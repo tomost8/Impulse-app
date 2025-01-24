@@ -1,11 +1,11 @@
 import { StyleSheet, View, Text } from 'react-native';
 
 
-export default function AccountScreen() {
+export default function NotificationsScreen() {
   return (
     <View style={styles.titleContainer}>
         <Text style={styles.text}>
-            Hello World (account)
+            notifications
         </Text>
     </View>
   );

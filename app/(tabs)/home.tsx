@@ -1,18 +1,12 @@
 import { StyleSheet, Image, Platform, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useCommunities } from '../../hooks/useCommunities';
-import { router } from 'expo-router';
+import React from 'react';
+
 
 export default function HomeScreen() {
-  const { communities, isLoading, error } = useCommunities();
-  console.log('Communities data:', communities);
-  
-
-  const handleCommunityPress = (id: string | number) => {
-    router.push(`/community/${id}`);
-  };
 
   return (
     <ScrollView style={styles.container}>
+
       <View style={styles.section}>
         <Text style={styles.text}>Quote of the Day</Text>
       </View>
@@ -22,34 +16,13 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.text}>Communities</Text>
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : error ? (
-          <Text style={styles.errorText}>{error}</Text>
-        ) : (
-          communities.map((community: any) => (
-            <TouchableOpacity
-              key={community.id}
-              onPress={() => handleCommunityPress(community.id)}
-            >
-              <Text style={styles.communityName}>
-                {community.name}
-              </Text>
-            </TouchableOpacity>
-          ))
-        )}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.text}>Accountability Progress or Leaderboards</Text>
+        <Text style={styles.text}>Leaderboards</Text>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // ... existing code ...
   container: {
     flex: 1,
   },

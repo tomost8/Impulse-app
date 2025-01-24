@@ -1,11 +1,11 @@
 import { StyleSheet, View, Text } from 'react-native';
 
 
-export default function CommunityScreen() {
+export default function DeletionScreen() {
   return (
     <View style={styles.titleContainer}>
         <Text style={styles.text}>
-            Hello World (communities)
+            deletion
         </Text>
     </View>
   );

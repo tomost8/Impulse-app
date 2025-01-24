@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useCommunity } from '../../hooks/useCommunities';
+import { getCommunity } from '../../hooks/useCommunities';
 
 export default function CommunityScreen() {
   const { id } = useLocalSearchParams();
-  const { community, isLoading, error } = useCommunity(Number(id));
+  const { community, isLoading, error } = getCommunity(Number(id));
 
   if (isLoading) {
     return (

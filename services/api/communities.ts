@@ -1,5 +1,26 @@
 import { gql } from '@apollo/client';
 
+// Query - Get User Communities by User ID
+export const GET_USER_COMMUNITIES = gql`
+    query ($userId: Int!) {
+        getUserCommunities(id: $userId) {
+            success
+            community_members {
+                community {
+                    id
+                    name
+                }
+                role
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
 export const GET_COMMUNITIES = gql`
   query {
     getAllCommunities {
