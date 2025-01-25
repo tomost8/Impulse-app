@@ -1,24 +1,25 @@
-import { StyleSheet, View, Text } from 'react-native';
-
+import { View, Text } from 'react-native';
+import styles from '@/constants/testStyles';
 
 export default function NotificationsScreen() {
   return (
-    <View style={styles.titleContainer}>
+    <View style={styles.container}>
+        <Text style={styles.todoText}>
+            Reminders and Notifications (TODO after backend implemented)
+        </Text>
         <Text style={styles.text}>
-            notifications
+            Morning Scheduling Reminder
+        </Text>
+        <Text style={styles.text}>
+            Afternoon Motivation
+        </Text>
+        <Text style={styles.text}>
+            Activities Reminder
+        </Text>
+        <Text style={styles.text}>
+            Nudge Message
         </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: 'white'
-  },
-});

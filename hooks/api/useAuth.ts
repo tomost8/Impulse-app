@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { FIREBASE_AUTH } from '../services/api/auth';
+import { FIREBASE_AUTH } from '../../services/api/auth';
 
 export function useAuth(authToken: string) {  // Default value for testing
   const [firebaseAuth, { data, loading, error }] = useMutation(FIREBASE_AUTH, {

@@ -1,5 +1,5 @@
 import { StyleSheet, Image, Platform, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getCommunities } from '../../../hooks/useCommunities';
+import { getCommunities } from '../../../hooks/api/useCommunities';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useState } from 'react';

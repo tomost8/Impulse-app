@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { useUser} from '../../hooks/useUsers';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useGetUser, useGetPoints } from '@/hooks/api/useUsers';
+import styles from '@/constants/testStyles';
 
 export default function UserScreen() {
   const { id } = useLocalSearchParams();
-  const { user, isLoading, error } = useUser(Number(id));
-
-  if (isLoading) {
+  const { user, isLoading: userLoading, error: userError } = useGetUser(Number(id));
+  const { points, isLoading: pointsLoading, error: pointsError } = useGetPoints(Number(id));
+  if (userLoading || pointsLoading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator color="white" />
@@ -14,36 +15,43 @@ export default function UserScreen() {
     );
   }
 
-  if (error) {
+  if (userError || pointsError) {
     return (
       <View style={styles.container}>
-        <Text style={styles.error}>{error}</Text>
+        <Text style={styles.error}>{userError || pointsError}</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{user?.username}</Text>
-      {/* Add user profile details here */}
+      <Text style={styles.text}>
+          Profile Picture: {user.profile_picture}
+      </Text>
+      <Text style={styles.text}>
+          First Name: {user.first_name}
+      </Text>
+      <Text style={styles.text}>
+          Username: {user.username}
+      </Text>
+      <Text style={styles.text}>
+          Points: {points.points}
+      </Text>
+      <Text style={styles.todoText}>
+          Todo: fetch bio
+      </Text>
+      <Text style={styles.text}>
+          Gender: {user.gender}
+      </Text>
+      <Text style={styles.text}>
+          Timezone: {user.timezone}
+      </Text>
+      <Text style={styles.todoText}>
+          Todo: fetch data for "friends since"
+      </Text>
+      <Text style={styles.todoText}>
+          Todo: fetch primary + secondary goal (preferences)
+      </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#000',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-    marginBottom: 20,
-  },
-  error: {
-    color: '#ff6b6b',
-    textAlign: 'center',
-  },
-}); 

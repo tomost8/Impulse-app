@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useGetChat } from '../../hooks/useChats'; // You'll need to create this hook
+import { useGetChat } from '../../hooks/api/useChats'; // You'll need to create this hook
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams();

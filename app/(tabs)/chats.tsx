@@ -1,11 +1,11 @@
 import { StyleSheet, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useGetUserChats } from '../../hooks/useChats';
+import { useGetUserChats } from '../../hooks/api/useChats';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
-import { useAcceptFriendRequest, useGetFriendRequests } from '@/hooks/useFriends';
+import { useAcceptFriendRequest, useGetFriendRequests } from '../../hooks/api/useFriends';
 import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '@/services/api/friends';
+import { ACCEPT_FRIEND_REQUEST } from '../../services/api/friends';
 import MyComponent from '@/components/Test';
 
 export default function ChatScreen() {

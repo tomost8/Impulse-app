@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_COMMUNITIES, GET_COMMUNITY, GET_USER_COMMUNITIES } from '../services/api/communities';
+import { GET_COMMUNITIES, GET_COMMUNITY, GET_USER_COMMUNITIES } from '../../services/api/communities';
 
 export function getUserCommunities(userId: number) {
     const { data, loading, error } = useQuery(GET_USER_COMMUNITIES, {

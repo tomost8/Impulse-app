@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS } from '../services/api/friends';
+import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS } from '../../services/api/friends';
 
 export function useGetFriends(userId: number) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {

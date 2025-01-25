@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_USER_CHATS, GET_CHAT } from '../services/api/chats';
+import { GET_USER_CHATS, GET_CHAT } from '../../services/api/chats';
 
 export function useGetUserChats(userId: number) {
     const { data, loading, error } = useQuery(GET_USER_CHATS, {

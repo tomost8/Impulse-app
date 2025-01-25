@@ -10,6 +10,8 @@ export const GET_FRIENDS = gql`
                     id
                     first_name
                     last_name
+                    username
+                    profile_picture
                     email
                 }
                 role

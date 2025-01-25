@@ -1,10 +1,9 @@
 import { StyleSheet, Image, Platform, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getUserCommunities } from '../../../hooks/useCommunities';
+import { getUserCommunities } from '../../../hooks/api/useCommunities';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useGetUserChats } from '@/hooks/useChats';
 
 
 export default function CommunitiesScreen() {
@@ -26,10 +25,8 @@ export default function CommunitiesScreen() {
   
   const { communityMembers, isLoading, error } = getUserCommunities(userId as number);
   if (userId !== null) {
-    console.log('userId', userId);
     console.log('Community Members data:', communityMembers);
   }
-  //console.log('Communities data:', communities);
   
 
   const handleCommunityPress = (id: string | number) => {
@@ -38,7 +35,6 @@ export default function CommunitiesScreen() {
 
   return (
     <ScrollView style={styles.container}>
-
       <View style={styles.section}>
         <Text style={styles.text}>Communities</Text>
         {isLoading ? (
@@ -59,10 +55,8 @@ export default function CommunitiesScreen() {
         )}
       </View>
       <View style={styles.section}>
-      <TouchableOpacity onPress={() => router.push('communities/explore')}>
-            <Text style={styles.text}>
-                Explore
-            </Text>
+        <TouchableOpacity onPress={() => router.push('communities/explore')}>
+          <Text style={styles.text}>Explore</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

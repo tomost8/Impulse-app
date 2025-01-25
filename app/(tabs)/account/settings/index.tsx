@@ -4,41 +4,41 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 export default function SettingsScreen() {
   return (
-    <View style={styles.titleContainer}>
-        <Text style={styles.text}>
-            settings_inside
-        </Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/deletion')}>
-            <Text style={styles.text}>
-                Deletion
-            </Text>
-        </TouchableOpacity> 
-        <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/password')}>
-            <Text style={styles.text}>
-                Password
-            </Text>
-        </TouchableOpacity>
+    <View style={styles.container}>
         <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/profile')}>
             <Text style={styles.text}>
                 Profile
             </Text>
-        </TouchableOpacity> 
+        </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/notifications')}>
             <Text style={styles.text}>
-                Notifications
+                Reminders and Notifications (TODO after backend implemented)
             </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/feedback')}>
             <Text style={styles.text}>
-                Feedback
+                Give Feedback
             </Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/password')}>
+            <Text style={styles.text}>
+                Reset Password
+            </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/deletion')}>
+            <Text style={styles.text}>
+                Support and Account Deletion
+            </Text>
+        </TouchableOpacity> 
+        <Text style={styles.todoText}>
+            TODO: add logout button + functionality
+        </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -48,6 +48,13 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   button: {
-    marginVertical: 10,
+    backgroundColor: '#007BFF', 
+    padding: 10, // Button padding
+    borderRadius: 5, // Rounded corners
+    marginVertical: 10, // Space between buttons
+  },
+  todoText: {
+    color: 'yellow', 
+    fontStyle: 'italic', 
   },
 });
