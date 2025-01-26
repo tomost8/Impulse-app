@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-
+import styles from '@/constants/testStyles';
 
 export default function FriendsScreen() {
   const [userId, setUserId] = useState<number | null>(null);
@@ -30,17 +30,17 @@ export default function FriendsScreen() {
   };
   
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
 
       <View style={styles.section}>
         <Text style={styles.text}>Friends</Text>
         {isLoading ? (
           <ActivityIndicator color="white" />
         ) : error ? (
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.error}>{error}</Text>
         ) : (
           friends.map((friend: any) => (
-            <TouchableOpacity
+            <TouchableOpacity style={styles.button}
               key={friend.friend.id}
               onPress={() => handleFriendPress(friend.friend.id)}
             >
@@ -54,24 +54,3 @@ export default function FriendsScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  section: {
-    padding: 20,
-    marginVertical: 10,
-    backgroundColor: '#333', // Optional: adds visual separation between sections
-    borderRadius: 8,
-  },
-  text: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  errorText: {
-    color: '#ff6b6b',
-    marginTop: 10,
-  }
-});

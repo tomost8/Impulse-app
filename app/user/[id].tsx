@@ -37,8 +37,8 @@ export default function UserScreen() {
       <Text style={styles.text}>
           Points: {points.points}
       </Text>
-      <Text style={styles.todoText}>
-          Todo: fetch bio
+      <Text style={styles.text}>
+          Bio: {user.bio}
       </Text>
       <Text style={styles.text}>
           Gender: {user.gender}
@@ -49,8 +49,11 @@ export default function UserScreen() {
       <Text style={styles.todoText}>
           Todo: fetch data for "friends since"
       </Text>
-      <Text style={styles.todoText}>
-          Todo: fetch primary + secondary goal (preferences)
+      <Text style={styles.text}>
+          Primary Goal: {user.primary_goal}
+      </Text>
+      <Text style={styles.text}>
+          Secondary Goal: {user.secondary_goal}
       </Text>
     </View>
   );

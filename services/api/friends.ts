@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // Query - Get Friends by User ID
 export const GET_FRIENDS = gql`
-    query ($userId: Int!) {
-        getFriendships(id: $userId) {
+    query ($userId: Int!, $sortBy: UserSortType!) {
+        getFriendships(id: $userId, sort_by: $sortBy) {
             success
             friendships {
                 friend {

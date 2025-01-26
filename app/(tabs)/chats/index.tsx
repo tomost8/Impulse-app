@@ -1,14 +1,21 @@
 import { StyleSheet, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useGetUserChats } from '../../hooks/api/useChats';
+import { useGetUserChats } from '../../../hooks/api/useChats';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useState, useEffect } from 'react';
-import { useAcceptFriendRequest, useGetFriendRequests } from '../../hooks/api/useFriends';
+import { useAcceptFriendRequest, useGetFriendRequests } from '../../../hooks/api/useFriends';
 import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '../../services/api/friends';
+import { ACCEPT_FRIEND_REQUEST } from '../../../services/api/friends';
 import MyComponent from '@/components/Test';
+import styles from '@/constants/testStyles';
+import SocialModal from '@/components/modals/SocialModal';
 
 export default function ChatScreen() {
+  //modal
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
   const [activeView, setActiveView] = useState<'chats' | 'requests'>('chats'); // Explicitly define the type
 
   const [userId, setUserId] = useState<number | null>(null);
@@ -68,26 +75,36 @@ export default function ChatScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
+      <TouchableOpacity style={styles.button} onPress={showModal}>
+        <Text style={styles.text}>
+          Button for add friends
+        </Text>
+      </TouchableOpacity>
+      <SocialModal 
+        visible={visible} 
+        hideModal={hideModal}
+      />
+      
       <MyComponent onLeftPress={onChatsPress} onRightPress={onRequestsPress} value={activeView} />
       
       {activeView === 'chats' && (
         <View style={styles.section}>
           {/* make chat component + add here */}
-          <Text style={styles.text}>You chose Chats!</Text>
           <View style={styles.section}>
             <Text style={styles.text}>Chats</Text>
             {chatsLoading ? (
               <ActivityIndicator color="white" />
             ) : chatsError ? (
-              <Text style={styles.errorText}>{chatsError}</Text>
+              <Text style={styles.error}>{chatsError}</Text>
             ) : (
               chatMembers.map((chatMember: any) => (
                 <TouchableOpacity
+                  style={styles.button}
                   key={`chat-${chatMember.chat.id}-member-${chatMember.id}`}
                   onPress={() => handleChatPress(chatMember.chat.id)}
                 >
-                  <Text style={styles.chatName}>
+                  <Text style={styles.text}>
                     {chatMember.chat.type}, {chatMember.chat.id}
                   </Text>
                 </TouchableOpacity>
@@ -100,13 +117,12 @@ export default function ChatScreen() {
       {activeView === 'requests' && (
         <View style={styles.section}>
           {/* make requests component + add here */}
-          <Text style={styles.text}>You chose Requests!</Text>
           <View style={styles.section}>
             <Text style={styles.text}>Requests</Text>
             {requestsLoading ? (
               <ActivityIndicator color="white" />
             ) : requestsError ? (
-              <Text style={styles.errorText}>{requestsError}</Text>
+              <Text style={styles.text}>{requestsError}</Text>
             ) : (
               friendRequests.map((friendRequest: any) => (
                 <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
@@ -114,7 +130,7 @@ export default function ChatScreen() {
                     {friendRequest.friend.first_name} {friendRequest.friend.last_name}
                   </Text>
                   <TouchableOpacity onPress={() => handleAcceptFriendRequest(friendRequest.friend.id)} style={styles.button}>
-                    <Text style={styles.buttonText}>Accept Friend Request</Text>
+                    <Text style={styles.text}>Accept Friend Request</Text>
                   </TouchableOpacity>
                 </View>
               ))
@@ -125,38 +141,3 @@ export default function ChatScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  section: {
-    padding: 20,
-    marginVertical: 10,
-    backgroundColor: '#333', // Optional: adds visual separation between sections
-    borderRadius: 8,
-  },
-  text: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  chatName: {
-    color: 'white',
-    fontSize: 16,
-    marginVertical: 4,
-  },
-  errorText: {
-    color: '#ff6b6b',
-    marginTop: 10,
-  },
-  button: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-  }
-});

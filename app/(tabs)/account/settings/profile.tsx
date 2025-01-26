@@ -53,12 +53,18 @@ export default function ProfileScreen() {
       <Text style={styles.text}>
           Timezone: {user.timezone}
       </Text>
-      <Text style={styles.todoText}>
-          Todo: fetch bio
+      <Text style={styles.text}>
+          Bio: {user.bio}
       </Text>
-      <Text style={styles.todoText}>
-          Todo: fetch primary + secondary goal (preferences)
+      <Text style={styles.text}>
+          Primary Goal: {user.primary_goal}
       </Text>
+      <Text style={styles.text}>
+          Secondary Goal: {user.secondary_goal}
+      </Text>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/profile')}>
+        <Text style={styles.text}>Edit Profile</Text>
+      </TouchableOpacity>
     </View>
   );
 }

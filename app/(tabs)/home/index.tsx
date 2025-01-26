@@ -3,7 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useGetFriends } from '@/hooks/api/useFriends';
+import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
 
 
 export default function HomeScreen() {
@@ -23,7 +23,7 @@ export default function HomeScreen() {
     getUserId();
   }, []);
   
-  const { friends, isLoading, error } = useGetFriends(userId as number);
+  const { friends, isLoading, error } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
   if (userId !== null) {
     console.log('Friends data:', friends);
   }

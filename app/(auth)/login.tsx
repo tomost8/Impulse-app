@@ -25,7 +25,7 @@ export default function Login() {
     setError(null);
     try {
         console.log("email", email, "password", password);
-        const authToken = 'dev-token-123'
+        const authToken = email; // TODO: change this to the actual auth token
         console.log("authToken", authToken);
         const { data } = await firebaseAuth({
             context: {

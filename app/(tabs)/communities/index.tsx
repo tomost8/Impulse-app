@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import styles from '@/constants/testStyles';
 
 export default function CommunitiesScreen() {
   const [userId, setUserId] = useState<number | null>(null);
@@ -34,20 +34,21 @@ export default function CommunitiesScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
       <View style={styles.section}>
         <Text style={styles.text}>Communities</Text>
         {isLoading ? (
           <ActivityIndicator color="white" />
         ) : error ? (
-          <Text style={styles.errorText}>{error}</Text>
+          <Text style={styles.error}>{error}</Text>
         ) : (
           communityMembers.map((communityMember: any) => (
             <TouchableOpacity
+              style={styles.button}
               key={communityMember.community.id}
               onPress={() => handleCommunityPress(communityMember.community.id)}
             >
-              <Text style={styles.communityName}>
+              <Text style={styles.text}>
                 {communityMember.community.name}
               </Text>
             </TouchableOpacity>
@@ -55,36 +56,10 @@ export default function CommunitiesScreen() {
         )}
       </View>
       <View style={styles.section}>
-        <TouchableOpacity onPress={() => router.push('communities/explore')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('communities/explore')}>
           <Text style={styles.text}>Explore</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  section: {
-    padding: 20,
-    marginVertical: 10,
-    backgroundColor: '#333', // Optional: adds visual separation between sections
-    borderRadius: 8,
-  },
-  text: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  communityName: {
-    color: 'white',
-    fontSize: 16,
-    marginVertical: 4,
-  },
-  errorText: {
-    color: '#ff6b6b',
-    marginTop: 10,
-  }
-});

@@ -37,6 +37,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#333', // Optional: adds visual separation between sections
     borderRadius: 8,
   },
+  modal: {
+    backgroundColor: 'gray',
+    padding: 20,
+    margin: 20,
+    borderRadius: 8,
+  },
 });
 
 export default styles; 

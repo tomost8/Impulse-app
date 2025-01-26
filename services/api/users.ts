@@ -15,6 +15,9 @@ export const GET_USER = gql`
         username
         dob
         gender
+        bio
+        primary_goal
+        secondary_goal
         profile_picture
         role
         status

@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/api/client';
+import { PaperProvider } from 'react-native-paper';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -30,22 +31,24 @@ export default function RootLayout() {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen 
-            name="community/[id]" 
-            options={{
-              headerShown: true,
-              headerTitle: "Community",
-            }} 
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </ApolloProvider>
+    <PaperProvider>
+      <ApolloProvider client={client}>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="community/[id]" 
+              options={{
+                headerShown: true,
+                headerTitle: "Community",
+              }} 
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </ApolloProvider>
+    </PaperProvider>
   );
 }
