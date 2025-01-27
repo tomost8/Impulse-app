@@ -53,7 +53,7 @@ export default function AccountScreen() {
         Username: {user.username}
       </Text>
       <Text style={styles.text}>
-        Points: {points.points}
+        Points: {points.points}//TODO: change to user.point.points
       </Text>
       <TouchableOpacity style={styles.button} onPress={showModal}>
         <Text style={styles.text}>
@@ -68,7 +68,7 @@ export default function AccountScreen() {
         style={styles.button} 
         onPress={() => router.push({ 
           pathname: 'account/redeems', 
-          params: { points: points?.points } 
+          params: { points: user.point.spending_points } 
         })}>
         <Text style={styles.text}>
           Redeem

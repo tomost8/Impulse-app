@@ -32,9 +32,19 @@ export default function RedeemsScreen() {
   const { rewards, isLoading, error } = useGetRewards();
   console.log('Rewards:', rewards);
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
+  useEffect(() => {
+    if (points < rewards[0].required_points) {
+        setIsButtonDisabled(true);
+    } else {
+        setIsButtonDisabled(false);
+    }
+  }, [rewards]);
+
   return (
     <View style={styles.container}>
-        <TouchableOpacity style={styles.button} onPress={showModal}>
+      <TouchableOpacity style={styles.button} onPress={showModal}>
         <Text style={styles.text}>
           Open Modal for Redeems
         </Text>
@@ -44,14 +54,18 @@ export default function RedeemsScreen() {
         hideModal={hideModal}
       />
       <View style={styles.section}>
-        <Text style={styles.text}>{points} Total Rewards Points (TODO: change to points to spend)</Text>
+        <Text style={styles.text}>{points} Total Rewards Points</Text>
       </View>
       <View style={styles.section}>
         {rewards.map((reward: any) => (
-            <View style={styles.section}>
+            <View key={reward.id} style={styles.section}>
                 <Text style={styles.text}>{reward.required_points} Reward Points Redemption</Text>
                 <Text style={styles.text}>{reward.title}, {reward.description}</Text>
-                <TouchableOpacity style={styles.button} onPress={() => console.log('Redeem')}>
+                <TouchableOpacity 
+                    style={[styles.button, isButtonDisabled && { opacity: 0.5 }]}
+                    onPress={() => !isButtonDisabled && console.log('Redeem')}
+                    disabled={isButtonDisabled}
+                >
                     <Text style={styles.todoText}>TODO: Redeem</Text>
                 </TouchableOpacity>
             </View>

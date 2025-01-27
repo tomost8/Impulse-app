@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS } from '../../services/api/friends';
+import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from '../../services/api/friends';
 
 export function useGetFriends(userId: number) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
@@ -19,9 +19,27 @@ export function useGetFriends(userId: number) {
   };
 } 
 
-export function useGetFriendRequests(userId: number) {
+export function useGetFriendsLeaderboard(userId: number, sortBy: string) {
+  const { data, loading, error } = useQuery(GET_FRIENDS_SORTING, {
+    variables: { userId, sortBy },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+    }
+  });
+  //console.log('Friends leaderboard data:', data);
+  return {
+    friends: data?.getFriendships.friendships || [],
+    isLoading: loading,
+    error: error?.message || null
+  };
+} 
+
+export function useGetFriendRequests(userId: number, role: string) {
   const { data, loading, error } = useQuery(GET_FRIEND_REQUESTS, {
-    variables: { userId },
+    variables: { userId, role: role },
     onError: (error) => {
       console.error('GraphQL Error:', error);
       console.error('GraphQL Error Message:', error.message);
@@ -50,24 +68,6 @@ export function useAcceptFriendRequest(userId: number, friendId: number) {
   console.log('Friends data:', data);
   return {
     friendRequests: data?.getFriendRequests.friendships || [],
-    isLoading: loading,
-    error: error?.message || null
-  };
-} 
-
-export function useGetFriendsLeaderboard(userId: number, sortBy: string) {
-  const { data, loading, error } = useQuery(GET_FRIENDS, {
-    variables: { userId, sortBy },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
-    }
-  });
-  //console.log('Friends data:', data);
-  return {
-    friends: data?.getFriendships.friendships || [],
     isLoading: loading,
     error: error?.message || null
   };

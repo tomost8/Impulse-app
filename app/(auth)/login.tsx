@@ -28,11 +28,11 @@ export default function Login() {
         const authToken = email; // TODO: change this to the actual auth token
         console.log("authToken", authToken);
         const { data } = await firebaseAuth({
-            context: {
+          context: {
             headers: {
                 Authorization: `Bearer ${authToken}`
             }
-            }
+          }
         });
         console.log("data", data);
         

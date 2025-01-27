@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function SettingsScreen() {
@@ -30,9 +31,17 @@ export default function SettingsScreen() {
                 Support and Account Deletion
             </Text>
         </TouchableOpacity> 
-        <Text style={styles.todoText}>
-            TODO: add logout button + functionality
-        </Text>
+        <TouchableOpacity 
+            style={styles.button} 
+            onPress={async () => {
+                await AsyncStorage.clear();
+                router.push('login');
+            }}
+        >
+            <Text style={styles.text}>
+                Logout
+            </Text>
+        </TouchableOpacity>
     </View>
   );
 }

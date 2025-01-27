@@ -49,7 +49,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <Text style={styles.text}>Weekly Leaderboard</Text>
         {friends.map((friend: any) => (
-          <Text key={friend.friend.id} style={styles.text}>{friend.friend.username}</Text>
+          <Text key={friend.friend.id} style={styles.text}>{friend.friend.username}, {friend.friend.point.weekly_points}</Text>
         ))}
         <TouchableOpacity style={styles.button} onPress={() => router.push('home/leaderboards')}>
           <Text style={styles.text}>View All</Text>

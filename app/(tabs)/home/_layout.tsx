@@ -8,7 +8,15 @@ export default function HomeLayout() {
         options={{ headerShown: false }} 
       />
       <Stack.Screen 
-        name="activity" 
+        name="activityAdd" 
+        options={{ headerShown: true }}
+      />
+      <Stack.Screen 
+        name="activityView" 
+        options={{ headerShown: true }}
+      />
+      <Stack.Screen 
+        name="leaderboards" 
         options={{ headerShown: true }}
       />
     </Stack>

@@ -1,31 +1,34 @@
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { router } from 'expo-router';
+import ActivitiesModal from '@/components/modals/ActivitiesModal';
 
 
 export default function ActivityViewScreen() {
+  const [visible, setVisible] = useState(false);
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={showModal}>
+        <Text style={styles.text}>
+          Open Modal for Activities
+        </Text>
+      </TouchableOpacity>
+      <ActivitiesModal 
+        visible={visible} 
+        hideModal={hideModal}
+      />
       <View style={styles.section}>
-        <Text style={styles.text}>Food</Text>
+        <Text style={styles.text}>Goals for the Day</Text>
       </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>Wellness</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>Working Out</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>Studying / Working</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>Rise and Shine</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>My Passion / Hobby</Text>
-      </View>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/home/activityAdd')}>
+        <Text style={styles.text}>
+          Add new daily goal
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }

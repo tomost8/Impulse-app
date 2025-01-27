@@ -2,6 +2,37 @@ import { gql } from '@apollo/client';
 
 // Query - Get Friends by User ID
 export const GET_FRIENDS = gql`
+    query ($userId: Int!) {
+        getFriendships(id: $userId) {
+            success
+            friendships {
+                friend {
+                    id
+                    first_name
+                    last_name
+                    username
+                    profile_picture
+                    email
+                    point {
+                        points
+                        spending_points
+                        weekly_points
+                        monthly_points
+                    }
+                }
+                role
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
+// Query - Get Friends by User ID with Sorting
+export const GET_FRIENDS_SORTING = gql`
     query ($userId: Int!, $sortBy: UserSortType!) {
         getFriendships(id: $userId, sort_by: $sortBy) {
             success
@@ -13,6 +44,12 @@ export const GET_FRIENDS = gql`
                     username
                     profile_picture
                     email
+                    point {
+                        points
+                        spending_points
+                        weekly_points
+                        monthly_points
+                    }
                 }
                 role
                 status
@@ -27,8 +64,8 @@ export const GET_FRIENDS = gql`
 
 // Query - Get Friends Requests by User ID
 export const GET_FRIEND_REQUESTS = gql`
-    query ($userId: Int!) {
-        getFriendRequests(id: $userId) {
+    query ($userId: Int!, $role: String!) {
+        getFriendRequests(id: $userId, role: $role) {
             success
             friendships {
                 friend {
