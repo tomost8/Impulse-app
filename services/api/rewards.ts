@@ -16,3 +16,31 @@ export const GET_REWARDS = gql`
         }
     }
 `;
+
+// Query - Redeem Reward (Create Redeem)
+//{"query": "mutation ($input: CreateRedeemInput!){ createRedeem(input: $input) { success redeem { user { id first_name last_name } reward { id title required_points } points_spent status  } errors { field message } } }",  
+export const REDEEM_REWARD = gql`
+    mutation ($input: CreateRedeemInput!) {
+        createRedeem(input: $input) {
+            success
+            redeem {
+                user {
+                    id
+                    first_name
+                    last_name
+                }
+                reward {
+                    id
+                    title
+                    required_points
+                }
+                points_spent
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;

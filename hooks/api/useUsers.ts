@@ -19,6 +19,8 @@ export function useGetUser(id: number) {
   };
 } 
 
+
+
 export function useGetUsersLeaderboard(sort_by: string) {
   const { data, loading, error } = useQuery(GET_USERS_LEADERBOARD, {
     variables: { sort_by },

@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import styles from '@/constants/testStyles';
+import { View, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -45,25 +46,3 @@ export default function SettingsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: 'white'
-  },
-  button: {
-    backgroundColor: '#007BFF', 
-    padding: 10, // Button padding
-    borderRadius: 5, // Rounded corners
-    marginVertical: 10, // Space between buttons
-  },
-  todoText: {
-    color: 'yellow', 
-    fontStyle: 'italic', 
-  },
-});

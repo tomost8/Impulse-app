@@ -5,30 +5,11 @@ import { router } from 'expo-router';
 import { createActivity } from '@/hooks/api/useActivites';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { List } from 'react-native-paper';
+import useUserInfo from '@/hooks/useUserInfo';
 
 
 export default function ActivityAddScreen() {
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [userId, setUserId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const getAuthTokenAndUserId = async () => {
-      try {
-        const storedAuthToken = await AsyncStorage.getItem('authToken');
-        const storedUserId = await AsyncStorage.getItem('idUser');
-        if (storedAuthToken) {
-          setAuthToken(storedAuthToken);
-        }
-        if (storedUserId) {
-          setUserId(parseInt(storedUserId));
-        }
-      } catch (error) {
-        console.error('Error fetching data from AsyncStorage:', error);
-      }
-    };
-
-    getAuthTokenAndUserId();
-  }, []);
+  const { authToken, userId } = useUserInfo();
 
   //input: name, description, category, duration, scheduledDatetime, postId, userId
   const handleActivityCreation = (category: string, date: string) => {

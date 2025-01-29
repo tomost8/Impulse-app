@@ -3,44 +3,21 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { router, useRouter, useLocalSearchParams } from 'expo-router';
 import RedeemsModal from '@/components/modals/RedeemsModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGetRewards } from '@/hooks/api/useRewards';
+import RedeemButton from '@/components/RedeemButton';
+import useUserInfo from '@/hooks/useUserInfo';
+import { useGetPoints } from '@/hooks/api/useUsers';
 
 export default function RedeemsScreen() {
-    const { points } = useLocalSearchParams();
+  const { userId } = useUserInfo();
+  const { points, isLoading: pointsLoading, error: pointsError } = useGetPoints(userId as number);
 
-    const [visible, setVisible] = useState(false);
-    const showModal = () => setVisible(true);
-    const hideModal = () => setVisible(false);
-
-    const [userId, setUserId] = useState<number | null>(null);
-    useEffect(() => {
-        const getUserId = async () => {
-        try {
-            const storedUserId = await AsyncStorage.getItem('idUser');
-            if (storedUserId) {
-            setUserId(parseInt(storedUserId));
-            }
-        } catch (error) {
-            console.error('Error fetching userId from AsyncStorage:', error);
-        }
-        };
-
-        getUserId();
-    }, []);
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
   const { rewards, isLoading, error } = useGetRewards();
-  console.log('Rewards:', rewards);
-
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
-  useEffect(() => {
-    if (points < rewards[0].required_points) {
-        setIsButtonDisabled(true);
-    } else {
-        setIsButtonDisabled(false);
-    }
-  }, [rewards]);
+  console.log('Rewards:', rewards, "points:", points);
 
   return (
     <View style={styles.container}>
@@ -54,24 +31,21 @@ export default function RedeemsScreen() {
         hideModal={hideModal}
       />
       <View style={styles.section}>
-        <Text style={styles.text}>{points} Total Rewards Points</Text>
+        <Text style={styles.text}>{points.spending_points} Total Rewards Points</Text>
       </View>
       <View style={styles.section}>
         {rewards.map((reward: any) => (
-            <View key={reward.id} style={styles.section}>
-                <Text style={styles.text}>{reward.required_points} Reward Points Redemption</Text>
-                <Text style={styles.text}>{reward.title}, {reward.description}</Text>
-                <TouchableOpacity 
-                    style={[styles.button, isButtonDisabled && { opacity: 0.5 }]}
-                    onPress={() => !isButtonDisabled && console.log('Redeem')}
-                    disabled={isButtonDisabled}
-                >
-                    <Text style={styles.todoText}>TODO: Redeem</Text>
-                </TouchableOpacity>
-            </View>
+          <RedeemButton 
+            key={reward.id}
+            title={reward.title}
+            description={reward.description}
+            requiredPoints={reward.required_points}
+            spendingPoints={Number(points.spending_points)}
+            userId={userId as number}
+            rewardId={reward.id}
+        />
         ))}
       </View>
-      <Text>Your Points: {points}</Text>
     </View>
   );
 }

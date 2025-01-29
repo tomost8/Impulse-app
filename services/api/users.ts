@@ -39,6 +39,27 @@ export const GET_USER = gql`
   }
 `; 
 
+//"query": "mutation($input: UpdateUserInput!) { updateUser(input: $input) { success user { id first_name last_name username gender dob bio status primary_goal secondary_goal } errors { field message } } }",
+export const UPDATE_USER = gql`
+  mutation($input: UpdateUserInput!) {
+    updateUser(input: $input) {
+      success
+      user {
+        id
+        first_name
+        last_name
+        username
+        gender
+        dob
+        bio
+        status
+        primary_goal
+        secondary_goal
+      }
+    }
+  }
+`;
+
 export const GET_USERS_LEADERBOARD = gql`
   query ($sort_by: UserSortType!) {
     users(sort_by: $sort_by) {

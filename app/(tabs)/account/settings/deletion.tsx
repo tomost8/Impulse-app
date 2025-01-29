@@ -1,9 +1,14 @@
 import styles from '@/constants/testStyles';
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
+import { useMutation } from '@apollo/client';
+import { UPDATE_USER } from '@/services/api/users';
+import useUserInfo from '@/hooks/useUserInfo';
 
 
 export default function DeletionScreen() {
+  const { authToken } = useUserInfo();
+  const [updateUser] = useMutation(UPDATE_USER);
   const [formData, setFormData] = useState({
     code: '',
   });
@@ -15,15 +20,30 @@ export default function DeletionScreen() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const { code } = formData;
-
-    console.log('Community Leader Code submitted:', formData);
-    
-    // clear input
-    setFormData({
-      code: '',
-    });
+    if (code === "INSPIRE") {
+      console.log('Community Leader Code submitted: ', formData);
+      try {
+        const { data } = await updateUser({
+          variables: {
+            input: {
+              role: "INFLUENCER"
+            },
+          },
+          context: {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          },
+        });
+        console.log('Profile updated successfully:', data);
+      } catch (error) {
+        console.error('Error updating profile:', error);
+      }
+    } else {
+      console.log('Invalid promotion code: ', formData);
+    }
   };
 
   const handleFormPress = () => {
@@ -45,12 +65,11 @@ export default function DeletionScreen() {
         style={styles.input}
         placeholder="Enter given code"
         placeholderTextColor="gray"
-        secureTextEntry 
         value={formData.code}
         onChangeText={(value) => handleChange('code', value)} // Update code
       />
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.text}>Apply (TODO: functionality)</Text>
+          <Text style={styles.text}>Apply</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={handleFormPress}>
         <Text style={styles.text}>Account Deletion Form</Text>

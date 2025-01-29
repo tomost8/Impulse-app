@@ -31,7 +31,7 @@ export const GET_FRIENDS = gql`
     }
 `;
 
-// Query - Get Friends by User ID with Sorting
+// Query - Get Friends by User ID with Sorting for Leaderboard
 export const GET_FRIENDS_SORTING = gql`
     query ($userId: Int!, $sortBy: UserSortType!) {
         getFriendships(id: $userId, sort_by: $sortBy) {
@@ -39,11 +39,8 @@ export const GET_FRIENDS_SORTING = gql`
             friendships {
                 friend {
                     id
-                    first_name
-                    last_name
                     username
                     profile_picture
-                    email
                     point {
                         points
                         spending_points
@@ -51,8 +48,6 @@ export const GET_FRIENDS_SORTING = gql`
                         monthly_points
                     }
                 }
-                role
-                status
             }
             errors {
                 field

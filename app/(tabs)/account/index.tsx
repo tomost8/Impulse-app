@@ -2,39 +2,22 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
 import { useGetPoints, useGetUser } from '@/hooks/api/useUsers';
-import { Modal, Portal, Button } from 'react-native-paper';
 import PointsModal from '@/components/modals/PointsModal';
+import useUserInfo from '@/hooks/useUserInfo';
 
 export default function AccountScreen() {
-  const [userId, setUserId] = useState<number | null>(null);
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem('idUser');
-        if (storedUserId) {
-          setUserId(parseInt(storedUserId));
-        }
-      } catch (error) {
-        console.error('Error fetching userId from AsyncStorage:', error);
-      }
-    };
-
-    getUserId();
-  }, []);
-
+  const { userId } = useUserInfo();
   const { user, isLoading: userLoading, error: userError } = useGetUser(userId as number);
   const { points, isLoading: pointsLoading, error: pointsError } = useGetPoints(userId as number);
   if (userId !== null) {
     console.log('User data:', user);
     console.log('Points data:', points);
   }
+
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
   
   return (
     <View style={styles.container}>
@@ -53,22 +36,18 @@ export default function AccountScreen() {
         Username: {user.username}
       </Text>
       <Text style={styles.text}>
-        Points: {points.points}//TODO: change to user.point.points
+        Points: {user.point?.points}
       </Text>
       <TouchableOpacity style={styles.button} onPress={showModal}>
         <Text style={styles.text}>
           Open Modal for Points
         </Text>
       </TouchableOpacity>
-      <PointsModal 
-        visible={visible} 
-        hideModal={hideModal}
-      />
+      <PointsModal visible={visible} hideModal={hideModal} />
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => router.push({ 
-          pathname: 'account/redeems', 
-          params: { points: user.point.spending_points } 
+          pathname: 'account/redeems'
         })}>
         <Text style={styles.text}>
           Redeem

@@ -9,6 +9,7 @@ import { ACCEPT_FRIEND_REQUEST } from '../../../services/api/friends';
 import MyComponent from '@/components/Test';
 import styles from '@/constants/testStyles';
 import SocialModal from '@/components/modals/SocialModal';
+import useUserInfo from '@/hooks/useUserInfo';
 
 export default function ChatScreen() {
   //modal
@@ -17,25 +18,10 @@ export default function ChatScreen() {
   const hideModal = () => setVisible(false);
 
   const [activeView, setActiveView] = useState<'chats' | 'requests'>('chats');
+  const onChatsPress = () => { setActiveView('chats');};
+  const onRequestsPress = () => { setActiveView('requests');};
 
-  const [userId, setUserId] = useState<number | null>(null);
-  const [acceptFriendRequest, { loading: mutationLoading, error: mutationError }] = useMutation(ACCEPT_FRIEND_REQUEST);
-
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem('idUser');
-        if (storedUserId) {
-          setUserId(parseInt(storedUserId));
-        }
-      } catch (error) {
-        console.error('Error fetching userId from AsyncStorage:', error);
-      }
-    };
-
-    getUserId();
-  }, []);
-  
+  const { userId } = useUserInfo();
   const { chatMembers, isLoading: chatsLoading, error: chatsError } = useGetUserChats(userId as number);
   const { friendRequests: receivedRequests, isLoading: requestsLoading, error: requestsError } = useGetFriendRequests(userId as number, 'receiver');
   const { friendRequests: sentRequests, isLoading: sentRequestsLoading, error: sentRequestsError } = useGetFriendRequests(userId as number, 'sender');
@@ -45,10 +31,12 @@ export default function ChatScreen() {
     console.log('Friend Requests Sender data:', sentRequests);
   }
 
+
   const handleChatPress = (id: string | number) => {
     router.push(`/chat/${id}`);
   };
 
+  const [acceptFriendRequest, { loading: mutationLoading, error: mutationError }] = useMutation(ACCEPT_FRIEND_REQUEST);
   const handleAcceptFriendRequest = async (friendId: number) => {
     console.log('Accepting friend request for user ID:', friendId);
     try {
@@ -65,14 +53,6 @@ export default function ChatScreen() {
     } catch (error) {
       console.error('Error accepting friend request:', error);
     }
-  };
-
-  const onChatsPress = () => {
-    setActiveView('chats'); // Set active view to 'walk'
-  };
-
-  const onRequestsPress = () => {
-    setActiveView('requests'); // Set active view to 'transit'
   };
 
   return (

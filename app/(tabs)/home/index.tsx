@@ -1,27 +1,12 @@
 import styles from '@/constants/testStyles';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
+import useUserInfo from '@/hooks/useUserInfo';
 
 
 export default function HomeScreen() {
-  const [userId, setUserId] = useState<number | null>(null);
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem('idUser');
-        if (storedUserId) {
-          setUserId(parseInt(storedUserId));
-        }
-      } catch (error) {
-        console.error('Error fetching userId from AsyncStorage:', error);
-      }
-    };
-
-    getUserId();
-  }, []);
+  const { userId } = useUserInfo();
   
   const { friends, isLoading, error } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
   if (userId !== null) {

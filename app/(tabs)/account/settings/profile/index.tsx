@@ -1,26 +1,11 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
 import { useGetUser } from '@/hooks/api/useUsers';
+import useUserInfo from '@/hooks/useUserInfo';
 
 export default function ProfileScreen() {
-  const [userId, setUserId] = useState<number | null>(null);
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem('idUser');
-        if (storedUserId) {
-          setUserId(parseInt(storedUserId));
-        }
-      } catch (error) {
-        console.error('Error fetching userId from AsyncStorage:', error);
-      }
-    };
-
-    getUserId();
-  }, []);
+  const { userId } = useUserInfo();
 
   const { user, isLoading: userLoading, error: userError } = useGetUser(userId as number);
   if (userId !== null) {
@@ -62,7 +47,7 @@ export default function ProfileScreen() {
       <Text style={styles.text}>
           Secondary Goal: {user.secondary_goal}
       </Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/profile')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/profile/editProfile')}>
         <Text style={styles.text}>Edit Profile</Text>
       </TouchableOpacity>
     </View>
