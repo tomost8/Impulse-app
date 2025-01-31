@@ -28,7 +28,7 @@ export default function GroupJoinScreen() {
     if (chat.password) {
       console.log('There is a password', chat);
     } else {
-      const input = { chat_id: chat.id, user_id: userId };
+      const input = { chat_id: chat.id, user_id: userId, status: 'ACCEPTED' };
       console.log('There is no password', chat, input);
       try {
         const { data } = await client.mutate({

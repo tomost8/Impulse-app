@@ -6,7 +6,7 @@ import useUserInfo from '@/hooks/useUserInfo';
 import { useGetAllUsers } from '@/hooks/api/useUsers';
 import { useGetFriends } from '@/hooks/api/useFriends';
 import { useMutation } from '@apollo/client';
-import { SEND_FRIEND_REQUEST } from '@/services/api/friends';
+import { DELETE_FRIENDSHIP, SEND_FRIEND_REQUEST } from '@/services/api/friends';
 
 
 export default function AddFriendsScreen() {
@@ -40,7 +40,18 @@ export default function AddFriendsScreen() {
     }
   };
 
-  const removeRequest = (userId: number) => {
+  const [deleteFriendRequest] = useMutation(DELETE_FRIENDSHIP);
+  const removeRequest = async (friendId: number) => {
+      try {
+        const { data } = await deleteFriendRequest({ variables: { userId, friendId } });
+        if (data.deleteFriendship.success) {
+          console.log("Friend request deleted successfully");
+        } else {
+          console.error("Error deleting friendship:", data.deleteFriendship.errors);
+        }
+      } catch (error) {
+        console.error("Error deleting friendship:", error);
+      }
     console.log('Removing friend request for user ID:', userId);
   };
 
