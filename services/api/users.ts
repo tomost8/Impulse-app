@@ -1,5 +1,16 @@
 import { gql } from '@apollo/client';
 
+//"query": "query { users { success users { id email firebase_uid first_name last_name username gender role status searchable last_login_at created_at updated_at } errors { field message } } }"
+export const GET_ALL_USERS = gql`
+  query {
+    users {
+      success
+      users { id email firebase_uid first_name last_name username gender role status searchable last_login_at created_at updated_at }
+      errors { field message }
+    }
+  }
+`;
+
 //query($id: Int!) { user(id: $id) { success user { username profile_picture} errors { field message } } }
 //success user { id email firebase_uid first_name last_name username gender profile_picture role status timezone searchable last_login_at } errors { field message } } }",
 export const GET_USER = gql`

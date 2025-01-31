@@ -15,8 +15,8 @@ export default function LeaderboardsScreen() {
   const onGlobalPress = () => { setScopeView('global');};
 
   const [activeView, setActiveView] = useState<'weekly' | 'monthly' | 'all'>('weekly');
-  const { users, isLoading, error } = useGetUsersLeaderboard(activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL');
-  const { friends, isLoading: friendsLoading, error: friendsError } = useGetFriendsLeaderboard(userId as number, activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL');
+  const { users } = useGetUsersLeaderboard(activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL');
+  const { friends } = useGetFriendsLeaderboard(userId as number, activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL');
   if (userId !== null) {
     console.log('Users leaderboard data:', users);
     console.log('Friends leaderboard data:', friends);

@@ -23,7 +23,7 @@ export default function FriendsScreen() {
         ) : error ? (
           <Text style={styles.error}>{error}</Text>
         ) : (
-          friends.map((friend: any) => (
+          friends.filter((friend: any) => friend.status === 'ACCEPTED').map((friend: any) => (
             <TouchableOpacity style={styles.button}
               key={friend.friend.id}
               onPress={() => handleFriendPress(friend.friend.id)}

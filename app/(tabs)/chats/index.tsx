@@ -26,14 +26,16 @@ export default function ChatScreen() {
   const { friendRequests: receivedRequests, isLoading: requestsLoading, error: requestsError } = useGetFriendRequests(userId as number, 'receiver');
   const { friendRequests: sentRequests, isLoading: sentRequestsLoading, error: sentRequestsError } = useGetFriendRequests(userId as number, 'sender');
   if (userId !== null) {
-    console.log('Chats data:', chatMembers);
-    console.log('Friend Requests data:', receivedRequests);
-    console.log('Friend Requests Sender data:', sentRequests);
+    console.log('chats/index.tsx',
+      'Chats data:', chatMembers, 
+      'Friend Requests data:', receivedRequests, 
+      'Friend Requests Sender data:', sentRequests);
   }
 
 
-  const handleChatPress = (id: string | number) => {
-    router.push(`/chat/${id}`);
+  const handleChatPress = (chatId: number) => {
+    console.log('Chat ID:', chatId);
+    router.push(`/chats/${chatId}`);
   };
 
   const [acceptFriendRequest, { loading: mutationLoading, error: mutationError }] = useMutation(ACCEPT_FRIEND_REQUEST);

@@ -1,5 +1,22 @@
 import { useQuery } from '@apollo/client';
-import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD } from '../../services/api/users';
+import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD, GET_ALL_USERS } from '../../services/api/users';
+
+export function useGetAllUsers() {
+  const { data, loading, error } = useQuery(GET_ALL_USERS, {
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+    }
+  });
+  //console.log(data);
+  return {
+    users: data?.users.users || [],
+    isLoading: loading,
+    error: error?.message || null
+  };
+}
 
 export function useGetUser(id: number) {
   const { data, loading, error } = useQuery(GET_USER, {
