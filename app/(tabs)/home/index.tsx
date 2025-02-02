@@ -3,14 +3,15 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
 import useUserInfo from '@/hooks/useUserInfo';
+import { useGetActivities } from '@/hooks/api/useActivites';
 
 
 export default function HomeScreen() {
-  const { userId } = useUserInfo();
-  
-  const { friends, isLoading, error } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
+  const { userId, authToken } = useUserInfo();
+  const { friends } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
+  const { activities } = useGetActivities(userId as number, authToken as string);
   if (userId !== null) {
-    console.log('Friends data:', friends);
+    console.log('Activities data:', activities, 'Friends data:', friends);
   }
 
   return (
@@ -21,9 +22,18 @@ export default function HomeScreen() {
       </View>
       <View style={styles.section}>
         <Text style={styles.text}>Daily Goals</Text>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('home/activityAdd')}>
-          <Text style={styles.text}>Add Activity</Text>
-        </TouchableOpacity>
+        {activities.length === 0 ? (
+          <TouchableOpacity style={styles.button} onPress={() => router.push('home/activityAdd')}>
+            <Text style={styles.text}>Add Activity</Text>
+          </TouchableOpacity>
+        ) : (
+          activities.filter((activity: any) => activity.status !== 'expired').map((activity: any) => (
+            //make not clickable if completed (status==='active idk'), should route to camera
+            <TouchableOpacity style={styles.button} key={activity.id} onPress={() => console.log("clicked on", activity)}>
+              <Text style={styles.text}>{activity.category}, {activity.status}</Text>
+            </TouchableOpacity>
+          ))
+        )}
         <TouchableOpacity style={styles.button} onPress={() => router.push('home/activityView')}>
           <Text style={styles.text}>View All</Text>
         </TouchableOpacity>

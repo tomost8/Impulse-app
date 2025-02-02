@@ -2,13 +2,13 @@ import { View, Text } from 'react-native';
 import { Modal, Portal, Button } from 'react-native-paper';
 import styles from '@/constants/testStyles';
 
-interface PointsModalProps {
+interface ActivitiesModalProps {
   visible: boolean;
   hideModal: () => void;
 }
 
 
-export default function PointsModal({ visible, hideModal }: PointsModalProps) {
+export default function ActivitiesModal({ visible, hideModal }: ActivitiesModalProps) {
   return (
     <Portal>
       <Modal visible={visible} onDismiss={hideModal}>

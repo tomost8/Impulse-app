@@ -45,3 +45,24 @@ export const CREATE_ACTIVITY = gql`
     }
   }
 `;
+
+// Update Activity
+export const UPDATE_ACTIVITY = gql`
+  mutation ($id: Int!, $input: UpdateActivityInput!) {
+    updateActivity(id: $id, input: $input) {
+      success
+      activity {
+        id
+        category
+        scheduledDatetime
+        duration
+        description
+        status
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
