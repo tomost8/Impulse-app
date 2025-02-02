@@ -4,6 +4,9 @@ import { router } from 'expo-router';
 import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '../../services/api/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '@/config/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { API_CONFIG } from '@/config/apiConfig';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -25,8 +28,15 @@ export default function Login() {
     setError(null);
     try {
         console.log("email", email, "password", password);
-        const authToken = email; // TODO: change this to the actual auth token
+        let authToken;
+        if (API_CONFIG.NODE_ENV === 'development') {
+          authToken = email;
+        } else { //production
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          authToken = await userCredential.user.getIdToken();
+        }
         console.log("authToken", authToken);
+        
         const { data } = await firebaseAuth({
           context: {
             headers: {
