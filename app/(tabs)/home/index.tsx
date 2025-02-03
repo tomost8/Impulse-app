@@ -8,9 +8,13 @@ import { useGetActivities } from '@/hooks/api/useActivites';
 
 export default function HomeScreen() {
   const { userId, authToken } = useUserInfo();
-  const { friends } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
-  const { activities } = useGetActivities(userId as number, authToken as string);
-  if (userId !== null) {
+  console.log('userId:', userId);
+  console.log('authToken:', authToken);
+  let { friends, error: friendsError } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
+  let { activities, error: activitiesError } = useGetActivities(userId as number, authToken as string);
+  if (authToken !== null) {
+    console.log('Friends error:', friendsError);
+    console.log('Activities error:', activitiesError);
     console.log('Activities data:', activities, 'Friends data:', friends);
   }
 
@@ -23,7 +27,7 @@ export default function HomeScreen() {
       <View style={styles.section}>
         <Text style={styles.text}>Daily Goals</Text>
         {activities.length === 0 ? (
-          <TouchableOpacity style={styles.button} onPress={() => router.push('home/activityAdd')}>
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/home/activityAdd')}>
             <Text style={styles.text}>Add Activity</Text>
           </TouchableOpacity>
         ) : (
@@ -34,10 +38,10 @@ export default function HomeScreen() {
             </TouchableOpacity>
           ))
         )}
-        <TouchableOpacity style={styles.button} onPress={() => router.push('home/activityView')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/home/activityView')}>
           <Text style={styles.text}>View All</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/notifications')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings/notifications')}>
           <Text style={styles.text}>Notifications</Text>
         </TouchableOpacity>
       </View>
@@ -46,7 +50,7 @@ export default function HomeScreen() {
         {friends.map((friend: any) => (
           <Text key={friend.friend.id} style={styles.text}>{friend.friend.username}, {friend.friend.point.weekly_points}</Text>
         ))}
-        <TouchableOpacity style={styles.button} onPress={() => router.push('home/leaderboards')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/home/leaderboards')}>
           <Text style={styles.text}>View All</Text>
         </TouchableOpacity>
       </View>

@@ -10,6 +10,20 @@ export default function AuthLayout() {
           headerShown: false 
         }} 
       />
+      <Stack.Screen 
+        name="signup1" 
+        options={{ 
+          title: "Sign Up",
+          headerShown: true 
+        }} 
+      />
+      <Stack.Screen 
+        name="signup2" 
+        options={{ 
+          title: "Additional Info",
+          headerShown: true 
+        }} 
+      />
     </Stack>
   );
 } 

@@ -47,7 +47,7 @@ export default function ProfileScreen() {
       <Text style={styles.text}>
           Secondary Goal: {user.secondary_goal}
       </Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings/profile/editProfile')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings/profile/editProfile')}>
         <Text style={styles.text}>Edit Profile</Text>
       </TouchableOpacity>
     </View>

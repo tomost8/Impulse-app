@@ -1,10 +1,11 @@
 export default ({ config }) => {
+  //console.log('Current ENV:', process.env); 
   return {
     ...config,
     extra: {
-      nodeEnv: process.env.NODE_ENV,
+      apiEnv: process.env.API_ENVIROMENT,
       apiKey: process.env.API_KEY,
-      apiUrl: process.env.NODE_ENV === 'development' ? process.env.API_DEV_URL : process.env.API_PROD_URL,
+      apiUrl: process.env.API_ENVIROMENT === 'development' ? process.env.API_DEV_URL : process.env.API_PROD_URL,
     },
   };
 }; 
