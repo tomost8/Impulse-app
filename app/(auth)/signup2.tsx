@@ -69,7 +69,7 @@ export default function Signup2() {
       if (data?.createUser?.success) {
         await AsyncStorage.setItem('authToken', authToken);
         if (data.createUser.user) {
-          await AsyncStorage.setItem('idUser', String(data.createUser.user.id));
+          await AsyncStorage.setItem('userId', String(data.createUser.user.id));
           await AsyncStorage.setItem('idFirebase', firebase_uid);
         }
         router.replace('/(tabs)/home');

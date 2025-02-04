@@ -8,7 +8,7 @@ import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/api/client';
 import { PaperProvider } from 'react-native-paper';
-
+import { UserProvider } from '@/components/auth/UserContext';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -32,9 +32,10 @@ export default function RootLayout() {
 
   return (
     <PaperProvider>
-      <ApolloProvider client={client}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
+      <UserProvider>
+        <ApolloProvider client={client}>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen 
@@ -48,7 +49,8 @@ export default function RootLayout() {
           </Stack>
           <StatusBar style="auto" />
         </ThemeProvider>
-      </ApolloProvider>
+        </ApolloProvider>
+      </UserProvider>
     </PaperProvider>
   );
 }

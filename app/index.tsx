@@ -1,25 +1,17 @@
 import { Redirect } from 'expo-router';
-import { useEffect, useState } from 'react';
-import useUserInfo from '@/hooks/useUserInfo';
+import { useUserInfo } from '@/components/auth/UserContext';
+import { Text } from 'react-native';
 
 export default function Index() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true); // New loading state
-  const { authToken, userId } = useUserInfo(); // Fetch user info
-  console.log(authToken, userId);
+  const { userId, authToken, isLoading } = useUserInfo();
 
-  useEffect(() => {
-    // Check if authToken exists
-    if (authToken) {
-      setIsAuthenticated(true);
-    }
-    setLoading(false); // Set loading to false after checking
-  }, [authToken]);
-
-  if (loading) {
-    return null; // Optionally, you can return a loading spinner or placeholder
+  if (isLoading) {
+    return <Text>Loading...</Text>;
   }
 
-  // Redirect only after loading is complete
-  return <Redirect href={isAuthenticated ? '/(tabs)/home' : '/(auth)/login'} />;
+  if (userId && authToken) {
+    return <Redirect href="/(tabs)/home" />;
+  } else {
+    return <Redirect href="/(auth)/login" />;
+  }
 }

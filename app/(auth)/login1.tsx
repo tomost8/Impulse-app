@@ -8,7 +8,11 @@ import { auth } from '@/config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { API_CONFIG } from '@/config/apiConfig';
 
+import { useUserInfo } from '@/components/auth/UserContext';
+
 export default function Login() {
+  const { login } = useUserInfo();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,9 +55,7 @@ export default function Login() {
             await AsyncStorage.setItem('authToken', authToken);
             if (data.firebaseAuth.user) {
                 const userData = data.firebaseAuth.user;
-                // Convert IDs to strings before storing
-                await AsyncStorage.setItem('idUser', String(userData.id));
-                await AsyncStorage.setItem('idFirebase', String(userData.firebase_uid));
+                await login(authToken, userData.id);
             }
             router.replace('/(tabs)/home');
         }

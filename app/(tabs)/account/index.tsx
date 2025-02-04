@@ -21,7 +21,7 @@ export default function AccountScreen() {
   
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('account/settings')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings')}>
         <Text style={styles.text}>
           Settings
         </Text>
@@ -46,14 +46,12 @@ export default function AccountScreen() {
       <PointsModal visible={visible} hideModal={hideModal} />
       <TouchableOpacity 
         style={styles.button} 
-        onPress={() => router.push({ 
-          pathname: 'account/redeems'
-        })}>
+        onPress={() => router.push('/account/redeems')}>
         <Text style={styles.text}>
           Redeem
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('account/friends')}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/account/friends')}>
         <Text style={styles.text}>
           Friends
         </Text>

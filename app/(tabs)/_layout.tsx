@@ -6,14 +6,13 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
-import useUserInfo from '@/hooks/useUserInfo';
 import { useGetActivities } from '@/hooks/api/useActivites';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 
-export default function TabLayout() {
+function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const { userId, authToken } = useUserInfo();
   const { activities } = useGetActivities(userId as number, authToken as string);
-  const hasActivities = activities.some((activity: any) => activity.status !== 'expired');
+  const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
 
   return (
     <>
@@ -84,9 +83,11 @@ export default function TabLayout() {
         visible={modalVisible}
         hideModal={() => {
           setModalVisible(false);
-          router.push('home/activityAdd');
+          router.push('/home/activityAdd');
         }}
       />
     </>
   );
 }
+
+export default AuthWrapper(TabLayout);

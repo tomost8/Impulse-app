@@ -29,7 +29,7 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log('Friends leaderboard data:', data);
+  console.log(userId, 'Friends leaderboard data:', data);
   return {
     friends: data?.getFriendships.friendships || [],
     isLoading: loading,

@@ -1,25 +1,46 @@
 import styles from '@/constants/testStyles';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// figuring out data retrieval
 import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
-import useUserInfo from '@/hooks/useUserInfo';
 import { useGetActivities } from '@/hooks/api/useActivites';
+import { useQuery } from '@apollo/client';
+import { GET_ACTIVITIES } from '@/services/api/activities';
+import { GET_FRIENDS_SORTING } from '@/services/api/friends';
 
+// Main component
+const HomeScreen = (props: any) => {
+  console.log("HomeScreen rendered"); // Log every render
 
-export default function HomeScreen() {
-  const { userId, authToken } = useUserInfo();
-  console.log('userId:', userId);
-  console.log('authToken:', authToken);
-  let { friends, error: friendsError } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY');
-  let { activities, error: activitiesError } = useGetActivities(userId as number, authToken as string);
-  if (authToken !== null) {
-    console.log('Friends error:', friendsError);
-    console.log('Activities error:', activitiesError);
-    console.log('Activities data:', activities, 'Friends data:', friends);
-  }
+  const { userId, authToken } = props; 
+  const { friends, activities } = HomeData({ userId, authToken });
 
+  return <HomeComponent friends={friends} activities={activities}/>;
+};
+
+// Optional: If you want to track mounting and unmounting
+useEffect(() => {
+  console.log("HomeScreen mounted");
+
+  return () => {
+    console.log("HomeScreen unmounted");
+  };
+}, []); // This will run only on mount and unmount
+
+export default AuthWrapper(HomeScreen);
+
+function HomeData({ userId, authToken }: { userId: number, authToken: string }) {
+  const { activities } = useGetActivities(userId, authToken);
+  const { friends } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY');
+  return { friends, activities };
+}
+
+// New HomeComponent to render the UI
+function HomeComponent({ friends, activities }: { friends: any[], activities: any[]}) {
   return (
-    <ScrollView >
+    <ScrollView>
       <View style={styles.section}>
         <Text style={styles.text}>Quote of the Day</Text>
         <Text style={styles.text}>The quote goes here using normal text</Text>

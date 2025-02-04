@@ -9,7 +9,7 @@ const useUserInfo = () => {
         const getUserInfo = async () => {
           try {
             const storedAuthToken = await AsyncStorage.getItem('authToken');
-            const storedUserId = await AsyncStorage.getItem('idUser');
+            const storedUserId = await AsyncStorage.getItem('userId');
             if (storedAuthToken) {
               setAuthToken(storedAuthToken);
             }
