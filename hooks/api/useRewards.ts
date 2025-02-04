@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_REWARDS, REDEEM_REWARD } from '../../services/api/rewards';
 
+const debug = false;
+
 export function useGetRewards(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_REWARDS, {
     skip: !shouldFetch,
@@ -11,10 +13,16 @@ export function useGetRewards(shouldFetch: boolean = true) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log('Rewards:', data);
+  if (debug) {
+    console.log("useGetRewards data", data, 
+      "skipped", !shouldFetch, 
+      "loading", loading, 
+      "error", error,
+    );
+  }
   return {
     rewards: data?.getRewards.rewards || [],
-    isLoading: loading,
+    fetched: shouldFetch && !loading,
     error: error?.message || null
   };
 } 

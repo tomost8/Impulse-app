@@ -25,15 +25,12 @@ const HomePage = (props: any) => {
     if (hasNewFriendsData) {
       friendsRef.current = friends;
       hasFetchedFriends.current = true;
-      console.log("setting friendsRef to", friendsRef.current);
     }
     if (hasNewActivitiesData) {
       activitiesRef.current = activities;
       hasFetchedActivities.current = true;
-      console.log("setting activitiesRef to", activitiesRef.current);
     }
     if (hasFetchedFriends.current && hasFetchedActivities.current) {
-      console.log("setting isLoading from", isLoading, "to false");
       setIsLoading(false);
     }
   }, [hasNewFriendsData, hasNewActivitiesData]); 

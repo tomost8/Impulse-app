@@ -20,10 +20,8 @@ const AccountPage = (props: any) => {
     if (hasNewUserData) {
       userRef.current = user;
       hasFetchedUser.current = true;
-      console.log("setting userRef to", userRef.current);
     }
     if (hasFetchedUser.current) {
-      console.log("setting isLoading from", isLoading, "to false");
       setIsLoading(false);
     }
   }, [hasNewUserData]); 

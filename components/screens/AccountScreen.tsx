@@ -13,7 +13,6 @@ function AccountScreen({
     user: any; 
     isUserLoading: boolean; 
   }) {
-    // Move modal state here
     const [modalVisible, setModalVisible] = useState(false);
     const showModal = () => setModalVisible(true);
     const hideModal = () => setModalVisible(false);
