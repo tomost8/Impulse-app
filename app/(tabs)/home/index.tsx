@@ -1,43 +1,46 @@
 import styles from '@/constants/testStyles';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // figuring out data retrieval
 import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
 import { useGetActivities } from '@/hooks/api/useActivites';
-import { useQuery } from '@apollo/client';
-import { GET_ACTIVITIES } from '@/services/api/activities';
-import { GET_FRIENDS_SORTING } from '@/services/api/friends';
 
 // Main component
 const HomeScreen = (props: any) => {
-  console.log("HomeScreen rendered"); // Log every render
+  console.log("HomeScreen rendered");
 
   const { userId, authToken } = props; 
-  const { friends, activities } = HomeData({ userId, authToken });
+  const friendsRef= useRef<any[] | null>(null);
+  const hasFetchedFriends = useRef(false);
+  const activitiesRef = useRef<any[] | null>(null);
+  const hasFetchedActivities = useRef(false);
+
+  // Fetch data
+  const { friends, fetched: friendsFetched } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current);
+  const { activities, fetched: activitiesFetched } = useGetActivities(userId, authToken, !hasFetchedActivities.current);
+
+  useEffect(() => {
+    if (friendsFetched) {
+      friendsRef.current = friends;
+      hasFetchedFriends.current = true;
+      console.log("friendsRef", friendsRef.current);
+    }
+    if (activitiesFetched) {
+      activitiesRef.current = activities;
+      hasFetchedActivities.current = true;
+      console.log("activitiesRef", activitiesRef.current);
+    }
+  }, [friendsFetched, activitiesFetched]); 
 
   return <HomeComponent friends={friends} activities={activities}/>;
 };
 
-// Optional: If you want to track mounting and unmounting
-useEffect(() => {
-  console.log("HomeScreen mounted");
-
-  return () => {
-    console.log("HomeScreen unmounted");
-  };
-}, []); // This will run only on mount and unmount
-
 export default AuthWrapper(HomeScreen);
 
-function HomeData({ userId, authToken }: { userId: number, authToken: string }) {
-  const { activities } = useGetActivities(userId, authToken);
-  const { friends } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY');
-  return { friends, activities };
-}
-
-// New HomeComponent to render the UI
+// Home Screen Component for rendering the UI
 function HomeComponent({ friends, activities }: { friends: any[], activities: any[]}) {
   return (
     <ScrollView>

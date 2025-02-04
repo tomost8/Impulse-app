@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/client';
 import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from '../../services/api/friends';
 
-export function useGetFriends(userId: number) {
+export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
+    skip: !shouldFetch,
     variables: { userId },
     onError: (error) => {
       console.error('GraphQL Error:', error);
@@ -19,8 +20,9 @@ export function useGetFriends(userId: number) {
   };
 } 
 
-export function useGetFriendsLeaderboard(userId: number, sortBy: string) {
+export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS_SORTING, {
+    skip: !shouldFetch,
     variables: { userId, sortBy },
     onError: (error) => {
       console.error('GraphQL Error:', error);
@@ -29,16 +31,17 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  console.log(userId, 'Friends leaderboard data:', data);
+  console.log(userId, 'Friends leaderboard data:', data, "skipped", !shouldFetch, "loading", loading);
   return {
     friends: data?.getFriendships.friendships || [],
-    isLoading: loading,
+    renderable: !loading && shouldFetch,
     error: error?.message || null
   };
 } 
 
-export function useGetFriendRequests(userId: number, role: string) {
+export function useGetFriendRequests(userId: number, role: string, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIEND_REQUESTS, {
+    skip: !shouldFetch,
     variables: { userId, role: role },
     onError: (error) => {
       console.error('GraphQL Error:', error);
@@ -55,8 +58,9 @@ export function useGetFriendRequests(userId: number, role: string) {
   };
 } 
 
-export function useAcceptFriendRequest(userId: number, friendId: number) {
+export function useAcceptFriendRequest(userId: number, friendId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(ACCEPT_FRIEND_REQUEST, {
+    skip: !shouldFetch,
     variables: { userId, friendId },
     onError: (error) => {
       console.error('GraphQL Error:', error);

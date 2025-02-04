@@ -1,5 +1,5 @@
 import { router, Tabs } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Platform, Image, View, Text, Button } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -11,6 +11,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
+  console.log("TabLayout rendered");
   const { activities } = useGetActivities(userId as number, authToken as string);
   const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
 

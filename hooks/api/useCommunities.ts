@@ -1,9 +1,10 @@
 import { useQuery } from '@apollo/client';
 import { GET_COMMUNITIES, GET_COMMUNITY, GET_USER_COMMUNITIES } from '../../services/api/communities';
 
-export function getUserCommunities(userId: number) {
+export function getUserCommunities(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_USER_COMMUNITIES, {
     variables: { userId },
+    skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
       console.error('GraphQL Error Message:', error.message);
@@ -19,8 +20,9 @@ export function getUserCommunities(userId: number) {
   };
 } 
 
-export function getCommunities() {
+export function getCommunities(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITIES, {
+    skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
       console.error('GraphQL Error Message:', error.message);
@@ -37,9 +39,10 @@ export function getCommunities() {
   };
 } 
 
-export function getCommunity(id: number) {
+export function getCommunity(id: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITY, {
     variables: { id },
+    skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
       console.error('GraphQL Error Message:', error.message);

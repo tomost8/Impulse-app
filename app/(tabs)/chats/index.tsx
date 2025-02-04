@@ -1,44 +1,31 @@
-import { StyleSheet, View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useGetUserChats } from '../../../hooks/api/useChats';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useState, useEffect } from 'react';
-import { useAcceptFriendRequest, useGetFriendRequests } from '../../../hooks/api/useFriends';
-import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '../../../services/api/friends';
 import MyComponent from '@/components/Test';
 import styles from '@/constants/testStyles';
 import SocialModal from '@/components/modals/SocialModal';
-import useUserInfo from '@/hooks/useUserInfo';
 
-export default function ChatScreen() {
-  //modal
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+import AuthWrapper from '@/components/auth/AuthWrapper';
+import { useState, useRef } from 'react';
 
-  const [activeView, setActiveView] = useState<'chats' | 'requests'>('chats');
-  const onChatsPress = () => { setActiveView('chats');};
-  const onRequestsPress = () => { setActiveView('requests');};
+import { useGetUserChats } from '../../../hooks/api/useChats';
+import { useGetFriendRequests } from '../../../hooks/api/useFriends';
+import { useMutation } from '@apollo/client';
+import { ACCEPT_FRIEND_REQUEST } from '../../../services/api/friends';
 
-  const { userId } = useUserInfo();
-  const { chatMembers, isLoading: chatsLoading, error: chatsError } = useGetUserChats(userId as number);
-  const { friendRequests: receivedRequests, isLoading: requestsLoading, error: requestsError } = useGetFriendRequests(userId as number, 'receiver');
-  const { friendRequests: sentRequests, isLoading: sentRequestsLoading, error: sentRequestsError } = useGetFriendRequests(userId as number, 'sender');
-  if (userId !== null) {
-    console.log('chats/index.tsx',
-      'Chats data:', chatMembers, 
-      'Friend Requests data:', receivedRequests, 
-      'Friend Requests Sender data:', sentRequests);
+const ChatScreen = (props: any) => {
+  console.log("ChatScreen rendered");
+
+  const { userId, authToken } = props;
+  const hasFetched = useRef(false);
+  const { chatMembers } = useGetUserChats(userId as number, hasFetched.current);
+  const { friendRequests: receivedRequests } = useGetFriendRequests(userId as number, 'receiver', hasFetched.current);
+  const { friendRequests: sentRequests } = useGetFriendRequests(userId as number, 'sender', hasFetched.current);
+  if (!hasFetched.current && chatMembers && receivedRequests && sentRequests) {
+    console.log("ChatData fetched", chatMembers, receivedRequests, sentRequests);
+    hasFetched.current = true;
   }
 
-
-  const handleChatPress = (chatId: number) => {
-    console.log('Chat ID:', chatId);
-    router.push(`/chats/${chatId}`);
-  };
-
-  const [acceptFriendRequest, { loading: mutationLoading, error: mutationError }] = useMutation(ACCEPT_FRIEND_REQUEST);
+  const [acceptFriendRequest, { loading, error }] = useMutation(ACCEPT_FRIEND_REQUEST);
   const handleAcceptFriendRequest = async (friendId: number) => {
     console.log('Accepting friend request for user ID:', friendId);
     try {
@@ -55,6 +42,22 @@ export default function ChatScreen() {
     } catch (error) {
       console.error('Error accepting friend request:', error);
     }
+  };
+
+
+  //modal
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
+  const [activeView, setActiveView] = useState<'chats' | 'requests'>('chats');
+  const onChatsPress = () => { setActiveView('chats');};
+  const onRequestsPress = () => { setActiveView('requests');};
+
+
+  const handleChatPress = (chatId: number) => {
+    console.log('Chat ID:', chatId);
+    router.push(`/chats/${chatId}`);
   };
 
   return (
@@ -76,23 +79,17 @@ export default function ChatScreen() {
           {/* make chat component + add here */}
           <View style={styles.section}>
             <Text style={styles.text}>Chats</Text>
-            {chatsLoading ? (
-              <ActivityIndicator color="white" />
-            ) : chatsError ? (
-              <Text style={styles.error}>{chatsError}</Text>
-            ) : (
-              chatMembers.map((chatMember: any) => (
-                <TouchableOpacity
-                  style={styles.button}
-                  key={`chat-${chatMember.chat.id}-member-${chatMember.id}`}
-                  onPress={() => handleChatPress(chatMember.chat.id)}
-                >
-                  <Text style={styles.text}>
-                    {chatMember.chat.type}, {chatMember.chat.id}
-                  </Text>
-                </TouchableOpacity>
-              ))
-            )}
+            {chatMembers.map((chatMember: any) => (
+              <TouchableOpacity
+                style={styles.button}
+                key={`chat-${chatMember.chat.id}-member-${chatMember.id}`}
+                onPress={() => handleChatPress(chatMember.chat.id)}
+              >
+                <Text style={styles.text}>
+                  {chatMember.chat.type}, {chatMember.chat.id}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       )}
@@ -102,39 +99,29 @@ export default function ChatScreen() {
           {/* make requests component + add here */}
           <View style={styles.section}>
             <Text style={styles.text}>Received Requests</Text>
-            {requestsLoading ? (
-              <ActivityIndicator color="white" />
-            ) : requestsError ? (
-              <Text style={styles.text}>{requestsError}</Text>
-            ) : (
-              receivedRequests.map((friendRequest: any) => (
-                <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
-                  <Text style={styles.text}>
-                    {friendRequest.friend.first_name} {friendRequest.friend.last_name}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleAcceptFriendRequest(friendRequest.friend.id)} style={styles.button}>
-                    <Text style={styles.text}>Accept Friend Request</Text>
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
+            {receivedRequests.map((friendRequest: any) => (
+              <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
+                <Text style={styles.text}>
+                  {friendRequest.friend.first_name} {friendRequest.friend.last_name}
+                </Text>
+                <TouchableOpacity onPress={() => handleAcceptFriendRequest(friendRequest.friend.id)} style={styles.button}>
+                  <Text style={styles.text}>Accept Friend Request</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
           <View style={styles.section}>
             <Text style={styles.text}>Sent Requests</Text>
-            {sentRequestsLoading ? (
-              <ActivityIndicator color="white" />
-            ) : sentRequestsError ? (
-              <Text style={styles.text}>{sentRequestsError}</Text>
-            ) : (
-              sentRequests.map((friendRequest: any) => (
-                <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
-                  <Text style={styles.text}>{friendRequest.friend.first_name} {friendRequest.friend.last_name}</Text>
-                </View>
-              ))
-            )}
+            {sentRequests.map((friendRequest: any) => (
+              <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
+                <Text style={styles.text}>{friendRequest.friend.first_name} {friendRequest.friend.last_name}</Text>
+              </View>
+            ))}
           </View>
         </View>
       )}
     </ScrollView>
   );
 }
+
+export default AuthWrapper(ChatScreen);

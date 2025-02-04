@@ -40,7 +40,7 @@ export default function CommunitiesScreen() {
         )}
       </View>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('communities/explore')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/communities/explore')}>
           <Text style={styles.text}>Explore</Text>
         </TouchableOpacity>
       </View>

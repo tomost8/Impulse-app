@@ -34,9 +34,9 @@ export default function Login() {
     try {
         console.log("email", email, "password", password);
         let authToken;
-        if (API_CONFIG.API_ENV === 'development') {
+        if (API_CONFIG.API_ENV === 'local') {
           authToken = email;
-        } else { //production
+        } else {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           authToken = await userCredential.user.getIdToken();
         }
@@ -57,6 +57,7 @@ export default function Login() {
                 const userData = data.firebaseAuth.user;
                 await login(authToken, userData.id);
             }
+            console.log("redirecting to home");
             router.replace('/(tabs)/home');
         }
     } catch (error) {

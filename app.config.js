@@ -4,8 +4,7 @@ export default ({ config }) => {
     ...config,
     extra: {
       apiEnv: process.env.API_ENVIROMENT,
-      apiKey: process.env.API_KEY,
-      apiUrl: process.env.API_ENVIROMENT === 'development' ? process.env.API_DEV_URL : process.env.API_PROD_URL,
+      apiUrl: process.env.API_ENVIROMENT === 'local' ? process.env.API_LOCAL_URL : process.env.API_AWS_URL,
     },
   };
 }; 

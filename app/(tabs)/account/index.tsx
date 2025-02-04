@@ -1,18 +1,21 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useGetPoints, useGetUser } from '@/hooks/api/useUsers';
 import PointsModal from '@/components/modals/PointsModal';
-import useUserInfo from '@/hooks/useUserInfo';
 
-export default function AccountScreen() {
-  const { userId } = useUserInfo();
-  const { user, isLoading: userLoading, error: userError } = useGetUser(userId as number);
-  const { points, isLoading: pointsLoading, error: pointsError } = useGetPoints(userId as number);
-  if (userId !== null) {
-    console.log('User data:', user);
-    console.log('Points data:', points);
+import { useRef,useState } from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+
+const AccountScreen = (props: any) => {
+  const { userId, authToken } = props;
+  const hasFetched = useRef(false);
+  console.log("userId", userId, "authToken", authToken);
+  const { user } = useGetUser(userId as number);
+  const { points } = useGetPoints(userId as number, hasFetched.current);
+  if (!hasFetched.current && user && points) {
+    console.log("AccountData fetched", user, points);
+    hasFetched.current = true;
   }
 
   const [visible, setVisible] = useState(false);
@@ -75,3 +78,4 @@ export default function AccountScreen() {
   );
 }
 
+export default AuthWrapper(AccountScreen);

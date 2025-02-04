@@ -6,5 +6,4 @@ console.log('expoConfig:', Constants.expoConfig?.extra);
 export const API_CONFIG = {
   API_ENV: Constants.expoConfig?.extra?.apiEnv,
   BASE_URL: Constants.expoConfig?.extra?.apiUrl || "",
-  API_KEY: Constants.expoConfig?.extra?.apiKey || "",
 }; 
