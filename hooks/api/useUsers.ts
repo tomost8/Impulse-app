@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD, GET_ALL_USERS } from '../../services/api/users';
 
+const debug = false;
+
 export function useGetAllUsers(hasFetched: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_USERS, {
     skip: !hasFetched,
@@ -11,10 +13,12 @@ export function useGetAllUsers(hasFetched: boolean = true) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log(data);
+  if (debug) {
+    console.log("useGetAllUsers data", data, "skipped", !hasFetched, "loading", loading, "error", error);
+  }
   return {
     users: data?.users.users || [],
-    isLoading: loading,
+    fetched: hasFetched && !loading,
     error: error?.message || null
   };
 }
@@ -30,11 +34,12 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  console.log("data", data, "loading", loading, "error", error, "hasFetched", hasFetched);
-
+  if (debug) {
+    console.log("useGetUser data", data, "skipped", !hasFetched, "loading", loading, "error", error);
+  }
   return {
     user: data?.user.user || [],
-    isLoading: loading,
+    fetched: hasFetched && !loading,
     error: error?.message || null
   };
 } 
@@ -52,10 +57,12 @@ export function useGetUsersLeaderboard(sort_by: string, hasFetched: boolean = tr
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log(data);
+  if (debug) {
+    console.log("useGetUsersLeaderboard data", data, "skipped", !hasFetched, "loading", loading, "error", error);
+  }
   return {
     users: data?.users.users || [],
-    isLoading: loading,
+    fetched: hasFetched && !loading,
     error: error?.message || null
   };
 }
@@ -71,9 +78,12 @@ export function useGetPoints(id: number, hasFetched: boolean = true) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
+  if (debug) {
+    console.log("useGetPoints data", data, "skipped", !hasFetched, "loading", loading, "error", error);
+  }
   return {
     points: data?.getPoint.point || [],
-    isLoading: loading,
+    fetched: hasFetched && !loading,
     error: error?.message || null
   };
 }

@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { GET_ACTIVITIES } from '../../services/api/activities';
 
+const debug = false;
+
 export const useGetActivities = (userId: number, authToken: string, shouldFetch: boolean = true) => {
     const { data, loading, error, refetch } = useQuery(GET_ACTIVITIES, {
         skip: !shouldFetch,
@@ -17,7 +19,12 @@ export const useGetActivities = (userId: number, authToken: string, shouldFetch:
             console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
         }
     });
-    console.log(userId, "ActivityGraphQL data", data, "skipped", !shouldFetch, "loading", loading);
+    if (debug) {
+        console.log("useGetActivities data", data, 
+            "skipped", !shouldFetch, 
+            "loading", loading, 
+            "error", error);
+    }
     return {
         activities: data?.activitiesByUserId.activities || [],
         fetched: shouldFetch && !loading,

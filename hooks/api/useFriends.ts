@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from '../../services/api/friends';
 
+const debug = false;
+
 export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
     skip: !shouldFetch,
@@ -12,10 +14,15 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log('Friends data:', data);
+  if (debug) {
+    console.log("useGetFriends data", data, 
+        "skipped", !shouldFetch, 
+        "loading", loading, 
+        "error", error);
+  }
   return {
     friends: data?.getFriendships.friendships || [],
-    isLoading: loading,
+    fetched: shouldFetch && !loading,
     error: error?.message || null
   };
 } 
@@ -31,10 +38,15 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  console.log(userId, 'Friends leaderboard data:', data, "skipped", !shouldFetch, "loading", loading);
+  if (debug) {
+    console.log("useGetFriendsLeaderboard data", data, 
+        "skipped", !shouldFetch, 
+        "loading", loading, 
+        "error", error);
+  }
   return {
     friends: data?.getFriendships.friendships || [],
-    renderable: !loading && shouldFetch,
+    fetched: shouldFetch && !loading,
     error: error?.message || null
   };
 } 
@@ -50,14 +62,20 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-  //console.log('Friends data:', data);
+  if (debug) {
+    console.log("useGetFriendRequests data", data, 
+        "skipped", !shouldFetch, 
+        "loading", loading, 
+        "error", error);
+  }
   return {
     friendRequests: data?.getFriendRequests.friendships || [],
-    isLoading: loading,
+    fetched: shouldFetch && !loading,
     error: error?.message || null
   };
 } 
 
+//mutation
 export function useAcceptFriendRequest(userId: number, friendId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(ACCEPT_FRIEND_REQUEST, {
     skip: !shouldFetch,

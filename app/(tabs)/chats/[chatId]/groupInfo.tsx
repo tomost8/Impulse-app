@@ -2,7 +2,7 @@ import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { router, Link, useLocalSearchParams } from 'expo-router';
-import MyComponent from '@/components/Test';
+import MyComponent from '@/components/TwoTab';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useGetChatMembers } from '@/hooks/api/useChats';
 import { useGetGroupLeaderboard } from '@/hooks/api/useChats';

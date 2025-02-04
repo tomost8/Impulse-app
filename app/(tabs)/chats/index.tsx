@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import MyComponent from '@/components/Test';
+import MyComponent from '@/components/TwoTab';
 import styles from '@/constants/testStyles';
 import SocialModal from '@/components/modals/SocialModal';
 

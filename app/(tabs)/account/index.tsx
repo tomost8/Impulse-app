@@ -1,81 +1,43 @@
-import { router } from 'expo-router';
-import styles from '@/constants/testStyles';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { useGetPoints, useGetUser } from '@/hooks/api/useUsers';
-import PointsModal from '@/components/modals/PointsModal';
-
-import { useRef,useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useGetUser } from '@/hooks/api/useUsers';
+// Components
+import AccountScreen from '@/components/screens/AccountScreen';
 
-const AccountScreen = (props: any) => {
+const AccountPage = (props: any) => {
   const { userId, authToken } = props;
-  const hasFetched = useRef(false);
-  console.log("userId", userId, "authToken", authToken);
-  const { user } = useGetUser(userId as number);
-  const { points } = useGetPoints(userId as number, hasFetched.current);
-  if (!hasFetched.current && user && points) {
-    console.log("AccountData fetched", user, points);
-    hasFetched.current = true;
-  }
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  
+  const userRef = useRef<any[] | null>(null);
+  const hasFetchedUser = useRef(false);
+  const { user, fetched: hasNewUserData } = useGetUser(userId as number);
+
+  useEffect(() => {
+    if (!hasNewUserData) {
+      return;
+    }
+    if (hasNewUserData) {
+      userRef.current = user;
+      hasFetchedUser.current = true;
+      console.log("setting userRef to", userRef.current);
+    }
+    if (hasFetchedUser.current) {
+      console.log("setting isLoading from", isLoading, "to false");
+      setIsLoading(false);
+    }
+  }, [hasNewUserData]); 
+
+  console.log("Rendering AccountPage.\n",
+    "User:", userRef.current
+  );
+
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings')}>
-        <Text style={styles.text}>
-          Settings
-        </Text>
-      </TouchableOpacity>
-      <Text style={styles.text}>
-        Profile Picture: {user.profile_picture}
-      </Text>
-      <Text style={styles.text}>
-        First Name: {user.first_name}
-      </Text>
-      <Text style={styles.text}>
-        Username: {user.username}
-      </Text>
-      <Text style={styles.text}>
-        Points: {user.point?.points}
-      </Text>
-      <TouchableOpacity style={styles.button} onPress={showModal}>
-        <Text style={styles.text}>
-          Open Modal for Points
-        </Text>
-      </TouchableOpacity>
-      <PointsModal visible={visible} hideModal={hideModal} />
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => router.push('/account/redeems')}>
-        <Text style={styles.text}>
-          Redeem
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => router.push('/account/friends')}>
-        <Text style={styles.text}>
-          Friends
-        </Text>
-      </TouchableOpacity>
-      <Text style={styles.text}>
-        Bio: {user.bio}
-      </Text>
-      <Text style={styles.text}>
-        Gender: {user.gender}
-      </Text>
-      <Text style={styles.text}>
-        Timezone: {user.timezone}
-      </Text>
-      <Text style={styles.text}>
-        Primary Goal: {user.primary_goal}
-      </Text>
-      <Text style={styles.text}>
-        Secondary Goal: {user.secondary_goal}
-      </Text>
-    </View>
+    <AccountScreen 
+      user={userRef.current} 
+      isUserLoading={!hasFetchedUser.current} 
+    />
   );
 }
 
-export default AuthWrapper(AccountScreen);
+export default AuthWrapper(AccountPage);

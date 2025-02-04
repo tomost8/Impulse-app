@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useGetUsersLeaderboard } from '@/hooks/api/useUsers';
 import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
 import useUserInfo from '@/hooks/useUserInfo';
-import MyComponent from '@/components/Test';
+import MyComponent from '@/components/TwoTab';
 
 
 export default function LeaderboardsScreen() {
