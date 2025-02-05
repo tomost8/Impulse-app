@@ -7,10 +7,10 @@ import SocialModal from '@/components/modals/SocialModal';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useState, useRef } from 'react';
 
-import { useGetUserChats } from '../../../hooks/api/useChats';
-import { useGetFriendRequests } from '../../../hooks/api/useFriends';
+import { useGetUserChats } from '../../../hooks/graphql/useChats';
+import { useGetFriendRequests } from '../../../hooks/graphql/useFriends';
 import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '../../../graphql/constants/friends';
+import { ACCEPT_FRIEND_REQUEST } from '../../../hooks/graphql/constants/friends';
 
 const ChatScreen = (props: any) => {
   console.log("ChatScreen rendered");

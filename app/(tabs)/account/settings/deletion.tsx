@@ -2,7 +2,7 @@ import styles from '@/constants/testStyles';
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '@/graphql/constants/users';
+import { UPDATE_USER } from '@/hooks/graphql/constants/users';
 import useUserInfo from '@/hooks/useUserInfo';
 
 

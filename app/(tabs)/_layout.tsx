@@ -6,7 +6,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
-import { useGetActivities } from '@/hooks/api/useActivites';
+import { useGetActivities } from '@/hooks/graphql/useActivites';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {

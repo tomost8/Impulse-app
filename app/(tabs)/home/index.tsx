@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetFriendsLeaderboard } from '@/hooks/api/useFriends';
-import { useGetActivities } from '@/hooks/api/useActivites';
+import { useGetFriendsLeaderboard } from '@/hooks/graphql/useFriends';
+import { useGetActivities } from '@/hooks/graphql/useActivites';
 // Components
 import HomeScreen from '@/components/screens/HomeScreen';
 

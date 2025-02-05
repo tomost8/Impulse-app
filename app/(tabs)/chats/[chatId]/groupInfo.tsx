@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { router, Link, useLocalSearchParams } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
 import useUserInfo from '@/hooks/useUserInfo';
-import { useGetChatMembers } from '@/hooks/api/useChats';
-import { useGetGroupLeaderboard } from '@/hooks/api/useChats';
+import { useGetChatMembers } from '@/hooks/graphql/useChats';
+import { useGetGroupLeaderboard } from '@/hooks/graphql/useChats';
 
 export default function GroupInfoScreen() {
   const { userId } = useUserInfo();

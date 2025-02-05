@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import ActivitiesModal from '@/components/modals/ActivitiesModal';
-import { useGetActivities } from '@/hooks/api/useActivites';
+import { useGetActivities } from '@/hooks/graphql/useActivites';
 import useUserInfo from '@/hooks/useUserInfo';
 
 

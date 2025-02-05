@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUser } from '@/hooks/api/useUsers';
+import { useGetUser } from '@/hooks/graphql/useUsers';
 // Components
 import AccountScreen from '@/components/screens/AccountScreen';
 

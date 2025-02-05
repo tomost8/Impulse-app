@@ -3,7 +3,7 @@ import { Modal, Portal, Button } from 'react-native-paper';
 import styles from '@/constants/testStyles';
 import { useMutation } from '@apollo/client';
 import { router } from 'expo-router';
-import { INVITE_USER_TO_CHAT } from '@/graphql/constants/chats';
+import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/constants/chats';
 
 interface JoinGroupModalProps {
   visible: boolean;

@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { FIREBASE_AUTH } from '../../graphql/constants/auth';
+import { FIREBASE_AUTH } from './constants/auth';
 
 export function useAuth(authToken: string) {  
   const [firebaseAuth, { data, loading, error }] = useMutation(FIREBASE_AUTH, {

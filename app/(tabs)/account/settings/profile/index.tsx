@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
-import { useGetUser } from '@/hooks/api/useUsers';
+import { useGetUser } from '@/hooks/graphql/useUsers';
 import useUserInfo from '@/hooks/useUserInfo';
 
 export default function ProfileScreen() {

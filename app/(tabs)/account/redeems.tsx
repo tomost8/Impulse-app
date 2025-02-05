@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUser } from '@/hooks/api/useUsers';
-import { useGetRewards } from '@/hooks/api/useRewards';
+import { useGetUser } from '@/hooks/graphql/useUsers';
+import { useGetRewards } from '@/hooks/graphql/useRewards';
 // Components
 import RedeemsScreen from '@/components/screens/RedeemsScreen';
 

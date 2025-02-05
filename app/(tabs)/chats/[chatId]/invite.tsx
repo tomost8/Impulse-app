@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
 import useUserInfo from '@/hooks/useUserInfo';
-import { useGetFriends } from '@/hooks/api/useFriends';
-import { INVITE_USER_TO_CHAT } from '@/graphql/constants/chats';
+import { useGetFriends } from '@/hooks/graphql/useFriends';
+import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/constants/chats';
 import { client } from '@/services/client';
-import { useGetChatMembers } from '@/hooks/api/useChats';
+import { useGetChatMembers } from '@/hooks/graphql/useChats';
 
 
 export default function GroupInviteScreen() {

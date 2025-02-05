@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD, GET_ALL_USERS } from '../../graphql/constants/users';
+import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD, GET_ALL_USERS } from './constants/users';
 
 const debug = false;
 
