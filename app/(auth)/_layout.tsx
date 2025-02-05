@@ -24,6 +24,20 @@ export default function AuthLayout() {
           headerShown: true 
         }} 
       />
+      <Stack.Screen 
+        name="signup3" 
+        options={{ 
+          title: "Primary Goal",
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="signup4" 
+        options={{ 
+          title: "Secondary Goal",
+          headerShown: false 
+        }} 
+      />
     </Stack>
   );
 } 

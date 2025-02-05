@@ -3,130 +3,50 @@ import styles from '@/constants/testStyles';
 import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator, Platform, Pressable, Modal, ScrollView } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation } from '@apollo/client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import moment from 'moment-timezone';
-import { auth } from '@/config/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FIREBASE_AUTH } from '@/services/api/auth';
+import { FIREBASE_AUTH, UPDATE_USER } from '@/services/api/auth';
 
 export default function Signup2() {
+
+
   const params = useLocalSearchParams();
   const { email, password, firstName, lastName, username } = params;
-  console.log('params', params);
+  //console.log('params', params);
 
   const [bio, setBio] = useState('');
-  const [dateOfBirth, setDateOfBirth] = useState(new Date());
+  const [age, setAge] = useState<number | null>(null);
   const [gender, setGender] = useState('');
   const [timezone, setTimezone] = useState(moment.tz.guess());
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [showGenderPicker, setShowGenderPicker] = useState(false);
   const [showTimezonePicker, setShowTimezonePicker] = useState(false);
 
-  const [firebaseAuth] = useMutation(FIREBASE_AUTH, {
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-      setError(error.message);
-    }
-  });
 
   const genderOptions = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
   const timezoneOptions = moment.tz.names();
 
-  const handleSignup = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email as string, password as string);
-      // currently not storing in firestore, only in firebase auth
-      const authToken = await userCredential.user.getIdToken();
-      const firebase_uid = userCredential.user.uid;
-
-      const { data } = await firebaseAuth({
-        variables: {
-          input: {
-            email,
-            firebase_uid,
-            first_name: firstName,
-            last_name: lastName,
-            dob: dateOfBirth.toISOString().split('T')[0],
-            gender,
-            timezone,
-            username,
-            bio,
-          }
-        },
-        context: {
-          headers: {
-            Authorization: `Bearer ${authToken}`
-          }
-        }
-      });
-
-      if (data?.createUser?.success) {
-        await AsyncStorage.setItem('authToken', authToken);
-        if (data.createUser.user) {
-          await AsyncStorage.setItem('userId', String(data.createUser.user.id));
-          await AsyncStorage.setItem('idFirebase', firebase_uid);
-        }
-        router.replace('/(tabs)/home');
+  const handleSignup = () => {
+    router.push({
+      pathname: '/(auth)/signup3',
+      params: {
+        email,
+        password,
+        firstName,
+        lastName,
+        username,
+        age,
+        gender,
+        timezone,
+        bio,
+        //community code
       }
-    } catch (error) {
-      console.log('Signup failed', error);
-      setError(error instanceof Error ? error.message : 'Signup failed');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    });
+  }
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-      if (Platform.OS === 'android') {
-        setShowDatePicker(false);
-      }
-    }
-  };
 
   return (
     <View style={styles.container}>
-      {error && (
-        <Text style={styles.error}>{error}</Text>
-      )}
-      
-      {(showDatePicker || Platform.OS === 'ios') && (
-        <Modal
-          transparent={true}
-          visible={showDatePicker}
-          animationType="slide"
-        >
-          <View style={dateStyles.modalContainer}>
-            <View style={dateStyles.modalContent}>
-              <DateTimePicker
-                textColor="black"
-                value={dateOfBirth}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={onDateChange}
-                maximumDate={new Date()}
-                minimumDate={new Date(1900, 0, 1)}
-                style={dateStyles.datePicker}
-              />
-              {Platform.OS === 'ios' && (
-                <Pressable 
-                  style={dateStyles.modalButton}
-                  onPress={() => setShowDatePicker(false)}
-                >
-                  <Text>Confirm</Text>
-                </Pressable>
-              )}
-            </View>
-          </View>
-        </Modal>
-      )}
 
       {/* Gender Picker Modal */}
       <Modal
@@ -204,10 +124,20 @@ export default function Signup2() {
 
       <Pressable 
         style={dateStyles.dateButton}
-        onPress={() => setShowDatePicker(true)}
+        onPress={() => {/* No longer needed for date picker */}}
       >
-        <Text>{dateOfBirth.toLocaleDateString() || "Select Date of Birth"}</Text>
+        <Text>{age !== null ? `${age} years` : "Enter Age"}</Text>
       </Pressable>
+
+      <TextInput 
+        placeholder="Age" 
+        placeholderTextColor="gray"
+        value={age !== null ? String(age) : ''}
+        onChangeText={(text) => setAge(Number(text))}
+        keyboardType="numeric"
+        style={[styles.input]}
+        maxLength={3} // Optional: limit input length
+      />
 
       <Pressable 
         style={dateStyles.dateButton}
@@ -233,7 +163,7 @@ export default function Signup2() {
         style={[styles.input]}
       />
       
-      {isLoading ? (
+      {false ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <Button 

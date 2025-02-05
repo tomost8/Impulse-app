@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-import { useMutation } from '@apollo/client';
-import { FIREBASE_AUTH } from '../../services/api/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+//authentication
 import { auth } from '@/config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { API_CONFIG } from '@/config/apiConfig';
+import { FIREBASE_AUTH } from '../../services/api/auth';
+import { useMutation } from '@apollo/client';
 
+import { API_CONFIG } from '@/config/apiConfig';
 import { useUserInfo } from '@/components/auth/UserContext';
 
 export default function Login() {
@@ -32,34 +32,28 @@ export default function Login() {
     setIsLoading(true);
     setError(null);
     try {
-        console.log("email", email, "password", password);
-        let authToken;
-        if (API_CONFIG.API_ENV === 'local') {
-          authToken = email;
-        } else {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          authToken = await userCredential.user.getIdToken();
-        }
-        console.log("authToken", authToken);
-        
-        const { data } = await firebaseAuth({
-          context: {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
+      let authToken;
+      if (API_CONFIG.API_ENV === 'local') {
+        authToken = email;
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password); // imported from firebase/auth
+        authToken = await userCredential.user.getIdToken();
+      }
+      const { data } = await firebaseAuth({
+        context: {
+          headers: {
+              Authorization: `Bearer ${authToken}`
           }
-        });
-        console.log("data", data);
-        
-        if (data?.firebaseAuth?.success) {
-            await AsyncStorage.setItem('authToken', authToken);
-            if (data.firebaseAuth.user) {
-                const userData = data.firebaseAuth.user;
-                await login(authToken, userData.id);
-            }
-            console.log("redirecting to home");
-            router.replace('/(tabs)/home');
         }
+      });
+      console.log("data", data.firebaseAuth.success, data.firebaseAuth.user, data.firebaseAuth.errors);
+      
+      if (data?.firebaseAuth?.success && data.firebaseAuth?.user) {
+        const userData = data.firebaseAuth.user;
+        await login(authToken, userData.id);
+        console.log("redirecting to home");
+        router.replace('/(tabs)/home');
+      }
     } catch (error) {
       console.log('Login failed', error);
       setError(error instanceof Error ? error.message : 'Login failed');

@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '../../services/api/auth';
 
-export function useAuth(authToken: string) {  // Default value for testing
+export function useAuth(authToken: string) {  
   const [firebaseAuth, { data, loading, error }] = useMutation(FIREBASE_AUTH, {
     context: {
       headers: {
@@ -15,16 +15,6 @@ export function useAuth(authToken: string) {  // Default value for testing
       console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const result = await firebaseAuth();
-      return result.data?.firebaseAuth;
-    } catch (error) {
-      console.error('Sign in error:', error);
-      throw error;
-    }
-  };
 
   return {
     firebaseAuth,
