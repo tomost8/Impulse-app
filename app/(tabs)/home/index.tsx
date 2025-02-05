@@ -10,7 +10,7 @@ const HomePage = (props: any) => {
   const { userId, authToken } = props;
   const [isLoading, setIsLoading] = useState(true);
 
-  const friendsRef = useRef<any[] | null>(null);
+  const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
   const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current);
   

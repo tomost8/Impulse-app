@@ -35,20 +35,24 @@ const RedeemsPage = (props: any) => {
     }
   }, [hasNewUserData, hasNewRewardsData]); 
 
-  const { redeem } = useCreateRedeem();
-
-  const handleRedeemComplete = async (rewardId: number) => {
-    console.log("handleRedeemComplete called");
+  const { createRedeem } = useCreateRedeem();
+  const [isCreatingRedeem, setIsCreatingRedeem] = useState(false);
+  const handleCreateRedeem = async (rewardId: number) => {
+    setIsCreatingRedeem(true);
     try {
-      const response = await redeem(userRef.current?.id, rewardId);
-      console.log("response", response);
+      const response = await createRedeem(userRef.current?.id, rewardId);
       if (response.success) {
-        const newUserData = await refetchUser();
+        console.log("response success", response.redeem);
+        const newUserData = await refetchUser(); //causes extra 2 renders
         userRef.current = newUserData.data.user.user;
         setRenderCounter(prev => prev + 1);
+      } else {
+        console.log("Error redeeming reward:", response.errors);
       }
     } catch (error) {
       console.error("Error redeeming reward:", error);
+    } finally {
+      setIsCreatingRedeem(false);
     }
   }
 
@@ -63,7 +67,8 @@ const RedeemsPage = (props: any) => {
       isUserLoading={!hasFetchedUser.current}
       rewards={rewardsRef.current}
       isRewardsLoading={!hasFetchedRewards.current}
-      onRedeemComplete={handleRedeemComplete}
+      handleCreateRedeem={handleCreateRedeem}
+      isCreatingRedeem={isCreatingRedeem}
     />
   );
 }

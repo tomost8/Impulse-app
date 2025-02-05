@@ -9,7 +9,7 @@ const AccountPage = (props: any) => {
   const { userId, authToken } = props;
   const [isLoading, setIsLoading] = useState(true);
 
-  const userRef = useRef<any[] | null>(null);
+  const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
   const { user, fetched: hasNewUserData } = useGetUser(userId as number);
 

@@ -24,22 +24,18 @@ export function useGetRewards(shouldFetch: boolean = true) {
   };
 } 
 
-// New function to create a redeem
 export function useCreateRedeem() {
-  const [createRedeem, { data, loading, error }] = useMutation(REDEEM_REWARD, {
-    onCompleted: (data) => {
-      console.log('Redemption successful:', data);
-    },
-    onError: (error) => {
+  const [createRedeemMutation] = useMutation(REDEEM_REWARD);
+  const createRedeem = async (user_id: number, reward_id: number) => {
+    try {
+      const response = await createRedeemMutation({ variables: { 
+        input: { user_id, reward_id } 
+      } });
+      return response.data.createRedeem;
+    } catch (error) {
       console.error('Redemption failed:', error);
+      throw error;
     }
-  });
-
-  const redeem = async (user_id: number, reward_id: number) => {
-    return createRedeem({ variables: { input: { user_id, reward_id } } })
-      .then(response => response.data.createRedeem)
-      .catch(err => { throw err });
   };
-
-  return { redeem, data, loading, error };
+  return { createRedeem };
 }
