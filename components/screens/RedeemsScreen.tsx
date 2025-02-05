@@ -10,12 +10,14 @@ function RedeemsScreen({
   user, 
   isUserLoading,
   rewards, 
-  isRewardsLoading
+  isRewardsLoading,
+  onRedeemComplete
 }: { 
   user: any; 
   isUserLoading: boolean;
   rewards: any;
   isRewardsLoading: boolean;
+  onRedeemComplete: (rewardId: number) => void;
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const showModal = () => setModalVisible(true);
@@ -47,8 +49,8 @@ function RedeemsScreen({
           description={reward.description}
           requiredPoints={reward.required_points}
           spendingPoints={Number(user.point.spending_points)}
-          userId={user.id}
           rewardId={reward.id}
+          onRedeemComplete={onRedeemComplete}
         />
         ))}
       </View>

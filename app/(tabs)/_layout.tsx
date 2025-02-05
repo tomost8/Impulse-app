@@ -60,9 +60,9 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           }}
         />
         <Tabs.Screen
-          name="communities"
+          name="social"
           options={{
-            title: 'Communities',
+            title: 'Social',
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/people-icon.png')} 

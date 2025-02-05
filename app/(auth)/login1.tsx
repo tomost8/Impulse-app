@@ -22,9 +22,6 @@ export default function Login() {
   const [firebaseAuth] = useMutation(FIREBASE_AUTH, {
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
 
@@ -39,6 +36,7 @@ export default function Login() {
         const userCredential = await signInWithEmailAndPassword(auth, email, password); // imported from firebase/auth
         authToken = await userCredential.user.getIdToken();
       }
+      console.log("authToken", authToken);
       const { data } = await firebaseAuth({
         context: {
           headers: {

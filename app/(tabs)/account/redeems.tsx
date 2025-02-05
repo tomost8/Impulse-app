@@ -2,17 +2,17 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/useUsers';
-import { useGetRewards } from '@/hooks/graphql/useRewards';
+import { useCreateRedeem, useGetRewards } from '@/hooks/graphql/useRewards';
 // Components
 import RedeemsScreen from '@/components/screens/RedeemsScreen';
 
 const RedeemsPage = (props: any) => {
   const { userId, authToken } = props;
-  const [isLoading, setIsLoading] = useState(true);
+  const [renderCounter, setRenderCounter] = useState(0);
 
-  const userRef = useRef<any[] | null>(null);
+  const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(userId as number);
+  const { user, fetched: hasNewUserData, refetch: refetchUser } = useGetUser(userId as number);
 
   const rewardsRef = useRef<any[] | null>(null);
   const hasFetchedRewards = useRef(false);
@@ -25,20 +25,34 @@ const RedeemsPage = (props: any) => {
     if (hasNewUserData) {
       userRef.current = user;
       hasFetchedUser.current = true;
-      console.log("setting userRef to", userRef.current);
     }
     if (hasNewRewardsData) {
       rewardsRef.current = rewards;
       hasFetchedRewards.current = true;
-      console.log("setting rewardsRef to", rewardsRef.current);
     }
     if (hasFetchedUser.current && hasFetchedRewards.current) {
-      console.log("setting isLoading from", isLoading, "to false");
-      setIsLoading(false);
+      setRenderCounter(prev => prev + 1);
     }
   }, [hasNewUserData, hasNewRewardsData]); 
 
-  console.log("Rendering RedeemsPage.\n",
+  const { redeem } = useCreateRedeem();
+
+  const handleRedeemComplete = async (rewardId: number) => {
+    console.log("handleRedeemComplete called");
+    try {
+      const response = await redeem(userRef.current?.id, rewardId);
+      console.log("response", response);
+      if (response.success) {
+        const newUserData = await refetchUser();
+        userRef.current = newUserData.data.user.user;
+        setRenderCounter(prev => prev + 1);
+      }
+    } catch (error) {
+      console.error("Error redeeming reward:", error);
+    }
+  }
+
+  console.log("Rendering RedeemsPage. Counter:", renderCounter, "\n",
     "User:", userRef.current, "\n",
     "Rewards:", rewardsRef.current
   );
@@ -49,6 +63,7 @@ const RedeemsPage = (props: any) => {
       isUserLoading={!hasFetchedUser.current}
       rewards={rewardsRef.current}
       isRewardsLoading={!hasFetchedRewards.current}
+      onRedeemComplete={handleRedeemComplete}
     />
   );
 }

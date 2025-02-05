@@ -7,9 +7,6 @@ export function getUserCommunities(userId: number, shouldFetch: boolean = true) 
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   //console.log(data);
@@ -25,9 +22,6 @@ export function getCommunities(shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   //console.log(data);
@@ -45,9 +39,6 @@ export function getCommunity(id: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
 

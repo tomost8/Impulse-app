@@ -10,9 +10,6 @@ export function useAuth(authToken: string) {
     },
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
 

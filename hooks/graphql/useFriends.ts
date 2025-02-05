@@ -9,9 +9,6 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
     variables: { userId },
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {
@@ -33,9 +30,9 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
     variables: { userId, sortBy },
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+      
+      
+      
     }
   });
   if (debug) {
@@ -57,9 +54,9 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
     variables: { userId, role: role },
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+      
+      
+      
     }
   });
   if (debug) {
@@ -82,9 +79,9 @@ export function useAcceptFriendRequest(userId: number, friendId: number, shouldF
     variables: { userId, friendId },
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+      
+      
+      
     }
   });
   console.log('Friends data:', data);

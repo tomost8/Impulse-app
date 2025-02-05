@@ -8,9 +8,6 @@ export function useGetAllUsers(hasFetched: boolean = true) {
     skip: !hasFetched,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {
@@ -24,14 +21,11 @@ export function useGetAllUsers(hasFetched: boolean = true) {
 }
 
 export function useGetUser(id: number, hasFetched: boolean = true) {
-  const { data, loading, error } = useQuery(GET_USER, {
+  const { data, loading, error, refetch } = useQuery(GET_USER, {
     variables: { id },
     skip: !hasFetched,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {
@@ -40,7 +34,8 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
   return {
     user: data?.user.user || [],
     fetched: hasFetched && !loading,
-    error: error?.message || null
+    error: error?.message || null,
+    refetch: refetch
   };
 } 
 
@@ -52,9 +47,6 @@ export function useGetUsersLeaderboard(sort_by: string, hasFetched: boolean = tr
     skip: !hasFetched,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {
@@ -73,9 +65,6 @@ export function useGetPoints(id: number, hasFetched: boolean = true) {
     skip: !hasFetched,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {

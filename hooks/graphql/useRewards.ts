@@ -8,9 +8,6 @@ export function useGetRewards(shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
-      console.error('GraphQL Error Message:', error.message);
-      console.error('GraphQL Network Error:', error.networkError);
-      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   if (debug) {
@@ -26,3 +23,23 @@ export function useGetRewards(shouldFetch: boolean = true) {
     error: error?.message || null
   };
 } 
+
+// New function to create a redeem
+export function useCreateRedeem() {
+  const [createRedeem, { data, loading, error }] = useMutation(REDEEM_REWARD, {
+    onCompleted: (data) => {
+      console.log('Redemption successful:', data);
+    },
+    onError: (error) => {
+      console.error('Redemption failed:', error);
+    }
+  });
+
+  const redeem = async (user_id: number, reward_id: number) => {
+    return createRedeem({ variables: { input: { user_id, reward_id } } })
+      .then(response => response.data.createRedeem)
+      .catch(err => { throw err });
+  };
+
+  return { redeem, data, loading, error };
+}

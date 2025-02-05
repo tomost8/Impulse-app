@@ -8,15 +8,12 @@ export const useGetActivities = (userId: number, authToken: string, shouldFetch:
     skip: !shouldFetch,
     variables: { userId },
     context: {
-    headers: {
-        Authorization: `Bearer ${authToken}`,
-    },
+      headers: {
+          Authorization: `Bearer ${authToken}`,
+      },
     },
     onError: (error) => {
-    console.error('GraphQL Error:', error);
-    console.error('GraphQL Error Message:', error.message);
-    console.error('GraphQL Network Error:', error.networkError);
-    console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
+      console.error('GraphQL Error:', error);
     }
   });
 if (debug) {
