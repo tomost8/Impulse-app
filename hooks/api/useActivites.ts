@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_ACTIVITIES } from '../../services/api/activities';
+import { GET_ACTIVITIES } from '../../graphql/constants/activities';
 
 const debug = false;
 

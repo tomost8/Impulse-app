@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
 import styles from '@/constants/testStyles';
 import { useMutation } from '@apollo/client';
-import { REDEEM_REWARD } from '@/services/api/rewards';
+import { REDEEM_REWARD } from '@/graphql/constants/rewards';
 
 interface RedeemButtonProps {
     title: string;

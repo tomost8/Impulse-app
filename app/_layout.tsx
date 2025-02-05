@@ -6,10 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
-import { client } from '../services/api/client';
+import { client } from '../services/client';
 import { PaperProvider } from 'react-native-paper';
-import { UserProvider } from '@/components/auth/UserContext';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { UserProvider } from '@/services/UserContext';
+import { useColorScheme } from 'react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

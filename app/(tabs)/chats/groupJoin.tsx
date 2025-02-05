@@ -6,8 +6,8 @@ import { Searchbar } from 'react-native-paper';
 import { useGetAllChats, useGetUserChats } from '@/hooks/api/useChats';
 import useUserInfo from '@/hooks/useUserInfo';
 import JoinGroupModal from '@/components/modals/JoinGroupModal';
-import { INVITE_USER_TO_CHAT } from '@/services/api/chats';
-import { client } from '@/services/api/client';
+import { INVITE_USER_TO_CHAT } from '@/graphql/constants/chats';
+import { client } from '@/services/client';
 
 
 export default function GroupJoinScreen() {

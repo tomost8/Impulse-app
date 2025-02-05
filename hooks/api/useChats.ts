@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from '../../services/api/chats';
+import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from '../../graphql/constants/chats';
 
 export function useGetAllChats(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_CHATS, {

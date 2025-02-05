@@ -4,11 +4,11 @@ import { router } from 'expo-router';
 //authentication
 import { auth } from '@/config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FIREBASE_AUTH } from '../../services/api/auth';
+import { FIREBASE_AUTH } from '../../graphql/constants/auth';
 import { useMutation } from '@apollo/client';
 
 import { API_CONFIG } from '@/config/apiConfig';
-import { useUserInfo } from '@/components/auth/UserContext';
+import { useUserInfo } from '@/services/UserContext';
 
 export default function Login() {
   const { login } = useUserInfo();

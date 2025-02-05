@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import styles from '@/constants/testStyles';
-import { goals } from '@/services/goals';
+import { goals } from '@/constants/goals';
 
 
 interface GoalSelectorProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { useUserInfo } from '@/components/auth/UserContext';
+import { useUserInfo } from '@/services/UserContext';
 
 const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
   return (props: any) => {

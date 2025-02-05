@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUserInfo } from '@/components/auth/UserContext';
+import { useUserInfo } from '@/services/UserContext';
 
 export default function SettingsScreen() {
   const { logout } = useUserInfo();

@@ -5,7 +5,6 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useMutation } from '@apollo/client';
 
 import moment from 'moment-timezone';
-import { FIREBASE_AUTH, UPDATE_USER } from '@/services/api/auth';
 
 export default function Signup2() {
 

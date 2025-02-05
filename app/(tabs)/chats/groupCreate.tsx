@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { Switch } from 'react-native-paper';
 import { useMutation } from '@apollo/client';
-import { CREATE_CHAT } from '@/services/api/chats';
+import { CREATE_CHAT } from '@/graphql/constants/chats';
 import useUserInfo from '@/hooks/useUserInfo';
 
 export default function GroupCreateScreen() {

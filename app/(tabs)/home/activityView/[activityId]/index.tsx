@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useGetActivities } from '@/hooks/api/useActivites';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useMutation } from '@apollo/client';
-import { UPDATE_ACTIVITY } from '@/services/api/activities'; // Ensure this import is correct
+import { UPDATE_ACTIVITY } from '@/graphql/constants/activities'; // Ensure this import is correct
 
 export default function ActivityDetailsScreen() {
 

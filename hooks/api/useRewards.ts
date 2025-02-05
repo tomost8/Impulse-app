@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client';
-import { GET_REWARDS, REDEEM_REWARD } from '../../services/api/rewards';
+import { GET_REWARDS, REDEEM_REWARD } from '../../graphql/constants/rewards';
 
 const debug = false;
 
