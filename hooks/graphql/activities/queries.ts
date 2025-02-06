@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
-const debug = debugQueries;
 
 // Query - Get Activities (by User ID)
 export const GET_ACTIVITIES = gql`
@@ -34,8 +33,8 @@ export const useGetActivities = (userId: number, authToken: string, shouldFetch:
     }
   });
   const fetched = shouldFetch && !loading;
-  if (debug && fetched) {
-    console.log("useGetActivities data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetActivities data", data, error ? 'error:' + error : '');
   }
   return {
     activities: data?.activitiesByUserId.activities || [],

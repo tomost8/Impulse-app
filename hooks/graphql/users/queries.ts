@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
-const debug = debugQueries;
 
 // Query - Get All Users
 export const GET_ALL_USERS = gql`
@@ -21,8 +20,8 @@ export function useGetAllUsers(hasFetched: boolean = true) {
     }
   });
   const fetched = hasFetched && !loading;
-  if (debug && fetched) {
-    console.log("useGetAllUsers data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetAllUsers data", data, error ? 'error:' + error : '');
   }
   return {
     users: data?.users.users || [],
@@ -74,8 +73,8 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
     }
   });
   const fetched = hasFetched && !loading;
-  if (debug && fetched) {
-    console.log("useGetUser data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetUser data", data, error ? 'error:' + error : '');
   }
   return {
     user: data?.user.user || [],
@@ -104,7 +103,7 @@ export const GET_USERS_LEADERBOARD = gql`
           monthly_points
         }
       }
-      errors { field  message }
+      errors { field message }
     }
   }
 `; 
@@ -118,8 +117,8 @@ export function useGetUsersLeaderboard(sort_by: string, hasFetched: boolean = tr
     }
   });
   const fetched = hasFetched && !loading;
-  if (debug && fetched) {
-    console.log("useGetUsersLeaderboard data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetUsersLeaderboard data", data, error ? 'error:' + error : '');
   }
   return {
     users: data?.users.users || [],
@@ -152,8 +151,8 @@ export function useGetPoints(id: number, hasFetched: boolean = true) {
     }
   });
   const fetched = hasFetched && !loading;
-  if (debug && fetched) {
-    console.log("useGetPoints data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetPoints data", data, error ? 'error:' + error : '');
   }
   return {
     points: data?.getPoint.point || [],

@@ -1,7 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-
 import { debugQueries } from '@/constants/debug';
-const debug = debugQueries;
 
 // Query - Get Rewards
 export const GET_REWARDS = gql`
@@ -27,8 +25,8 @@ export function useGetRewards(shouldFetch: boolean = true) {
     }
   });
   const fetched = shouldFetch && !loading;
-  if (debug && fetched) {
-    console.log("useGetRewards data", data, "error", error);
+  if (debugQueries && fetched) {
+    console.log("useGetRewards data", data, error ? 'error:' + error : '');
   }
   return {
     rewards: data?.getRewards.rewards || [],

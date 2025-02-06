@@ -43,7 +43,11 @@ const RedeemsPage = (props: any) => {
   const handleCreateRedeem = async (rewardId: number) => {
     setIsCreatingRedeem(true);
     try {
-      const response = await createRedeem(userRef.current?.id, rewardId);
+      const input = {
+        user_id: userRef.current?.id,
+        reward_id: rewardId
+      }
+      const response = await createRedeem(input);
       if (response.success) {
         //console.log("response success", response.redeem);
         const newUserData = await refetchUser(); 

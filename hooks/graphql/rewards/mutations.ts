@@ -16,16 +16,22 @@ export const CREATE_REDEEM = gql`
   }
 `;
 
+/* Input:
+  user_id: number
+  reward_id: number
+*/
 export function useCreateRedeem() {
   const [createRedeemMutation] = useMutation(CREATE_REDEEM);
-  const createRedeem = async (user_id: number, reward_id: number) => {
+  const createRedeem = async (input: any) => {
     try {
-      const response = await createRedeemMutation({ variables: { 
-        input: { user_id, reward_id } 
-      } });
+      const response = await createRedeemMutation({ 
+        variables: { 
+          input: input
+        }
+      });
       return response.data.createRedeem;
     } catch (error) {
-      console.error('Redemption failed:', error);
+      console.error('Create Redeem failed:', error);
       throw error;
     }
   };
