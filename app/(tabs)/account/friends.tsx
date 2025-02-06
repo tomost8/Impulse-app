@@ -1,4 +1,4 @@
-import { useGetFriends } from '../../../hooks/graphql/useFriends';
+import { useGetFriends } from '../../../hooks/graphql/friends/queries';
 import { router } from 'expo-router';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '@/constants/testStyles';

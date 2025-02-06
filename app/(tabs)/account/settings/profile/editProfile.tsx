@@ -1,15 +1,15 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
-import { useGetUser } from '@/hooks/graphql/useUsers';
+import { useGetUser } from '@/hooks/graphql/users/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '@/hooks/graphql/constants/users';
+import { UPDATE_USER } from '@/hooks/graphql/constants/auth';
 
 export default function EditProfileScreen() {
   const { authToken, userId } = useUserInfo();
-  const { user, isLoading: userLoading, error: userError } = useGetUser(userId as number);
+  const { user } = useGetUser(userId as number);
   
   // Initialize state for form data
   const [formData, setFormData] = useState({

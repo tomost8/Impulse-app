@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { GET_ACTIVITIES } from './constants/activities';
+import { GET_ACTIVITIES } from './activities';
 
 import { debugQueries } from '@/constants/debug';
 const debug = debugQueries;

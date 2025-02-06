@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useGetUser, useGetPoints } from '@/hooks/graphql/useUsers';
+import { useGetUser, useGetPoints } from '@/hooks/graphql/users/queries';
 import styles from '@/constants/testStyles';
 
 export default function UserScreen() {

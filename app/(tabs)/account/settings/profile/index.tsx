@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
-import { useGetUser } from '@/hooks/graphql/useUsers';
+import { useGetUser } from '@/hooks/graphql/users/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 
 export default function ProfileScreen() {
   const { userId } = useUserInfo();
 
-  const { user, isLoading: userLoading, error: userError } = useGetUser(userId as number);
+  const { user } = useGetUser(userId as number);
   if (userId !== null) {
     console.log('User data:', user);
   }

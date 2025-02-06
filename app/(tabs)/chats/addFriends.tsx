@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { Searchbar } from 'react-native-paper';
 import useUserInfo from '@/hooks/useUserInfo';
-import { useGetAllUsers } from '@/hooks/graphql/useUsers';
-import { useGetFriends } from '@/hooks/graphql/useFriends';
+import { useGetAllUsers } from '@/hooks/graphql/users/queries';
+import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useMutation } from '@apollo/client';
-import { DELETE_FRIENDSHIP, SEND_FRIEND_REQUEST } from '@/hooks/graphql/constants/friends';
+import { DELETE_FRIENDSHIP, SEND_FRIEND_REQUEST } from '@/hooks/graphql/friends/friends';
 
 
 export default function AddFriendsScreen() {

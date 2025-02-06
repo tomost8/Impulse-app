@@ -8,9 +8,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useState, useRef } from 'react';
 
 import { useGetUserChats } from '../../../hooks/graphql/useChats';
-import { useGetFriendRequests } from '../../../hooks/graphql/useFriends';
+import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '../../../hooks/graphql/constants/friends';
+import { ACCEPT_FRIEND_REQUEST } from '../../../hooks/graphql/friends/friends';
 
 const ChatScreen = (props: any) => {
   console.log("ChatScreen rendered");

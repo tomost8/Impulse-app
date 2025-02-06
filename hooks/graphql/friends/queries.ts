@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from './constants/friends';
+import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from './friends';
 
 import { debugQueries } from '@/constants/debug';
 const debug = debugQueries;

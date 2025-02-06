@@ -1,8 +1,8 @@
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useGetUsersLeaderboard } from '@/hooks/graphql/useUsers';
-import { useGetFriendsLeaderboard } from '@/hooks/graphql/useFriends';
+import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
+import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import MyComponent from '@/components/TwoTab';
 

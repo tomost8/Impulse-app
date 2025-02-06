@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUser } from '@/hooks/graphql/useUsers';
+import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 import AccountScreen from '@/components/screens/AccountScreen';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
 const AccountPage = (props: any) => {
   const { userId, authToken } = props;
-  const [isLoading, setIsLoading] = useState(true);
+  const [renderCounter, setRenderCounter] = useState(0);
 
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
@@ -22,13 +24,17 @@ const AccountPage = (props: any) => {
       hasFetchedUser.current = true;
     }
     if (hasFetchedUser.current) {
-      setIsLoading(false);
+      setRenderCounter(prev => prev + 1);
     }
   }, [hasNewUserData]); 
 
-  console.log("Rendering AccountPage.\n",
-    "User:", userRef.current
-  );
+  const loading = !hasFetchedUser.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering AccountPage\n",
+      "User:", userRef.current, "\n",
+      "Render Counter:", renderCounter
+    );
+  }
 
   return (
     <AccountScreen 

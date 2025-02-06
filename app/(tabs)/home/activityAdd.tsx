@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { List, Menu, Checkbox } from 'react-native-paper';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useMutation } from '@apollo/client';
-import { CREATE_ACTIVITY } from '@/hooks/graphql/constants/activities';
+import { CREATE_ACTIVITY } from '@/hooks/graphql/activities/activities';
 
 export default function ActivityAddScreen() {
   const { authToken, userId } = useUserInfo();

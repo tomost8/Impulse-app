@@ -1,14 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetFriendsLeaderboard } from '@/hooks/graphql/useFriends';
-import { useGetActivities } from '@/hooks/graphql/useActivites';
+import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
+import { useGetActivities } from '@/hooks/graphql/activities/queries';
 // Components
 import HomeScreen from '@/components/screens/HomeScreen';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
 const HomePage = (props: any) => {
   const { userId, authToken } = props;
-  const [isLoading, setIsLoading] = useState(true);
+  const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
@@ -31,14 +33,18 @@ const HomePage = (props: any) => {
       hasFetchedActivities.current = true;
     }
     if (hasFetchedFriends.current && hasFetchedActivities.current) {
-      setIsLoading(false);
+      setRenderCounter(prev => prev + 1);
     }
   }, [hasNewFriendsData, hasNewActivitiesData]); 
 
-  console.log("Rendering HomePage.\n",
-    "Friends:", friendsRef.current, "\n",
-    "Activities:", activitiesRef.current
-  );
+  const loading = !hasFetchedFriends.current || !hasFetchedActivities.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering HomePage.\n",
+      "Friends:", friendsRef.current, "\n",
+      "Activities:", activitiesRef.current, "\n",
+      "Render Counter:", renderCounter
+    );
+  }
   
   return <HomeScreen 
     friends={friendsRef.current || []} 

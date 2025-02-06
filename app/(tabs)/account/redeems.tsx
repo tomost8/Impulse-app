@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-// GraphQL query hooks + mutations
-import { useGetUser } from '@/hooks/graphql/useUsers';
+// GraphQL hooks
+import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
@@ -61,9 +61,10 @@ const RedeemsPage = (props: any) => {
 
   const loading = !hasFetchedUser.current || !hasFetchedRewards.current || isCreatingRedeem;
   if (debugRenders && !loading) {
-    console.log("Rendering RedeemsPage. Counter:", renderCounter, "\n",
+    console.log("Rendering RedeemsPage\n",
       "User:", userRef.current, "\n",
-      "Rewards:", rewardsRef.current
+      "Rewards:", rewardsRef.current, "\n",
+      "Render Counter:", renderCounter
     );
   }
 

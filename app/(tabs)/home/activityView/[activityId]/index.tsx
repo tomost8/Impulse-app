@@ -2,10 +2,10 @@ import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useGetActivities } from '@/hooks/graphql/useActivites';
+import { useGetActivities } from '@/hooks/graphql/activities/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useMutation } from '@apollo/client';
-import { UPDATE_ACTIVITY } from '@/hooks/graphql/constants/activities'; // Ensure this import is correct
+import { UPDATE_ACTIVITY } from '@/hooks/graphql/activities/activities'; // Ensure this import is correct
 
 export default function ActivityDetailsScreen() {
 
