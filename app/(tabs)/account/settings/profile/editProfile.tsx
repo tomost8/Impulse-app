@@ -10,6 +10,111 @@ import { router } from 'expo-router';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
+function EditProfileScreen({
+  user,
+  isUserLoading,
+  formData,
+  handleFormDataChange,
+  handleFormSubmit,
+  isSubmitting,
+}: {
+  user: any,
+  isUserLoading: boolean,
+  formData: any,
+  handleFormDataChange: any,
+  handleFormSubmit: any,
+  isSubmitting: boolean,
+}) {
+  if (isUserLoading || isSubmitting) {
+    return <Text>Loading...</Text>;
+  }
+  return (
+    <View style={styles.container}>
+      <TextInput
+          style={styles.input}
+          placeholder="Profile Picture"
+          placeholderTextColor="gray"
+          value={formData.profile_picture}
+          onChangeText={(text) => handleFormDataChange('profile_picture', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="gray"
+          value={formData.email}
+          onChangeText={(text) => handleFormDataChange('email', text)}
+          editable={false}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="First Name"
+          placeholderTextColor="gray"
+          value={formData.first_name}
+          onChangeText={(text) => handleFormDataChange('first_name', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Last Name"
+          placeholderTextColor="gray"
+          value={formData.last_name}
+          onChangeText={(text) => handleFormDataChange('last_name', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="gray"
+          value={formData.username}
+          onChangeText={(text) => handleFormDataChange('username', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Age"
+          placeholderTextColor="gray"
+          value={formData.age}
+          onChangeText={(text) => handleFormDataChange('age', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Gender"
+          placeholderTextColor="gray"
+          value={formData.gender}
+          onChangeText={(text) => handleFormDataChange('gender', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Timezone"
+          placeholderTextColor="gray"
+          value={formData.timezone}
+          onChangeText={(text) => handleFormDataChange('timezone', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Bio"
+          placeholderTextColor="gray"
+          value={formData.bio}
+          onChangeText={(text) => handleFormDataChange('bio', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Primary Goal"
+          placeholderTextColor="gray"
+          value={formData.primary_goal}
+          onChangeText={(text) => handleFormDataChange('primary_goal', text)}
+      />
+      <TextInput
+          style={styles.input}
+          placeholder="Secondary Goal"
+          placeholderTextColor="gray"
+          value={formData.secondary_goal}
+          onChangeText={(text) => handleFormDataChange('secondary_goal', text)}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
+        <Text style={styles.text}>Save Profile</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 const EditProfilePage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
@@ -25,6 +130,7 @@ const EditProfilePage = (props: any) => {
     }
     if (hasNewUserData) {
       userRef.current = user;
+      initializeFormData();
       hasFetchedUser.current = true;
     }
     if (hasFetchedUser.current) {
@@ -32,44 +138,15 @@ const EditProfilePage = (props: any) => {
     }
   }, [hasNewUserData]);
 
-  // Populate form data when user data is loaded
-  /*
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        profile_picture: user.profile_picture || '',
-        email: user.email || '',
-        first_name: user.first_name || '',
-        last_name: user.last_name || '',
-        username: user.username || '',
-        dob: user.dob || '',
-        gender: user.gender || '',
-        timezone: user.timezone || '',
-        bio: user.bio || '',
-        primary_goal: user.primary_goal || '',
-        secondary_goal: user.secondary_goal || '',
-      });
-    }
-  }, [user]);*/
-
   // Mutations
   const { updateUser } = useUpdateUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleFormSubmit= async (input: any) => {
+  const handleFormSubmit = async (input: any) => {
     setIsSubmitting(true);
     try {
-      const input = {
-        profile_picture: formData.profile_picture,
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        username: formData.username,
-        dob: formData.dob,
-        gender: formData.gender,
-        timezone: formData.timezone,
-        bio: formData.bio,
-        primary_goal: formData.primary_goal,
-        secondary_goal: formData.secondary_goal,
-      }
+      const input = Object.fromEntries(
+        Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'email')
+      );
       const response = await updateUser(input, authToken);
       console.log('User updated successfully:', response);
     } catch (error) {
@@ -81,24 +158,40 @@ const EditProfilePage = (props: any) => {
   
   // Form Data
   const [formData, setFormData] = useState({
-    profile_picture: '',
     email: '',
     first_name: '',
     last_name: '',
     username: '',
-    dob: '',
+    age: '',
     gender: '',
+    profile_picture: '',
     timezone: '',
     bio: '',
     primary_goal: '',
     secondary_goal: '',
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleFormDataChange = (field: string, value: string) => {
     setFormData((formData) => ({
       ...formData,
       [field]: value,
     }));
+  };
+
+  const initializeFormData = () => {
+    setFormData({
+      profile_picture: userRef.current.profile_picture || '',
+      email: userRef.current.email || '',
+      first_name: userRef.current.first_name || '',
+      last_name: userRef.current.last_name || '',
+      username: userRef.current.username || '',
+      age: userRef.current.age || '',
+      gender: userRef.current.gender || '',
+      timezone: userRef.current.timezone || '',
+      bio: userRef.current.bio || '',
+      primary_goal: userRef.current.primary_goal || '',
+      secondary_goal: userRef.current.secondary_goal || '',
+    });
   };
 
   // Debug
@@ -111,89 +204,14 @@ const EditProfilePage = (props: any) => {
   }
 
   return (
-    <View style={styles.container}>
-      <TextInput
-          style={styles.input}
-          placeholder="Profile Picture"
-          placeholderTextColor="gray"
-          value={formData.profile_picture}
-          onChangeText={(text) => handleInputChange('profile_picture', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="gray"
-          value={formData.email}
-          onChangeText={(text) => handleInputChange('email', text)}
-          editable={false}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="First Name"
-          placeholderTextColor="gray"
-          value={formData.first_name}
-          onChangeText={(text) => handleInputChange('first_name', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Last Name"
-          placeholderTextColor="gray"
-          value={formData.last_name}
-          onChangeText={(text) => handleInputChange('last_name', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Username"
-          placeholderTextColor="gray"
-          value={formData.username}
-          onChangeText={(text) => handleInputChange('username', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Date of Birth"
-          placeholderTextColor="gray"
-          value={formData.dob}
-          onChangeText={(text) => handleInputChange('dob', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Gender"
-          placeholderTextColor="gray"
-          value={formData.gender}
-          onChangeText={(text) => handleInputChange('gender', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Timezone"
-          placeholderTextColor="gray"
-          value={formData.timezone}
-          onChangeText={(text) => handleInputChange('timezone', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Bio"
-          placeholderTextColor="gray"
-          value={formData.bio}
-          onChangeText={(text) => handleInputChange('bio', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Primary Goal"
-          placeholderTextColor="gray"
-          value={formData.primary_goal}
-          onChangeText={(text) => handleInputChange('primary_goal', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Secondary Goal"
-          placeholderTextColor="gray"
-          value={formData.secondary_goal}
-          onChangeText={(text) => handleInputChange('secondary_goal', text)}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
-        <Text style={styles.text}>Save Profile</Text>
-      </TouchableOpacity>
-    </View>
+    <EditProfileScreen
+      user={userRef.current}
+      isUserLoading={!hasFetchedUser.current}
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      handleFormSubmit={handleFormSubmit}
+      isSubmitting={isSubmitting}
+    />
   );
 }
 

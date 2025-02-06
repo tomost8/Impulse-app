@@ -1,49 +1,28 @@
+import { useState, useEffect, useRef } from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
+// Components
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { List, Menu, Checkbox } from 'react-native-paper';
-import useUserInfo from '@/hooks/useUserInfo';
-import { useMutation } from '@apollo/client';
-import { CREATE_ACTIVITY } from '@/hooks/graphql/activities/mutations';
+import { Checkbox } from 'react-native-paper';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
-export default function ActivityAddScreen() {
-  const { authToken, userId } = useUserInfo();
-  const [createActivityMutation] = useMutation(CREATE_ACTIVITY);
-  const [visible, setVisible] = useState(false);
-  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
-
-  const handleActivityCreation = async (category: string, date?: string) => {
-    const activityDate = date || new Date().toISOString(); 
-    const input = {
-      category: category,
-      scheduledDatetime: activityDate, // Make sure to handle time zone, server stores data in UTC
-      // Add other necessary fields here: description, duration, datetime are forms
-    };
-
-    try {
-      const { data } = await createActivityMutation({
-        variables: { input },
-        context: { 
-          headers: { Authorization: `Bearer ${authToken}` } // Pass the authToken in headers
-        },
-      });
-      if (data.createActivity.success) {
-        console.log("Activity created successfully", data);
-      } else {
-        console.error("Error creating activity:", data);
-      }
-    } catch (error) {
-      console.error("Error creating activity:", error);
-      // Handle error (e.g., show an error message)
-    }
-  };
-
-  const handleSelectActivity = (activity: string) => {
-    setSelectedActivities(prev => 
-      prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]
-    );
-  };
-
+function AddActivityScreen({
+  selectedActivities,
+  handleSelectActivity,
+  handleCreateActivity, 
+  isSubmitting,
+}: {
+  selectedActivities: string[],
+  handleSelectActivity: any,
+  handleCreateActivity: any, 
+  isSubmitting: boolean,
+}) {
+  if (isSubmitting) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Select Activities:</Text>
@@ -65,7 +44,7 @@ export default function ActivityAddScreen() {
       <TouchableOpacity 
         style={styles.button} 
         onPress={() => {
-          selectedActivities.forEach(activity => handleActivityCreation(activity)); // Call handleActivityCreation for each selected activity
+          selectedActivities.forEach(activity => handleCreateActivity(activity)); // Call handleActivityCreation for each selected activity
         }}
       >
         <Text style={styles.text}>Create Activities</Text>
@@ -73,3 +52,56 @@ export default function ActivityAddScreen() {
     </View>
   );
 }
+
+const AddActivityPage = (props: any) => {
+  const { userId, authToken } = props;
+
+  // Mutations
+  const { createActivity } = useCreateActivity();
+  const [isCreatingActivity, setIsCreatingActivity] = useState(false);
+  const handleCreateActivity = async (activity: string, date?: string) => {
+    setIsCreatingActivity(true);
+    try {
+      const activityDate = date || new Date().toISOString();
+      const input = {
+        category: activity,
+        scheduledDatetime: activityDate, // Need to handle time zone, server is UTC
+        //Description, duration, datetime are form inputs
+      };
+      const response = await createActivity(input, authToken);
+      if (response.success) {
+        console.log("Activity created successfully", response);
+      } else {
+        console.error("Error creating activity:", response);
+      }
+    } catch (error) {
+      console.error("Error creating activity:", error);
+    } finally {
+      setIsCreatingActivity(false);
+    }
+  }
+
+  // Form data
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+
+  const handleSelectActivity = (activity: string) => {
+    setSelectedActivities(prev => 
+      prev.includes(activity) ? prev.filter(a => a !== activity) : [...prev, activity]
+    );
+  };
+
+  // Debug
+  const loading = isCreatingActivity;
+  if (debugRenders && !loading) {
+    console.log("Rendering AddActivityPage");
+  }
+
+  return <AddActivityScreen 
+    selectedActivities={selectedActivities}
+    handleSelectActivity={handleSelectActivity}
+    handleCreateActivity={handleCreateActivity}
+    isSubmitting={isCreatingActivity}
+  />
+}
+
+export default AuthWrapper(AddActivityPage);
