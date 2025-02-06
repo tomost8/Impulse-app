@@ -13,6 +13,7 @@ const RedeemsPage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
+  // Queries for Loading State
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
   const { user, fetched: hasNewUserData, refetch: refetchUser } = useGetUser(userId as number, !hasFetchedUser.current);
@@ -38,6 +39,7 @@ const RedeemsPage = (props: any) => {
     }
   }, [hasNewUserData, hasNewRewardsData]); 
 
+  // Mutations
   const { createRedeem } = useCreateRedeem();
   const [isCreatingRedeem, setIsCreatingRedeem] = useState(false);
   const handleCreateRedeem = async (rewardId: number) => {
@@ -63,12 +65,13 @@ const RedeemsPage = (props: any) => {
     }
   }
 
+  // Debug
   const loading = !hasFetchedUser.current || !hasFetchedRewards.current || isCreatingRedeem;
   if (debugRenders && !loading) {
     console.log("Rendering RedeemsPage\n",
       "User:", userRef.current, "\n",
       "Rewards:", rewardsRef.current, "\n",
-      "Render Counter:", renderCounter
+      "Render Counter:", renderCounter, "\n",
     );
   }
 

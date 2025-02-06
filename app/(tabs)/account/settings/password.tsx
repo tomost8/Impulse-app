@@ -1,40 +1,20 @@
+import { useState, useEffect, useRef } from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// Components
 import styles from '@/constants/testStyles';
-import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
-
-export default function PasswordScreen() {
-  const [formData, setFormData] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-
-  const handleChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
-      [name]: value, // Update the specific field in the state
-    });
-  };
-
-  const handleSubmit = () => {
-    const { newPassword, confirmPassword } = formData;
-
-    if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match.");
-      return;
-    }
-
-    console.log('Password change submitted:', formData);
-    
-    // clear input
-    setFormData({
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-  };
-
+function PasswordScreen({
+  formData,
+  handleFormDataChange,
+  handleFormSubmit,
+  isSubmitting,
+}: {
+  formData: any,
+  handleFormDataChange: any,
+  handleFormSubmit: any,
+  isSubmitting: boolean,
+}) {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Change Password</Text>
@@ -44,7 +24,7 @@ export default function PasswordScreen() {
         placeholderTextColor="gray"
         secureTextEntry // Hides the text input
         value={formData.oldPassword}
-        onChangeText={(value) => handleChange('oldPassword', value)} // Update old password
+        onChangeText={(value) => handleFormDataChange('oldPassword', value)}
       />
       <TextInput
         style={styles.input}
@@ -52,7 +32,7 @@ export default function PasswordScreen() {
         placeholderTextColor="gray"
         secureTextEntry 
         value={formData.newPassword}
-        onChangeText={(value) => handleChange('newPassword', value)} // Update new password
+        onChangeText={(value) => handleFormDataChange('newPassword', value)}
       />
       <TextInput
         style={styles.input}
@@ -60,11 +40,58 @@ export default function PasswordScreen() {
         placeholderTextColor="gray"
         secureTextEntry 
         value={formData.confirmPassword}
-        onChangeText={(value) => handleChange('confirmPassword', value)} // Update confirm password
+        onChangeText={(value) => handleFormDataChange('confirmPassword', value)}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
         <Text style={styles.text}>Reset (TODO: functionality)</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+const PasswordPage = (props: any) => {
+  const { userId, authToken } = props;
+
+  // TODO: Implement Firebase Password Reset
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleFormSubmit = () => {
+    const { newPassword, confirmPassword } = formData;
+
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password do not match.");
+      return;
+    }
+
+    console.log('Password change submitted:', formData);
+    
+    // Clear form data after submitting
+    setFormData({
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+  };
+
+  // Form data
+  const [formData, setFormData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const handleFormDataChange = (field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+  };
+
+  return <PasswordScreen
+    formData={formData}
+    handleFormDataChange={handleFormDataChange}
+    handleFormSubmit={handleFormSubmit}
+    isSubmitting={isSubmitting}
+  />
+}
+
+export default AuthWrapper(PasswordPage);

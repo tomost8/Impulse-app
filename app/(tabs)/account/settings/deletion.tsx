@@ -9,17 +9,17 @@ import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 import { debugRenders } from '@/constants/debug';
 
 function DeletionScreen({
-  handleUpdateUser, 
-  isUpdatingUser,
   formData,
-  handleFormDataChange
-}: { 
-  handleUpdateUser: any, 
-  isUpdatingUser: boolean,
+  handleFormDataChange,
+  handleFormSubmit, 
+  isSubmitting,
+}: {
   formData: any, 
-  handleFormDataChange: any
+  handleFormDataChange: any,
+  handleFormSubmit: any, 
+  isSubmitting: boolean,
 }) {
-  if (isUpdatingUser) {
+  if (isSubmitting) {
     return <Text>Loading...</Text>;
   }
   return (
@@ -41,7 +41,7 @@ function DeletionScreen({
         onChangeText={(value) => handleFormDataChange('code', value)}
       />
       <TouchableOpacity style={styles.button} 
-      onPress={handleUpdateUser}>
+      onPress={handleFormSubmit}>
           <Text style={styles.text}>Apply</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} 
@@ -57,12 +57,12 @@ const DeletionPage = (props: any) => {
 
   // Mutations
   const { updateUser } = useUpdateUser();
-  const [isUpdatingUser, setIsUpdatingUser] = useState(false);
-  const handleUpdateUser = async () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleFormSubmit = async () => {
     const { code } = formData;
     if (code === "INSPIRE") {
       console.log('Community Leader Code submitted: ', formData);
-      setIsUpdatingUser(true);
+      setIsSubmitting(true);
       try {
         const input = {
           role: "INFLUENCER"
@@ -76,7 +76,7 @@ const DeletionPage = (props: any) => {
       } catch (error) {
         console.error('Error updating user:', error);
       } finally {
-        setIsUpdatingUser(false);
+        setIsSubmitting(false);
       }
     } else {
       console.log('Invalid promotion code: ', formData);
@@ -88,15 +88,15 @@ const DeletionPage = (props: any) => {
     code: '',
   });
 
-  const handleFormDataChange = (name: string, value: string) => {
+  const handleFormDataChange = (field: string, value: string) => {
     setFormData({
       ...formData,
-      [name]: value,
+      [field]: value,
     });
   };
 
   // Debug
-  const loading = isUpdatingUser;
+  const loading = isSubmitting;
   if (debugRenders && !loading) {
     console.log("Rendering DeletionPage");
   }
@@ -105,8 +105,8 @@ const DeletionPage = (props: any) => {
     <DeletionScreen
       formData={formData}
       handleFormDataChange={handleFormDataChange}
-      handleUpdateUser={handleUpdateUser}
-      isUpdatingUser={isUpdatingUser}
+      handleFormSubmit={handleFormSubmit}
+      isSubmitting={isSubmitting}
     />
   );
 }

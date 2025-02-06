@@ -1,34 +1,39 @@
+import { useState, useEffect, useRef } from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useGetUser } from '@/hooks/graphql/users/queries';
+import { useUpdateUser } from '@/hooks/graphql/users/mutations';
+// Components
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
-import { useGetUser } from '@/hooks/graphql/users/queries';
-import useUserInfo from '@/hooks/useUserInfo';
-import React, { useState, useEffect } from 'react';
-import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
-export default function EditProfileScreen() {
-  const { authToken, userId } = useUserInfo();
-  const { user } = useGetUser(userId as number);
-  
-  // Initialize state for form data
-  const [formData, setFormData] = useState({
-    profile_picture: '',
-    email: '',
-    first_name: '',
-    last_name: '',
-    username: '',
-    dob: '',
-    gender: '',
-    timezone: '',
-    bio: '',
-    primary_goal: '',
-    secondary_goal: '',
-  });
+const EditProfilePage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
 
-  const [updateUser] = useMutation(UPDATE_USER);
+  // Queries for Loading State
+  const userRef = useRef<any | null>(null);
+  const hasFetchedUser = useRef(false);
+  const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
+
+  useEffect(() => {
+    if (!hasNewUserData) {
+      return;
+    }
+    if (hasNewUserData) {
+      userRef.current = user;
+      hasFetchedUser.current = true;
+    }
+    if (hasFetchedUser.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewUserData]);
 
   // Populate form data when user data is loaded
+  /*
   useEffect(() => {
     if (user) {
       setFormData({
@@ -45,44 +50,65 @@ export default function EditProfileScreen() {
         secondary_goal: user.secondary_goal || '',
       });
     }
-  }, [user]);
+  }, [user]);*/
+
+  // Mutations
+  const { updateUser } = useUpdateUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleFormSubmit= async (input: any) => {
+    setIsSubmitting(true);
+    try {
+      const input = {
+        profile_picture: formData.profile_picture,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        username: formData.username,
+        dob: formData.dob,
+        gender: formData.gender,
+        timezone: formData.timezone,
+        bio: formData.bio,
+        primary_goal: formData.primary_goal,
+        secondary_goal: formData.secondary_goal,
+      }
+      const response = await updateUser(input, authToken);
+      console.log('User updated successfully:', response);
+    } catch (error) {
+      console.error('Error updating user:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Form Data
+  const [formData, setFormData] = useState({
+    profile_picture: '',
+    email: '',
+    first_name: '',
+    last_name: '',
+    username: '',
+    dob: '',
+    gender: '',
+    timezone: '',
+    bio: '',
+    primary_goal: '',
+    secondary_goal: '',
+  });
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((formData) => ({
+      ...formData,
       [field]: value,
     }));
   };
 
-  const handleSaveProfile = async () => {
-    try {
-      const { data } = await updateUser({
-        variables: {
-          input: {
-            profile_picture: formData.profile_picture,
-            first_name: formData.first_name,
-            last_name: formData.last_name,
-            username: formData.username,
-            dob: formData.dob,
-            gender: formData.gender,
-            timezone: formData.timezone,
-            bio: formData.bio,
-            primary_goal: formData.primary_goal,
-            secondary_goal: formData.secondary_goal,
-          },
-        },
-        context: {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        },
-      });
-      console.log('Profile updated successfully:', data);
-      router.push('/account/settings');
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
+  // Debug
+  const loading = isSubmitting;
+  if (debugRenders && !loading) {
+    console.log("Rendering EditProfilePage\n",
+      "User:", userRef.current, "\n",
+      "Render Counter:", renderCounter, "\n",
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -164,10 +190,11 @@ export default function EditProfileScreen() {
           value={formData.secondary_goal}
           onChangeText={(text) => handleInputChange('secondary_goal', text)}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSaveProfile}>
+      <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
         <Text style={styles.text}>Save Profile</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
+export default AuthWrapper(EditProfilePage);
