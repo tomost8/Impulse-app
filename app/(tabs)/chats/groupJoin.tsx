@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
-import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/useChats';
+import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import JoinGroupModal from '@/components/modals/JoinGroupModal';
-import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/constants/chats';
+import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/chats';
 import { client } from '@/services/client';
 
 

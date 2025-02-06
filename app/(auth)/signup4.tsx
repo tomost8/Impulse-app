@@ -7,7 +7,7 @@ import { goals, getCategoryById } from '@/constants/goals';
 
 import { auth } from '@/config/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FIREBASE_AUTH, UPDATE_USER } from '@/hooks/graphql/constants/auth';
+import { FIREBASE_AUTH, UPDATE_USER } from '@/hooks/graphql/users/auth';
 import { useMutation } from '@apollo/client';
 import { useUserInfo } from '@/services/UserContext';
 

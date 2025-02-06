@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useGetChat, useGetChatMembers } from '../../../../hooks/graphql/useChats';
+import { useGetChat, useGetChatMembers } from '../../../../hooks/graphql/chats/queries';
 import styles from '@/constants/testStyles';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useState } from 'react';

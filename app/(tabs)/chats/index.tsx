@@ -7,7 +7,7 @@ import SocialModal from '@/components/modals/SocialModal';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useState, useRef } from 'react';
 
-import { useGetUserChats } from '../../../hooks/graphql/useChats';
+import { useGetUserChats } from '../../../hooks/graphql/chats/queries';
 import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useMutation } from '@apollo/client';
 import { ACCEPT_FRIEND_REQUEST } from '../../../hooks/graphql/friends/friends';

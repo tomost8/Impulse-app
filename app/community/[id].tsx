@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { getCommunity } from '../../hooks/graphql/useCommunities';
+import { getCommunity } from '../../hooks/graphql/communities/queries';
 
 export default function CommunityScreen() {
   const { id } = useLocalSearchParams();

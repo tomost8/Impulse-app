@@ -1,11 +1,14 @@
 import { useQuery } from '@apollo/client';
-import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from './constants/chats';
+import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from '../graphql/chats/chats';
 
 export function useGetAllChats(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_CHATS, {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   //console.log(data);
@@ -22,6 +25,9 @@ export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
 
@@ -38,6 +44,9 @@ export function useGetChatMembers(chatId: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   //console.log(data);
@@ -54,6 +63,9 @@ export function useGetGroupLeaderboard(chatId: number, sortBy: string, shouldFet
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
   //console.log(data);
@@ -70,6 +82,9 @@ export function useGetChat(id: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     onError: (error) => {
       console.error('GraphQL Error:', error);
+      console.error('GraphQL Error Message:', error.message);
+      console.error('GraphQL Network Error:', error.networkError);
+      console.error('GraphQL GraphQL Errors:', error.graphQLErrors);
     }
   });
 

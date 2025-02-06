@@ -5,7 +5,7 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import React, { useState, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
-import { UPDATE_USER } from '@/hooks/graphql/constants/auth';
+import { UPDATE_USER } from '@/hooks/graphql/users/auth';
 
 export default function EditProfileScreen() {
   const { authToken, userId } = useUserInfo();

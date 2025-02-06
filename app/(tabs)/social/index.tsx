@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getUserCommunities } from '../../../hooks/graphql/useCommunities';
+import { getUserCommunities } from '../../../hooks/graphql/communities/queries';
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
 import useUserInfo from '@/hooks/useUserInfo';
