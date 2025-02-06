@@ -6,7 +6,7 @@ import useUserInfo from '@/hooks/useUserInfo';
 
 export default function FriendsScreen() {
   const { userId } = useUserInfo();
-  const { friends, isLoading, error } = useGetFriends(userId as number);
+  const { friends, fetched, error } = useGetFriends(userId as number);
   console.log('Friends data:', friends);
   
   const handleFriendPress = (id: string | number) => {
@@ -18,7 +18,7 @@ export default function FriendsScreen() {
 
       <View style={styles.section}>
         <Text style={styles.text}>Friends</Text>
-        {isLoading ? (
+        {fetched ? (
           <ActivityIndicator color="white" />
         ) : error ? (
           <Text style={styles.error}>{error}</Text>

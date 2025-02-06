@@ -6,7 +6,7 @@ import { Searchbar } from 'react-native-paper';
 import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import useUserInfo from '@/hooks/useUserInfo';
 import JoinGroupModal from '@/components/modals/JoinGroupModal';
-import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/chats';
+import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/mutations';
 import { client } from '@/services/client';
 
 

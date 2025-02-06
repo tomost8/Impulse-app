@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
 import useUserInfo from '@/hooks/useUserInfo';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
-import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/chats';
+import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/mutations';
 import { client } from '@/services/client';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 

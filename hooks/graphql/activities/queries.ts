@@ -1,8 +1,24 @@
-import { useQuery } from '@apollo/client';
-import { GET_ACTIVITIES } from './activities';
-
+import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
 const debug = debugQueries;
+
+// Query - Get Activities (by User ID)
+export const GET_ACTIVITIES = gql`
+  query ($userId: Int!) {
+    activitiesByUserId(userId: $userId) {
+      success
+      activities {
+        id
+        name
+        category
+        description
+        duration
+        scheduledDatetime
+        status
+      }
+    }
+  }
+`;
 
 export const useGetActivities = (userId: number, authToken: string, shouldFetch: boolean = true) => {
   const { data, loading, error, refetch } = useQuery(GET_ACTIVITIES, {

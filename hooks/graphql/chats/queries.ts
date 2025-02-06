@@ -1,5 +1,89 @@
-import { useQuery } from '@apollo/client';
-import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from './chats';
+import { gql, useQuery } from '@apollo/client';
+import { debugQueries } from '@/constants/debug';
+const debug = debugQueries;
+//import { GET_USER_CHATS, GET_CHAT, GET_ALL_CHATS, GET_CHAT_MEMBERS, GET_CHAT_MEMBERS_SORTED } from './chats';
+
+
+//"query": "query { getAllChats { success chats { id type title password profile_pic creator { first_name last_name email } creator_id } errors { field message } } }"
+export const GET_ALL_CHATS = gql`
+  query {
+    getAllChats {
+      success
+      chats { id type title password profile_pic creator { first_name last_name email } creator_id }
+      errors { field message }
+    }
+  }
+`;
+
+// Query - Get User Chats by User ID
+export const GET_USER_CHATS = gql`
+  query ($userId: Int!) {
+    getUserChats(id: $userId) {
+      success
+      chat_members {
+        chat { id type title }
+        role
+        status
+      }
+      errors { field message }
+    }
+  }
+`;
+
+//"query ($id: Int!) { getChat(id: $id) { success chat { id type title password profile_pic creator { first_name last_name email } creator_id } errors { field message } } }",
+export const GET_CHAT = gql`
+  query ($id: Int!) {
+    getChat(id: $id) {
+      success
+      chat {
+        id
+        type
+        title
+        password
+        profile_pic
+        creator {
+          id
+          first_name
+          last_name
+          email
+        }
+        creator_id
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`; 
+
+//"query": "query ($chatId: Int!) { getChatMembers(id: $chatId) { success chat_members { user { id first_name last_name } role status } errors { field message } } }",
+export const GET_CHAT_MEMBERS = gql`
+  query ($chatId: Int!) {
+    getChatMembers(id: $chatId) {
+      success
+      chat_members { user { id first_name last_name username profile_picture } role status }
+      errors { field message }
+    }
+  }
+`;
+
+//"query": "query ($chatId: Int!) { getChatMembers(id: $chatId) { success chat_members { user { id first_name last_name } role status } errors { field message } } }",
+export const GET_CHAT_MEMBERS_SORTED = gql`
+  query ($chatId: Int!, $sortBy: UserSortType!) {
+    getChatMembers(id: $chatId, sort_by: $sortBy) {
+      success
+      chat_members { user { id first_name last_name username profile_picture point {
+                        points
+                        spending_points
+                        weekly_points
+                        monthly_points
+                    } } role status }
+      errors { field message }
+    }
+  }
+`;
+
 
 export function useGetAllChats(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_CHATS, {

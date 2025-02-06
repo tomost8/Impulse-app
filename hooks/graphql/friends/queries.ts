@@ -1,8 +1,89 @@
-import { useQuery } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from './friends';
-
+import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
 const debug = debugQueries;
+
+
+// Query - Get Friends by User ID
+export const GET_FRIENDS = gql`
+    query ($userId: Int!) {
+        getFriendships(id: $userId) {
+            success
+            friendships {
+                friend {
+                    id
+                    first_name
+                    last_name
+                    username
+                    profile_picture
+                    email
+                    point {
+                        points
+                        spending_points
+                        weekly_points
+                        monthly_points
+                    }
+                }
+                role
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
+// Query - Get Friends by User ID with Sorting for Leaderboard
+export const GET_FRIENDS_SORTING = gql`
+    query ($userId: Int!, $sortBy: UserSortType!) {
+        getFriendships(id: $userId, sort_by: $sortBy) {
+            success
+            friendships {
+                friend {
+                    id
+                    username
+                    profile_picture
+                    point {
+                        points
+                        spending_points
+                        weekly_points
+                        monthly_points
+                    }
+                }
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
+// Query - Get Friends Requests by User ID
+export const GET_FRIEND_REQUESTS = gql`
+    query ($userId: Int!, $role: String!) {
+        getFriendRequests(id: $userId, role: $role) {
+            success
+            friendships {
+                friend {
+                    id
+                    first_name
+                    last_name
+                    email
+                }
+                role
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
+
 
 export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
@@ -64,26 +145,6 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
   return {
     friendRequests: data?.getFriendRequests.friendships || [],
     fetched: shouldFetch && !loading,
-    error: error?.message || null
-  };
-} 
-
-//mutation
-export function useAcceptFriendRequest(userId: number, friendId: number, shouldFetch: boolean = true) {
-  const { data, loading, error } = useQuery(ACCEPT_FRIEND_REQUEST, {
-    skip: !shouldFetch,
-    variables: { userId, friendId },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-      
-      
-      
-    }
-  });
-  console.log('Friends data:', data);
-  return {
-    friendRequests: data?.getFriendRequests.friendships || [],
-    isLoading: loading,
     error: error?.message || null
   };
 } 

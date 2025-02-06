@@ -6,7 +6,7 @@ import useUserInfo from '@/hooks/useUserInfo';
 import { useGetAllUsers } from '@/hooks/graphql/users/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useMutation } from '@apollo/client';
-import { DELETE_FRIENDSHIP, SEND_FRIEND_REQUEST } from '@/hooks/graphql/friends/friends';
+import { DELETE_FRIENDSHIP, SEND_FRIEND_REQUEST } from '@/hooks/graphql/friends/mutations';
 
 
 export default function AddFriendsScreen() {

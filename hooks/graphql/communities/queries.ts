@@ -1,5 +1,66 @@
-import { useQuery } from '@apollo/client';
-import { GET_COMMUNITIES, GET_COMMUNITY, GET_USER_COMMUNITIES } from './communities';
+import { gql, useQuery } from '@apollo/client';
+import { debugQueries } from '@/constants/debug';
+const debug = debugQueries;
+
+// Query - Get User Communities by User ID
+export const GET_USER_COMMUNITIES = gql`
+    query ($userId: Int!) {
+        getUserCommunities(id: $userId) {
+            success
+            community_members {
+                community {
+                    id
+                    name
+                }
+                role
+                status
+            }
+            errors {
+                field
+                message
+            }
+        }
+    }
+`;
+
+export const GET_COMMUNITIES = gql`
+  query {
+    getAllCommunities {
+      communities {
+        id
+        name
+        description
+        thumbnail
+        influencer {
+          id
+          first_name
+          last_name
+          email
+        }
+      }
+    }
+  }
+`;
+
+export const GET_COMMUNITY = gql`
+  query ($id: Int!) {
+    getCommunity(id: $id) {
+      success
+      community {
+        id
+        name
+        description
+        thumbnail
+        influencer {
+          id
+          first_name
+          last_name
+          email
+        }
+      }
+    }
+  }
+`; 
 
 export function getUserCommunities(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_USER_COMMUNITIES, {

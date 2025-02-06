@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import { Modal, Portal, Button } from 'react-native-paper';
 import styles from '@/constants/testStyles';
 import { useMutation } from '@apollo/client';
-import { DELETE_FRIENDSHIP } from '@/hooks/graphql/friends/friends';
+import { DELETE_FRIENDSHIP } from '@/hooks/graphql/friends/mutations';
 import { router } from 'expo-router';
 
 interface RemoveFriendModalProps {
