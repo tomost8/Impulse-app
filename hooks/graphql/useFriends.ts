@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { ACCEPT_FRIEND_REQUEST, GET_FRIEND_REQUESTS, GET_FRIENDS, GET_FRIENDS_SORTING } from './constants/friends';
 
-const debug = false;
+import { debugQueries } from '@/constants/debug';
+const debug = debugQueries;
 
 export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
@@ -29,21 +30,16 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
     skip: !shouldFetch,
     variables: { userId, sortBy },
     onError: (error) => {
-      console.error('GraphQL Error:', error);
-      
-      
-      
+      console.error('GraphQL Error:', error);  
     }
   });
-  if (debug) {
-    console.log("useGetFriendsLeaderboard data", data, 
-        "skipped", !shouldFetch, 
-        "loading", loading, 
-        "error", error);
+  const fetched = shouldFetch && !loading;
+  if (debug && fetched) {
+    console.log("useGetFriendsLeaderboard data", data, "error", error);
   }
   return {
     friends: data?.getFriendships.friendships || [],
-    fetched: shouldFetch && !loading,
+    fetched: fetched,
     error: error?.message || null
   };
 } 

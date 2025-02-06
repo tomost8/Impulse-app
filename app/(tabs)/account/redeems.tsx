@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-// GraphQL hooks
+// GraphQL query hooks + mutations
 import { useGetUser } from '@/hooks/graphql/useUsers';
-import { useCreateRedeem, useGetRewards } from '@/hooks/graphql/useRewards';
+import { useGetRewards } from '@/hooks/graphql/rewards/queries';
+import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
 import RedeemsScreen from '@/components/screens/RedeemsScreen';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
 const RedeemsPage = (props: any) => {
   const { userId, authToken } = props;
@@ -12,11 +15,11 @@ const RedeemsPage = (props: any) => {
 
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData, refetch: refetchUser } = useGetUser(userId as number);
+  const { user, fetched: hasNewUserData, refetch: refetchUser } = useGetUser(userId as number, !hasFetchedUser.current);
 
   const rewardsRef = useRef<any[] | null>(null);
   const hasFetchedRewards = useRef(false);
-  const { rewards, fetched: hasNewRewardsData } = useGetRewards();
+  const { rewards, fetched: hasNewRewardsData } = useGetRewards(!hasFetchedRewards.current);
 
   useEffect(() => {
     if (!hasNewUserData && !hasNewRewardsData) {
@@ -42,8 +45,8 @@ const RedeemsPage = (props: any) => {
     try {
       const response = await createRedeem(userRef.current?.id, rewardId);
       if (response.success) {
-        console.log("response success", response.redeem);
-        const newUserData = await refetchUser(); //causes extra 2 renders
+        //console.log("response success", response.redeem);
+        const newUserData = await refetchUser(); 
         userRef.current = newUserData.data.user.user;
         setRenderCounter(prev => prev + 1);
       } else {
@@ -56,10 +59,13 @@ const RedeemsPage = (props: any) => {
     }
   }
 
-  console.log("Rendering RedeemsPage. Counter:", renderCounter, "\n",
-    "User:", userRef.current, "\n",
-    "Rewards:", rewardsRef.current
-  );
+  const loading = !hasFetchedUser.current || !hasFetchedRewards.current || isCreatingRedeem;
+  if (debugRenders && !loading) {
+    console.log("Rendering RedeemsPage. Counter:", renderCounter, "\n",
+      "User:", userRef.current, "\n",
+      "Rewards:", rewardsRef.current
+    );
+  }
 
   return (
     <RedeemsScreen 

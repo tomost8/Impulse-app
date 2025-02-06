@@ -25,7 +25,7 @@ function RedeemsScreen({
   const showModal = () => setModalVisible(true);
   const hideModal = () => setModalVisible(false);
 
-  if (isUserLoading || isRewardsLoading) {
+  if (isUserLoading || isRewardsLoading || isCreatingRedeem) {
     return <Text>Loading...</Text>;
   }
 

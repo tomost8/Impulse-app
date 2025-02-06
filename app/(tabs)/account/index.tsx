@@ -11,7 +11,7 @@ const AccountPage = (props: any) => {
 
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(userId as number);
+  const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
 
   useEffect(() => {
     if (!hasNewUserData) {

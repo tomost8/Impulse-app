@@ -1,7 +1,8 @@
 import { useQuery } from '@apollo/client';
 import { GET_USER, GET_POINTS, GET_USERS_LEADERBOARD, GET_ALL_USERS } from './constants/users';
 
-const debug = false;
+import { debugQueries } from '@/constants/debug';
+const debug = debugQueries;
 
 export function useGetAllUsers(hasFetched: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_USERS, {
@@ -28,12 +29,13 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
       console.error('GraphQL Error:', error);
     }
   });
-  if (debug) {
-    console.log("useGetUser data", data, "skipped", !hasFetched, "loading", loading, "error", error);
+  const fetched = hasFetched && !loading;
+  if (debug && fetched) {
+    console.log("useGetUser data", data, "error", error);
   }
   return {
     user: data?.user.user || [],
-    fetched: hasFetched && !loading,
+    fetched: fetched,
     error: error?.message || null,
     refetch: refetch
   };
