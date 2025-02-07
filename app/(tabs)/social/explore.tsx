@@ -3,13 +3,12 @@ import { getCommunities } from '../../../hooks/graphql/communities/queries';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from '@/constants/testStyles';
 
 
 export default function ExploreScreen() {
   
-  const { communities, isLoading, error } = getCommunities();
+  const { communities } = getCommunities();
   
 
   const handleCommunityPress = (id: string | number) => {
@@ -21,11 +20,7 @@ export default function ExploreScreen() {
 
       <View style={styles.section}>
         <Text style={styles.text}>Communities</Text>
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : error ? (
-          <Text style={styles.error}>{error}</Text>
-        ) : (
+        {(
           communities.map((community: any) => (
             <TouchableOpacity 
               style={styles.button}

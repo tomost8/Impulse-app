@@ -71,3 +71,27 @@ export const UPDATE_ACTIVITY = gql`
     }
   }
 `;
+
+export function useUpdateActivity() {
+  const [updateActivityMutation] = useMutation(UPDATE_ACTIVITY);
+  const updateActivity = async (id: number, input: any, authToken: string) => {
+    try {
+      const response = await updateActivityMutation({ 
+        variables: { 
+          id: id,
+          input: input 
+        },
+        context: {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
+      });
+      return response.data.updateActivity;
+    } catch (error) {
+      console.error('Update Activity failed:', error);
+      throw error;
+    }
+  };
+  return { updateActivity };
+}

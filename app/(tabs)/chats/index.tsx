@@ -1,50 +1,41 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
 import styles from '@/constants/testStyles';
 import SocialModal from '@/components/modals/SocialModal';
 
+import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-import { useState, useRef } from 'react';
-
+// GraphQL hooks
 import { useGetUserChats } from '../../../hooks/graphql/chats/queries';
 import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
-import { useMutation } from '@apollo/client';
-import { ACCEPT_FRIEND_REQUEST } from '../../../hooks/graphql/friends/mutations';
+import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
+// Components
+// Debug
+import { debugRenders } from '@/constants/debug';
 
-const ChatScreen = (props: any) => {
-  console.log("ChatScreen rendered");
-
-  const { userId, authToken } = props;
-  const hasFetched = useRef(false);
-  const { chatMembers } = useGetUserChats(userId as number, hasFetched.current);
-  const { friendRequests: receivedRequests } = useGetFriendRequests(userId as number, 'receiver', hasFetched.current);
-  const { friendRequests: sentRequests } = useGetFriendRequests(userId as number, 'sender', hasFetched.current);
-  if (!hasFetched.current && chatMembers && receivedRequests && sentRequests) {
-    console.log("ChatData fetched", chatMembers, receivedRequests, sentRequests);
-    hasFetched.current = true;
+function ChatScreen({
+  chats,
+  isChatsLoading,
+  friendRequests,
+  isFriendRequestsLoading,
+  sentRequests,
+  isSentRequestsLoading,
+  handleAcceptFriendRequest,
+  isAcceptingFriendRequest
+}: {
+  chats: any,
+  isChatsLoading: boolean,
+  friendRequests: any,
+  isFriendRequestsLoading: boolean,
+  sentRequests: any,
+  isSentRequestsLoading: boolean,
+  handleAcceptFriendRequest: (friendId: number) => void,
+  isAcceptingFriendRequest: boolean,
+}) {
+  if (isChatsLoading || isFriendRequestsLoading || isSentRequestsLoading || isAcceptingFriendRequest) {
+    return <Text>Loading...</Text>;
   }
-
-  const [acceptFriendRequest, { loading, error }] = useMutation(ACCEPT_FRIEND_REQUEST);
-  const handleAcceptFriendRequest = async (friendId: number) => {
-    console.log('Accepting friend request for user ID:', friendId);
-    try {
-      const response = await acceptFriendRequest({
-        variables: {
-          userId: userId as number,
-          friendId: friendId,
-          input: {
-            status: 'ACCEPTED',
-          },
-        },
-      });
-      console.log('Friend request accepted:', response);
-    } catch (error) {
-      console.error('Error accepting friend request:', error);
-    }
-  };
-
-
   //modal
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
@@ -53,7 +44,6 @@ const ChatScreen = (props: any) => {
   const [activeView, setActiveView] = useState<'chats' | 'requests'>('chats');
   const onChatsPress = () => { setActiveView('chats');};
   const onRequestsPress = () => { setActiveView('requests');};
-
 
   const handleChatPress = (chatId: number) => {
     console.log('Chat ID:', chatId);
@@ -76,21 +66,19 @@ const ChatScreen = (props: any) => {
       
       {activeView === 'chats' && (
         <View style={styles.section}>
-          {/* make chat component + add here */}
-          <View style={styles.section}>
-            <Text style={styles.text}>Chats</Text>
-            {chatMembers.map((chatMember: any) => (
-              <TouchableOpacity
-                style={styles.button}
-                key={`chat-${chatMember.chat.id}-member-${chatMember.id}`}
-                onPress={() => handleChatPress(chatMember.chat.id)}
-              >
-                <Text style={styles.text}>
-                  {chatMember.chat.type}, {chatMember.chat.id}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <Text style={styles.text}>Chats</Text>
+          {chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => (
+            //console.log("Chat:", chat),
+            <TouchableOpacity
+              style={styles.button}
+              key={`chat-${chat.chat.id}`}
+              onPress={() => handleChatPress(chat.chat.id)}
+            >
+              <Text style={styles.text}>
+                {chat.chat.type}, {chat.chat.id}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
       )}
 
@@ -99,7 +87,7 @@ const ChatScreen = (props: any) => {
           {/* make requests component + add here */}
           <View style={styles.section}>
             <Text style={styles.text}>Received Requests</Text>
-            {receivedRequests.map((friendRequest: any) => (
+            {friendRequests.map((friendRequest: any) => (
               <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
                 <Text style={styles.text}>
                   {friendRequest.friend.first_name} {friendRequest.friend.last_name}
@@ -124,4 +112,87 @@ const ChatScreen = (props: any) => {
   );
 }
 
-export default AuthWrapper(ChatScreen);
+const ChatPage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const chatsRef = useRef<any[] | null>(null);
+  const hasFetchedChats = useRef(false);
+  const { chatMembers, fetched: hasNewChatsData } = useGetUserChats(userId as number, !hasFetchedChats.current);
+
+  const friendRequestsRef = useRef<any[] | null>(null);
+  const hasFetchedFriendRequests = useRef(false);
+  const { friendRequests: receivedRequests, fetched: hasNewFriendRequestsData } = useGetFriendRequests(userId as number, 'receiver', !hasFetchedFriendRequests.current);
+  
+  const sentRequestsRef = useRef<any[] | null>(null);
+  const hasFetchedSentRequests = useRef(false);
+  const { friendRequests: sentRequests, fetched: hasNewSentRequestsData } = useGetFriendRequests(userId as number, 'sender', !hasFetchedSentRequests.current);
+
+  useEffect(() => {
+    if (!hasNewChatsData && !hasNewFriendRequestsData && !hasNewSentRequestsData) {
+      return;
+    }
+    if (hasNewChatsData) {
+      chatsRef.current = chatMembers;
+      hasFetchedChats.current = true;
+    }
+    if (hasNewFriendRequestsData) {
+      friendRequestsRef.current = receivedRequests;
+      hasFetchedFriendRequests.current = true;
+    }
+    if (hasNewSentRequestsData) {
+      sentRequestsRef.current = sentRequests;
+      hasFetchedSentRequests.current = true;
+    }
+    if (hasFetchedChats.current && hasFetchedFriendRequests.current && hasFetchedSentRequests.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewChatsData, hasNewFriendRequestsData, hasNewSentRequestsData]);
+
+  // Mutations
+  const { acceptFriendRequest } = useAcceptFriendRequest();
+  const [isAcceptingFriendRequest, setIsAcceptingFriendRequest] = useState(false);
+  const handleAcceptFriendRequest = async (friendId: number) => {
+    setIsAcceptingFriendRequest(true);
+    try {
+      const input = {
+        status: 'ACCEPTED',
+      }
+      const response = await acceptFriendRequest(userId as number, friendId, input, authToken);
+      if (response.success) {
+        console.log("Friend request accepted:", response);
+      } else {
+        console.log("Error accepting friend request:", response.errors);
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    } finally {
+      setIsAcceptingFriendRequest(false);
+    }
+  };
+
+  // Debug
+  const loading = !hasFetchedChats.current || !hasFetchedFriendRequests.current || !hasFetchedSentRequests.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering ChatScreen\n",
+      "Chats:", chatsRef.current, "\n",
+      "Friend Requests:", friendRequestsRef.current, "\n",
+      "Sent Requests:", sentRequestsRef.current, "\n",
+      "Render Counter:", renderCounter, "\n",
+    );
+  }
+
+  return <ChatScreen 
+    chats={chatsRef.current}
+    isChatsLoading={!hasFetchedChats.current}
+    friendRequests={friendRequestsRef.current}
+    isFriendRequestsLoading={!hasFetchedFriendRequests.current}
+    sentRequests={sentRequestsRef.current}
+    isSentRequestsLoading={!hasFetchedSentRequests.current}
+    handleAcceptFriendRequest={handleAcceptFriendRequest}
+    isAcceptingFriendRequest={isAcceptingFriendRequest}
+  />;
+}
+
+export default AuthWrapper(ChatPage);

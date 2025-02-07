@@ -1,36 +1,35 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getUserCommunities } from '../../../hooks/graphql/communities/queries';
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
-import useUserInfo from '@/hooks/useUserInfo';
 
-export default function CommunitiesScreen() {
-  const { userId } = useUserInfo();
-  
-  const { communityMembers, isLoading, error } = getUserCommunities(userId as number);
-  if (userId !== null) {
-    console.log('Community Members data:', communityMembers);
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { getUserCommunities } from '@/hooks/graphql/communities/queries';
+// Components
+// Debug
+import { debugRenders } from '@/constants/debug';
+
+function SocialScreen({
+  communityMembers,
+  isCommunityMembersLoading,
+}: {
+  communityMembers: any,
+  isCommunityMembersLoading: boolean,
+}) {
+  if (isCommunityMembersLoading) {
+    return <Text>Loading...</Text>;
   }
-  
-
-  const handleCommunityPress = (id: string | number) => {
-    router.push(`/community/${id}`);
-  };
-
   return (
     <ScrollView>
       <View style={styles.section}>
         <Text style={styles.text}>Communities</Text>
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : error ? (
-          <Text style={styles.error}>{error}</Text>
-        ) : (
+        {(
           communityMembers.map((communityMember: any) => (
             <TouchableOpacity
               style={styles.button}
               key={communityMember.community.id}
-              onPress={() => handleCommunityPress(communityMember.community.id)}
+              onPress={() => router.push(`/community/${communityMember.community.id}`)}
             >
               <Text style={styles.text}>
                 {communityMember.community.name}
@@ -40,10 +39,51 @@ export default function CommunitiesScreen() {
         )}
       </View>
       <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/communities/explore')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/social/explore')}>
           <Text style={styles.text}>Explore</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
   );
 }
+
+const SocialPage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const communitiesRef = useRef<any[] | null>(null);
+  const hasFetchedCommunities = useRef(false);
+  const { communityMembers, fetched: hasNewCommunitiesData } = getUserCommunities(userId as number, !hasFetchedCommunities.current);
+
+  useEffect(() => {
+    if (!hasNewCommunitiesData) {
+      return;
+    }
+    if (hasNewCommunitiesData) {
+      communitiesRef.current = communityMembers;
+      hasFetchedCommunities.current = true;
+    }
+    if (hasFetchedCommunities.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewCommunitiesData]);
+
+  // Debug
+  const loading = !hasFetchedCommunities.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering SocialPage\n",
+      "Communities:", communitiesRef.current, "\n",
+      "Render Counter:", renderCounter, "\n",
+    );
+  }
+  
+  return (
+    <SocialScreen 
+      communityMembers={communitiesRef.current}
+      isCommunityMembersLoading={!hasFetchedCommunities.current}
+    />
+  );
+}
+
+export default AuthWrapper(SocialPage);

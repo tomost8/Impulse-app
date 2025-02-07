@@ -1,21 +1,30 @@
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useGetActivities } from '@/hooks/graphql/activities/queries';
+// Components
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
 import { router } from 'expo-router';
 import ActivitiesModal from '@/components/modals/ActivitiesModal';
-import { useGetActivities } from '@/hooks/graphql/activities/queries';
-import useUserInfo from '@/hooks/useUserInfo';
+// Debug
+import { debugRenders } from '@/constants/debug';
 
+function ViewActivityScreen({
+  activities,
+  isActivitiesLoading,
+}: {
+  activities: any;
+  isActivitiesLoading: boolean;
+}) {
+  // Modal for Activities
+  const [modalVisible, setModalVisible] = useState(false);
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
 
-export default function ActivityViewScreen() {
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
-  const { userId, authToken} = useUserInfo();
-  const { activities } = useGetActivities(userId as number, authToken as string);
-  console.log("activities page:", activities);
-
+  if (isActivitiesLoading) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={showModal}>
@@ -24,7 +33,7 @@ export default function ActivityViewScreen() {
         </Text>
       </TouchableOpacity>
       <ActivitiesModal 
-        visible={visible} 
+        visible={modalVisible} 
         hideModal={hideModal}
       />
       <View style={styles.section}>
@@ -48,3 +57,44 @@ export default function ActivityViewScreen() {
     </View>
   );
 }
+
+const ViewActivityPage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const activitiesRef = useRef<any[] | null>(null);
+  const hasFetchedActivities = useRef(false);
+  const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId as number, authToken as string, !hasFetchedActivities.current);
+
+  useEffect(() => {
+    if (!hasNewActivitiesData) {
+      return;
+    }
+    if (hasNewActivitiesData) {
+      activitiesRef.current = activities;
+      hasFetchedActivities.current = true;
+    }
+    if (hasFetchedActivities.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewActivitiesData]);
+
+  // Debug
+  const loading = !hasFetchedActivities.current;
+  if (debugRenders && !loading) {
+    console.log('Rendering ViewActivityPage\n',
+      'Activities:', activitiesRef.current, '\n',
+      'Render Counter:', renderCounter, '\n',
+    );
+  }
+
+  return (
+    <ViewActivityScreen 
+      activities={activitiesRef.current}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />
+  );
+}
+
+export default AuthWrapper(ViewActivityPage);
