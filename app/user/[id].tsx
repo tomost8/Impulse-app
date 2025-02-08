@@ -1,28 +1,25 @@
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useGetUser, useGetPoints } from '@/hooks/graphql/users/queries';
 import styles from '@/constants/testStyles';
 
-export default function UserScreen() {
-  const { id } = useLocalSearchParams();
-  const { user, isLoading: userLoading, error: userError } = useGetUser(Number(id));
-  const { points, isLoading: pointsLoading, error: pointsError } = useGetPoints(Number(id));
-  if (userLoading || pointsLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator color="white" />
-      </View>
-    );
-  }
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useGetUser } from '@/hooks/graphql/users/queries';
+// Components
+// Debug
+import { debugRenders } from '@/constants/debug';
 
-  if (userError || pointsError) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.error}>{userError || pointsError}</Text>
-      </View>
-    );
+function UserScreen({
+  user,
+  isUserLoading,
+}: {
+  user: any;
+  isUserLoading: boolean;
+}) {
+  if (isUserLoading) {
+    return <Text>Loading...</Text>;
   }
-
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
@@ -35,7 +32,7 @@ export default function UserScreen() {
           Username: {user.username}
       </Text>
       <Text style={styles.text}>
-          Points: {points.points}
+          Points: {user.point.points}
       </Text>
       <Text style={styles.text}>
           Bio: {user.bio}
@@ -58,3 +55,44 @@ export default function UserScreen() {
     </View>
   );
 }
+
+const UserPage = (props: any) => {
+  const { id } = useLocalSearchParams();
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const userRef = useRef<any | null>(null);
+  const hasFetchedUser = useRef(false);
+  const { user, fetched: hasNewUserData } = useGetUser(Number(id), !hasFetchedUser.current);
+
+  useEffect(() => {
+    if (!hasNewUserData) {
+      return;
+    }
+    if (hasNewUserData) {
+      userRef.current = user;
+      hasFetchedUser.current = true;
+    }
+    if (hasFetchedUser.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewUserData]);
+
+  // Debug
+  const loading = !hasFetchedUser.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering UserPage\n",
+      "User:", userRef.current, "\n",
+      "Render Counter:", renderCounter, "\n",
+    );
+  }
+
+  return (
+    <UserScreen
+      user={userRef.current}
+      isUserLoading={!hasFetchedUser.current}
+    />
+  );
+}
+
+export default UserPage; // not sure if need authwrapper

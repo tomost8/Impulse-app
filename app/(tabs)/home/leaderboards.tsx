@@ -11,52 +11,32 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
-const LeaderboardsPage = (props: any) => {
-  const { userId, authToken } = props;
-  const [renderCounter, setRenderCounter] = useState(0);
-
-  // Tab Status: Have to figure out how to separate these to components
-  const [scopeView, setScopeView] = useState<'friends' | 'global'>('friends');
-  const onFriendsPress = () => { setScopeView('friends');};
-  const onGlobalPress = () => { setScopeView('global');};
-  const [activeView, setActiveView] = useState<'weekly' | 'monthly' | 'all'>('weekly');
-
-  // Queries for Loading State
-  const usersRef = useRef<any | null>(null);
-  const hasFetchedUsers = useRef(false);
-  const { users, fetched: hasNewUserData } = useGetUsersLeaderboard(activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedUsers.current);
-
-  const friendsRef = useRef<any | null>(null);
-  const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedFriends.current);
-
-  useEffect(() => {
-    if (!hasNewUserData && !hasNewFriendsData) {
-      return;
-    }
-    if (hasNewUserData) {
-      usersRef.current = users;
-      hasFetchedUsers.current = true;
-    }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
-    }
-    if (hasFetchedUsers.current && hasFetchedFriends.current) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [hasNewUserData, hasNewFriendsData]);
-
-  // Debug
-  const loading = !hasFetchedUsers.current || !hasFetchedFriends.current;
-  if (debugRenders && !loading) {
-    console.log('Rendering LeaderboardsPage\n',
-      'Users:', usersRef.current, '\n',
-      'Friends:', friendsRef.current, '\n',
-      'Render Counter:', renderCounter, '\n',
-    );
+function LeaderboardsScreen({
+  users,
+  isUsersLoading,
+  friends,
+  isFriendsLoading,
+  // Tab Status
+  scopeView,
+  onFriendsPress,
+  onGlobalPress,
+  activeView,
+  setActiveView,
+}: {
+  users: any;
+  isUsersLoading: boolean;
+  friends: any;
+  isFriendsLoading: boolean;
+  // Tab Status
+  scopeView: 'friends' | 'global';
+  onFriendsPress: () => void;
+  onGlobalPress: () => void;
+  activeView: 'weekly' | 'monthly' | 'all';
+  setActiveView: (view: 'weekly' | 'monthly' | 'all') => void;
+}) {
+  if (isUsersLoading || isFriendsLoading) {
+    return <Text>Loading...</Text>;
   }
-
   return (
     <View style={styles.container}>
       {/* Button for leaderboard view: weekly, monthly, or all */}
@@ -112,6 +92,66 @@ const LeaderboardsPage = (props: any) => {
       )}
     </View>
   );
+}
+
+const LeaderboardsPage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Tab Status: Have to figure out how to separate these to components
+  const [scopeView, setScopeView] = useState<'friends' | 'global'>('friends');
+  const onFriendsPress = () => { setScopeView('friends');};
+  const onGlobalPress = () => { setScopeView('global');};
+  const [activeView, setActiveView] = useState<'weekly' | 'monthly' | 'all'>('weekly');
+
+  // Queries for Loading State
+  const usersRef = useRef<any | null>(null);
+  const hasFetchedUsers = useRef(false);
+  const { users, fetched: hasNewUserData } = useGetUsersLeaderboard(activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedUsers.current);
+
+  const friendsRef = useRef<any | null>(null);
+  const hasFetchedFriends = useRef(false);
+  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedFriends.current);
+
+  useEffect(() => {
+    if (!hasNewUserData && !hasNewFriendsData) {
+      return;
+    }
+    if (hasNewUserData) {
+      usersRef.current = users;
+      hasFetchedUsers.current = true;
+    }
+    if (hasNewFriendsData) {
+      friendsRef.current = friends;
+      hasFetchedFriends.current = true;
+    }
+    if (hasFetchedUsers.current && hasFetchedFriends.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewUserData, hasNewFriendsData]);
+
+  // Debug
+  const loading = !hasFetchedUsers.current || !hasFetchedFriends.current;
+  if (debugRenders && !loading) {
+    console.log('Rendering LeaderboardsPage\n',
+      'Users:', usersRef.current, '\n',
+      'Friends:', friendsRef.current, '\n',
+      'Render Counter:', renderCounter, '\n',
+    );
+  }
+
+  return LeaderboardsScreen({
+    users: usersRef.current,
+    isUsersLoading: !hasFetchedUsers.current,
+    friends: friendsRef.current,
+    isFriendsLoading: !hasFetchedFriends.current,
+    // Tab Status
+    scopeView: scopeView,
+    onFriendsPress: onFriendsPress,
+    onGlobalPress: onGlobalPress,
+    activeView: activeView,
+    setActiveView: setActiveView,
+  });
 }
 
 export default AuthWrapper(LeaderboardsPage);

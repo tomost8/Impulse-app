@@ -126,37 +126,3 @@ export function useGetUsersLeaderboard(sort_by: string, hasFetched: boolean = tr
     error: error?.message || null
   };
 }
-
-//Currently in [member] and [id].tsx, should replace them and then make this method deprecated
-export const GET_POINTS = gql`
-  query ($id: Int!) {
-    getPoint(id: $id) {
-      success
-      point {
-        points
-        spending_points
-        weekly_points
-        monthly_points
-      }
-    }
-  }
-`;
-
-export function useGetPoints(id: number, hasFetched: boolean = true) {
-  const { data, loading, error } = useQuery(GET_POINTS, {
-    variables: { id },
-    skip: !hasFetched,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
-  });
-  const fetched = hasFetched && !loading;
-  if (debugQueries && fetched) {
-    console.log("useGetPoints data", data, error ? 'error:' + error : '');
-  }
-  return {
-    points: data?.getPoint.point || [],
-    fetched: fetched,
-    error: error?.message || null
-  };
-}

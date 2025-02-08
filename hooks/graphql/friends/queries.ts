@@ -129,7 +129,7 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriendRequests data", data, error ? 'error:' + error : '');
+    console.log("useGetFriendRequests", role, "data", data, error ? 'error:' + error : '');
   }
   return {
     friendRequests: data?.getFriendRequests.friendships || [],

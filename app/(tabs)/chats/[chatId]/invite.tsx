@@ -1,40 +1,40 @@
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Searchbar } from 'react-native-paper';
-import useUserInfo from '@/hooks/useUserInfo';
+
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
-import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/mutations';
-import { client } from '@/services/client';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
+import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
+// Components
+// Debug
+import { debugRenders } from '@/constants/debug';
 
-
-export default function GroupInviteScreen() {
+function GroupInviteScreen({
+  chatId,
+  friends,
+  isFriendsLoading,
+  chatMembers,
+  isChatMembersLoading,
+  handleInviteUserToChat,
+  isInvitingUserToChat
+}: {
+  chatId: number;
+  friends: any;
+  isFriendsLoading: boolean;
+  chatMembers: any;
+  isChatMembersLoading: boolean;
+  handleInviteUserToChat: (userId: number, chatId: number) => void;
+  isInvitingUserToChat: boolean;
+}) {
+  console.log(isFriendsLoading, isChatMembersLoading, isInvitingUserToChat);
+  if (isFriendsLoading || isChatMembersLoading || isInvitingUserToChat) {
+    return <Text style={styles.text}>Loading...</Text>;
+  }
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const { userId } = useUserInfo();
-  const { chatId } = useLocalSearchParams();
-  const { friends } = useGetFriends(userId as number);
-  const { chatMembers } = useGetChatMembers(Number(chatId));
-  console.log("search bar: chats/[chatId]/invite.tsx", 
-    "friends", friends, 
-    "chatMembers", chatMembers
-  );
-
-  const inviteFriend = async (userId: number, chatId: number) => {
-    const input = { user_id: userId, chat_id: chatId };
-    try {
-      const response = await client.mutate({
-        mutation: INVITE_USER_TO_CHAT,
-        variables: { input },
-      });
-      console.log(response.data.createChatMember);
-      return response.data.createChatMember;
-    } catch (error) {
-      console.error("Error inviting friend:", error);
-      throw error;
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -59,7 +59,7 @@ export default function GroupInviteScreen() {
               <Text style={styles.text}>{friend.friend.first_name} {friend.friend.last_name}, {friend.friend.username}, {friend.friend.profile_picture}</Text>
               <TouchableOpacity 
                 style={[styles.button, isPending && { opacity: 0.5 }]} 
-                onPress={() => inviteFriend(friend.friend.id, Number(chatId))}
+                onPress={() => handleInviteUserToChat(friend.friend.id, chatId)}
                 disabled={isPending}
               >
                 <Text style={styles.text}>{isPending ? 'Invited' : 'Send Invite'}</Text>
@@ -71,3 +71,81 @@ export default function GroupInviteScreen() {
     </View>
   );
 }
+
+const GroupInvitePage = (props: any) => {
+  console.log("GroupInvitePage");
+  const { chatId } = useLocalSearchParams();
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const friendsRef = useRef<any[] | null>(null);
+  const hasFetchedFriends = useRef<boolean>(false);
+  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
+
+  const chatMembersRef = useRef<any[] | null>(null);
+  const hasFetchedChatMembers = useRef<boolean>(false);
+  const { chatMembers, fetched: hasNewChatMembersData } = useGetChatMembers(Number(chatId), !hasFetchedChatMembers.current);
+
+  useEffect(() => {
+    if (!hasNewFriendsData && !hasNewChatMembersData) {
+      return;
+    }
+    if (hasNewFriendsData) {
+      friendsRef.current = friends;
+      hasFetchedFriends.current = true;
+    }
+    if (hasNewChatMembersData) {
+      chatMembersRef.current = chatMembers;
+      hasFetchedChatMembers.current = true;
+    }
+    if (hasNewFriendsData && hasNewChatMembersData) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewFriendsData, hasNewChatMembersData]);
+
+  // Mutations
+  const { createChatMember } = useCreateChatMember();
+  const [isInvitingUserToChat, setIsInvitingUserToChat] = useState(false);
+  const handleInviteUserToChat = async (chatId: number) => {
+    setIsInvitingUserToChat(true);
+    try {
+      const input = { 
+        user_id: userId, 
+        chat_id: chatId,
+      };
+      const response = await createChatMember(input);
+      console.log(response.data.createChatMember);
+      return response.data.createChatMember;
+    } catch (error) {
+      console.error("Error inviting friend:", error);
+      throw error;
+    } finally {
+      setIsInvitingUserToChat(false);
+    }
+  }
+
+  // Debug
+  const loading = !hasFetchedFriends.current || !hasFetchedChatMembers.current || isInvitingUserToChat;
+  if (debugRenders && !loading) {
+    console.log('Rendering GroupInvitePage\n',
+      'Friends:', friendsRef.current, '\n',
+      'Chat Members:', chatMembersRef.current, '\n',
+      'Render Counter:', renderCounter, '\n',
+    );
+  }
+
+  return (
+    <GroupInviteScreen
+      chatId={Number(chatId)}
+      friends={friendsRef.current}
+      isFriendsLoading={!hasFetchedFriends.current}
+      chatMembers={chatMembersRef.current}
+      isChatMembersLoading={!hasFetchedChatMembers.current}
+      handleInviteUserToChat={handleInviteUserToChat}
+      isInvitingUserToChat={isInvitingUserToChat}
+    />
+  );
+}
+
+export default AuthWrapper(GroupInvitePage);

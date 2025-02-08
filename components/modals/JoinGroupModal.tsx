@@ -1,38 +1,25 @@
-import { View, Text } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { Modal, Portal, Button } from 'react-native-paper';
 import styles from '@/constants/testStyles';
-import { useMutation } from '@apollo/client';
-import { router } from 'expo-router';
-import { INVITE_USER_TO_CHAT } from '@/hooks/graphql/chats/mutations';
+import { useState } from 'react';
 
 interface JoinGroupModalProps {
   visible: boolean;
   hideModal: () => void;
   chat: any;
-  userId: number;
+  handleJoinGroup: (chat: any) => void;
 }
 
-export default function JoinGroupModal({ visible, hideModal, chat, userId }: JoinGroupModalProps) {
-  const [joinGroup] = useMutation(INVITE_USER_TO_CHAT); // TODO: add status to ACCEPTED
+export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGroup }: JoinGroupModalProps) {
+  const [password, setPassword] = useState('');
 
-  const handleJoinGroup = async () => {
-    if (chat.password) {
-      console.log('There is a password', chat);
+  const handlePasswordSubmit = () => {
+    if (password === chat.password) {
+      handleJoinGroup(chat);
+      console.log("Correct password, need to join group and then switch view");
     } else {
-      console.log('There is no password', chat);
-    }/*
-    try {
-      const { data } = await joinGroup({ variables: { chat_id: chat.id, user_id: userId } });
-      if (data.joinGroup.success) {
-        console.log("Friendship (+ chat) deleted successfully");
-        hideModal();
-        router.push(`/chats`);
-      } else {
-        console.error("Error deleting friendship:", data.deleteFriendship.errors);
-      }
-    } catch (error) {
-      console.error("Error deleting friendship:", error);
-    }*/
+      console.log("Incorrect password, display error text");
+    }
     hideModal();
   };
 
@@ -40,9 +27,29 @@ export default function JoinGroupModal({ visible, hideModal, chat, userId }: Joi
     <Portal>
       <Modal visible={visible} onDismiss={hideModal}>
         <View style={styles.modal}>
-          <Text style={styles.text}>Image</Text>
-          <Text style={styles.text}>Successfully Joined Group</Text>
-          <Button style={styles.button} onPress={hideModal}>Okay</Button>
+          {chat === null ? (
+            <>
+              <Text style={styles.text}>No chat available, something went wrong.</Text>
+            </>
+          ) : chat.password ? (
+            <>
+              <Text style={styles.text}>Enter Password:</Text>
+              <TextInput
+                style={[styles.input, { borderWidth: 1, borderColor: 'black', borderRadius: 5 }]}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <Button style={styles.button} onPress={handlePasswordSubmit}>Join Group</Button>
+            </>
+          ) : (
+            <>
+              {handleJoinGroup(chat)}
+              <Text style={styles.text}>Success Image</Text>
+              <Text style={styles.text}>Successfully Joined Group</Text>
+              <Button style={styles.button} onPress={hideModal}>Okay</Button>
+            </>
+          )}
         </View>
       </Modal>
     </Portal>

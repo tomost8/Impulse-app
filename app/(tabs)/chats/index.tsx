@@ -75,7 +75,7 @@ function ChatScreen({
               onPress={() => handleChatPress(chat.chat.id)}
             >
               <Text style={styles.text}>
-                {chat.chat.type}, {chat.chat.id}
+                {chat.chat.type}, {chat.chat.id}, {chat.chat.title}
               </Text>
             </TouchableOpacity>
           ))}
