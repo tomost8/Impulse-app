@@ -1,11 +1,22 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
+import { HeaderContext } from './_layout';
 
 export default function CameraScreen() {
-  const [facing, setFacing] = useState<CameraType>('back');
+  const { id, category } = useLocalSearchParams();
+  const context = useContext(HeaderContext);
+  if (!context) return null;
+
   const [permission, requestPermission] = useCameraPermissions();
+  const [facing, setFacing] = useState<CameraType>('back');
   const cameraRef = useRef<CameraView>(null);
+
+  useEffect(() => {
+    context.setPictureTaken(false);
+    context.setCategory(category as string);
+  }, [category]);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -28,14 +39,29 @@ export default function CameraScreen() {
 
   async function takePicture() {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      console.log(photo);
+      try {
+        const photo = await cameraRef.current.takePictureAsync();
+        if (photo && photo.uri) {
+          router.push({
+            pathname: '/camera/displayPicture',
+            params: { 
+              photo: photo.uri,
+              id: id,
+              category: context?.category,
+            }
+          });
+        } else {
+          console.error('Photo URI is not available');
+        }
+      } catch (error) {
+        console.error('Error taking picture:', error);
+      }
     }
   }
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+      <CameraView ref={cameraRef} style={styles.camera} facing={facing} flash={context.flash ? 'on' : 'off'}>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>

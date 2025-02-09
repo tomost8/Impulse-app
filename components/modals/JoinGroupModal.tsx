@@ -12,15 +12,16 @@ interface JoinGroupModalProps {
 
 export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGroup }: JoinGroupModalProps) {
   const [password, setPassword] = useState('');
+  const [hasJoined, setHasJoined] = useState(false);
 
   const handlePasswordSubmit = () => {
     if (password === chat.password) {
       handleJoinGroup(chat);
+      setHasJoined(true);
       console.log("Correct password, need to join group and then switch view");
     } else {
       console.log("Incorrect password, display error text");
     }
-    hideModal();
   };
 
   return (
@@ -31,7 +32,14 @@ export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGro
             <>
               <Text style={styles.text}>No chat available, something went wrong.</Text>
             </>
-          ) : chat.password ? (
+          ) : hasJoined || !chat.password ? (
+            <>
+              {!hasJoined && handleJoinGroup(chat)}
+              <Text style={styles.text}>Success Image</Text>
+              <Text style={styles.text}>Successfully Joined Group</Text>
+              <Button style={styles.button} onPress={hideModal}>Okay</Button>
+            </>
+          ) : (
             <>
               <Text style={styles.text}>Enter Password:</Text>
               <TextInput
@@ -41,13 +49,6 @@ export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGro
                 secureTextEntry
               />
               <Button style={styles.button} onPress={handlePasswordSubmit}>Join Group</Button>
-            </>
-          ) : (
-            <>
-              {handleJoinGroup(chat)}
-              <Text style={styles.text}>Success Image</Text>
-              <Text style={styles.text}>Successfully Joined Group</Text>
-              <Button style={styles.button} onPress={hideModal}>Okay</Button>
             </>
           )}
         </View>

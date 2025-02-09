@@ -76,7 +76,7 @@ const PartnerPage = (props: any) => {
       hasFetchedUser.current = true;
     }
     if (hasFetchedUser.current) {
-      setRenderCounter(renderCounter + 1);
+      setRenderCounter(prev => prev + 1);
     }
   }, [hasNewUserData]);
 

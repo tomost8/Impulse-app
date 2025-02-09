@@ -87,7 +87,7 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriendsLeaderboard error", error ? 'error:' + error : '');
+    console.log("useGetFriendsLeaderboard", data, error ? 'error:' + error : '');
   }
   return {
     friends: data?.getFriendships.friendships || [],

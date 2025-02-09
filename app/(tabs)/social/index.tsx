@@ -5,7 +5,7 @@ import styles from '@/constants/testStyles';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { getUserCommunities } from '@/hooks/graphql/communities/queries';
+import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 // Components
 // Debug
 import { debugRenders } from '@/constants/debug';
@@ -54,7 +54,7 @@ const SocialPage = (props: any) => {
   // Queries for Loading State
   const communitiesRef = useRef<any[] | null>(null);
   const hasFetchedCommunities = useRef(false);
-  const { communityMembers, fetched: hasNewCommunitiesData } = getUserCommunities(userId as number, !hasFetchedCommunities.current);
+  const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
 
   useEffect(() => {
     if (!hasNewCommunitiesData) {

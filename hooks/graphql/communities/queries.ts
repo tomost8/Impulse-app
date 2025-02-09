@@ -100,7 +100,7 @@ export const GET_USER_COMMUNITIES = gql`
   }
 `;
 
-export function getUserCommunities(userId: number, shouldFetch: boolean = true) {
+export function useGetUserCommunities(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_USER_COMMUNITIES, {
     variables: { userId },
     skip: !shouldFetch,
