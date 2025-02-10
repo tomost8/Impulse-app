@@ -32,42 +32,18 @@ const DisplayPicturePage = (props: any) => {
     const hasFetchedActivities = useRef(false);
     const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId as number, authToken, !hasFetchedActivities.current);
 
-    const friendsRef = useRef<any[] | null>(null);
-    const hasFetchedFriends = useRef(false);
-    const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
-
-    const groupsRef = useRef<any[] | null>(null);
-    const hasFetchedGroups = useRef(false);
-    const { chatMembers, fetched: hasNewGroupsData } = useGetUserChats(userId as number, !hasFetchedGroups.current);
-
-    const communitiesRef = useRef<any[] | null>(null);
-    const hasFetchedCommunities = useRef(false);
-    const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
-
     useEffect(() => {
-        if (!hasNewActivitiesData && !hasNewFriendsData && !hasNewGroupsData && !hasNewCommunitiesData) {
+        if (!hasNewActivitiesData) {
             return;
         }
         if (hasNewActivitiesData) {
             activitiesRef.current = activities;
             hasFetchedActivities.current = true;
         }
-        if (hasNewFriendsData) {
-            friendsRef.current = friends;
-            hasFetchedFriends.current = true;
-        }
-        if (hasNewGroupsData) {
-            groupsRef.current = chatMembers;
-            hasFetchedGroups.current = true;
-        }
-        if (hasNewCommunitiesData) {
-            communitiesRef.current = communityMembers;
-            hasFetchedCommunities.current = true;
-        }
-        if (hasFetchedActivities.current && hasFetchedFriends.current && hasFetchedGroups.current && hasFetchedCommunities.current) {
+        if (hasFetchedActivities.current) {
             setRenderCounter(prev => prev + 1);
         }
-    }, [hasNewActivitiesData, hasNewFriendsData, hasNewGroupsData, hasNewCommunitiesData]);
+    }, [hasNewActivitiesData]);
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalTab, setModalTab] = useState<string>("activity");
@@ -84,18 +60,14 @@ const DisplayPicturePage = (props: any) => {
     const hideModal = () => setModalVisible(false);
 
     // Debug
-    const loading = !hasFetchedActivities.current || !hasFetchedFriends.current || !hasFetchedGroups.current || !hasFetchedCommunities.current; 
+    const loading = !hasFetchedActivities.current; 
     if (debugRenders && !loading) {
-        console.log("Rendering SendPicturePage\n",
+        console.log("Rendering DisplayPicturePage\n",
             "Activities:", activitiesRef.current, "\n",
-            "Friends:", friendsRef.current, "\n",
-            "Groups:", groupsRef.current, "\n",
-            "Communities:", communitiesRef.current, "\n",
             "Modal Tab:", modalTab, "\n",
             "Render Counter:", renderCounter, "\n",
         );
     }
-    
 
     return (
         <View style={styles.container}>

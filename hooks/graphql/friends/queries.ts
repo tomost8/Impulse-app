@@ -23,6 +23,7 @@ export const GET_FRIENDS = gql`
         }
         role
         status
+        chat_id
       }
       errors {
         field
