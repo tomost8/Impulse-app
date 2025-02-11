@@ -14,7 +14,7 @@ const HomePage = (props: any) => {
 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current);
+  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
   
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);

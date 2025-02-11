@@ -22,8 +22,14 @@ function SocialScreen({
   }
   return (
     <ScrollView>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/social/explore')}>
+        <Text style={styles.text}>Explore</Text>
+      </TouchableOpacity>
       <View style={styles.section}>
-        <Text style={styles.text}>Communities</Text>
+        <Text style={styles.text}>Friends Feed</Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.text}>Communities Feed</Text>
         {(
           communityMembers.map((communityMember: any) => (
             <TouchableOpacity
@@ -37,11 +43,6 @@ function SocialScreen({
             </TouchableOpacity>
           ))
         )}
-      </View>
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/social/explore')}>
-          <Text style={styles.text}>Explore</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );

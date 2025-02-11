@@ -1,26 +1,10 @@
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { getCommunity } from '../../hooks/graphql/communities/queries';
+import { useGetCommunity } from '../../hooks/graphql/communities/queries';
 
 export default function CommunityScreen() {
   const { id } = useLocalSearchParams();
-  const { community, isLoading, error } = getCommunity(Number(id));
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator color="white" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.error}>{error}</Text>
-      </View>
-    );
-  }
+  const { community } = useGetCommunity(Number(id));
 
   return (
     <View style={styles.container}>

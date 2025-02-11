@@ -30,6 +30,8 @@ export const HeaderContext = createContext<{
 });
 
 export const SocialDataContext = createContext<{
+  userId: number;
+  authToken: string;
   friends: any[] | null;
   groups: any[] | null;
   communities: any[] | null;
@@ -134,6 +136,8 @@ export default function CameraLayout() {
       flash, setFlash,
     }}>
       <SocialDataContext.Provider value={{
+        userId: userId as number,
+        authToken: authToken as string,
         friends: friendsRef.current,
         groups: groupsRef.current,
         communities: communitiesRef.current

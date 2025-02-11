@@ -62,7 +62,7 @@ function AddFriendsScreen({
           })
         ) : (
           users.map((user: any) => {
-            const matchesSearch = user.username.includes(searchQuery);
+            const matchesSearch = user.username && user.username.includes(searchQuery);
             const isFriend = friends.some((friend: any) => friend.friend.id === user.id);
             const isDisplay = matchesSearch && !isFriend;
             

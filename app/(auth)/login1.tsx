@@ -30,12 +30,8 @@ export default function Login() {
     setError(null);
     try {
       let authToken;
-      if (API_CONFIG.API_ENV === 'local') {
-        authToken = email;
-      } else {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password); // imported from firebase/auth
-        authToken = await userCredential.user.getIdToken();
-      }
+      const userCredential = await signInWithEmailAndPassword(auth, email, password); // imported from firebase/auth
+      authToken = await userCredential.user.getIdToken();
       console.log("authToken", authToken);
       const { data } = await firebaseAuth({
         context: {

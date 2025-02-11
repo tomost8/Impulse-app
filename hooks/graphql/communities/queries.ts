@@ -5,10 +5,10 @@ import { debugQueries } from '@/constants/debug';
 export const GET_COMMUNITIES = gql`
   query {
     getAllCommunities {
+      success
       communities {
         id
         name
-        description
         thumbnail
         influencer {
           id
@@ -17,11 +17,15 @@ export const GET_COMMUNITIES = gql`
           email
         }
       }
+      errors {
+        field
+        message
+      }
     }
   }
 `;
 
-export function getCommunities(shouldFetch: boolean = true) {
+export function useGetCommunities(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITIES, {
     skip: !shouldFetch,
     onError: (error) => {
@@ -60,7 +64,7 @@ export const GET_COMMUNITY = gql`
   }
 `; 
 
-export function getCommunity(id: number, shouldFetch: boolean = true) {
+export function useGetCommunity(id: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITY, {
     variables: { id },
     skip: !shouldFetch,
@@ -119,5 +123,41 @@ export function useGetUserCommunities(userId: number, shouldFetch: boolean = tru
   };
 } 
 
+// Query - Get Category Communities (by Category)
+export const GET_CATEGORY_COMMUNITIES = gql`
+  query ($category: Category!) {
+    getCategoryCommunities(category: $category) {
+      success
+      community_categories {
+        community {
+          id
+          name
+        }
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
 
+export function useGetCategoryCommunities(category: string, shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_CATEGORY_COMMUNITIES, {
+    variables: { category },
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetCategoryCommunities data", data, error ? 'error:' + error : '');
+  }
+  return {
+    communityCategories: data?.getCategoryCommunities.community_categories || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
 

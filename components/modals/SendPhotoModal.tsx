@@ -1,9 +1,11 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Modal, Portal, Checkbox } from 'react-native-paper';
 import styles from '@/constants/testStyles';
+
 import { useState, useContext } from 'react';
 import { SocialDataContext } from '@/app/(tabs)/camera/_layout';
 import { debugRenders } from '@/constants/debug';
+import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 
 interface SendPhotoModalProps {
     visible: boolean;
@@ -16,19 +18,14 @@ interface SendPhotoModalProps {
 
 const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSelectedCategory, activities }: SendPhotoModalProps) => {
     const socialData = useContext(SocialDataContext);
+    const userId = socialData?.userId;
+    const authToken = socialData?.authToken;
     const friends = socialData?.friends ?? [];
     const groups = socialData?.groups ?? [];
     const communities = socialData?.communities ?? [];
-  
-    if (debugRenders) {
-      console.log("Rendering SendPhotoModal\n",
-        "Friends:", friends, "\n",
-        "Groups:", groups, "\n",
-        "Communities:", communities, "\n",
-      );
-    }
 
     const [activityID, setActivityID] = useState<string>("");
+    const [activityCategory, setActivityCategory] = useState<string>("");
     const [caption, setCaption] = useState<string>("");
     const [selectedTargets, setSelectedTargets] = useState<{[key: string]: boolean}>({});
 
@@ -38,6 +35,53 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
             [id]: !prev[id]
         }));
     };
+
+    // Mutations
+    const { createPost } = useCreatePost();
+    const [isCreatingPost, setIsCreatingPost] = useState(false);
+    const handleCreatePost = async () => {
+        setIsCreatingPost(true);
+        try {
+            const postTargets = Object.entries(selectedTargets).map(([key, value]) => {
+                const [targetType, targetId] = key.split(/(\d+)/).filter(Boolean);
+                return {
+                    target_type: targetType,
+                    target_id: parseInt(targetId, 10),
+                };
+            });
+            const input = {
+                authorId: userId,
+                activityId: activityID,
+                category: activityCategory,
+                caption: caption,
+                post_targets: postTargets,
+                mediaUrl: "https://www.google.com",
+                //expires_at: new Date(),
+            }
+            console.log("input", input);
+            const response = await createPost(input, authToken as string);
+            console.log("response", response);
+            if (response.success) {
+                console.log("Post created successfully:", response.post);
+            } else {
+                console.error("Oh no! Error creating post:", response.errors);
+            }
+            
+        } catch (error) {
+            console.error("Error creating post:", error);
+        } finally {
+            setIsCreatingPost(false);
+        }
+    }
+
+    // Debug
+    if (debugRenders) {
+      console.log("Rendering SendPhotoModal\n",
+        "Friends:", friends, "\n",
+        "Groups:", groups, "\n",
+        "Communities:", communities, "\n",
+      );
+    }
 
     return (
       <Portal>
@@ -51,7 +95,8 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
                     status={activityID === activity.id ? 'checked' : 'unchecked'}
                     onPress={() => {
                       setActivityID(activity.id);
-                      setSelectedCategory(activity.category);
+                      setSelectedCategory(activity.category); //this is for header
+                      setActivityCategory(activity.category); //this is for mutation input
                     }}
                   />
                   <Text style={styles.text}>{activity.category}</Text>
@@ -123,12 +168,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
                 <Text style={styles.text}>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.button} onPress={() => {
-                Object.entries(selectedTargets)
-                    .filter(([key, value]) => value) // Filter for true values
-                    .forEach(([key]) => {
-                        console.log(`Selected target: ${key}`); // call mutation for post
-                    });
-                console.log("submit activityID", activityID, "caption", caption);
+                handleCreatePost();
                 hideModal();
               }}>
                 <Text style={styles.text}>Submit</Text>
