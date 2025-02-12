@@ -8,34 +8,34 @@ const HomeIconSvg = require("../../../assets/icons/home2.svg").default;
 const ProfileIconSvg = require("../../../assets/icons/profile.svg").default;
 const PeopleIconSvg = require("../../../assets/icons/people.svg").default;
 const BarChartIconSvg = require("../../../assets/icons/barchart-2.svg").default;
-import CameraIconSvg from "../../../assets/icons/camera.svg";
+const CameraIconSvg = require("../../../assets/icons/camera.svg").default;
 
-const BottomNav = ({ navigation }: { navigation: any }) => {
+const BottomNav = () => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
+      <TouchableOpacity style={styles.navItem} onPress={() => console.log("Home")}>
         <HomeIconSvg width="24" height="24" />
         <Text style={styles.label}>Home</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Community")}>
+      <TouchableOpacity style={styles.navItem} onPress={() => console.log("Community")}>
         <PeopleIconSvg width="24" height="24" />
         <Text style={styles.label}>Community</Text>
       </TouchableOpacity>
 
       {/* Center Floating Camera Button */}
       <View style={styles.cameraWrapper}>
-        <TouchableOpacity style={styles.cameraButton} onPress={() => navigation.navigate("Camera")}>
-          {/* <CameraIconSvg width={28} height={28} /> */}
+        <TouchableOpacity style={styles.cameraButton} onPress={() => console.log("Camera")}>
+          <CameraIconSvg width={28} height={28} /> 
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Leaderboard")}>
+      <TouchableOpacity style={styles.navItem} onPress={() => console.log("Leaderboard")}>
         <BarChartIconSvg width="24" height="24" />
         <Text style={styles.label}>Stats</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
+      <TouchableOpacity style={styles.navItem} onPress={() => console.log("Profile")}>
         <ProfileIconSvg width="24" height="24" />
         <Text style={styles.label}>Profile</Text>
       </TouchableOpacity>

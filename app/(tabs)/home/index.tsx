@@ -15,11 +15,11 @@ const HomePage = ({ userId, authToken }: { userId: string; authToken: string }) 
 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current);
+  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(Number(userId), 'POINTS_WEEKLY', !hasFetchedFriends.current);
   
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
-  const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId, authToken, !hasFetchedActivities.current);
+  const { activities, fetched: hasNewActivitiesData } = useGetActivities(Number(userId), authToken, !hasFetchedActivities.current);
 
   useEffect(() => {
     if (!hasNewFriendsData && !hasNewActivitiesData) {

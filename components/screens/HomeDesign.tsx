@@ -12,10 +12,10 @@ type HomeDesignProps = {
   isFriendsLoading: boolean;
   activities: any[];
   isActivitiesLoading: boolean;
-  navigation: any; // Add navigation prop here
+  //navigation: any; // Add navigation prop here
 };
 
-const HomeDesign: React.FC<HomeDesignProps> = ({ friends, isFriendsLoading, activities, isActivitiesLoading, navigation }) => {
+const HomeDesign: React.FC<HomeDesignProps> = ({ friends, isFriendsLoading, activities, isActivitiesLoading}) => {
   return (
     <View style={styles.container}>
       <UserOverview />
@@ -23,7 +23,7 @@ const HomeDesign: React.FC<HomeDesignProps> = ({ friends, isFriendsLoading, acti
       <DailyGoals activities={activities} isLoading={isActivitiesLoading} />
       <Leaderboard friends={friends} isLoading={isFriendsLoading} />
       {/* Pass the navigation prop to BottomNav */}
-      <BottomNav navigation={navigation} /> 
+      {/* <BottomNav navigation={navigation} /> */}
     </View>
   );
 };
