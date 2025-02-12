@@ -8,7 +8,7 @@ const HomeIconSvg = require("../../../assets/icons/home2.svg").default;
 const ProfileIconSvg = require("../../../assets/icons/profile.svg").default;
 const PeopleIconSvg = require("../../../assets/icons/people.svg").default;
 const BarChartIconSvg = require("../../../assets/icons/barchart-2.svg").default;
-//import CameraIconSvg from "../../../assets/icons/camera.svg";
+import CameraIconSvg from "../../../assets/icons/camera.svg";
 
 const BottomNav = ({ navigation }: { navigation: any }) => {
   return (
