@@ -1,42 +1,42 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import PropTypes from "prop-types";
-import { SvgXml } from "react-native-svg"; // ✅ Correctly handle SVGs
+import { SvgProps } from "react-native-svg";
 
-// Import SVGs correctly
-import HomeIconSvg from "../../../assets/icons/home2.svg";
-import ProfileIconSvg from "../../../assets/icons/profile.svg";
-import PeopleIconSvg from "../../../assets/icons/people.svg";
-import BarChartIconSvg from "../../../assets/icons/barchart-2.svg";
+// Update SVG imports to use .default
+const HomeIconSvg = require("../../../assets/icons/home2.svg").default;
+const ProfileIconSvg = require("../../../assets/icons/profile.svg").default;
+const PeopleIconSvg = require("../../../assets/icons/people.svg").default;
+const BarChartIconSvg = require("../../../assets/icons/barchart-2.svg").default;
 //import CameraIconSvg from "../../../assets/icons/camera.svg";
 
 const BottomNav = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
-        <SvgXml xml={HomeIconSvg} width={24} height={24} />
+        <HomeIconSvg width="24" height="24" />
         <Text style={styles.label}>Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Community")}>
-        <SvgXml xml={PeopleIconSvg} width={24} height={24} />
+        <PeopleIconSvg width="24" height="24" />
         <Text style={styles.label}>Community</Text>
       </TouchableOpacity>
 
       {/* Center Floating Camera Button */}
       <View style={styles.cameraWrapper}>
         <TouchableOpacity style={styles.cameraButton} onPress={() => navigation.navigate("Camera")}>
-          {/* <SvgXml xml={CameraIconSvg} width={28} height={28} /> */}
+          {/* <CameraIconSvg width={28} height={28} /> */}
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Leaderboard")}>
-        <SvgXml xml={BarChartIconSvg} width={24} height={24} />
+        <BarChartIconSvg width="24" height="24" />
         <Text style={styles.label}>Stats</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Profile")}>
-        <SvgXml xml={ProfileIconSvg} width={24} height={24} />
+        <ProfileIconSvg width="24" height="24" />
         <Text style={styles.label}>Profile</Text>
       </TouchableOpacity>
     </View>
