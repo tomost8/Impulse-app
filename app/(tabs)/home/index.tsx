@@ -1,15 +1,16 @@
+import HomeDesign from '../../../components/screens/HomeDesign.tsx';
+
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useGetActivities } from '@/hooks/graphql/activities/queries';
 // Components
-import HomeScreen from '@/components/screens/HomeScreen';
+
 // Debug
 import { debugRenders } from '@/constants/debug';
 
-const HomePage = (props: any) => {
-  const { userId, authToken } = props;
+const HomePage = ({ userId, authToken }: { userId: string; authToken: string }) => {
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
@@ -46,7 +47,7 @@ const HomePage = (props: any) => {
     );
   }
   
-  return <HomeScreen 
+  return <HomeDesign
     friends={friendsRef.current || []} 
     isFriendsLoading={!hasFetchedFriends.current}
     activities={activitiesRef.current || []}
