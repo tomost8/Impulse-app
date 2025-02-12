@@ -2,7 +2,7 @@ import { gql, useMutation } from '@apollo/client';
 
 //"query": "mutation ($input: CreateChatInput!) { createChat(input: $input) { success chat { id type title password profile_pic creator { id first_name last_name email } } errors { field message } } }",
 //input: type/title/creator_id
-export const CREATE_CHAT = gql`
+export const CREATE_GROUP = gql`
   mutation ($input: CreateChatInput!) {
     createChat(input: $input) {
       success
@@ -12,9 +12,27 @@ export const CREATE_CHAT = gql`
   }
 `;
 
+export function useCreateGroup() {
+  const [createGroupMutation] = useMutation(CREATE_GROUP);
+  const createGroup = async (input: any) => {
+    try {
+      const response = await createGroupMutation({ 
+        variables: { 
+          input: input
+        }
+      });
+      return response.data.createChat;
+    } catch (error) {
+      console.error('Create Group failed:', error);
+      throw error;
+    }
+  };
+  return { createGroup };
+}
+
 // Mutation - Invite User to Chat (default status: PENDING)
 // input: chat_id/user_id
-export const INVITE_USER_TO_CHAT = gql`
+export const CREATE_CHAT_MEMBER = gql`
   mutation ($input: CreateChatMemberInput!) {
     createChatMember(input: $input) {
       success
@@ -28,3 +46,21 @@ export const INVITE_USER_TO_CHAT = gql`
     }
   }
 `;
+
+export function useCreateChatMember() {
+  const [createChatMemberMutation] = useMutation(CREATE_CHAT_MEMBER);
+  const createChatMember = async (input: any) => {
+    try {
+      const response = await createChatMemberMutation({ 
+        variables: { 
+          input: input
+        }
+      });
+      return response.data.createChatMember;
+    } catch (error) {
+      console.error('Create Chat Member failed:', error);
+      throw error;
+    }
+  };
+  return { createChatMember };
+}

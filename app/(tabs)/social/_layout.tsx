@@ -11,6 +11,10 @@ export default function CommunitiesLayout() {
         name="explore" 
         options={{ headerShown: true }}
       />
+      <Stack.Screen 
+        name="createCommunity" 
+        options={{ headerShown: true }}
+      />
     </Stack>
   );
 }

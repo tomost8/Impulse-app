@@ -1,36 +1,42 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { getUserCommunities } from '../../../hooks/graphql/communities/queries';
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
-import useUserInfo from '@/hooks/useUserInfo';
 
-export default function CommunitiesScreen() {
-  const { userId } = useUserInfo();
-  
-  const { communityMembers, isLoading, error } = getUserCommunities(userId as number);
-  if (userId !== null) {
-    console.log('Community Members data:', communityMembers);
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
+import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
+// Components
+// Debug
+import { debugRenders } from '@/constants/debug';
+
+function SocialScreen({
+  communityMembers,
+  isCommunityMembersLoading,
+}: {
+  communityMembers: any,
+  isCommunityMembersLoading: boolean,
+}) {
+  if (isCommunityMembersLoading) {
+    return <Text>Loading...</Text>;
   }
-  
-
-  const handleCommunityPress = (id: string | number) => {
-    router.push(`/community/${id}`);
-  };
-
   return (
     <ScrollView>
+      <TouchableOpacity style={styles.button} onPress={() => router.push('/social/explore')}>
+        <Text style={styles.text}>Explore</Text>
+      </TouchableOpacity>
       <View style={styles.section}>
-        <Text style={styles.text}>Communities</Text>
-        {isLoading ? (
-          <ActivityIndicator color="white" />
-        ) : error ? (
-          <Text style={styles.error}>{error}</Text>
-        ) : (
+        <Text style={styles.text}>Friends Feed</Text>
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.text}>Communities Feed</Text>
+        {(
           communityMembers.map((communityMember: any) => (
             <TouchableOpacity
               style={styles.button}
               key={communityMember.community.id}
-              onPress={() => handleCommunityPress(communityMember.community.id)}
+              onPress={() => router.push(`/community/${communityMember.community.id}`)}
             >
               <Text style={styles.text}>
                 {communityMember.community.name}
@@ -39,11 +45,56 @@ export default function CommunitiesScreen() {
           ))
         )}
       </View>
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/communities/explore')}>
-          <Text style={styles.text}>Explore</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 }
+
+const SocialPage = (props: any) => {
+  const { userId, authToken } = props;
+  const [renderCounter, setRenderCounter] = useState(0);
+
+  // Queries for Loading State
+  const communitiesRef = useRef<any[] | null>(null);
+  const hasFetchedCommunities = useRef(false);
+  const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
+
+  const postsRef = useRef<any[] | null>(null);
+  const hasFetchedPosts = useRef(false);
+  const { posts, fetched: hasNewPostsData } = useGetPostsByUserId(userId as number, 0, 10);
+
+  useEffect(() => {
+    if (!hasNewCommunitiesData && !hasNewPostsData) {
+      return;
+    }
+    if (hasNewCommunitiesData) {
+      communitiesRef.current = communityMembers;
+      hasFetchedCommunities.current = true;
+    }
+    if (hasNewPostsData) {
+      postsRef.current = posts;
+      hasFetchedPosts.current = true;
+    }
+    if (hasFetchedCommunities.current && hasFetchedPosts.current) {
+      setRenderCounter(prev => prev + 1);
+    }
+  }, [hasNewCommunitiesData, hasNewPostsData]);
+
+  // Debug
+  const loading = !hasFetchedCommunities.current || !hasFetchedPosts.current;
+  if (debugRenders && !loading) {
+    console.log("Rendering SocialPage\n",
+      "Communities:", communitiesRef.current, "\n",
+      "Posts:", postsRef.current, "\n",
+      "Render Counter:", renderCounter, "\n",
+    );
+  }
+  
+  return (
+    <SocialScreen 
+      communityMembers={communitiesRef.current}
+      isCommunityMembersLoading={!hasFetchedCommunities.current}
+    />
+  );
+}
+
+export default AuthWrapper(SocialPage);

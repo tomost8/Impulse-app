@@ -23,6 +23,7 @@ export const GET_FRIENDS = gql`
         }
         role
         status
+        chat_id
       }
       errors {
         field
@@ -87,7 +88,7 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriendsLeaderboard error", error ? 'error:' + error : '');
+    console.log("useGetFriendsLeaderboard", data, error ? 'error:' + error : '');
   }
   return {
     friends: data?.getFriendships.friendships || [],
@@ -129,7 +130,7 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriendRequests data", data, error ? 'error:' + error : '');
+    console.log("useGetFriendRequests", role, "data", data, error ? 'error:' + error : '');
   }
   return {
     friendRequests: data?.getFriendRequests.friendships || [],

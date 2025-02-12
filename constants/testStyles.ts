@@ -43,6 +43,25 @@ const styles = StyleSheet.create({
     margin: 20,
     borderRadius: 8,
   },
+  image: {
+    width: 300, // Set your desired width
+    height: 300, // Set your desired height
+    resizeMode: 'contain', // Adjust the image to fit within the specified dimensions
+    borderRadius: 10, // Optional: rounded corners for the image
+    borderWidth: 2, // Optional: border around the image
+    borderColor: '#ccc', // Optional: border color
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    justifyContent: 'space-between',
+  },
+  checkbox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
 });
 
 export default styles; 

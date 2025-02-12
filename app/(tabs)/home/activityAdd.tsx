@@ -8,6 +8,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 // Debug
 import { debugRenders } from '@/constants/debug';
+import { router } from 'expo-router';
 
 function AddActivityScreen({
   selectedActivities,
@@ -70,6 +71,7 @@ const AddActivityPage = (props: any) => {
       };
       const response = await createActivity(input, authToken);
       if (response.success) {
+        router.back();
         console.log("Activity created successfully", response);
       } else {
         console.error("Error creating activity:", response);

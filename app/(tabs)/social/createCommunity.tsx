@@ -1,0 +1,156 @@
+import {useState, useEffect, useRef} from 'react';
+import AuthWrapper from '@/components/auth/AuthWrapper';
+// GraphQL hooks
+import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
+// Components
+import styles from '@/constants/testStyles';
+import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { Checkbox } from 'react-native-paper';
+import { goals } from '@/constants/goals';
+// Debug
+import { debugRenders } from '@/constants/debug';
+
+function CreateCommunityScreen({
+  handleCreateCommunity,
+  isCreatingCommunity,
+  formData,
+  handleFormDataChange,
+  communityCategories,
+  handleCategoryChange,
+}: {
+  handleCreateCommunity: (input: any) => void;
+  isCreatingCommunity: boolean;
+  formData: any;
+  handleFormDataChange: (field: string, value: string) => void;
+  communityCategories: string[];
+  handleCategoryChange: (category: string) => void;
+}) {
+  if (isCreatingCommunity) {
+    return <Text>Loading...</Text>;
+  }
+  return (
+    <View>
+      <Text>Create Community</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Name"
+        placeholderTextColor={"gray"}
+        value={formData.name}
+        onChangeText={(text) => handleFormDataChange('name', text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        placeholderTextColor={"gray"}
+        value={formData.description}
+        onChangeText={(text) => handleFormDataChange('description', text)}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Thumbnail"
+        placeholderTextColor={"gray"}
+        value={formData.thumbnail}
+        onChangeText={(text) => handleFormDataChange('thumbnail', text)}
+      />
+      {goals.map((goal) => (
+        <View key={goal.id} style={styles.checkbox}>
+          <Text style={styles.text}>{goal.label}</Text>
+          <Checkbox
+            status={communityCategories.includes(goal.category) ? 'checked' : 'unchecked'}
+            onPress={() => handleCategoryChange(goal.category)}
+          />
+        </View>
+      ))}
+      <TouchableOpacity 
+        style={[styles.button, !formData.name && {
+          backgroundColor: 'gray',
+          opacity: 0.5, 
+        }]} 
+        onPress={() => handleCreateCommunity(formData)} 
+        disabled={!formData.name}
+      >
+        <Text>Create</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const CreateCommunityPage = (props: any) => {
+  const { userId, authToken } = props;
+
+  // Mutations
+  const {createCommunity} = useCreateCommunity();
+  const {createCommunityCategory} = useCreateCommunityCategory();
+  const [isCreatingCommunity, setIsCreatingCommunity] = useState(false);
+  const handleCreateCommunity = async (input: any) => {
+    setIsCreatingCommunity(true);
+    try {
+      const input = {
+        influencer_id: userId,
+        name: formData.name,
+        ...(formData.description && { description: formData.description }),
+        ...(formData.thumbnail && { thumbnail: formData.thumbnail }),
+      }
+      const response = await createCommunity(input);
+      if (response.success) {
+        const communityId = response.community.id;
+        for (const category of communityCategories) {
+          const input_category = {
+            community_id: communityId,
+            category: category
+          }
+          const categoryResponse = await createCommunityCategory(input_category);
+          if (categoryResponse.success) {
+          } else {
+            throw new Error("createCommunityCategory response.success false:" + categoryResponse.errors);
+          }
+        }
+        console.log("Community and Categories created successfully");
+      } else {
+        throw new Error("createCommunity response.success false:" + response.errors);
+      }
+    } catch (error) {
+      console.error('Create Community failed:', error);
+    } finally {
+      setIsCreatingCommunity(false);
+    }
+  };
+
+  // Form Data
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    thumbnail: '',
+  });
+  const [communityCategories, setCommunityCategories] = useState<string[]>([]);
+
+  // Form Data Handlers
+  const handleFormDataChange = (field: string, value: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setCommunityCategories((prev) => 
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
+
+  // Debug
+  if (debugRenders) {
+    console.log("Rendering CreateCommunityPage");
+  }
+
+  return <CreateCommunityScreen
+    handleCreateCommunity={handleCreateCommunity}
+    isCreatingCommunity={isCreatingCommunity}
+    formData={formData}
+    handleFormDataChange={handleFormDataChange}
+    communityCategories={communityCategories}
+    handleCategoryChange={handleCategoryChange}
+  />;
+};
+
+export default AuthWrapper(CreateCommunityPage);

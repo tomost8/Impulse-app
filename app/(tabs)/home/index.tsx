@@ -10,16 +10,17 @@ import { useGetActivities } from '@/hooks/graphql/activities/queries';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
-const HomePage = ({ userId, authToken }: { userId: string; authToken: string }) => {
+const HomePage = (props: any) => {
+  const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(Number(userId), 'POINTS_WEEKLY', !hasFetchedFriends.current);
+  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
   
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
-  const { activities, fetched: hasNewActivitiesData } = useGetActivities(Number(userId), authToken, !hasFetchedActivities.current);
+  const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId, authToken, !hasFetchedActivities.current);
 
   useEffect(() => {
     if (!hasNewFriendsData && !hasNewActivitiesData) {
