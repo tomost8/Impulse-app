@@ -43,6 +43,41 @@ export function useGetCommunities(shouldFetch: boolean = true) {
   };
 } 
 
+// Query - Get All Categories
+export const GET_ALL_CATEGORIES = gql`
+  query {
+    getAllCategories {
+      success
+      community_categories {
+        community_id
+        category
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetAllCategories(shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_ALL_CATEGORIES, {
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetAllCategories data", data, error ? 'error:' + error : '');
+  }
+  return {
+    categories: data?.getAllCategories.community_categories || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+} 
+
 // Query - Get Community (by Community ID)
 export const GET_COMMUNITY = gql`
   query ($id: Int!) {
@@ -82,6 +117,43 @@ export function useGetCommunity(id: number, shouldFetch: boolean = true) {
     error: error?.message || null
   };
 } 
+
+// Query - Get Community Members (by Community ID)
+export const GET_COMMUNITY_MEMBERS = gql`
+  query ($communityId: Int!) {
+    getCommunityMembers(id: $communityId) {
+      success
+      community_members {
+        user { id first_name last_name username}
+        role
+        status
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetCommunityMembers(communityId: number, shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_COMMUNITY_MEMBERS, {
+    variables: { communityId },
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetCommunityMembers data", data, error ? 'error:' + error : '');
+  }
+  return {
+    communityMembers: data?.getCommunityMembers.community_members || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
 
 // Query - Get User Communities (by User ID)
 export const GET_USER_COMMUNITIES = gql`

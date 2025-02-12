@@ -6,6 +6,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
+import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 // Components
 // Debug
 import { debugRenders } from '@/constants/debug';
@@ -57,24 +58,33 @@ const SocialPage = (props: any) => {
   const hasFetchedCommunities = useRef(false);
   const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
 
+  const postsRef = useRef<any[] | null>(null);
+  const hasFetchedPosts = useRef(false);
+  const { posts, fetched: hasNewPostsData } = useGetPostsByUserId(userId as number, 0, 10);
+
   useEffect(() => {
-    if (!hasNewCommunitiesData) {
+    if (!hasNewCommunitiesData && !hasNewPostsData) {
       return;
     }
     if (hasNewCommunitiesData) {
       communitiesRef.current = communityMembers;
       hasFetchedCommunities.current = true;
     }
-    if (hasFetchedCommunities.current) {
+    if (hasNewPostsData) {
+      postsRef.current = posts;
+      hasFetchedPosts.current = true;
+    }
+    if (hasFetchedCommunities.current && hasFetchedPosts.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunitiesData]);
+  }, [hasNewCommunitiesData, hasNewPostsData]);
 
   // Debug
-  const loading = !hasFetchedCommunities.current;
+  const loading = !hasFetchedCommunities.current || !hasFetchedPosts.current;
   if (debugRenders && !loading) {
     console.log("Rendering SocialPage\n",
       "Communities:", communitiesRef.current, "\n",
+      "Posts:", postsRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
     );
   }

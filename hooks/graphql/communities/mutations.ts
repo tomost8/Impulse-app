@@ -64,3 +64,36 @@ export function useCreateCommunityCategory() {
   };
   return { createCommunityCategory };
 }
+
+const CREATE_COMMUNITY_MEMBER = gql`
+  mutation ($input: CreateCommunityMemberInput!) {
+    createCommunityMember(input: $input) {
+      success
+      community_member {
+        community { id name influencer { id first_name last_name } }
+        user { id first_name last_name }
+        role status
+      }
+      errors { field message }
+    }
+  }
+`;
+
+// Required Inputs: community_id, user_id
+export function useCreateCommunityMember() {
+  const [createCommunityMemberMutation] = useMutation(CREATE_COMMUNITY_MEMBER);
+  const createCommunityMember = async (input: any) => {
+    try {
+      const response = await createCommunityMemberMutation({ 
+        variables: { 
+          input: input
+        }
+      });
+      return response.data.createCommunityMember;
+    } catch (error) {
+      console.error('Create Community Member failed:', error);
+      throw error;
+    }
+  };
+  return { createCommunityMember };
+}

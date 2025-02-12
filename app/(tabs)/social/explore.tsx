@@ -5,7 +5,8 @@ import styles from '@/constants/testStyles';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetCommunities, useGetUserCommunities, useGetCategoryCommunities } from '../../../hooks/graphql/communities/queries';
+import { useGetCommunities, useGetUserCommunities, useGetAllCategories } from '../../../hooks/graphql/communities/queries';
+import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 // Debug
@@ -28,17 +29,16 @@ const ExplorePage = (props: any) => {
   const hasFetchedUserCommunities = useRef(false);
   const { communityMembers, fetched: hasNewUserCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedUserCommunities.current);
 
+  const categoriesRef = useRef<any[] | null>(null);
+  const hasFetchedCategories = useRef(false);
+  const { categories, fetched: hasNewCategoriesData } = useGetAllCategories(!hasFetchedCategories.current);
+
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
   const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
 
-  const communityCategoriesRef = useRef<any[] | null>(null); // Need to figure out category filtering
-  const hasFetchedCategoryCommunities = useRef(false);
-  const { communityCategories, fetched: hasNewCategoryCommunitiesData } = useGetCategoryCommunities("PASSION_HOBBY", false);
-
-
   useEffect(() => {
-    if (!hasNewCommunitiesData && !hasNewUserCommunitiesData && !hasNewUserData) {
+    if (!hasNewCommunitiesData && !hasNewUserCommunitiesData && !hasNewCategoriesData && !hasNewUserData) {
       return;
     }
     if (hasNewCommunitiesData) {
@@ -49,33 +49,63 @@ const ExplorePage = (props: any) => {
       userCommunitiesRef.current = communityMembers;
       hasFetchedUserCommunities.current = true;
     }
+    if (hasNewCategoriesData) {
+      categoriesRef.current = categories;
+      hasFetchedCategories.current = true;
+    }
     if (hasNewUserData) {
       userRef.current = user;
       hasFetchedUser.current = true;
     }
-    if (hasFetchedCommunities.current && hasFetchedUserCommunities.current && hasFetchedUser.current) {
+    if (hasFetchedCommunities.current && hasFetchedUserCommunities.current && hasFetchedCategories.current && hasFetchedUser.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunitiesData]);
+  }, [hasNewCommunitiesData, hasNewUserCommunitiesData, hasNewCategoriesData, hasNewUserData]);
 
-  // Search + Filtering, need to add functionality
+  // Mutations
+  const { createCommunityMember } = useCreateCommunityMember();
+  const [isCreatingCommunityMember, setIsCreatingCommunityMember] = useState(false);
+  const handleCreateCommunityMember = async (communityId: number) => {
+    setIsCreatingCommunityMember(true);
+    try {
+      const input = {
+        community_id: communityId,
+        user_id: userId
+      };
+      const response = await createCommunityMember(input);
+      if (response.success) {
+        console.log("Community Member created successfully:", response);
+      } else {
+        console.error("Error creating community member:", response);
+      }
+    } catch (error) {
+      console.error("Error creating community member:", error);
+    } finally {
+      setIsCreatingCommunityMember(false);
+    }
+  }
+
+  // Search + Filtering
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
 
-  // Get communities not in userCommunities
-  const joinableCommunities = communitiesRef.current?.filter((community: any) => 
-    !userCommunitiesRef.current?.some((userCommunity: any) => userCommunity.community.id === community.id)
+  // Get communities not in userCommunities and filter by selectedGoal
+  const filteredCommunities = communitiesRef.current?.filter((community: any) => 
+    !userCommunitiesRef.current?.some((userCommunity: any) => userCommunity.community.id === community.id) &&
+    (selectedGoal === null || categoriesRef.current?.some((category: any) => 
+      category.community_id === community.id && category.category === selectedGoal
+    ))
   );
 
   // Debug
-  const loading = !hasFetchedCommunities.current || !hasFetchedUserCommunities.current || !hasFetchedUser.current;
+  const loading = !hasFetchedCommunities.current || !hasFetchedUserCommunities.current || !hasFetchedUser.current || !hasFetchedCategories.current;
   if (debugRenders && !loading) {
     console.log("Rendering ExplorePage\n",
       "Communities:", communitiesRef.current, "\n",
-      "User Communities:", userCommunitiesRef.current, "\n",
+      "Selected Goal:", selectedGoal, "\n",
+      "Filtered Communities:", filteredCommunities, "\n",
       "User:", userRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
-      "Joinable Communities:", joinableCommunities, "\n",
     );
   }
 
@@ -95,7 +125,7 @@ const ExplorePage = (props: any) => {
       </View>
       <View style={styles.section}>
         <Text style={styles.text}>Filter Communities by Category</Text>
-        <RadioButton.Group onValueChange={value => setSelectedGoal(value)} value={selectedGoal || ''}>
+        <RadioButton.Group onValueChange={setSelectedGoal} value={selectedGoal || ''}>
           {goals.map((goal) => (
             <View key={goal.id} style={styles.checkbox}>
               <Text style={styles.text}>{goal.label}</Text>
@@ -106,9 +136,9 @@ const ExplorePage = (props: any) => {
       </View>
       
       <View style={styles.section}>
-        <Text style={styles.text}>Communities Not in User Communities</Text>
+        <Text style={styles.text}>Communities List (Filtered)</Text>
         {(
-          joinableCommunities
+          filteredCommunities
             ?.filter((community: any) => community.name.toLowerCase().includes(searchQuery.toLowerCase()))
             .map((community: any) => (
               <View key={community.id}>
@@ -122,32 +152,7 @@ const ExplorePage = (props: any) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={styles.button}
-                  onPress={() => console.log("Join Group")}
-                >
-                  <Text style={styles.text}>Join Group</Text>
-                </TouchableOpacity>
-              </View>
-            ))
-        )}
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.text}>All Communities (Testing)</Text>
-        {(
-          communitiesRef.current
-            ?.filter((community: any) => community.name.toLowerCase().includes(searchQuery.toLowerCase()))
-            .map((community: any) => (
-              <View key={community.id}>
-                <Text style={styles.text}>{community.name}</Text>
-                <Text style={styles.text}>Number of Members (need to retrieve from backend)</Text>
-                <TouchableOpacity 
-                  style={styles.button}
-                  onPress={() => router.push(`/community/${community.id}`)}
-                >
-                  <Text style={styles.text}>Group View</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.button}
-                  onPress={() => console.log("Join Group")}
+                  onPress={() => handleCreateCommunityMember(community.id)}
                 >
                   <Text style={styles.text}>Join Group</Text>
                 </TouchableOpacity>
