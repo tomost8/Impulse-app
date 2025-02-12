@@ -98,7 +98,8 @@ const DisplayPicturePage = (props: any) => {
                 currentTab={modalTab}
                 setCurrentTab={setModalTab}
                 setSelectedCategory={context.setCategory}
-                activities={activitiesRef.current || []}
+                activities={activitiesRef.current || []} // Need activity ID in form data
+                imageSource={imageSource} // Need image source in form data
             />
         </View>
     );

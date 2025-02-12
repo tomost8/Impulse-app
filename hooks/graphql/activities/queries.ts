@@ -14,6 +14,7 @@ export const GET_ACTIVITIES = gql`
         duration
         scheduledDatetime
         status
+        createdAt
       }
     }
   }

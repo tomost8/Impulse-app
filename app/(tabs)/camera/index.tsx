@@ -41,6 +41,7 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
+        console.log("photo", photo, photo?.uri);
         if (photo && photo.uri) {
           router.push({
             pathname: '/camera/displayPicture',

@@ -33,7 +33,7 @@ export const CREATE_POST = gql`
 export function useCreatePost() {
   const [createPostMutation] = useMutation(CREATE_POST);
   const createPost = async (input: any, authToken: string) => {
-    console.log("Create Post input", input);
+    //console.log("Create Post input", input);
     try {
       const response = await createPostMutation({ 
         variables: { 

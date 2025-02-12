@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
 
@@ -6,7 +6,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
-import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
+import { useGetPosts, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 // Components
 // Debug
 import { debugRenders } from '@/constants/debug';
@@ -14,11 +14,15 @@ import { debugRenders } from '@/constants/debug';
 function SocialScreen({
   communityMembers,
   isCommunityMembersLoading,
+  posts,
+  isPostsLoading,
 }: {
   communityMembers: any,
   isCommunityMembersLoading: boolean,
+  posts: any,
+  isPostsLoading: boolean,
 }) {
-  if (isCommunityMembersLoading) {
+  if (isCommunityMembersLoading || isPostsLoading) {
     return <Text>Loading...</Text>;
   }
   return (
@@ -30,7 +34,7 @@ function SocialScreen({
         <Text style={styles.text}>Friends Feed</Text>
       </View>
       <View style={styles.section}>
-        <Text style={styles.text}>Communities Feed</Text>
+        <Text style={styles.text}>Communities List</Text>
         {(
           communityMembers.map((communityMember: any) => (
             <TouchableOpacity
@@ -44,6 +48,26 @@ function SocialScreen({
             </TouchableOpacity>
           ))
         )}
+      </View>
+      <View style={styles.section}>
+        <Text style={styles.text}>Community Feed (Posts)</Text>
+        {posts.map((post: any) => (
+          <View key={post.id}>
+            <Image 
+              source={{ uri: post.mediaUrl }}
+              style={{ 
+                width: 100,
+                height: 100,
+                resizeMode: 'contain'
+              }}
+            />
+            <Text style={styles.text}>Community Button</Text>
+            <Text style={styles.text}>{post.caption}</Text>
+            <Text style={styles.text}>PFP: {post.author.profile_picture}, Name: {post.author.first_name} {post.author.last_name}</Text>
+            <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}"</Text>
+            <Text style={styles.text}>Message count + Like count</Text>
+          </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -60,7 +84,7 @@ const SocialPage = (props: any) => {
 
   const postsRef = useRef<any[] | null>(null);
   const hasFetchedPosts = useRef(false);
-  const { posts, fetched: hasNewPostsData } = useGetPostsByUserId(userId as number, 0, 10);
+  const { posts, fetched: hasNewPostsData } = useGetPosts(userId as number, authToken, "community", true, 0, 10, !hasFetchedPosts.current);
 
   useEffect(() => {
     if (!hasNewCommunitiesData && !hasNewPostsData) {
@@ -93,6 +117,8 @@ const SocialPage = (props: any) => {
     <SocialScreen 
       communityMembers={communitiesRef.current}
       isCommunityMembersLoading={!hasFetchedCommunities.current}
+      posts={postsRef.current}
+      isPostsLoading={!hasFetchedPosts.current}
     />
   );
 }

@@ -1,4 +1,5 @@
-import HomeDesign from '../../../components/screens/HomeDesign';
+import HomeDesign from '@/components/screens/HomeDesign';
+import HomeScreen from '@/components/screens/HomeScreen';
 
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
@@ -48,7 +49,7 @@ const HomePage = (props: any) => {
     );
   }
   
-  return <HomeDesign
+  return <HomeScreen
     friends={friendsRef.current || []} 
     isFriendsLoading={!hasFetchedFriends.current}
     activities={activitiesRef.current || []}
