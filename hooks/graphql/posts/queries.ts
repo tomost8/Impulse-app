@@ -122,6 +122,58 @@ export function useGetFeed(currentUserId: number, authToken: string, shouldFetch
   };
 }
 
+
+// Get Post by Post ID
+const GET_POST = gql`
+  query($id: Int!) {
+    post(id: $id) {
+      success
+      post {
+        id
+        mediaUrl
+        caption
+        author {
+          id
+          profile_picture
+          first_name
+          last_name
+        }
+        created_at
+        expires_at
+        category
+        liked
+        likeCount
+        comments {
+          id
+        }
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetPost(id: number, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_POST, {
+    skip: !shouldFetch,
+    variables: { id },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetPost data", data, error ? 'error:' + error : '');
+  }
+  return {
+    post: data?.post.post || null,
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
 // Variables: 
 const GET_POSTS_BY_USER_ID = gql`
   query($userId: Int!, $skip: Int, $take: Int) {

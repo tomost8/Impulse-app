@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image, Touchable } from 'react-native';
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
 
@@ -7,6 +7,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 import { useGetFeed, useGetPosts, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
+import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 // Debug
 import { debugRenders } from '@/constants/debug';
@@ -18,6 +19,11 @@ function SocialScreen({
   isFriendsFeedLoading,
   communityFeed,
   isCommunityFeedLoading,
+  handleLikePost,
+  handleUnlikePost,
+  isHandlingLike,
+  isHandlingUnlike,
+  updatePostLikeState,
 }: {
   communityMembers: any,
   isCommunityMembersLoading: boolean,
@@ -25,8 +31,13 @@ function SocialScreen({
   isFriendsFeedLoading: boolean,
   communityFeed: any,
   isCommunityFeedLoading: boolean,
+  handleLikePost: (postId: number) => Promise<void>,
+  handleUnlikePost: (postId: number) => Promise<void>,
+  isHandlingLike: boolean,
+  isHandlingUnlike: boolean,
+  updatePostLikeState: (postId: number, liked: boolean) => void,
 }) {
-  if (isCommunityMembersLoading || isFriendsFeedLoading || isCommunityFeedLoading) {
+  if (isCommunityMembersLoading || isFriendsFeedLoading || isCommunityFeedLoading || isHandlingLike || isHandlingUnlike) {
     return <Text>Loading...</Text>;
   }
   return (
@@ -38,18 +49,21 @@ function SocialScreen({
         <Text style={styles.text}>Friends Feed (Posts)</Text>
         {friendsFeed.map((post: any) => (
           <View key={post.id}>
-            <Image 
-              source={{ uri: post.mediaUrl }}
-              style={{ 
-                width: 100,
-                height: 100,
-                resizeMode: 'contain'
-              }}
-            />
+            <TouchableOpacity onPress={() => router.push(`/post/${post.id}`)}>
+              <Image 
+                source={{ uri: post.mediaUrl }}
+                style={styles.smallImage}
+              />
+            </TouchableOpacity>
             <Text style={styles.text}>{post.caption}</Text>
             <Text style={styles.text}>PFP: {post.author.profile_picture}, Name: {post.author.first_name} {post.author.last_name}</Text>
             <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}"</Text>
-            <Text style={styles.text}>Message count + Like count</Text>
+            <TouchableOpacity style={styles.button} onPress={() => console.log("Comment Button Pressed")}>
+              <Text style={styles.text}>Comment Button</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => console.log("Like Button Pressed")}>
+              <Text style={styles.text}>Like Button</Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
@@ -69,20 +83,51 @@ function SocialScreen({
           ))
         )}
       </View>
-      <View style={styles.section}>
+      <View>
         <Text style={styles.text}>Community Feed (Posts)</Text>
         {communityFeed.map((post: any) => (
-          <View key={post.id}>
-            <Image 
-              source={{ uri: post.mediaUrl }}
-              style={styles.smallImage}
-            />
-            <Text style={styles.text}>Community Button</Text>
+          <View key={post.id} style={styles.section}>
+            <TouchableOpacity onPress={() => router.push({
+              pathname: "/post/[id]",
+              params: { id: post.id, isLiked: post.liked, likeCount: post.likeCount }
+            })}>
+              <Image 
+                source={{ uri: post.mediaUrl }}
+                style={styles.smallImage}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => console.log("Community Button Pressed")}>
+              <Text style={styles.text}>Community Button</Text>
+            </TouchableOpacity>
             <Text style={styles.text}>{post.caption}</Text>
             <Image source={{ uri: post.author.profile_picture }} style={styles.smallImage} />
             <Text style={styles.text}>Name: {post.author.first_name} {post.author.last_name}</Text>
             <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}"</Text>
-            <Text style={styles.text}>Message count + Like count</Text>
+            <TouchableOpacity style={styles.button} onPress={() => router.push({
+              pathname: "/post/[id]",
+              params: { id: post.id, isLiked: post.liked, likeCount: post.likeCount }
+            })}>
+              <Text style={styles.text}>Comment Button</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[
+                styles.button,
+                post.liked// && styles.likedButton
+              ]} 
+              onPress={() => {
+                const newLikedState = !post.liked;
+                updatePostLikeState(post.id, newLikedState);
+                if (newLikedState) {
+                  handleLikePost(post.id);
+                } else {
+                  handleUnlikePost(post.id);
+                }
+              }}
+            >
+              <Text style={styles.text}>
+                {post.liked ? 'Unlike' : 'Like'} ({post.likeCount})
+              </Text>
+            </TouchableOpacity>
           </View>
         ))}
       </View>
@@ -128,6 +173,58 @@ const SocialPage = (props: any) => {
     }
   }, [hasNewCommunitiesData, hasNewFriendsFeedData, hasNewCommunityFeedData]);
 
+  // Mutations
+  const { likePost } = useLikePost();
+  const { unlikePost } = useUnlikePost();
+  const [isHandlingLike, setIsHandlingLike] = useState(false);
+  const [isHandlingUnlike, setIsHandlingUnlike] = useState(false);
+
+  // Add function to update local post state
+  const updatePostLikeState = (postId: number, liked: boolean) => {
+    if (communityFeedRef.current) {
+      communityFeedRef.current = communityFeedRef.current.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            liked: liked,
+            likeCount: liked ? post.likeCount + 1 : post.likeCount - 1
+          };
+        }
+        return post;
+      });
+      setRenderCounter(prev => prev + 1);
+    }
+  };
+
+  // Update the handlers to use optimistic updates
+  const handleLikePost = async (postId: number) => {
+    setIsHandlingLike(true);
+    try {
+      await likePost(postId, authToken);
+      // No need to refetch - state already updated optimistically
+    } catch (error) {
+      console.error("Error liking post:", error);
+      // Revert optimistic update on error
+      updatePostLikeState(postId, false);
+    } finally {
+      setIsHandlingLike(false);
+    }
+  }
+
+  const handleUnlikePost = async (postId: number) => {
+    setIsHandlingUnlike(true);
+    try {
+      await unlikePost(postId, authToken);
+      // No need to refetch - state already updated optimistically
+    } catch (error) {
+      console.error("Error unliking post:", error);
+      // Revert optimistic update on error
+      updatePostLikeState(postId, true);
+    } finally {
+      setIsHandlingUnlike(false);
+    }
+  }
+
   // Debug
   const loading = !hasFetchedCommunities.current || !hasFetchedFriendsFeed.current || !hasFetchedCommunityFeed.current;
   if (debugRenders && !loading) {
@@ -147,6 +244,11 @@ const SocialPage = (props: any) => {
       isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
       communityFeed={communityFeedRef.current}
       isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
+      handleLikePost={handleLikePost}
+      handleUnlikePost={handleUnlikePost}
+      isHandlingLike={isHandlingLike}
+      isHandlingUnlike={isHandlingUnlike}
+      updatePostLikeState={updatePostLikeState}
     />
   );
 }
