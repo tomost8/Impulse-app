@@ -1,38 +1,58 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import UserOverview from "../ui/HomeOrganisms/UserOverview";
-import QuoteCard from "../ui/HomeOrganisms/QuoteCard";
-import DailyGoals from "../ui/HomeOrganisms/DailyGoals";
-import Leaderboard from "../ui/HomeOrganisms/Leaderboard";
-import BottomNav from "../ui/HomeOrganisms/BottomNav";
+import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import UserOverview from "../ui/HomeComponents/UserOverview";
+import QuoteCard from "../ui/HomeComponents/QuoteCard";
+import DailyGoals from "../ui/HomeComponents/DailyGoals";
+import LeaderboardCard from "../ui/HomeComponents/LeaderboardComponents/LeaderboardCard";
+import BottomNav from "../ui/HomeComponents/BottomNav";
 
-// Define props for HomeDesign
-type HomeDesignProps = {
-  friends: any[];
-  isFriendsLoading: boolean;
-  activities: any[];
-  isActivitiesLoading: boolean;
-  //navigation: any; // Add navigation prop here
-};
+// Dummy Data for UI Testing
+const dummyActivities = [
+  { id: "1", title: "Morning Run", time: "6:00 AM - 7:00 AM", status: "Completed" },
+  { id: "2", title: "Read Book", time: "8:00 PM - 9:00 PM", status: "In Progress" },
+];
 
-const HomeDesign: React.FC<HomeDesignProps> = ({ friends, isFriendsLoading, activities, isActivitiesLoading}) => {
+const dummyFriends = [
+  { id: "1", name: "Andrew", points: 3496, rank: 2 },
+  { id: "2", name: "Pedro", points: 3645, rank: 1 },
+  { id: "3", name: "Freida", points: 3178, rank: 3 },
+];
+
+const HomeDesign: React.FC = () => {
   return (
-    <View style={styles.container}>
-      <UserOverview />
-      <QuoteCard />
-      <DailyGoals activities={activities} isLoading={isActivitiesLoading} />
-      <Leaderboard friends={friends} isLoading={isFriendsLoading} />
-      {/* Pass the navigation prop to BottomNav */}
-      {/* <BottomNav navigation={navigation} /> */}
-    </View>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content}>
+        
+        {/* User Overview & Quote */}
+        <UserOverview />
+        <QuoteCard />
+
+        {/* Daily Goals Section */}
+        <View style={styles.section}>
+          <DailyGoals activities={dummyActivities} isLoading={false} />
+        </View>
+
+        {/* Leaderboard Section */}
+        <View style={styles.section}>
+          <LeaderboardCard friends={dummyFriends} isLoading={false} />
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    padding: 16,
     backgroundColor: "white",
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 60,
+  },
+  section: {
+    marginBottom: 24, // Ensures spacing between sections
   },
 });
 
