@@ -1,5 +1,6 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from '@/constants/testStyles';
+import { useLocalSearchParams } from 'expo-router';
 
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
@@ -24,9 +25,7 @@ function PartnerScreen({
       <Text style={styles.text}>
           Partner Insights
       </Text>
-      <Text style={styles.text}>
-          Profile Picture: {user.profile_picture}
-      </Text>
+      <Image source={{ uri: user.profile_picture }} style={styles.smallImage} />
       <Text style={styles.text}>
           First Name: {user.first_name}
       </Text>
@@ -62,10 +61,12 @@ const PartnerPage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
+  const { chatId, member } = useLocalSearchParams();
+
   // Queries for Loading State
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(Number(userId), !hasFetchedUser.current);
+  const { user, fetched: hasNewUserData } = useGetUser(Number(member), !hasFetchedUser.current);
 
   useEffect(() => {
     if (!hasNewUserData) {

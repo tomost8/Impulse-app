@@ -84,6 +84,14 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 14,
   },
+  //image
+  smallImage: { 
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+    borderWidth: 1,
+    borderColor: '#ccc',
+  }
 });
 
 export default styles; 

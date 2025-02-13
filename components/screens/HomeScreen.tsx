@@ -1,5 +1,5 @@
 import styles from '@/constants/testStyles';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import React from 'react';
 
@@ -60,7 +60,10 @@ function HomeScreen({
       <View style={styles.section}>
         <Text style={styles.text}>Weekly Leaderboard</Text>
         {friends.map((friend: any) => (
-          <Text key={friend.friend.id} style={styles.text}>{friend.friend.username}, {friend.friend.point.weekly_points}</Text>
+          <View key={friend.friend.id} style={styles.container}>
+            <Image source={{ uri: friend.friend.profile_picture }} style={styles.smallImage} />
+            <Text style={styles.text}>{friend.friend.username}, {friend.friend.point.weekly_points}</Text>
+          </View>
         ))}
         <TouchableOpacity style={styles.button} onPress={() => router.push('/home/leaderboards')}>
           <Text style={styles.text}>View All</Text>

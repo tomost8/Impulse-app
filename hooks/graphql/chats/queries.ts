@@ -82,7 +82,7 @@ export const GET_USER_CHATS = gql`
     getUserChats(id: $userId) {
       success
       chat_members {
-        chat { id type title }
+        chat { id type title profile_pic }
         role
         status
       }

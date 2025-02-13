@@ -1,5 +1,5 @@
 import styles from '@/constants/testStyles';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import MyComponent from '@/components/TwoTab';
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -61,6 +61,7 @@ function LeaderboardsScreen({
           {friends && friends.length > 0 ? (
             friends.map((friend: any) => (
               <View key={`friend_${friend.id}`} >
+                <Image source={{ uri: friend.friend.profile_picture }} style={styles.smallImage} />
                 <Text style={styles.text}>
                   {friend.friend.username}, 
                   {activeView === 'weekly' ? friend.friend.point.weekly_points : activeView === 'monthly' ? friend.friend.point.monthly_points : friend.friend.point.points}
@@ -79,6 +80,7 @@ function LeaderboardsScreen({
           {users && users.length > 0 ? (
             users.map((user: any) => (
               <View key={`user_${user.id}`} >
+                <Image source={{ uri: user.profile_picture }} style={styles.smallImage} />
                 <Text style={styles.text}>
                   {user.username}, 
                   {activeView === 'weekly' ? user.point.weekly_points : activeView === 'monthly' ? user.point.monthly_points : user.point.points}

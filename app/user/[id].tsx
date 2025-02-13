@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import styles from '@/constants/testStyles';
 
@@ -22,9 +22,7 @@ function UserScreen({
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
-          Profile Picture: {user.profile_picture}
-      </Text>
+      <Image source={{ uri: user.profile_picture }} style={styles.smallImage} />
       <Text style={styles.text}>
           First Name: {user.first_name}
       </Text>

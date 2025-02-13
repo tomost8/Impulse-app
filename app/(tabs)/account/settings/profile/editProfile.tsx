@@ -9,8 +9,7 @@ import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
 // Debug
 import { debugRenders } from '@/constants/debug';
-import * as ImagePicker from 'expo-image-picker';
-import { processAndUploadImage } from '@/utils/imageProcessing';
+import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 
 function EditProfileScreen({
   user,
@@ -28,28 +27,10 @@ function EditProfileScreen({
   isSubmitting: boolean,
 }) {
   const pickImage = async () => {
-    try {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-        exif: false,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        handleFormDataChange('profile_picture', result.assets[0].uri);
-      }
-    } catch (error) {
-      console.error('Error picking image:', error);
-      alert('Failed to pick image');
+    const uri = await pickImageFromProcessing(handleFormDataChange);
+    if (uri) {
+      console.log('Picked image URI:', uri);
+      handleFormDataChange('profile_picture', uri);
     }
   };
 

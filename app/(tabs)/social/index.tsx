@@ -75,15 +75,12 @@ function SocialScreen({
           <View key={post.id}>
             <Image 
               source={{ uri: post.mediaUrl }}
-              style={{ 
-                width: 100,
-                height: 100,
-                resizeMode: 'contain'
-              }}
+              style={styles.smallImage}
             />
             <Text style={styles.text}>Community Button</Text>
             <Text style={styles.text}>{post.caption}</Text>
-            <Text style={styles.text}>PFP: {post.author.profile_picture}, Name: {post.author.first_name} {post.author.last_name}</Text>
+            <Image source={{ uri: post.author.profile_picture }} style={styles.smallImage} />
+            <Text style={styles.text}>Name: {post.author.first_name} {post.author.last_name}</Text>
             <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}"</Text>
             <Text style={styles.text}>Message count + Like count</Text>
           </View>

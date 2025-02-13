@@ -23,11 +23,7 @@ function ProfileScreen({
     <View style={styles.container}>
       <Image 
         source={{ uri: user.profile_picture }}
-        style={{ 
-          width: 100,
-          height: 100,
-          resizeMode: 'contain'
-        }}
+        style={styles.smallImage}
       />
       <Text style={styles.text}>
         Email: {user.email}

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import styles from '@/constants/testStyles';
 import RemoveFriendModal from '@/components/modals/RemoveFriendModal';
@@ -56,7 +56,8 @@ function ChatScreen({
         return (
           <View>
             <TouchableOpacity style={styles.button} onPress={() => router.push(`/chats/${chatId}/${partner?.id}`)}>
-              <Text style={styles.text}>{partner?.profile_pic}, {partner?.first_name} {partner?.last_name}</Text>
+              <Image source={{ uri: partner?.profile_picture }} style={styles.smallImage} />
+              <Text style={styles.text}>{partner?.first_name} {partner?.last_name}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={showModal}>
               <Text style={styles.text}>

@@ -42,7 +42,7 @@ function ViewActivityScreen({
       {activities
         .filter((activity: any) => activity.status !== 'expired')
         .map((activity: any) => (
-          <View key={activity.id}>
+          <View key={activity.id} style={styles.checkbox}>
             <Text style={styles.text}>{activity.category}</Text>
             <TouchableOpacity style={styles.button} onPress={() => router.push(`/home/activityView/${activity.id}`)}>
               <Text style={styles.text}>Edit</Text>

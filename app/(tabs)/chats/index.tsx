@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
 import styles from '@/constants/testStyles';
@@ -68,16 +68,17 @@ function ChatScreen({
         <View style={styles.section}>
           <Text style={styles.text}>Chats</Text>
           {chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => (
-            //console.log("Chat:", chat),
-            <TouchableOpacity
-              style={styles.button}
-              key={`chat-${chat.chat.id}`}
-              onPress={() => handleChatPress(chat.chat.id)}
+            <View key={`chat-${chat.chat.id}`}>
+              <Image source={{ uri: chat.chat.profile_pic }} style={styles.smallImage} />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleChatPress(chat.chat.id)}
             >
               <Text style={styles.text}>
                 {chat.chat.type}, {chat.chat.id}, {chat.chat.title}
-              </Text>
-            </TouchableOpacity>
+                </Text>
+              </TouchableOpacity>
+            </View>
           ))}
         </View>
       )}
@@ -89,6 +90,7 @@ function ChatScreen({
             <Text style={styles.text}>Received Requests</Text>
             {friendRequests.map((friendRequest: any) => (
               <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
+                <Image source={{ uri: friendRequest.friend.profile_picture }} style={styles.smallImage} />
                 <Text style={styles.text}>
                   {friendRequest.friend.first_name} {friendRequest.friend.last_name}
                 </Text>
@@ -102,6 +104,7 @@ function ChatScreen({
             <Text style={styles.text}>Sent Requests</Text>
             {sentRequests.map((friendRequest: any) => (
               <View key={`request-${friendRequest.friend.id}`} style={{ marginBottom: 10 }}>
+                <Image source={{ uri: friendRequest.friend.profile_picture }} style={styles.smallImage} />
                 <Text style={styles.text}>{friendRequest.friend.first_name} {friendRequest.friend.last_name}</Text>
               </View>
             ))}

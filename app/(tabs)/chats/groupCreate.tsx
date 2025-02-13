@@ -1,6 +1,7 @@
 import styles from '@/constants/testStyles';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,  Image } from 'react-native';
 import { Switch } from 'react-native-paper';
+import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
@@ -25,17 +26,33 @@ function CreateGroupScreen({
   isPasswordOptional: boolean,
   setIsPasswordOptional: any,
 }) {
+  const pickImage = async () => {
+    const uri = await pickImageFromProcessing(handleFormDataChange);
+    if (uri) {
+      console.log('Picked image URI:', uri);
+      handleFormDataChange('profile_picture', uri);
+    }
+  };
+
   if (isCreatingGroup) {
     return <Text>Loading...</Text>;
   }
   return (
     <View style={styles.container}>
-      <TextInput
-          style={styles.input}
-          placeholder="Profile Picture"
-          value={formData.profile_picture}
-          onChangeText={(text) => handleFormDataChange('profile_picture', text)}
-      />
+      <View style={styles.profileImageContainer}>
+          <TouchableOpacity onPress={pickImage}>
+          {formData.profile_picture ? (
+            <Image
+              source={{ uri: formData.profile_picture }}
+              style={styles.profileImage}
+            />
+          ) : (
+            <View style={styles.profileImagePlaceholder}>
+              <Text style={styles.profileImagePlaceholderText}>Upload Photo</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
       <TextInput
           style={styles.input}
           placeholder="Group Name"
@@ -45,7 +62,7 @@ function CreateGroupScreen({
       <View >
         <Text style={styles.text}>Password</Text>
         <Switch
-          value={isPasswordOptional}
+          value={!isPasswordOptional}
           onValueChange={() => setIsPasswordOptional(!isPasswordOptional)}
         />
       </View>
@@ -100,9 +117,10 @@ const CreateGroupPage = (props: any) => {
     // Create Group
     setIsCreatingGroup(true);
     try {
+      const profile_pic = await processAndUploadImage(formData.profile_picture);
       const input = {
         type: "group",
-        profile_pic: formData.profile_picture,
+        profile_pic: profile_pic,
         title: formData.group_name,
         password: isPasswordOptional ? null : formData.password,
         creator_id: userId as number,
