@@ -49,7 +49,7 @@ const GET_POSTS = gql`
 `;
 
 export function useGetPosts(currentUserId: number, authToken: string, targetType: string, 
-  unreadOnly: boolean=true, skip: number=0, take: number=1, shouldFetch: boolean=true) {
+  unreadOnly: boolean=true, skip: number=0, take: number=10, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_POSTS, {
     skip: !shouldFetch,
     variables: { targetType, currentUserId, unreadOnly, skip, take },
@@ -68,6 +68,55 @@ export function useGetPosts(currentUserId: number, authToken: string, targetType
   }
   return {
     posts: data?.posts.posts || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
+//get friends feed
+const GET_FEED = gql`
+  query($currentUserId: Int!) {
+  friendsFeedPosts(currentUserId: $currentUserId) {
+    success
+    posts {
+      id
+      caption
+      mediaUrl
+      created_at
+      expires_at
+      author {
+        id
+        first_name
+        last_name
+      }
+    }
+    errors {
+      field
+      message
+    }
+  }
+}
+`;
+
+export function useGetFeed(currentUserId: number, authToken: string, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_FEED, {
+    skip: !shouldFetch,
+    variables: { currentUserId },
+    context: {
+      headers: {
+          Authorization: `Bearer ${authToken}`,
+      },
+    },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetFeed data", data, error ? 'error:' + error : '');
+  }
+  return {
+    posts: data?.friendsFeedPosts.posts || [],
     fetched: fetched,
     error: error?.message || null
   };

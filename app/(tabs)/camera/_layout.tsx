@@ -1,19 +1,20 @@
 import styles from '@/constants/testStyles';
-
-import { Stack } from 'expo-router';
-import { createContext, useState, useEffect, useRef } from 'react';
 import { TouchableOpacity, Text, View } from 'react-native';
-import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { router, useLocalSearchParams, Stack } from 'expo-router';
 
+import React, {  useState, useEffect, useRef, createContext } from 'react';
+// GraphQL Hooks
 import { useGetFriends } from "@/hooks/graphql/friends/queries";
 import { useGetUserChats } from "@/hooks/graphql/chats/queries";
 import { useGetUserCommunities } from "@/hooks/graphql/communities/queries";
-import { useUserInfo } from '../../../services/UserContext';
+import { useUserInfo } from '@/services/UserContext';
+// Debug
 import { debugRenders } from '@/constants/debug';
-// Create the context with type definition and default values
-export const HeaderContext = createContext<{
+
+export const CameraHeaderContext = createContext<{
+  id: number;
+  setId: (id: number) => void;
   category: string;
   setCategory: (category: string) => void;
   pictureTaken: boolean;
@@ -21,7 +22,9 @@ export const HeaderContext = createContext<{
   flash: boolean;
   setFlash: (flash: boolean) => void;
 }>({
-  category: 'Camera',
+  id: 0,
+  setId: () => {},
+  category: '',
   setCategory: () => {},
   pictureTaken: false,
   setPictureTaken: () => {},
@@ -38,36 +41,39 @@ export const SocialDataContext = createContext<{
 } | null>(null);
 
 function CameraHeader() {
-  const context = React.useContext(HeaderContext);
+  const header = React.useContext(CameraHeaderContext);
 
-  if (!context) return null;
+  if (!header) return null;
 
   return (
     <View style={styles.header}>
+      {/* Back Button */}
       <TouchableOpacity onPress={() => {
         router.back();
-        context.setCategory('');
-        if (context.pictureTaken) {
+        header.setId(0);
+        header.setCategory('');
+        if (header.pictureTaken) {
           router.back();
-          context.setPictureTaken(false);
+          header.setPictureTaken(false);
         }
       }}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
-      
-      <Text style={styles.text}>{context.category}</Text>
-      
-      {context.pictureTaken ? (
+      {/* Display Category Text for Selected Activity*/}
+      <Text style={styles.text}>{header.category}</Text>
+      {/* Retake Button or Flash Button*/}
+      {header.pictureTaken ? (
         <TouchableOpacity onPress={() => {
           router.back();
-          context.setCategory('');
-          context.setPictureTaken(false);
+          header.setId(0);
+          header.setCategory('');
+          header.setPictureTaken(false);
         }}>
           <Text style={styles.text}>Retake</Text>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={() => context.setFlash(!context.flash)}>
-          {context.flash ? (
+        <TouchableOpacity onPress={() => header.setFlash(!header.flash)}>
+          {header.flash ? (
             <Ionicons name="flash" size={24} color="white" />
           ) : (
             <Ionicons name="flash-off" size={24} color="white" />
@@ -79,7 +85,9 @@ function CameraHeader() {
 }
 
 export default function CameraLayout() {
-  const [category, setCategory] = useState('Camera');
+  const { id: activityId, category: activityCategory } = useLocalSearchParams();
+  const [id, setId] = useState(Number(activityId));
+  const [category, setCategory] = useState(activityCategory as string);
   const [pictureTaken, setPictureTaken] = useState(false);
   const [flash, setFlash] = useState(false);
 
@@ -130,17 +138,18 @@ export default function CameraLayout() {
   }
 
   return (
-    <HeaderContext.Provider value={{
-      category, setCategory,
-      pictureTaken, setPictureTaken,
-      flash, setFlash,
+    <SocialDataContext.Provider value={{
+      userId: userId as number,
+      authToken: authToken as string,
+      friends: friendsRef.current,
+      groups: groupsRef.current,
+      communities: communitiesRef.current
     }}>
-      <SocialDataContext.Provider value={{
-        userId: userId as number,
-        authToken: authToken as string,
-        friends: friendsRef.current,
-        groups: groupsRef.current,
-        communities: communitiesRef.current
+      <CameraHeaderContext.Provider value={{
+        id, setId,
+        category, setCategory,
+        pictureTaken, setPictureTaken,
+        flash, setFlash,
       }}>
         <Stack>
           <Stack.Screen 
@@ -156,8 +165,8 @@ export default function CameraLayout() {
             }}
           />
         </Stack>
-      </SocialDataContext.Provider>
-    </HeaderContext.Provider>
+      </CameraHeaderContext.Provider>
+    </SocialDataContext.Provider>
   );
 }
 

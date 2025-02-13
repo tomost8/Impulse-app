@@ -6,7 +6,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
-import { useGetPosts, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
+import { useGetFeed, useGetPosts, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 // Components
 // Debug
 import { debugRenders } from '@/constants/debug';
@@ -14,15 +14,19 @@ import { debugRenders } from '@/constants/debug';
 function SocialScreen({
   communityMembers,
   isCommunityMembersLoading,
-  posts,
-  isPostsLoading,
+  friendsFeed,
+  isFriendsFeedLoading,
+  communityFeed,
+  isCommunityFeedLoading,
 }: {
   communityMembers: any,
   isCommunityMembersLoading: boolean,
-  posts: any,
-  isPostsLoading: boolean,
+  friendsFeed: any,
+  isFriendsFeedLoading: boolean,
+  communityFeed: any,
+  isCommunityFeedLoading: boolean,
 }) {
-  if (isCommunityMembersLoading || isPostsLoading) {
+  if (isCommunityMembersLoading || isFriendsFeedLoading || isCommunityFeedLoading) {
     return <Text>Loading...</Text>;
   }
   return (
@@ -31,7 +35,23 @@ function SocialScreen({
         <Text style={styles.text}>Explore</Text>
       </TouchableOpacity>
       <View style={styles.section}>
-        <Text style={styles.text}>Friends Feed</Text>
+        <Text style={styles.text}>Friends Feed (Posts)</Text>
+        {friendsFeed.map((post: any) => (
+          <View key={post.id}>
+            <Image 
+              source={{ uri: post.mediaUrl }}
+              style={{ 
+                width: 100,
+                height: 100,
+                resizeMode: 'contain'
+              }}
+            />
+            <Text style={styles.text}>{post.caption}</Text>
+            <Text style={styles.text}>PFP: {post.author.profile_picture}, Name: {post.author.first_name} {post.author.last_name}</Text>
+            <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}"</Text>
+            <Text style={styles.text}>Message count + Like count</Text>
+          </View>
+        ))}
       </View>
       <View style={styles.section}>
         <Text style={styles.text}>Communities List</Text>
@@ -51,7 +71,7 @@ function SocialScreen({
       </View>
       <View style={styles.section}>
         <Text style={styles.text}>Community Feed (Posts)</Text>
-        {posts.map((post: any) => (
+        {communityFeed.map((post: any) => (
           <View key={post.id}>
             <Image 
               source={{ uri: post.mediaUrl }}
@@ -82,33 +102,42 @@ const SocialPage = (props: any) => {
   const hasFetchedCommunities = useRef(false);
   const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
 
-  const postsRef = useRef<any[] | null>(null);
-  const hasFetchedPosts = useRef(false);
-  const { posts, fetched: hasNewPostsData } = useGetPosts(userId as number, authToken, "community", true, 0, 10, !hasFetchedPosts.current);
+  const friendsFeedRef = useRef<any[] | null>(null);
+  const hasFetchedFriendsFeed = useRef(false);
+  const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeed(userId as number, authToken, !hasFetchedFriendsFeed.current);
+
+  const communityFeedRef = useRef<any[] | null>(null);
+  const hasFetchedCommunityFeed = useRef(false);
+  const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetPosts(userId as number, authToken, "community", true, 0, 10, !hasFetchedCommunityFeed.current);
 
   useEffect(() => {
-    if (!hasNewCommunitiesData && !hasNewPostsData) {
+    if (!hasNewCommunitiesData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
       return;
     }
     if (hasNewCommunitiesData) {
       communitiesRef.current = communityMembers;
       hasFetchedCommunities.current = true;
     }
-    if (hasNewPostsData) {
-      postsRef.current = posts;
-      hasFetchedPosts.current = true;
+    if (hasNewFriendsFeedData) {
+      friendsFeedRef.current = friendsFeed;
+      hasFetchedFriendsFeed.current = true;
     }
-    if (hasFetchedCommunities.current && hasFetchedPosts.current) {
+    if (hasNewCommunityFeedData) {
+      communityFeedRef.current = communityFeed;
+      hasFetchedCommunityFeed.current = true;
+    }
+    if (hasFetchedCommunities.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunitiesData, hasNewPostsData]);
+  }, [hasNewCommunitiesData, hasNewFriendsFeedData, hasNewCommunityFeedData]);
 
   // Debug
-  const loading = !hasFetchedCommunities.current || !hasFetchedPosts.current;
+  const loading = !hasFetchedCommunities.current || !hasFetchedFriendsFeed.current || !hasFetchedCommunityFeed.current;
   if (debugRenders && !loading) {
     console.log("Rendering SocialPage\n",
       "Communities:", communitiesRef.current, "\n",
-      "Posts:", postsRef.current, "\n",
+      "Friends Feed:", friendsFeedRef.current, "\n",
+      "Community Feed:", communityFeedRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
     );
   }
@@ -117,8 +146,10 @@ const SocialPage = (props: any) => {
     <SocialScreen 
       communityMembers={communitiesRef.current}
       isCommunityMembersLoading={!hasFetchedCommunities.current}
-      posts={postsRef.current}
-      isPostsLoading={!hasFetchedPosts.current}
+      friendsFeed={friendsFeedRef.current}
+      isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
+      communityFeed={communityFeedRef.current}
+      isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
     />
   );
 }

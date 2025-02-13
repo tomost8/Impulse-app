@@ -3,7 +3,7 @@ import { Modal, Portal, Checkbox } from 'react-native-paper';
 import styles from '@/constants/testStyles';
 
 import { useState, useContext } from 'react';
-import { SocialDataContext } from '@/app/(tabs)/camera/_layout';
+import { CameraHeaderContext, SocialDataContext } from '@/app/(tabs)/camera/_layout';
 import { debugRenders } from '@/constants/debug';
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 import { processAndUploadImage } from '@/utils/imageProcessing';
@@ -13,21 +13,24 @@ interface SendPhotoModalProps {
   hideModal: () => void;
   currentTab: string;
   setCurrentTab: (tab: string) => void;
-  setSelectedCategory: (category: string) => void;
-  activities: any[];
+  activitiesList: any[];
   imageSource: string;
 }
 
-const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSelectedCategory, activities, imageSource }: SendPhotoModalProps) => {
+const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activitiesList, imageSource }: SendPhotoModalProps) => {
   const socialData = useContext(SocialDataContext);
   const userId = socialData?.userId;
   const authToken = socialData?.authToken;
   const friends = socialData?.friends ?? [];
   const groups = socialData?.groups ?? [];
   const communities = socialData?.communities ?? [];
+  
+  const cameraHeader = useContext(CameraHeaderContext);
+  const id = cameraHeader?.id;
+  const category = cameraHeader?.category;
 
-  const [activityID, setActivityID] = useState<string>("");
-  const [activityCategory, setActivityCategory] = useState<string>("");
+  console.log("id", id, "category", category);
+
   const [caption, setCaption] = useState<string>("");
   const [selectedTargets, setSelectedTargets] = useState<{[key: string]: boolean}>({});
 
@@ -55,8 +58,8 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
       const downloadURL = await processAndUploadImage(imageSource);
       const input = {
         authorId: userId,
-        activityId: activityID,
-        category: activityCategory,
+        activityId: id,
+        category: category,
         caption: caption,
         post_targets: postTargets,
         mediaUrl: downloadURL,
@@ -92,14 +95,13 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
         {currentTab === "activity" && (
           <View style={styles.modal}>
             <Text style={styles.text}>Send Photo Modal - Activity</Text>
-            {activities.filter(activity => activity.status === "pending").map((activity: any) => (
+            {activitiesList.filter((activity: any) => activity.status === "pending").map((activity: any) => (
               <View key={activity.id} style={styles.checkbox}>
                 <Checkbox
-                  status={activityID === activity.id ? 'checked' : 'unchecked'}
+                  status={id === activity.id ? 'checked' : 'unchecked'}
                   onPress={() => {
-                    setActivityID(activity.id);
-                    setSelectedCategory(activity.category); // this is for header
-                    setActivityCategory(activity.category); // this is for mutation input
+                    cameraHeader?.setId(activity.id);
+                    cameraHeader?.setCategory(activity.category);
                   }}
                 />
                 <Text style={styles.text}>{activity.category}</Text>
@@ -137,6 +139,13 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, setSele
         {currentTab === "users" && (
           <View style={styles.modal}>
             <Text style={styles.text}>Send Photo Modal - Users</Text>
+            <View style={styles.checkbox}>
+              <Checkbox
+                status={selectedTargets["feed" + userId] ? 'checked' : 'unchecked'}
+                onPress={() => toggleTarget("feed" + userId)}
+              />
+              <Text style={styles.text}>Post to Feed</Text>
+            </View>
             {friends?.map((friend: any) => (
               <View key={friend.friend.id} style={styles.checkbox}>
                 <Checkbox

@@ -2,11 +2,11 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef, useEffect, useContext } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { HeaderContext } from './_layout';
+import { CameraHeaderContext } from './_layout';
 
 export default function CameraScreen() {
   const { id, category } = useLocalSearchParams();
-  const context = useContext(HeaderContext);
+  const context = useContext(CameraHeaderContext);
   if (!context) return null;
 
   const [permission, requestPermission] = useCameraPermissions();

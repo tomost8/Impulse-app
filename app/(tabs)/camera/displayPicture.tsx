@@ -2,19 +2,16 @@ import styles from "@/constants/testStyles";
 import { View, Image, TouchableOpacity, Text } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useState, useEffect, useRef, useContext } from 'react';
-import { HeaderContext } from './_layout';
+import { CameraHeaderContext } from './_layout';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetActivities } from "@/hooks/graphql/activities/queries";
-import { useGetFriends } from "@/hooks/graphql/friends/queries";
-import { useGetUserChats } from "@/hooks/graphql/chats/queries";
-import { useGetUserCommunities } from "@/hooks/graphql/communities/queries";
 // Components
 import { debugRenders } from '@/constants/debug';
 import SendPhotoModal from "@/components/modals/SendPhotoModal";
 
 const DisplayPicturePage = (props: any) => {
-    const context = useContext(HeaderContext);
+    const context = useContext(CameraHeaderContext);
     if (!context) return null;
 
     const { photo, id, category } = useLocalSearchParams();
@@ -97,8 +94,7 @@ const DisplayPicturePage = (props: any) => {
                 hideModal={hideModal} 
                 currentTab={modalTab}
                 setCurrentTab={setModalTab}
-                setSelectedCategory={context.setCategory}
-                activities={activitiesRef.current || []} // Need activity ID in form data
+                activitiesList={activitiesRef.current || []} // Need list of activities to choose from
                 imageSource={imageSource} // Need image source in form data
             />
         </View>
