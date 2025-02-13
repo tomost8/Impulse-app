@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import styles from '@/constants/testStyles';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import PointsModal from '@/components/modals/PointsModal';
 
 import { useState } from 'react';
@@ -25,7 +25,14 @@ function AccountScreen({
         <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings')}>
           <Text style={styles.text}>Settings</Text>
         </TouchableOpacity>
-        <Text style={styles.text}>Profile Picture: {user.profile_picture}</Text>
+        <Image 
+          source={{ uri: user.profile_picture }}
+          style={{ 
+            width: 100,
+            height: 100,
+            resizeMode: 'contain'
+          }}
+        />
         <Text style={styles.text}>First Name: {user.first_name}</Text>
         <Text style={styles.text}>Username: {user.username}</Text>
         <Text style={styles.text}>Points: {user.point?.points}</Text>

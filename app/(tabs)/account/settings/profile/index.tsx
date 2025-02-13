@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
 // Debug
@@ -21,9 +21,14 @@ function ProfileScreen({
   }
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>
-        Profile Picture: {user.profile_picture}
-      </Text>
+      <Image 
+        source={{ uri: user.profile_picture }}
+        style={{ 
+          width: 100,
+          height: 100,
+          resizeMode: 'contain'
+        }}
+      />
       <Text style={styles.text}>
         Email: {user.email}
       </Text>

@@ -1,4 +1,4 @@
-import { router, Tabs } from 'expo-router';
+import { router, Tabs, usePathname } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import { Platform, Image, View, Text, Button } from 'react-native';
 
@@ -11,9 +11,21 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
-  console.log("TabLayout rendered");
+  const pathname = usePathname();
+  
   const { activities } = useGetActivities(userId as number, authToken as string);
   const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
+
+  // Only show tab bar for these exact routes
+  const showForRoutes = [
+    '/home',
+    '/chats',
+    '/camera',
+    '/social',
+    '/account'
+  ];
+
+  const shouldShowTabBar = showForRoutes.includes(pathname);
 
   return (
     <>
@@ -21,13 +33,16 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
         screenOptions={{
           headerShown: false,
           tabBarBackground: TabBarBackground,
-          tabBarStyle: Platform.select({
-            ios: {
-              // Use a transparent background on iOS to show the blur effect
-              position: 'absolute',
-            },
-            default: {},
-          }),
+          tabBarStyle: {
+            display: shouldShowTabBar ? 'flex' : 'none',
+            height: shouldShowTabBar ? undefined : 0,
+            ...Platform.select({
+              ios: {
+                position: 'absolute',
+              },
+              default: {},
+            }),
+          },
         }}>
         <Tabs.Screen
           name="home"

@@ -4,11 +4,13 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
 // Debug
 import { debugRenders } from '@/constants/debug';
+import * as ImagePicker from 'expo-image-picker';
+import { processAndUploadImage } from '@/utils/imageProcessing';
 
 function EditProfileScreen({
   user,
@@ -25,18 +27,54 @@ function EditProfileScreen({
   handleFormSubmit: any,
   isSubmitting: boolean,
 }) {
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== 'granted') {
+        alert('Sorry, we need camera roll permissions to make this work!');
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+        exif: false,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        handleFormDataChange('profile_picture', result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      alert('Failed to pick image');
+    }
+  };
+
   if (isUserLoading || isSubmitting) {
     return <Text>Loading...</Text>;
   }
+
   return (
-    <View style={styles.container}>
-      <TextInput
-          style={styles.input}
-          placeholder="Profile Picture"
-          placeholderTextColor="gray"
-          value={formData.profile_picture}
-          onChangeText={(text) => handleFormDataChange('profile_picture', text)}
-      />
+    <SafeAreaView>
+      <ScrollView>
+      <View style={styles.container}>
+        <View style={styles.profileImageContainer}>
+          <TouchableOpacity onPress={pickImage}>
+          {formData.profile_picture ? (
+            <Image
+              source={{ uri: formData.profile_picture }}
+              style={styles.profileImage}
+            />
+          ) : (
+            <View style={styles.profileImagePlaceholder}>
+              <Text style={styles.profileImagePlaceholderText}>Upload Photo</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
       <TextInput
           style={styles.input}
           placeholder="Email"
@@ -112,6 +150,8 @@ function EditProfileScreen({
         <Text style={styles.text}>Save Profile</Text>
       </TouchableOpacity>
     </View>
+    </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -144,9 +184,16 @@ const EditProfilePage = (props: any) => {
   const handleFormSubmit = async (input: any) => {
     setIsSubmitting(true);
     try {
+      // Check if profile_picture has a value and process it
+      if (formData.profile_picture) {
+        const downloadURL = await processAndUploadImage(formData.profile_picture);
+        formData.profile_picture = downloadURL; // Update the profile_picture with the download URL
+      }
+
       const input = Object.fromEntries(
         Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'email')
       );
+      console.log('Input:', input);
       const response = await updateUser(input, authToken);
       console.log('User updated successfully:', response);
     } catch (error) {

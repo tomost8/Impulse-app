@@ -31,15 +31,21 @@ function HomeScreen({
           </TouchableOpacity>
         ) : (
           validActivities.map((activity: any) => (
-            <TouchableOpacity style={styles.button} key={activity.id} onPress={
-              () => {
+            <TouchableOpacity 
+              style={[
+                styles.button,
+                activity.status !== 'pending' && { opacity: 0.5 }
+              ]} 
+              key={activity.id} 
+              disabled={activity.status !== 'pending'}
+              onPress={() => {
                 console.log("clicked on", activity);
                 router.push({
                   pathname: '/camera',
                   params: { id: activity.id, category: activity.category }
                 });
-              }
-            }>
+              }}
+            >
               <Text style={styles.text}>{activity.category}, {activity.status}</Text>
             </TouchableOpacity>
           ))
