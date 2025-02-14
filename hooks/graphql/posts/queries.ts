@@ -123,6 +123,7 @@ export function useGetFeed(currentUserId: number, authToken: string, shouldFetch
 }
 
 
+
 // Get Post by Post ID
 const GET_POST = gql`
   query($id: Int!) {
@@ -143,9 +144,6 @@ const GET_POST = gql`
         category
         liked
         likeCount
-        comments {
-          id
-        }
       }
       errors {
         field
@@ -172,7 +170,62 @@ export function useGetPost(id: number, shouldFetch: boolean=true) {
     fetched: fetched,
     error: error?.message || null
   };
+} 
+
+// Get Post Comments
+const GET_POST_COMMENTS = gql`
+  query PostComments($postId: Int!) {
+    postComments(postId: $postId) {
+    success
+    comments {
+      id
+      post_id
+      user {
+        id
+        username
+        profile_picture
+      }
+      content
+      created_at
+      updated_at
+      parent_comment_id
+      replies {
+        id
+        content
+        created_at
+        user {
+          id
+          username
+        }
+      }
+    }
+    errors {
+      field
+      message
+      }
+    }
+  }
+`;
+
+export function useGetPostComments(postId: number, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_POST_COMMENTS, {
+    skip: !shouldFetch,
+    variables: { postId },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetPostComments data", data, error ? 'error:' + error : '');
+  }
+  return {
+    comments: data?.postComments.comments || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
 }
+
 
 // Variables: 
 const GET_POSTS_BY_USER_ID = gql`

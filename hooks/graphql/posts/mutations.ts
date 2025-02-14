@@ -121,3 +121,49 @@ export function useUnlikePost() {
   }
   return { unlikePost };
 }
+
+// Mutation - Create Comment
+export const CREATE_COMMENT = gql`
+  mutation CreateComment($input: CreateCommentInput!) {
+    createComment(input: $input) {
+      success
+      comment {
+        id
+        post_id
+        user_id
+        content
+        parent_comment_id
+      created_at
+      updated_at
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+// Mutation - Create Comment
+// Inputs: post_id, content
+//Optional inputs: parent_comment_id (nullable)
+export function useCreateComment() {
+  const [createCommentMutation] = useMutation(CREATE_COMMENT);
+  const createComment = async (input: any, authToken: string) => {
+    try {
+      const response = await createCommentMutation({ 
+        variables: { 
+          input: input 
+        },
+        context: {
+          headers: { Authorization: `Bearer ${authToken}` }
+        }
+      });
+      return response.data.createComment;
+    } catch (error) {
+      console.error('Create Comment failed:', error);
+      throw error;
+    }
+  }
+  return { createComment };
+}
