@@ -1,16 +1,10 @@
 import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
 
-// @param targetType - Type of target to filter by (e.g., "community", "group")
-// @param targetId - ID of the specific target
-// @param currentUserId - ID of the current user for permission checks
-// @param unreadOnly - Whether to return only unread posts
-// @param skip - Number of records to skip (pagination)
-// @param take - Number of records to take (pagination)
-// @param category - Category to filter posts by
-const GET_POSTS = gql`
-  query($targetType: String, $currentUserId: Int, $unreadOnly: Boolean, $skip: Int, $take: Int) {
-    posts(targetType: $targetType, currentUserId: $currentUserId, unreadOnly: $unreadOnly, skip: $skip, take: $take) {
+
+const GET_FEED_COMMUNITIES = gql`
+  query($currentUserId: Int!, $skip: Int, $take: Int) {
+    joinedCommunityPosts(currentUserId: $currentUserId, skip: $skip, take: $take) {
       success
       posts {
         id
@@ -48,11 +42,10 @@ const GET_POSTS = gql`
   }
 `;
 
-export function useGetPosts(currentUserId: number, authToken: string, targetType: string, 
-  unreadOnly: boolean=true, skip: number=0, take: number=10, shouldFetch: boolean=true) {
-  const { data, loading, error } = useQuery(GET_POSTS, {
+export function useGetFeedCommunities(currentUserId: number, authToken: string, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_FEED_COMMUNITIES, {
     skip: !shouldFetch,
-    variables: { targetType, currentUserId, unreadOnly, skip, take },
+    variables: { currentUserId },
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
@@ -64,32 +57,48 @@ export function useGetPosts(currentUserId: number, authToken: string, targetType
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetPosts data", data, error ? 'error:' + error : '');
+    console.log("useGetFeedCommunities data", data, error ? 'error:' + error : '');
   }
   return {
-    posts: data?.posts.posts || [],
+    posts: data?.joinedCommunityPosts.posts || [],
     fetched: fetched,
     error: error?.message || null
   };
 }
 
 //get friends feed
-const GET_FEED = gql`
+const GET_FEED_FRIENDS = gql`
   query($currentUserId: Int!) {
   friendsFeedPosts(currentUserId: $currentUserId) {
     success
     posts {
-      id
-      caption
-      mediaUrl
-      created_at
-      expires_at
-      author {
         id
-        first_name
-        last_name
+        caption
+        category
+        mediaUrl
+        author {
+          id
+          profile_picture
+          first_name
+          last_name
+        }
+        created_at
+        expires_at
+        post_targets {
+          id
+          target_type
+          target_id
+        }
+        category
+        messages {
+          id
+        }
+        comments {
+          id
+        }
+        liked
+        likeCount
       }
-    }
     errors {
       field
       message
@@ -98,8 +107,8 @@ const GET_FEED = gql`
 }
 `;
 
-export function useGetFeed(currentUserId: number, authToken: string, shouldFetch: boolean=true) {
-  const { data, loading, error } = useQuery(GET_FEED, {
+export function useGetFeedFriends(currentUserId: number, authToken: string, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_FEED_FRIENDS, {
     skip: !shouldFetch,
     variables: { currentUserId },
     context: {
@@ -221,6 +230,79 @@ export function useGetPostComments(postId: number, shouldFetch: boolean=true) {
   }
   return {
     comments: data?.postComments.comments || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
+
+// @param targetType - Type of target to filter by (e.g., "community", "group")
+// @param targetId - ID of the specific target
+// @param currentUserId - ID of the current user for permission checks
+// @param unreadOnly - Whether to return only unread posts
+// @param skip - Number of records to skip (pagination)
+// @param take - Number of records to take (pagination)
+// @param category - Category to filter posts by
+const GET_POSTS = gql`
+  query($targetType: String, $currentUserId: Int, $unreadOnly: Boolean, $skip: Int, $take: Int) {
+    posts(targetType: $targetType, currentUserId: $currentUserId, unreadOnly: $unreadOnly, skip: $skip, take: $take) {
+      success
+      posts {
+        id
+        caption
+        category
+        mediaUrl
+        author {
+          id
+          profile_picture
+          first_name
+          last_name
+        }
+        created_at
+        expires_at
+        post_targets {
+          id
+          target_type
+          target_id
+        }
+        category
+        messages {
+          id
+        }
+        comments {
+          id
+        }
+        liked
+        likeCount
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetPosts(currentUserId: number, authToken: string, targetType: string, 
+  unreadOnly: boolean=true, skip: number=0, take: number=10, shouldFetch: boolean=true) {
+  const { data, loading, error } = useQuery(GET_POSTS, {
+    skip: !shouldFetch,
+    variables: { targetType, currentUserId, unreadOnly, skip, take },
+    context: {
+      headers: {
+          Authorization: `Bearer ${authToken}`,
+      },
+    },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetPosts data", data, error ? 'error:' + error : '');
+  }
+  return {
+    posts: data?.posts.posts || [],
     fetched: fetched,
     error: error?.message || null
   };

@@ -1,6 +1,52 @@
 import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/constants/debug';
 
+export const GET_ACTIVITIES_BY_DATE = gql`
+  query ActivitiesByDate($userId: Int!, $date: String!) {
+    activitiesByDate(userId: $userId, date: $date) {
+      success
+      activities {
+        id
+        name
+        category
+        description
+        duration
+        scheduledDatetime
+        status
+        createdAt
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const useGetActivitiesByDate = (userId: number, date: string, authToken: string, shouldFetch: boolean=true) => {
+  const { data, loading, error } = useQuery(GET_ACTIVITIES_BY_DATE, {
+    skip: !shouldFetch,
+    variables: { userId, date },
+    context: {
+      headers: {
+          Authorization: `Bearer ${authToken}`,
+      },
+    },
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetActivitiesByDate data", data, error ? 'error:' + error : '');
+  }
+  return {
+    activities: data?.activitiesByDate.activities || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
 // Query - Get Activities (by User ID)
 export const GET_ACTIVITIES = gql`
   query ($userId: Int!) {

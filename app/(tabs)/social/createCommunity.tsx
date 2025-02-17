@@ -78,7 +78,7 @@ function CreateCommunityScreen({
           backgroundColor: 'gray',
           opacity: 0.5, 
         }]} 
-        onPress={() => handleCreateCommunity(formData)} 
+        onPress={handleCreateCommunity} 
         disabled={!formData.name}
       >
         <Text>Create</Text>
@@ -94,14 +94,17 @@ const CreateCommunityPage = (props: any) => {
   const {createCommunity} = useCreateCommunity();
   const {createCommunityCategory} = useCreateCommunityCategory();
   const [isCreatingCommunity, setIsCreatingCommunity] = useState(false);
-  const handleCreateCommunity = async (input: any) => {
+  const handleCreateCommunity = async () => {
     setIsCreatingCommunity(true);
+    const thumbnail = formData.thumbnail 
+      ? await processAndUploadImage(formData.thumbnail)
+      : null;
     try {
       const input = {
         influencer_id: userId,
         name: formData.name,
         ...(formData.description && { description: formData.description }),
-        ...(formData.thumbnail && { thumbnail: formData.thumbnail }),
+        ...(thumbnail && { thumbnail }),
       }
       const response = await createCommunity(input);
       if (response.success) {

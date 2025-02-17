@@ -1,0 +1,84 @@
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { router } from 'expo-router';
+import styles from '@/constants/testStyles';
+
+interface PostCardProps {
+  post: {
+    id: number;
+    mediaUrl: string;
+    caption: string;
+    author: {
+      profile_picture: string;
+      first_name: string;
+      last_name: string;
+    };
+    created_at: string;
+    expires_at: string;
+    liked: boolean;
+    likeCount: number;
+  };
+  handleLikePost: (postId: number) => Promise<void>;
+  handleUnlikePost: (postId: number) => Promise<void>;
+  updatePostLikeState: (postId: number, liked: boolean) => void;
+  showCommunityButton?: boolean;
+}
+
+export default function PostCard({ 
+  post, 
+  handleLikePost, 
+  handleUnlikePost, 
+  updatePostLikeState,
+  showCommunityButton = false
+}: PostCardProps) {
+  return (
+    <View key={post.id} style={styles.section}>
+      <TouchableOpacity onPress={() => router.push({
+        pathname: "/post/[id]",
+        params: { id: post.id, isLiked: post.liked.toString(), likeCount: post.likeCount }
+      })}>
+        <Image 
+          source={{ uri: post.mediaUrl }}
+          style={styles.smallImage}
+        />
+      </TouchableOpacity>
+      
+      {showCommunityButton && (
+        <TouchableOpacity style={styles.button} onPress={() => console.log("Community Button Pressed")}>
+          <Text style={styles.text}>Community Button</Text>
+        </TouchableOpacity>
+      )}
+
+      <Text style={styles.text}>{post.caption}</Text>
+      <Image source={{ uri: post.author.profile_picture }} style={styles.smallImage} />
+      <Text style={styles.text}>Name: {post.author.first_name} {post.author.last_name}</Text>
+      <Text style={styles.text}>Created At: {post.created_at}, Expires At: {post.expires_at}</Text>
+      
+      <TouchableOpacity style={styles.button} onPress={() => router.push({
+        pathname: "/post/[id]",
+        params: { id: post.id, isLiked: post.liked.toString(), likeCount: post.likeCount }
+      })}>
+        <Text style={styles.text}>Comment Button</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={[
+          styles.button,
+          //post.liked && styles.likedButton
+        ]} 
+        onPress={() => {
+          const newLikedState = !post.liked;
+          updatePostLikeState(post.id, newLikedState);
+          if (newLikedState) {
+            handleLikePost(post.id);
+          } else {
+            handleUnlikePost(post.id);
+          }
+        }}
+      >
+        <Text style={styles.text}>
+          {post.liked ? 'Unlike' : 'Like'} ({post.likeCount})
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}

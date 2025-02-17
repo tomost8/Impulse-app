@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
-import { useGetActivities } from '@/hooks/graphql/activities/queries';
+import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
 
 // Debug
@@ -21,7 +21,9 @@ const HomePage = (props: any) => {
   
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
-  const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId, authToken, !hasFetchedActivities.current);
+  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId, currentDate, authToken, !hasFetchedActivities.current);
+  //console.log("activities", activities);
 
   useEffect(() => {
     if (!hasNewFriendsData && !hasNewActivitiesData) {
