@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     flexGrow: 1, // ✅ Fix: Ensures the content expands and prevents cutoff
     padding: 16,
     paddingBottom: 80, // ✅ Increased padding to avoid bottom cutoff
+    paddingTop: 0,
   },
   quoteSection: {
     marginTop: 35, // ✅ Adds spacing between TopSection & Quote Card

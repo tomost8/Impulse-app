@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native"; // ✅ Added for navig
 import LeaderboardHeader from "../ui/Leaderboard/LeaderboardHeader";
 import LeaderboardPodium from "../ui/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "../ui/Leaderboard/LeaderboardList";
-
+import { router } from "expo-router";
 
 // Import Andrew's image as a placeholder (for all profile images)
 const AndrewProfile = require("@/assets/images/andrew.png");
@@ -42,7 +42,7 @@ const LeaderboardScreen: React.FC = () => {
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Section: DON'T WORRY ABOUT THIS FOR NOW, WE WILL TRY TO HANDLE THIS WITH EXPO ROUTING HEADERS */}
-        {/*<LeaderboardHeader />*/}
+        <LeaderboardHeader onBackPress={() => router.back()} />
 
         {/* Toggle Tabs (Friends / All Users) */}
         {/*<LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />*/}
