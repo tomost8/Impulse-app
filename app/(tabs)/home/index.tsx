@@ -1,4 +1,4 @@
-import HomeDesign from '../../../components/screens/HomeDesign';
+import HomeDesign from '@/components/screens/HomeDesign';
 
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';

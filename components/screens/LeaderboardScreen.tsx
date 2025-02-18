@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native"; // ✅ Added for navigation
 import LeaderboardHeader from "../ui/Leaderboard/LeaderboardHeader";
 import LeaderboardPodium from "../ui/Leaderboard/LeaderboardPodium";
@@ -27,21 +27,25 @@ const leaderboardUsers = [
   { rank: 10, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
 ];
 
+/*
 const LeaderboardScreen: React.FC = () => {
     const navigation = useNavigation(); // ✅ Allows navigation back
+}
+*/
 
 const LeaderboardScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState("Friends"); // Track active leaderboard (Friends or All Users)
 
   return (
     <SafeAreaView style={styles.container}>
+      
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Header Section */}
         <LeaderboardHeader />
 
         {/* Toggle Tabs (Friends / All Users) */}
-        <LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+        {/*<LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />*/}
 
         {/* Podium (Top 3 Users) */}
         <LeaderboardPodium podiumData={podiumUsers} />

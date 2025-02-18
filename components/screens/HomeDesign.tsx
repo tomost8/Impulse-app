@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native"; // ✅ Import navigation hook
+import { router } from "expo-router";
 
 import TopSection from "../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
@@ -44,7 +45,7 @@ const HomeDesign: React.FC = () => {
         <View style={styles.leaderboardWrapper}>
           <View style={styles.leaderboardHeader}>
             <Text style={styles.leaderboardTitle}>Weekly Leaderboard</Text>
-            <TouchableOpacity onPress={() => navigation.navigate("leaderboard")}>
+            <TouchableOpacity onPress={() => router.push('/home/leaderboards')}>
               <Text style={styles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
