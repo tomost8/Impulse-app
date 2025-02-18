@@ -37,9 +37,10 @@ const HomeDesign: React.FC = () => {
         </View>
 
         {/* ✅ Fix: Wrapped LeaderboardFull to avoid being pushed down */}
-        <View style={styles.leaderboardWrapper}>
+        
+        {/*<View style={styles.leaderboardWrapper}>
           <LeaderboardFull />
-        </View>
+        </View>*/}
 
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
         <View style={styles.leaderboardWrapper}>

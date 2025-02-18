@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import LeaderboardCard from "./LeaderboardCard";
 import LeaderboardList from "./LeaderboardList";
-
+import { router } from "expo-router";
 const LeaderboardFull: React.FC = () => {
   return (
     <View style={styles.container}>
@@ -10,7 +10,7 @@ const LeaderboardFull: React.FC = () => {
       {/* Leaderboard Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Weekly Leaderboard</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/home/leaderboards')}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>

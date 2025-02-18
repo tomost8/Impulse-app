@@ -41,8 +41,8 @@ const LeaderboardScreen: React.FC = () => {
       
       {/* Scrollable Content */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header Section */}
-        <LeaderboardHeader />
+        {/* Header Section: DON'T WORRY ABOUT THIS FOR NOW, WE WILL TRY TO HANDLE THIS WITH EXPO ROUTING HEADERS */}
+        {/*<LeaderboardHeader />*/}
 
         {/* Toggle Tabs (Friends / All Users) */}
         {/*<LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />*/}
