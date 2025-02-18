@@ -19,13 +19,13 @@ const GoalSelector: React.FC<GoalSelectorProps> = ({ primaryGoal, selectedGoal, 
   return (
     <View>
       {filteredGoals.map(goal => (
-        <View key={goal.id} style={styles.section}>
+        <View key={goal.id} style={styles.checkbox}>
+          <Text style={styles.text}>{goal.label}</Text>
           <RadioButton
             value={goal.id.toString()}
             status={selectedGoal === goal.id ? 'checked' : 'unchecked'}
             onPress={() => setSelectedGoal(goal.id)}
           />
-          <Text style={styles.text}>{goal.label}</Text>
         </View>
       ))}
     </View>

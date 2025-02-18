@@ -34,9 +34,22 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
   }, [hasNewActivitiesData]);
 
   const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
-  //console.log("hasActivities", hasActivities, "currentDate", currentDate);
 
-  // Only show tab bar for these exact routes
+  // Add debug logging
+  useEffect(() => {
+    console.log('Current pathname:', pathname);
+    console.log('Should show tab bar:', showForRoutes.includes(pathname));
+  }, [pathname]);
+
+  // Force tab bar to be visible on initial mount
+  useEffect(() => {
+    if (pathname.includes('/(tabs)') || pathname === '/') {
+      console.log('Forcing tab bar visibility for path:', pathname);
+      router.setParams({});
+    }
+  }, [pathname]);
+
+  // Specific routes where the tab bar should be shown
   const showForRoutes = [
     '/',
     '/home',
@@ -48,10 +61,31 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
     '/chats/index',
     '/camera/index',
     '/social/index',
-    '/account/index'
+    '/account/index',
+    '/(tabs)',
+    '/(tabs)/home',
+    '/(tabs)/home/index',
+    '/(tabs)/chats',
+    '/(tabs)/chats/index',
+    '/(tabs)/camera',
+    '/(tabs)/camera/index',
+    '/(tabs)/social',
+    '/(tabs)/social/index',
+    '/(tabs)/account',
+    '/(tabs)/account/index'
   ];
 
   const shouldShowTabBar = showForRoutes.includes(pathname);
+  
+  console.log('Tab Layout Render:', {
+    pathname,
+    shouldShowTabBar,
+    showForRoutes,
+    tabBarStyle: {
+      display: shouldShowTabBar ? 'flex' : 'none',
+      height: shouldShowTabBar ? undefined : 0,
+    }
+  });
 
   return (
     <>
@@ -89,6 +123,12 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           options={{
             title: 'Chat',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push('/(tabs)/chats/index');
+            },
           }}
         />
         <Tabs.Screen

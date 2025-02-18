@@ -11,7 +11,7 @@ import { FIREBASE_AUTH} from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
 import { useMutation } from '@apollo/client';
 import { useUserInfo } from '@/services/UserContext';
-
+import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 
 export default function Signup4() {
   const params = useLocalSearchParams();
@@ -41,7 +41,7 @@ export default function Signup4() {
 
   const handleSignup = async () => {
     console.log("params", params);
-    console.log("Primary Goal Category:", getCategoryById(Number(primaryGoal)));
+    //console.log("Primary Goal Category:", getCategoryById(Number(primaryGoal)));
     console.log("Secondary Goal Selected", getCategoryById(selectedGoal));
     setIsLoading(true);
     setError(null);
@@ -55,24 +55,25 @@ export default function Signup4() {
           }
         }
       });
-
-      console.log("firebaseAuth data", data);
+      if (data?.firebaseAuth?.success) {
+        const userData = data.firebaseAuth.user;
+        console.log("Firebase Auth User Data Created:", userData);
+        await login(authToken, userData.id);
+      } else {
+        throw new Error("firebaseAuth failed: firebaseAuth.success is false");
+      }
       const input = {
         username,
         first_name: firstName,
         last_name: lastName,
-        //age,
+        age: Number(age),
         gender,
         timezone,
         bio,
         primary_goal: getCategoryById(Number(primaryGoal)),
         secondary_goal: getCategoryById(selectedGoal),
+        profile_picture: DEFAULT_PROFILE_PICTURE,
       }
-      if (data?.firebaseAuth?.success && data.firebaseAuth?.user) {
-        const userData = data.firebaseAuth.user;
-        await login(authToken, userData.id);
-      }
-
       const { data: updateData } = await updateUser({
         variables: { input },
         context: {
@@ -81,11 +82,8 @@ export default function Signup4() {
           }
         }
       });
-      console.log("updateData", updateData);
-      if (data?.firebaseAuth?.success) {
-        console.log("redirecting to home");
-        router.replace('/(tabs)/home');
-      }
+      console.log("Backend User Data Created:", updateData.updateUser.user, "Redirecting to Home");
+      router.replace('/(tabs)/home');
     } catch (error) {
       console.log('Signup failed', error);
       setError(error instanceof Error ? error.message : 'Signup failed');

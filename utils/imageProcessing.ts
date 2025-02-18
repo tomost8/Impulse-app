@@ -2,8 +2,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '@/config/firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import React from 'react';
-import { Image, ImageProps } from 'react-native';
+import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 
 
 interface PhotoInput {
@@ -11,6 +10,11 @@ interface PhotoInput {
 }
 
 export async function processAndUploadImage(photo: PhotoInput | string): Promise<string> {
+  // Return early if the photo is the default profile picture
+  if (photo === DEFAULT_PROFILE_PICTURE) {
+    return DEFAULT_PROFILE_PICTURE;
+  }
+
   try {
     const sourceUri = typeof photo === 'string' ? photo : photo.uri;
     

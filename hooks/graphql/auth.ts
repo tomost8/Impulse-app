@@ -6,10 +6,8 @@ export const FIREBASE_AUTH = gql`
       success
       user {
         id
-        email
         firebase_uid
-        first_name
-        last_name
+        email
         role
         status
       }
