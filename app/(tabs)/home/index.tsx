@@ -58,18 +58,19 @@ const HomePage = (props: any) => {
   const { updateUser } = useUpdateUser();
   const [isUpdating, setIsUpdating] = useState(false);
   if (hasFetchedUserData.current && !userRef.current.profile_picture && !isUpdating) {
-    setIsUpdating(true);
-    console.log("User has no profile picture: setting to default");
-    const input = {
-      profile_picture: DEFAULT_PROFILE_PICTURE
-    };
     try {
-      const response = updateUser(input, authToken);
-      console.log("User profile picture updated:", response);
+      //setIsUpdating(true);
+      //console.log("User has no profile picture: setting to default");
+      const input = {
+        profile_picture: DEFAULT_PROFILE_PICTURE
+      };
+      //const response = updateUser(input, authToken);
+      //console.log("User profile picture updated:", response);
     } catch (error) {
       console.error("Error updating user profile picture:", error);
+    } finally {
+      //setIsUpdating(false);
     }
-    setIsUpdating(false);
   }
   
   const loading = !hasFetchedFriends.current || !hasFetchedActivities.current || !hasFetchedUserData.current;
