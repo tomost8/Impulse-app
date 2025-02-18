@@ -8,10 +8,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
+import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
-function LeaderboardsScreen({
+function _LeaderboardsScreen({
   users,
   isUsersLoading,
   friends,
@@ -142,7 +143,7 @@ const LeaderboardsPage = (props: any) => {
     );
   }
 
-  return LeaderboardsScreen({
+  /*return LeaderboardsScreen({
     users: usersRef.current,
     isUsersLoading: !hasFetchedUsers.current,
     friends: friendsRef.current,
@@ -153,6 +154,12 @@ const LeaderboardsPage = (props: any) => {
     onGlobalPress: onGlobalPress,
     activeView: activeView,
     setActiveView: setActiveView,
+  });*/
+  return LeaderboardScreen({
+    users: usersRef.current,
+    isUsersLoading: !hasFetchedUsers.current,
+    friends: friendsRef.current,
+    isFriendsLoading: !hasFetchedFriends.current,
   });
 }
 

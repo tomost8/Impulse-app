@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import styles from '@/constants/testStyles';
-import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator, Platform, Pressable, Modal, ScrollView } from 'react-native';
+import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator, Platform, Pressable } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMutation } from '@apollo/client';
-
 import moment from 'moment-timezone';
+import { Picker } from '@react-native-picker/picker';
+import { TIMEZONES, GENDER_OPTIONS } from '@/constants/userOptions';
 
 export default function Signup2() {
 
@@ -16,16 +16,14 @@ export default function Signup2() {
   const [bio, setBio] = useState('');
   const [age, setAge] = useState<number | null>(null);
   const [gender, setGender] = useState('');
-  const [timezone, setTimezone] = useState(moment.tz.guess());
-
-  const [showGenderPicker, setShowGenderPicker] = useState(false);
-  const [showTimezonePicker, setShowTimezonePicker] = useState(false);
-
-
-  const genderOptions = ['Male', 'Female', 'Non-binary', 'Prefer not to say'];
-  const timezoneOptions = moment.tz.names();
+  const [timezone, setTimezone] = useState('');
 
   const handleSignup = () => {
+    if (!timezone) {
+      alert('Please select a timezone');
+      return;
+    }
+    
     router.push({
       pathname: '/(auth)/signup3',
       params: {
@@ -38,7 +36,6 @@ export default function Signup2() {
         gender,
         timezone,
         bio,
-        //community code
       }
     });
   }
@@ -46,88 +43,6 @@ export default function Signup2() {
 
   return (
     <View style={styles.container}>
-
-      {/* Gender Picker Modal */}
-      <Modal
-        transparent={true}
-        visible={showGenderPicker}
-        animationType="slide"
-      >
-        <View style={dateStyles.modalContainer}>
-          <View style={dateStyles.modalContent}>
-            <ScrollView>
-              {genderOptions.map((option) => (
-                <Pressable
-                  key={option}
-                  style={dateStyles.pickerItem}
-                  onPress={() => {
-                    setGender(option);
-                    setShowGenderPicker(false);
-                  }}
-                >
-                  <Text style={[
-                    dateStyles.pickerItemText,
-                    gender === option && dateStyles.selectedItem
-                  ]}>
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <Pressable 
-              style={dateStyles.modalButton}
-              onPress={() => setShowGenderPicker(false)}
-            >
-              <Text>Cancel</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Timezone Picker Modal */}
-      <Modal
-        transparent={true}
-        visible={showTimezonePicker}
-        animationType="slide"
-      >
-        <View style={dateStyles.modalContainer}>
-          <View style={dateStyles.modalContent}>
-            <ScrollView>
-              {timezoneOptions.map((option) => (
-                <Pressable
-                  key={option}
-                  style={dateStyles.pickerItem}
-                  onPress={() => {
-                    setTimezone(option);
-                    setShowTimezonePicker(false);
-                  }}
-                >
-                  <Text style={[
-                    dateStyles.pickerItemText,
-                    timezone === option && dateStyles.selectedItem
-                  ]}>
-                    {option}
-                  </Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-            <Pressable 
-              style={dateStyles.modalButton}
-              onPress={() => setShowTimezonePicker(false)}
-            >
-              <Text>Cancel</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Pressable 
-        style={dateStyles.dateButton}
-        onPress={() => {/* No longer needed for date picker */}}
-      >
-        <Text>{age !== null ? `${age} years` : "Enter Age"}</Text>
-      </Pressable>
-
       <TextInput 
         placeholder="Age" 
         placeholderTextColor="gray"
@@ -135,22 +50,41 @@ export default function Signup2() {
         onChangeText={(text) => setAge(Number(text))}
         keyboardType="numeric"
         style={[styles.input]}
-        maxLength={3} // Optional: limit input length
+        maxLength={3}
       />
 
-      <Pressable 
-        style={dateStyles.dateButton}
-        onPress={() => setShowGenderPicker(true)}
-      >
-        <Text>{gender || "Select Gender"}</Text>
-      </Pressable>
+      <View style={dateStyles.pickerContainer}>
+        <Picker
+          selectedValue={gender}
+          onValueChange={(itemValue) => setGender(itemValue)}
+          style={dateStyles.picker}
+        >
+          {GENDER_OPTIONS.map((option) => (
+            <Picker.Item 
+              key={option.value} 
+              label={option.label} 
+              value={option.value}
+            />
+          ))}
+        </Picker>
+      </View>
 
-      <Pressable 
-        style={dateStyles.dateButton}
-        onPress={() => setShowTimezonePicker(true)}
-      >
-        <Text>{timezone || "Select Timezone"}</Text>
-      </Pressable>
+      <View style={dateStyles.pickerContainer}>
+        <Picker
+          selectedValue={timezone}
+          onValueChange={(itemValue) => setTimezone(itemValue)}
+          style={dateStyles.picker}
+        >
+          <Picker.Item label="Select Timezone" value="" />
+          {TIMEZONES.map((option) => (
+            <Picker.Item 
+              key={option.value} 
+              label={option.label} 
+              value={option.value}
+            />
+          ))}
+        </Picker>
+      </View>
 
       <TextInput 
         placeholder="Bio (optional)" 
@@ -159,7 +93,7 @@ export default function Signup2() {
         onChangeText={setBio}
         multiline
         numberOfLines={3}
-        style={[styles.input]}
+        style={[dateStyles.input, dateStyles.bioInput]}
       />
       
       {false ? (
@@ -177,45 +111,19 @@ export default function Signup2() {
 
 const dateStyles = StyleSheet.create({
   ...styles,
-  dateButton: {
+  pickerContainer: {
     backgroundColor: 'white',
-    padding: 15,
     borderRadius: 8,
     marginVertical: 8,
-    alignItems: 'center',
+    overflow: 'hidden',
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  picker: {
+    height: 50,
+    width: '100%',
   },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  modalButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  datePicker: {
-    height: 200,
-    width: Platform.OS === 'ios' ? '100%' : undefined,
-  },
-  pickerItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  pickerItemText: {
-    fontSize: 16,
-  },
-  selectedItem: {
-    color: 'blue',
-    fontWeight: 'bold',
+  bioInput: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 10,
   },
 });

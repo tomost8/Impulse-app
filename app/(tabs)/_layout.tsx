@@ -1,28 +1,79 @@
 import { router, Tabs, usePathname } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Platform, Image, View, Text, Button } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
-import { useGetActivities } from '@/hooks/graphql/activities/queries';
+import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
   const pathname = usePathname();
-  
-  const { activities } = useGetActivities(userId as number, authToken as string);
+
+  const activitiesRef = useRef<any[] | null>(null);
+  const hasFetchedActivities = useRef(false);
+  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(
+    userId as number,
+    currentDate,
+    authToken as string,
+    !hasFetchedActivities.current
+  );
+
+  useEffect(() => {
+    if (!hasNewActivitiesData) {
+      return;
+    }
+    if (hasNewActivitiesData) {
+      activitiesRef.current = activities;
+      hasFetchedActivities.current = true;
+    }
+  }, [hasNewActivitiesData]);
+
   const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
 
-  // Only show tab bar for these exact routes
+  // Add debug logging
+  useEffect(() => {
+    console.log('Current pathname:', pathname, 'Should show tab bar:', showForRoutes.includes(pathname));
+  }, [pathname]);
+
+  // Force tab bar to be visible on initial mount
+  useEffect(() => {
+    if (pathname.includes('/(tabs)') || pathname === '/') {
+      console.log('Forcing tab bar visibility for path:', pathname);
+      router.setParams({});
+    }
+  }, [pathname]);
+
+  // Specific routes where the tab bar should be shown
   const showForRoutes = [
+    '/',
     '/home',
     '/chats',
     '/camera',
     '/social',
-    '/account'
+    '/account',
+    '/home/index',
+    '/chats/index',
+    '/camera/index',
+    '/social/index',
+    '/account/index',
+    /*
+    '/(tabs)',
+    '/(tabs)/home',
+    '/(tabs)/home/index',
+    '/(tabs)/chats',
+    '/(tabs)/chats/index',
+    '/(tabs)/camera',
+    '/(tabs)/camera/index',
+    '/(tabs)/social',
+    '/(tabs)/social/index',
+    '/(tabs)/account',
+    '/(tabs)/account/index'
+    */
   ];
 
   const shouldShowTabBar = showForRoutes.includes(pathname);
@@ -40,6 +91,13 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
               ios: {
                 position: 'absolute',
               },
+              android: {
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                elevation: 8,
+              },
               default: {},
             }),
           },
@@ -50,12 +108,24 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
             title: 'Home',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
           }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push('/home');
+            },
+          }}
         />
         <Tabs.Screen
           name="chats"
           options={{
             title: 'Chat',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push('/chats');
+            },
           }}
         />
         <Tabs.Screen
@@ -70,6 +140,8 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
                 e.preventDefault();
                 console.log("no activities, pop up modal");
                 setModalVisible(true);
+              } else {
+                router.push('/camera');
               }
             },
           }}
@@ -85,12 +157,24 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
               />
             ),
           }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push('/social');
+            },
+          }}
         />
         <Tabs.Screen
           name="account"
           options={{
             title: 'Account',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          }}
+          listeners={{
+            tabPress: (e) => {
+              e.preventDefault();
+              router.push('/account');
+            },
           }}
         />
       </Tabs>

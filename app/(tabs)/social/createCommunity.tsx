@@ -1,10 +1,11 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
 import styles from '@/constants/testStyles';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { goals } from '@/constants/goals';
 // Debug
@@ -25,6 +26,13 @@ function CreateCommunityScreen({
   communityCategories: string[];
   handleCategoryChange: (category: string) => void;
 }) {
+  const pickImage = async () => {
+    const uri = await pickImageFromProcessing(handleFormDataChange);
+    if (uri) {
+      console.log('Picked image URI:', uri);
+      handleFormDataChange('thumbnail', uri);
+    }
+  };
   if (isCreatingCommunity) {
     return <Text>Loading...</Text>;
   }
@@ -45,13 +53,17 @@ function CreateCommunityScreen({
         value={formData.description}
         onChangeText={(text) => handleFormDataChange('description', text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Thumbnail"
-        placeholderTextColor={"gray"}
-        value={formData.thumbnail}
-        onChangeText={(text) => handleFormDataChange('thumbnail', text)}
-      />
+      <View style={styles.profileImageContainer}>
+      <TouchableOpacity onPress={pickImage}>
+          {formData.thumbnail ? (
+            <Image source={{ uri: formData.thumbnail }} style={styles.profileImage} />
+          ) : (
+            <View style={styles.profileImagePlaceholder}>
+              <Text style={styles.profileImagePlaceholderText}>Upload Photo</Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
       {goals.map((goal) => (
         <View key={goal.id} style={styles.checkbox}>
           <Text style={styles.text}>{goal.label}</Text>
@@ -66,7 +78,7 @@ function CreateCommunityScreen({
           backgroundColor: 'gray',
           opacity: 0.5, 
         }]} 
-        onPress={() => handleCreateCommunity(formData)} 
+        onPress={handleCreateCommunity} 
         disabled={!formData.name}
       >
         <Text>Create</Text>
@@ -82,14 +94,17 @@ const CreateCommunityPage = (props: any) => {
   const {createCommunity} = useCreateCommunity();
   const {createCommunityCategory} = useCreateCommunityCategory();
   const [isCreatingCommunity, setIsCreatingCommunity] = useState(false);
-  const handleCreateCommunity = async (input: any) => {
+  const handleCreateCommunity = async () => {
     setIsCreatingCommunity(true);
+    const thumbnail = formData.thumbnail 
+      ? await processAndUploadImage(formData.thumbnail)
+      : null;
     try {
       const input = {
         influencer_id: userId,
         name: formData.name,
         ...(formData.description && { description: formData.description }),
-        ...(formData.thumbnail && { thumbnail: formData.thumbnail }),
+        ...(thumbnail && { thumbnail }),
       }
       const response = await createCommunity(input);
       if (response.success) {

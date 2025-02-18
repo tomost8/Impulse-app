@@ -100,7 +100,7 @@ const CreateGroupPage = (props: any) => {
   // Mutations
   const {createGroup} = useCreateGroup();
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
-  const handleCreateGroup = async (input: any) => {
+  const handleCreateGroup = async () => {
     const { password, confirm_password } = formData;
     if (password !== confirm_password) {
       alert("Passwords do not match.");

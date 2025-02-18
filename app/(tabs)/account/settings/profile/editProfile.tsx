@@ -4,12 +4,15 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
-import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, Platform } from 'react-native';
 import styles from '@/constants/testStyles';
 import { router } from 'expo-router';
+import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 // Debug
 import { debugRenders } from '@/constants/debug';
 import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
+import { Picker } from '@react-native-picker/picker';
+import { TIMEZONES, GENDER_OPTIONS, GOAL_OPTIONS } from '@/constants/userOptions';
 
 function EditProfileScreen({
   user,
@@ -43,19 +46,21 @@ function EditProfileScreen({
       <ScrollView>
       <View style={styles.container}>
         <View style={styles.profileImageContainer}>
-          <TouchableOpacity onPress={pickImage}>
-          {formData.profile_picture ? (
-            <Image
-              source={{ uri: formData.profile_picture }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={styles.profileImagePlaceholder}>
-              <Text style={styles.profileImagePlaceholderText}>Upload Photo</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
+          <Image
+            source={formData.profile_picture ? 
+              { uri: formData.profile_picture } : 
+              user.profile_picture ? 
+                { uri: user.profile_picture } :
+                { uri: DEFAULT_PROFILE_PICTURE }
+            }
+            style={styles.profileImage}
+          />
+          <TouchableOpacity 
+            onPress={pickImage}
+          >
+            <Text style={styles.text}>Edit Photo</Text>
+          </TouchableOpacity>
+        </View>
       <TextInput
           style={styles.input}
           placeholder="Email"
@@ -89,23 +94,36 @@ function EditProfileScreen({
           style={styles.input}
           placeholder="Age"
           placeholderTextColor="gray"
-          value={formData.age}
-          onChangeText={(text) => handleFormDataChange('age', text)}
+          value={formData.age.toString()}
+          keyboardType="numeric"
+          onChangeText={(text) => {
+            const numValue = text.replace(/[^0-9]/g, '');
+            handleFormDataChange('age', numValue);
+          }}
       />
-      <TextInput
-          style={styles.input}
-          placeholder="Gender"
-          placeholderTextColor="gray"
-          value={formData.gender}
-          onChangeText={(text) => handleFormDataChange('gender', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Timezone"
-          placeholderTextColor="gray"
-          value={formData.timezone}
-          onChangeText={(text) => handleFormDataChange('timezone', text)}
-      />
+      <View style={[styles.input, { paddingHorizontal: 0 }]}>
+        <Picker
+          selectedValue={formData.gender}
+          onValueChange={(value) => handleFormDataChange('gender', value)}
+          style={{ color: formData.gender ? '#000' : 'gray' }}
+        >
+          {GENDER_OPTIONS.map((option) => (
+            <Picker.Item key={option.value} label={option.label} value={option.value} />
+          ))}
+        </Picker>
+      </View>
+      <View style={[styles.input, { paddingHorizontal: 0 }]}>
+        <Picker
+          selectedValue={formData.timezone}
+          onValueChange={(value) => handleFormDataChange('timezone', value)}
+          style={{ color: formData.timezone ? '#000' : 'gray' }}
+        >
+          <Picker.Item label="Select Timezone" value="" />
+          {TIMEZONES.map((tz) => (
+            <Picker.Item key={tz.value} label={tz.label} value={tz.value} />
+          ))}
+        </Picker>
+      </View>
       <TextInput
           style={styles.input}
           placeholder="Bio"
@@ -113,20 +131,29 @@ function EditProfileScreen({
           value={formData.bio}
           onChangeText={(text) => handleFormDataChange('bio', text)}
       />
-      <TextInput
-          style={styles.input}
-          placeholder="Primary Goal"
-          placeholderTextColor="gray"
-          value={formData.primary_goal}
-          onChangeText={(text) => handleFormDataChange('primary_goal', text)}
-      />
-      <TextInput
-          style={styles.input}
-          placeholder="Secondary Goal"
-          placeholderTextColor="gray"
-          value={formData.secondary_goal}
-          onChangeText={(text) => handleFormDataChange('secondary_goal', text)}
-      />
+      <View style={[styles.input, { paddingHorizontal: 0 }]}>
+        <Picker
+          selectedValue={formData.primary_goal}
+          onValueChange={(value) => handleFormDataChange('primary_goal', value)}
+          style={{ color: formData.primary_goal ? '#000' : 'gray' }}
+        >
+          {GOAL_OPTIONS.map((option) => (
+            <Picker.Item key={option.value} label={option.label} value={option.value} />
+          ))}
+        </Picker>
+      </View>
+      <View style={[styles.input, { paddingHorizontal: 0 }]}>
+        <Picker
+          selectedValue={formData.secondary_goal}
+          onValueChange={(value) => handleFormDataChange('secondary_goal', value)}
+          style={{ color: formData.secondary_goal ? '#000' : 'gray' }}
+        >
+          {GOAL_OPTIONS.filter(option => option.value !== formData.primary_goal)
+            .map((option) => (
+              <Picker.Item key={option.value} label={option.label} value={option.value} />
+            ))}
+        </Picker>
+      </View>
       <TouchableOpacity style={styles.button} onPress={handleFormSubmit}>
         <Text style={styles.text}>Save Profile</Text>
       </TouchableOpacity>
@@ -165,14 +192,21 @@ const EditProfilePage = (props: any) => {
   const handleFormSubmit = async (input: any) => {
     setIsSubmitting(true);
     try {
+      console.log('Form Data:', formData);
       // Check if profile_picture has a value and process it
       if (formData.profile_picture) {
+        console.log('Processing profile picture:', formData.profile_picture);
         const downloadURL = await processAndUploadImage(formData.profile_picture);
         formData.profile_picture = downloadURL; // Update the profile_picture with the download URL
       }
 
       const input = Object.fromEntries(
-        Object.entries(formData).filter(([key, value]) => value !== '' && key !== 'email')
+        Object.entries(formData)
+          .filter(([key, value]) => value !== '' && key !== 'email')
+          .map(([key, value]) => [
+            key,
+            key === 'age' ? Number(value) : value
+          ])
       );
       console.log('Input:', input);
       const response = await updateUser(input, authToken);
@@ -222,12 +256,21 @@ const EditProfilePage = (props: any) => {
     });
   };
 
+  if (!userRef.current?.profile_picture) {
+    formData.profile_picture = DEFAULT_PROFILE_PICTURE;
+    console.log("Setting default profile picture", formData);
+  } else {
+    formData.profile_picture = '';
+    console.log("Resetting profile picture form data", formData);
+  }
+
   // Debug
   const loading = isSubmitting;
   if (debugRenders && !loading) {
     console.log("Rendering EditProfilePage\n",
       "User:", userRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
+      "Form Data:", formData, "\n",
     );
   }
 

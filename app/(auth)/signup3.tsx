@@ -39,7 +39,7 @@ export default function Signup3() {
       </Text>
       <Text style={styles.text}>Each category is flexible - you can choose what specifically you want to work on within it.
       </Text>
-      <GoalSelector 
+      <GoalSelector
         selectedGoal={selectedGoal} 
         setSelectedGoal={setSelectedGoal} 
         primaryGoal={null}

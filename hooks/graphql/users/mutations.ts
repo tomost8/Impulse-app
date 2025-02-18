@@ -7,12 +7,23 @@ export const UPDATE_USER = gql`
       success
       user {
         id
+        email
         first_name
         last_name
         username
         gender
-        dob
+        age
         status
+        profile_picture
+        bio
+        primary_goal
+        secondary_goal
+        timezone
+        role
+      }
+      errors {
+        field
+        message
       }
     }
   }

@@ -42,6 +42,7 @@ export const GET_USER = gql`
         first_name
         last_name
         username
+        age
         gender
         bio
         primary_goal
