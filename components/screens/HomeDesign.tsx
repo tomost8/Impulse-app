@@ -44,12 +44,6 @@ const HomeDesign: React.FC = () => {
 
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
         <View style={styles.leaderboardWrapper}>
-          <View style={styles.leaderboardHeader}>
-            <Text style={styles.leaderboardTitle}>Weekly Leaderboard</Text>
-            <TouchableOpacity onPress={() => router.push('/home/leaderboards')}>
-              <Text style={styles.viewAllText}>View All</Text>
-            </TouchableOpacity>
-          </View>
 
           {/* ✅ Keep only one instance of LeaderboardFull */}
           <LeaderboardFull />
