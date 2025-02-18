@@ -1,14 +1,20 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import DailyGoalCard from "./DailyGoalCard"; // Importing reusable component
+import { router } from "expo-router";
 
-const DailyGoals = () => {
+interface DailyGoalsProps {
+  activities: any[];
+  isActivitiesLoading: boolean;
+}
+
+const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
       <View style={styles.header}>
         <Text style={styles.title}>Daily Goals</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => {router.push('/home/activityView')}}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>

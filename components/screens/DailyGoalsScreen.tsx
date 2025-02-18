@@ -2,7 +2,12 @@ import React from "react";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import AddGoalButton from "../ui/DailyGoalsViewAll/AddGoalButton"; // ✅ Corrected Import
 
-const DailyGoalsScreen: React.FC = () => {
+interface DailyGoalsScreenProps {
+  activities: any[];
+  isActivitiesLoading: boolean;
+}
+  
+const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Add Goal Button */}

@@ -7,6 +7,7 @@ import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import ActivitiesModal from '@/components/modals/ActivitiesModal';
+import DailyGoalsScreen from '@/components/screens/DailyGoalsScreen';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
@@ -89,9 +90,9 @@ const ViewActivityPage = (props: any) => {
     );
   }
 
-  return (
-    <ViewActivityScreen 
-      activities={activitiesRef.current}
+  return (//ViewActivityScreen
+    <DailyGoalsScreen 
+      activities={activitiesRef.current || []}
       isActivitiesLoading={!hasFetchedActivities.current}
     />
   );
