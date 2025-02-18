@@ -8,9 +8,9 @@ const LeaderboardCard: React.FC = () => {
     <View style={styles.container}>
       <View style={styles.topProfiles}>
         {/* ✅ Fixed: Using require() directly instead of import */}
-        <LeaderboardProfile name="Andrew" points="3,496" imageUrl={require("../../../assets/images/andrew.png")} />
-        <LeaderboardProfile name="Pedro" points="3,645" imageUrl={require("../../../assets/images/andrew.png")} />
-        <LeaderboardProfile name="Freida" points="3,178" imageUrl={require("../../../assets/images/andrew.png")} />
+        <LeaderboardProfile name="Andrew" points="3,496" imageUrl={require("@/assets/images/andrew.png")} rank={2} />
+        <LeaderboardProfile name="Pedro" points="3,645" imageUrl={require("@/assets/images/andrew.png")} rank={1} />
+        <LeaderboardProfile name="Freida" points="3,178" imageUrl={require("@/assets/images/andrew.png")} rank={3} />
       </View>
 
       <View style={styles.podiumContainer}>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     height: 260,
     backgroundColor: "#FFFFFF",
     borderRadius: 32,
-    paddingTop: 47,
+    paddingTop: 28,
     paddingLeft: 3.2,
     paddingRight: 3.2,
     alignItems: "center",

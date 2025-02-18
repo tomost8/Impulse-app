@@ -6,20 +6,58 @@ interface PodiumProps {
 }
 
 const LeaderboardPodium: React.FC<PodiumProps> = ({ position }) => {
-  const podiumStyles = {
-    1: styles.firstPlace,
-    2: styles.secondPlace,
-    3: styles.thirdPlace,
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={[styles.podiumBlock, podiumStyles[position]]}>
-        <Text style={styles.podiumNumber}>{position}</Text>
+    return (
+      <View style={[styles.podiumBlock, getPodiumStyle(position)]}>
+        <Text style={[styles.podiumNumber, getNumberOffset(position)]}>{position}</Text>
       </View>
-    </View>
-  );
-};
+    );
+  };
+  
+  // ✅ Function to adjust the podium block styles dynamically
+  const getPodiumStyle = (position: number) => {
+    switch (position) {
+      case 1:
+        return {
+          width: 120,
+          height: 120,
+          backgroundColor: "#DE728D",
+          marginTop: 0, // Highest podium
+          zIndex: 3, // Ensures it stays on top
+        };
+      case 2:
+        return {
+          width: 113,
+          height: 87.5,
+          backgroundColor: "#C35A74",
+          marginTop: 32.5, // Lower than 1st place
+          zIndex: 2,
+        };
+      case 3:
+        return {
+          width: 110.8,
+          height: 64.91,
+          backgroundColor: "#9F4A5F",
+          marginTop: 55.09, // Lowest podium
+          zIndex: 1,
+        };
+      default:
+        return {};
+    }
+  };
+  
+  // ✅ Function to adjust number positioning
+  const getNumberOffset = (position: number) => {
+    switch (position) {
+      case 1:
+        return { marginTop: -30 }; // Moves the number slightly down
+      case 2:
+        return { marginTop: -10 }; // Adjusts position based on podium height
+      case 3:
+        return { marginTop: 0 }; // Moves the number down for shortest podium
+      default:
+        return {};
+    }
+  };
 
 const styles = StyleSheet.create({
   container: {
@@ -43,20 +81,20 @@ const styles = StyleSheet.create({
   },
 
   firstPlace: {
-    width: 122.42,
+    width: 120,
     height: 130,
     backgroundColor: "#DE728D", // Darker shade for the center block
   },
 
   secondPlace: {
-    width: 115.47,
+    width: 113,
     height: 97.5,
     backgroundColor: "#C35A74", // Lighter shade for left block
   },
 
   thirdPlace: {
-    width: 114.8,
-    height: 74.91,
+    width: 110.8,
+    height: 84.91,
     backgroundColor: "#9F4A5F", // Same as second place but smaller
     marginLeft: -1, // ✅ Removes tiny gap between first & second place
   },
