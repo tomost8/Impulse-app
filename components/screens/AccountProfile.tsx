@@ -8,7 +8,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-export const AccountProfile = () => {
+interface AccountProfileProps {
+  user: any;
+  isUserLoading: boolean;
+}
+
+export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => {
+  if (isUserLoading) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <ScrollView style={styles.container}>
         <View style={styles.header}>
@@ -25,19 +33,19 @@ export const AccountProfile = () => {
       <View style={styles.mainContent}>
         <Image
           source={{
-            uri: "assets/images/Account/bigInfo.png",
+            uri: user.profile_picture,
           }}
-          style={styles.profileImage}
+          style={styles.profileImage} //styles.test
           accessibilityLabel="Profile picture"
         />
-        <Text style={styles.profileName}>First Name Last Name</Text>
-        <Text style={styles.username}>@username</Text>
+        <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
+        <Text style={styles.username}>@{user.username}</Text>
 
         {/* Points Section */}
         <View style={styles.pointsContainer}>
           <View style={styles.pointsHeader}>
             <Text style={styles.pointsGuide}>Points Earning Guide</Text>
-            <Text style={styles.pointsValue}>5.1k / 7.5k pts</Text>
+            <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
           </View>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar} />
@@ -59,21 +67,18 @@ export const AccountProfile = () => {
         </View>
 
         <Text style={styles.bioText}>
-          Lorem ipsum dolor sit amet consectetur. Elit nisi quam ac semper arcu.
-          Magna suspendisse purus sed posuere tincidunt blandit nibh ornare
-          nunc. Venenatis id quam gravida nisi. Morbi tincidunt convallis enim
-          tristique mus. Tempus vitae morbi ut.
+          {user.bio}
         </Text>
 
         {/* Working Section */}
         <View style={styles.workingSection}>
           <Text style={styles.sectionTitle}>What I'm Working On</Text>
           <View style={styles.workItem}>
-            <Text style={styles.workText}>Working Out</Text>
+            <Text style={styles.workText}>{user.primary_goal}</Text>
             <Text style={styles.workType}>(Primary)</Text>
           </View>
           <View style={styles.workItem}>
-            <Text style={styles.workText}>Rise & Shine</Text>
+            <Text style={styles.workText}>{user.secondary_goal}</Text>
             <Text style={styles.workType}>(Secondary)</Text>
           </View>
         </View>
@@ -82,11 +87,11 @@ export const AccountProfile = () => {
         <View style={styles.infoSection}>
           <View style={styles.infoColumn}>
             <Text style={styles.infoLabel}>Gender</Text>
-            <Text style={styles.infoValue}>Female</Text>
+            <Text style={styles.infoValue}>{user.gender}</Text>
           </View>
           <View style={styles.infoColumn}>
             <Text style={styles.infoLabel}>Timezone</Text>
-            <Text style={styles.infoValue}>GMT +5</Text>
+            <Text style={styles.infoValue}>{user.timezone}</Text>
           </View>
         </View>
 
@@ -142,6 +147,8 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 50,
+    //borderWidth: 1,
+    //borderColor: '#ccc',
   },
   profileName: {
     fontFamily: "Poppins",
