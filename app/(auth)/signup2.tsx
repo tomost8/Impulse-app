@@ -4,7 +4,8 @@ import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator, Platform,
 import { router, useLocalSearchParams } from 'expo-router';
 import moment from 'moment-timezone';
 import { Picker } from '@react-native-picker/picker';
-import { TIMEZONES, GENDER_OPTIONS } from '@/constants/userOptions';
+import { GENDER_OPTIONS } from '@/constants/userOptions';
+import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 
 export default function Signup2() {
 
@@ -76,7 +77,7 @@ export default function Signup2() {
           style={dateStyles.picker}
         >
           <Picker.Item label="Select Timezone" value="" />
-          {TIMEZONES.map((option) => (
+          {TIMEZONE_OPTIONS.map((option) => (
             <Picker.Item 
               key={option.value} 
               label={option.label} 

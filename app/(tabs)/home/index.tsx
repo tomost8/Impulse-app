@@ -15,8 +15,10 @@ import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
+
 const HomePage = (props: any) => {
-  const { userId, authToken } = props;
+
+  const { userId, authToken, userData } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);

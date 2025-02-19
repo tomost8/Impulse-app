@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGetUser } from '../hooks/graphql/users/queries';
 
 interface UserContextType {
     authToken: string | null;
@@ -7,7 +8,6 @@ interface UserContextType {
     isLoading: boolean;
     login: (token: string, id: number) => Promise<void>;
     logout: () => Promise<void>;
-    refreshUserInfo: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -16,6 +16,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [authToken, setAuthToken] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Initial load
+    useEffect(() => {
+        //console.log("provider: useEffect");
+        getUserInfo();
+    }, []);
 
     const getUserInfo = async () => {
         try {
@@ -33,16 +39,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    // Initial load
-    useEffect(() => {
-        getUserInfo();
-    }, []);
-
     const login = async (token: string, id: number) => {
         try {
             await Promise.all([
                 AsyncStorage.setItem('authToken', token),
-                AsyncStorage.setItem('userId', id.toString())
+                AsyncStorage.setItem('userId', id.toString()),
             ]);
             setAuthToken(token);
             setUserId(id);
@@ -56,7 +57,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             await Promise.all([
                 AsyncStorage.removeItem('authToken'),
-                AsyncStorage.removeItem('userId')
+                AsyncStorage.removeItem('userId'),
+                AsyncStorage.removeItem('userData')
             ]);
             setAuthToken(null);
             setUserId(null);
@@ -66,20 +68,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const refreshUserInfo = async () => {
-        setIsLoading(true);
-        await getUserInfo();
-    };
-
     return (
         <UserContext.Provider 
             value={{ 
                 authToken, 
                 userId, 
-                isLoading, 
+                isLoading: isLoading,
                 login, 
                 logout,
-                refreshUserInfo 
             }}
         >
             {children}

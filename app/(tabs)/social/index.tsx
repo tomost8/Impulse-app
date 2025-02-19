@@ -42,8 +42,6 @@ function SocialScreen({
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
 
-  console.log("Selected Community:", selectedCommunity);
-
   if (isCommunityMembersLoading || isFriendsFeedLoading || isCommunityFeedLoading || isHandlingLike || isHandlingUnlike) {
     return <Text>Loading...</Text>;
   }
@@ -135,7 +133,7 @@ function SocialScreen({
 }
 
 const SocialPage = (props: any) => {
-  const { userId, authToken } = props;
+  const { userId, authToken} = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State

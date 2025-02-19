@@ -12,8 +12,8 @@ import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 import { debugRenders } from '@/constants/debug';
 import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 import { Picker } from '@react-native-picker/picker';
-import { TIMEZONES, GENDER_OPTIONS, GOAL_OPTIONS } from '@/constants/userOptions';
-
+import { GENDER_OPTIONS, GOAL_OPTIONS } from '@/constants/userOptions';
+import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 function EditProfileScreen({
   user,
   isUserLoading,
@@ -119,7 +119,7 @@ function EditProfileScreen({
           style={{ color: formData.timezone ? '#000' : 'gray' }}
         >
           <Picker.Item label="Select Timezone" value="" />
-          {TIMEZONES.map((tz) => (
+          {TIMEZONE_OPTIONS.map((tz) => (
             <Picker.Item key={tz.value} label={tz.label} value={tz.value} />
           ))}
         </Picker>
