@@ -16,11 +16,17 @@ interface PostCardProps {
     expires_at: string;
     liked: boolean;
     likeCount: number;
+    post_targets: {
+      id: number;
+      target_id: number;
+      target_type: string;
+    }[];
   };
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
   updatePostLikeState: (postId: number, liked: boolean) => void;
-  showCommunityButton?: boolean;
+  communityId?: number;
+  communityName?: string;
 }
 
 export default function PostCard({ 
@@ -28,7 +34,8 @@ export default function PostCard({
   handleLikePost, 
   handleUnlikePost, 
   updatePostLikeState,
-  showCommunityButton = false
+  communityId,
+  communityName,
 }: PostCardProps) {
   return (
     <View key={post.id} style={styles.section}>
@@ -42,9 +49,9 @@ export default function PostCard({
         />
       </TouchableOpacity>
       
-      {showCommunityButton && (
-        <TouchableOpacity style={styles.button} onPress={() => console.log("Community Button Pressed")}>
-          <Text style={styles.text}>Community Button</Text>
+      {communityId && (
+        <TouchableOpacity style={styles.button} onPress={() => router.push(`/community/${communityId}`)}>
+          <Text style={styles.text}>{communityName}</Text>
         </TouchableOpacity>
       )}
 

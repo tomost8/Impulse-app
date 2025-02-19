@@ -54,23 +54,33 @@ const HomePage = (props: any) => {
     }
   }, [hasNewFriendsData, hasNewActivitiesData, hasNewUserData]); 
 
-  // Mutations
+  // Mutations: Set Default PFP on Render if no PFP is set
   const { updateUser } = useUpdateUser();
   const [isUpdating, setIsUpdating] = useState(false);
-  if (hasFetchedUserData.current && !userRef.current.profile_picture && !isUpdating) {
-    setIsUpdating(true);
-    console.log("User has no profile picture: setting to default");
-    const input = {
-      profile_picture: DEFAULT_PROFILE_PICTURE
+  useEffect(() => {
+    const updateProfilePicture = async () => {
+      if (hasFetchedUserData.current && !userRef.current.profile_picture && !isUpdating) {
+        try {
+          setIsUpdating(true);
+          const input = {
+            profile_picture: DEFAULT_PROFILE_PICTURE
+          };
+          const response = await updateUser(input, authToken);
+          if (response.success) {
+            console.log("User profile picture not found: set to default", response.user);
+          } else {
+            throw new Error("updateUser response.success is false", response.errors);
+          }
+        } catch (error) {
+          console.error("Error updating user profile picture:", error);
+        } finally {
+          setIsUpdating(false);
+        }
+      }
     };
-    try {
-      const response = updateUser(input, authToken);
-      console.log("User profile picture updated:", response);
-    } catch (error) {
-      console.error("Error updating user profile picture:", error);
-    }
-    setIsUpdating(false);
-  }
+
+    updateProfilePicture();
+  }, [hasFetchedUserData.current, userRef.current?.profile_picture, authToken]);
   
   const loading = !hasFetchedFriends.current || !hasFetchedActivities.current || !hasFetchedUserData.current;
   if (debugRenders && !loading) {
@@ -81,7 +91,7 @@ const HomePage = (props: any) => {
     );
   }
   
-  return <HomeDesign
+  return <HomeScreen
     friends={friendsRef.current || []} 
     isFriendsLoading={!hasFetchedFriends.current}
     activities={activitiesRef.current || []}
