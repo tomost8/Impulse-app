@@ -16,6 +16,7 @@ interface PostCardProps {
     expires_at: string;
     liked: boolean;
     likeCount: number;
+    commentCount: number;
     post_targets: {
       id: number;
       target_id: number;
@@ -64,7 +65,7 @@ export default function PostCard({
         pathname: "/post/[id]",
         params: { id: post.id, isLiked: post.liked.toString(), likeCount: post.likeCount }
       })}>
-        <Text style={styles.text}>Comment Button</Text>
+        <Text style={styles.text}>Comment Button ({post.commentCount})</Text>
       </TouchableOpacity>
 
       <TouchableOpacity 

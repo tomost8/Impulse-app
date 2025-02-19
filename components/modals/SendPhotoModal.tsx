@@ -67,7 +67,6 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
       };
       console.log("input", input);
       const response = await createPost(input, authToken as string);
-      console.log("response", response);
       if (response.success) {
         console.log("Post created successfully:", response.post);
       } else {

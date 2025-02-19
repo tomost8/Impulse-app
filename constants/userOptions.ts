@@ -1,31 +1,30 @@
 import { goals } from '@/constants/goals';
 
 export const TIMEZONES = [
-  { value: 'Etc/GMT+12', label: 'UTC-12:00' },
-  { value: 'Etc/GMT+11', label: 'UTC-11:00' },
-  { value: 'Etc/GMT+10', label: 'UTC-10:00' },
-  { value: 'Etc/GMT+9', label: 'UTC-09:00' },
-  { value: 'Etc/GMT+8', label: 'UTC-08:00' },
-  { value: 'Etc/GMT+7', label: 'UTC-07:00' },
-  { value: 'Etc/GMT+6', label: 'UTC-06:00' },
-  { value: 'Etc/GMT+5', label: 'UTC-05:00' },
-  { value: 'Etc/GMT+4', label: 'UTC-04:00' },
-  { value: 'Etc/GMT+3', label: 'UTC-03:00' },
-  { value: 'Etc/GMT+2', label: 'UTC-02:00' },
-  { value: 'Etc/GMT+1', label: 'UTC-01:00' },
-  { value: 'Etc/GMT+0', label: 'UTC±00:00' },
-  { value: 'Etc/GMT-1', label: 'UTC+01:00' },
-  { value: 'Etc/GMT-2', label: 'UTC+02:00' },
-  { value: 'Etc/GMT-3', label: 'UTC+03:00' },
-  { value: 'Etc/GMT-4', label: 'UTC+04:00' },
-  { value: 'Etc/GMT-5', label: 'UTC+05:00' },
-  { value: 'Etc/GMT-6', label: 'UTC+06:00' },
-  { value: 'Etc/GMT-7', label: 'UTC+07:00' },
-  { value: 'Etc/GMT-8', label: 'UTC+08:00' },
-  { value: 'Etc/GMT-9', label: 'UTC+09:00' },
-  { value: 'Etc/GMT-10', label: 'UTC+10:00' },
-  { value: 'Etc/GMT-11', label: 'UTC+11:00' },
-  { value: 'Etc/GMT-12', label: 'UTC+12:00' }
+  { value: 'UTC-12:00', label: 'Etc/GMT+12' },
+  { value: 'UTC-11:00', label: 'Etc/GMT+11' },
+  { value: 'UTC-10:00', label: 'Etc/GMT+10' },
+  { value: 'UTC-09:00', label: 'Etc/GMT+9' },
+  { value: 'UTC-08:00', label: 'Etc/GMT+8' },
+  { value: 'UTC-07:00', label: 'Etc/GMT+7' },
+  { value: 'UTC-06:00', label: 'Etc/GMT+6' },
+  { value: 'UTC-05:00', label: 'Etc/GMT+5' },
+  { value: 'UTC-04:00', label: 'Etc/GMT+4' },
+  { value: 'UTC-03:00', label: 'Etc/GMT+3' },
+  { value: 'UTC-02:00', label: 'Etc/GMT+2' },
+  { value: 'UTC±00:00', label: 'Etc/GMT+0' },
+  { value: 'UTC+01:00', label: 'Etc/GMT-1' },
+  { value: 'UTC+02:00', label: 'Etc/GMT-2' },
+  { value: 'UTC+03:00', label: 'Etc/GMT-3' },
+  { value: 'UTC+04:00', label: 'Etc/GMT-4' },
+  { value: 'UTC+05:00', label: 'Etc/GMT-5' },
+  { value: 'UTC+06:00', label: 'Etc/GMT-6' },
+  { value: 'UTC+07:00', label: 'Etc/GMT-7' },
+  { value: 'UTC+08:00', label: 'Etc/GMT-8' },
+  { value: 'UTC+09:00', label: 'Etc/GMT-9' },
+  { value: 'UTC+10:00', label: 'Etc/GMT-10' },
+  { value: 'UTC+11:00', label: 'Etc/GMT-11' },
+  { value: 'UTC+12:00', label: 'Etc/GMT-12' }
 ];
 
 export const GENDER_OPTIONS = [
@@ -33,7 +32,6 @@ export const GENDER_OPTIONS = [
   { value: 'male', label: 'Male' },
   { value: 'female', label: 'Female' },
   { value: 'non-binary', label: 'Non-binary' },
-  { value: 'other', label: 'Other' },
   { value: 'prefer-not-to-say', label: 'Prefer not to say' }
 ];
 

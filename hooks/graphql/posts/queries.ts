@@ -28,9 +28,7 @@ const GET_FEED_COMMUNITIES = gql`
         messages {
           id
         }
-        comments {
-          id
-        }
+        commentCount
         liked
         likeCount
       }
@@ -93,9 +91,7 @@ const GET_FEED_FRIENDS = gql`
         messages {
           id
         }
-        comments {
-          id
-        }
+        commentCount
         liked
         likeCount
       }

@@ -63,7 +63,7 @@ const AddActivityPage = (props: any) => {
   const handleCreateActivity = async (activity: string, date?: string) => {
     setIsCreatingActivity(true);
     try {
-      const activityDate = date || new Date().toISOString();
+      const activityDate = date || new Date(Date.now());
       const input = {
         category: activity,
         scheduledDatetime: activityDate, // Need to handle time zone, server is UTC
@@ -73,6 +73,7 @@ const AddActivityPage = (props: any) => {
       if (response.success) {
         router.back();
         console.log("Activity created successfully", response);
+        console.log("Scheduled datetime:", activityDate);
       } else {
         console.error("Error creating activity:", response);
       }
