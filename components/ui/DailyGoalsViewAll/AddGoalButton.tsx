@@ -21,9 +21,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "stretch", // Stretch to fit container width
-    paddingHorizontal: 20, // Ensures padding around text
-    marginHorizontal: 20, // Adds spacing on sides
-    marginBottom: 33, // Matches Figma spacing at the bottom
+    paddingHorizontal: 60, // Ensures padding around text
+    marginHorizontal: 10, // Adds spacing on sides
+    marginBottom: 5, // Matches Figma spacing at the bottom
   },
   buttonText: {
     fontSize: 18, // Matches Figma font size
