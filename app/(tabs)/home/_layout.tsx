@@ -18,7 +18,7 @@ export default function HomeLayout() {
       {/* Activity View Screen */}
       <Stack.Screen 
         name="activityView" 
-        options={{ headerShown: true, headerTitle: "Activity Details" }} 
+        options={{ headerShown: false }} 
       />
 
       {/* Leaderboard Screen */}

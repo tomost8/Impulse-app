@@ -1,6 +1,7 @@
 import React from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import DailyGoals from "./DailyGoals"; // Import the updated DailyGoals component
+import { router } from "expo-router";
 
 // Dummy Data for Daily Goals (Replace with API data later)
 const dailyGoalsData = [
@@ -28,8 +29,7 @@ const dailyGoalsData = [
 const GoalsList: React.FC = () => {
   // Function to handle edit button press
   const handleEditGoal = (goalId: string) => {
-    console.log(`Edit goal with ID: ${goalId}`);
-    // Navigation logic can be added here
+    router.push(`/home/activityView/${goalId}`);
   };
 
   return (
