@@ -3,6 +3,7 @@ import { View, SafeAreaView, StyleSheet, Text, ScrollView } from "react-native";
 import AddGoalButton from "../ui/DailyGoalsViewAll/AddGoalButton"; // ✅ Corrected Import
 import GoalsHeader from "../ui/DailyGoalsViewAll/GoalsHeader"; // ✅ Added GoalsHeader
 import GoalsList from "../ui/DailyGoalsViewAll/GoalsList"; // ✅ Added GoalsList
+import { router } from "expo-router";
 
 interface DailyGoalsScreenProps {
   activities: any[];
@@ -27,7 +28,7 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
 
       {/* Add Goal Button */}
       <View style={styles.buttonContainer}>
-        <AddGoalButton onPress={() => console.log("Add Goal Pressed!")} />
+        <AddGoalButton onPress={() => router.push("/home/activityAdd")} />
       </View>
     </SafeAreaView>
   );

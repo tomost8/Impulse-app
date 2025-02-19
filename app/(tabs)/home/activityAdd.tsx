@@ -6,6 +6,7 @@ import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
+import AddDailyGoalsScreen from '@/components/screens/AddDailyGoals';
 // Debug
 import { debugRenders } from '@/constants/debug';
 import { router } from 'expo-router';
@@ -98,7 +99,7 @@ const AddActivityPage = (props: any) => {
     console.log("Rendering AddActivityPage");
   }
 
-  return <AddActivityScreen 
+  return <AddDailyGoalsScreen //AddActivityScreen
     selectedActivities={selectedActivities}
     handleSelectActivity={handleSelectActivity}
     handleCreateActivity={handleCreateActivity}
