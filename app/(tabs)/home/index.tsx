@@ -6,10 +6,6 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
-// Hooks for Profile Picture update testing
-import { useGetUser } from '@/hooks/graphql/users/queries';
-import { useUpdateUser } from '@/hooks/graphql/users/mutations';
-import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 // Components
 
 // Debug
@@ -21,7 +17,7 @@ import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 const HomePage = () => {
   const { userId, authToken } = useUserInfo();
-  const { timezone, activityStatus } = useUserPreferences();
+  const { timezone, cameraClickable } = useUserPreferences();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
@@ -49,35 +45,6 @@ const HomePage = () => {
       setRenderCounter(prev => prev + 1);
     }
   }, [hasNewFriendsData, hasNewActivitiesData]); 
-
-  // Mutations: Set Default PFP on Render if no PFP is set
-  /*
-  const { updateUser } = useUpdateUser();
-  const [isUpdating, setIsUpdating] = useState(false);
-  useEffect(() => {
-    const updateProfilePicture = async () => {
-      if (hasFetchedUserData.current && !userRef.current.profile_picture && !isUpdating) {
-        try {
-          setIsUpdating(true);
-          const input = {
-            profile_picture: DEFAULT_PROFILE_PICTURE
-          };
-          const response = await updateUser(input, authToken as string);
-          if (response.success) {
-            console.log("User profile picture not found: set to default", response.user);
-          } else {
-            throw new Error("updateUser response.success is false", response.errors);
-          }
-        } catch (error) {
-          console.error("Error updating user profile picture:", error);
-        } finally {
-          setIsUpdating(false);
-        }
-      }
-    };
-
-    updateProfilePicture();
-  }, [hasFetchedUserData.current, userRef.current?.profile_picture, authToken]);*/
   
   const loading = !hasFetchedFriends.current || !hasFetchedActivities.current;
   if (debugRenders && !loading) {
@@ -85,7 +52,8 @@ const HomePage = () => {
       "Friends:", friendsRef.current, "\n",
       "Activities:", activitiesRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
-      "Timezone:", timezone
+      "Timezone:", timezone, "\n",
+      "Camera Clickable:", cameraClickable
     );
   }
   

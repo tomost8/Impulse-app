@@ -6,47 +6,22 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
-import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+import { debugRouting } from '@/constants/debug';
+import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
   const pathname = usePathname();
 
-  const activitiesRef = useRef<any[] | null>(null);
-  const hasFetchedActivities = useRef(false);
-  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
-  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(
-    userId as number,
-    currentDate,
-    authToken as string,
-    !hasFetchedActivities.current
-  );
-
-  useEffect(() => {
-    if (!hasNewActivitiesData) {
-      return;
-    }
-    if (hasNewActivitiesData) {
-      activitiesRef.current = activities;
-      hasFetchedActivities.current = true;
-    }
-  }, [hasNewActivitiesData]);
-
-  const hasActivities = activities ? activities.some((activity: any) => activity.status !== 'expired') : false;
+  const {cameraClickable} = useUserPreferences();
 
   // Add debug logging
-  useEffect(() => {
-    console.log('Current pathname:', pathname, 'Should show tab bar:', showForRoutes.includes(pathname));
-  }, [pathname]);
-
-  // Force tab bar to be visible on initial mount
-  useEffect(() => {
-    if (pathname.includes('/(tabs)') || pathname === '/') {
-      console.log('Forcing tab bar visibility for path:', pathname);
-      router.setParams({});
-    }
-  }, [pathname]);
+  if (debugRouting) {
+    useEffect(() => {
+      console.log('Current pathname:', pathname, 'Should show tab bar:', showForRoutes.includes(pathname));
+    }, [pathname]);
+  }
 
   // Specific routes where the tab bar should be shown
   const showForRoutes = [
@@ -136,7 +111,7 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           }}
           listeners={{
             tabPress: (e) => {
-              if (!hasActivities) {
+              if (!cameraClickable) {
                 e.preventDefault();
                 console.log("no activities, pop up modal");
                 setModalVisible(true);

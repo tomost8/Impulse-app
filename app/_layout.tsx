@@ -1,9 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/client';
@@ -18,26 +16,13 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/Inter-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
 
   return (
-    <PaperProvider>
+    <ApolloProvider client={client}>
       <UserProvider>
         <UserPreferencesProvider>
-          <ApolloProvider client={client}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <PaperProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -53,10 +38,10 @@ export default function RootLayout() {
               <InitialDataLoader>
                 <StatusBar style="auto" />
               </InitialDataLoader>
-            </ThemeProvider>
-          </ApolloProvider>
+            </PaperProvider>
+          </ThemeProvider>
         </UserPreferencesProvider>
       </UserProvider>
-    </PaperProvider>
+    </ApolloProvider>
   );
 }
