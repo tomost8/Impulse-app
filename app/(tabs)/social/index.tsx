@@ -13,6 +13,8 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 import PostCard from '@/components/PostCard';
 // Debug
 import { debugRenders } from '@/constants/debug';
+// Services
+import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 function SocialScreen({
   communityMembers,
@@ -134,6 +136,7 @@ function SocialScreen({
 
 const SocialPage = (props: any) => {
   const { userId, authToken} = props;
+  const { timezone } = useUserPreferences();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -230,6 +233,7 @@ const SocialPage = (props: any) => {
       "Friends Feed:", friendsFeedRef.current, "\n",
       "Community Feed:", communityFeedRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
+      "Timezone:", timezone
     );
   }
   

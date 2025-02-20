@@ -46,5 +46,9 @@ export const TIMEZONE_OPTIONS = TIMEZONE_LIST
 });
 
 export const convertUtcToLocal = (utcTimestamp: string, timezone: string) => {
-    return moment.utc(utcTimestamp).tz(timezone).format('YYYY-MM-DD HH:mm:ss');
+  return moment.utc(utcTimestamp).tz(timezone).format('YYYY-MM-DD HH:mm:ss');
+};
+
+export const getTimeAgo = (utcTimestamp: string) => {
+  return moment.utc(utcTimestamp).fromNow();
 };

@@ -10,6 +10,8 @@ import { client } from '../services/client';
 import { PaperProvider } from 'react-native-paper';
 import { UserProvider } from '@/services/UserContext';
 import { useColorScheme } from 'react-native';
+import { UserPreferencesProvider } from '@/services/UserPreferencesContext';
+import { InitialDataLoader } from '@/components/InitialDataLoader';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,23 +35,27 @@ export default function RootLayout() {
   return (
     <PaperProvider>
       <UserProvider>
-        <ApolloProvider client={client}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="community/[id]" 
-              options={{
-                headerShown: true,
-                headerTitle: "Community",
-              }} 
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-        </ApolloProvider>
+        <UserPreferencesProvider>
+          <ApolloProvider client={client}>
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen 
+                  name="community/[id]" 
+                  options={{
+                    headerShown: true,
+                    headerTitle: "Community",
+                  }} 
+                />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <InitialDataLoader>
+                <StatusBar style="auto" />
+              </InitialDataLoader>
+            </ThemeProvider>
+          </ApolloProvider>
+        </UserPreferencesProvider>
       </UserProvider>
     </PaperProvider>
   );

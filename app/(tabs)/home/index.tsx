@@ -15,28 +15,26 @@ import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserPreferences } from '@/services/UserPreferencesContext';
 
-const HomePage = (props: any) => {
-
-  const { userId, authToken, userData } = props;
+const HomePage = () => {
+  const { userId, authToken } = useUserInfo();
+  const { timezone, activityStatus } = useUserPreferences();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
+  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
   
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
   const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
-  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId, currentDate, authToken, !hasFetchedActivities.current);
-  //console.log("activities", activities);
-
-  const userRef = useRef<any | null>(null);
-  const hasFetchedUserData = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(userId, !hasFetchedUserData.current);
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate, authToken as string, !hasFetchedActivities.current);
 
   useEffect(() => {
-    if (!hasNewFriendsData && !hasNewActivitiesData && !hasNewUserData) {
+    if (!hasNewFriendsData && !hasNewActivitiesData) {
       return;
     }
     if (hasNewFriendsData) {
@@ -47,16 +45,13 @@ const HomePage = (props: any) => {
       activitiesRef.current = activities;
       hasFetchedActivities.current = true;
     }
-    if (hasNewUserData) {
-      userRef.current = user;
-      hasFetchedUserData.current = true;
-    }
-    if (hasFetchedFriends.current && hasFetchedActivities.current && hasFetchedUserData.current) {
+    if (hasFetchedFriends.current && hasFetchedActivities.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData, hasNewActivitiesData, hasNewUserData]); 
+  }, [hasNewFriendsData, hasNewActivitiesData]); 
 
   // Mutations: Set Default PFP on Render if no PFP is set
+  /*
   const { updateUser } = useUpdateUser();
   const [isUpdating, setIsUpdating] = useState(false);
   useEffect(() => {
@@ -67,7 +62,7 @@ const HomePage = (props: any) => {
           const input = {
             profile_picture: DEFAULT_PROFILE_PICTURE
           };
-          const response = await updateUser(input, authToken);
+          const response = await updateUser(input, authToken as string);
           if (response.success) {
             console.log("User profile picture not found: set to default", response.user);
           } else {
@@ -82,14 +77,15 @@ const HomePage = (props: any) => {
     };
 
     updateProfilePicture();
-  }, [hasFetchedUserData.current, userRef.current?.profile_picture, authToken]);
+  }, [hasFetchedUserData.current, userRef.current?.profile_picture, authToken]);*/
   
-  const loading = !hasFetchedFriends.current || !hasFetchedActivities.current || !hasFetchedUserData.current;
+  const loading = !hasFetchedFriends.current || !hasFetchedActivities.current;
   if (debugRenders && !loading) {
     console.log("Rendering HomePage.\n",
       "Friends:", friendsRef.current, "\n",
       "Activities:", activitiesRef.current, "\n",
-      "Render Counter:", renderCounter
+      "Render Counter:", renderCounter, "\n",
+      "Timezone:", timezone
     );
   }
   
