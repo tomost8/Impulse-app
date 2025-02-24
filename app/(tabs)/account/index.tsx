@@ -6,7 +6,7 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import AccountScreen from '@/components/screens/AccountScreen';
 import AccountProfile from '@/components/screens/AccountProfile';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 const AccountPage = (props: any) => {
   const { userId, authToken } = props;
@@ -37,12 +37,17 @@ const AccountPage = (props: any) => {
     );
   }
 
-  return (
-    <AccountScreen
+  if (pageDisplay) {
+    return <AccountProfile
       user={userRef.current} 
       isUserLoading={!hasFetchedUser.current} 
-    />
-  );
+    />;
+  } else {
+    return <AccountScreen 
+      user={userRef.current} 
+      isUserLoading={!hasFetchedUser.current} 
+    />;
+  }
 }
 
 export default AuthWrapper(AccountPage);

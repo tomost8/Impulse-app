@@ -1,6 +1,3 @@
-import HomeDesign from '@/components/screens/HomeDesign';
-import HomeScreen from '@/components/screens/notneeded';
-
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
@@ -11,9 +8,10 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
 // Components
-
+import HomeDesign from '@/components/screens/HomeDesign';
+import HomeScreen from '@/components/screens/notneeded';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 const HomePage = (props: any) => {
   const { userId, authToken } = props;
@@ -90,13 +88,22 @@ const HomePage = (props: any) => {
       "Render Counter:", renderCounter
     );
   }
-  
-  return <HomeScreen
-    friends={friendsRef.current || []} 
-    isFriendsLoading={!hasFetchedFriends.current}
-    activities={activitiesRef.current || []}
-    isActivitiesLoading={!hasFetchedActivities.current}
-  />;
+
+  if (pageDisplay) {
+    return <HomeDesign
+      friends={friendsRef.current || []} 
+      isFriendsLoading={!hasFetchedFriends.current}
+      activities={activitiesRef.current || []}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />;
+  } else {
+    return <HomeScreen
+      friends={friendsRef.current || []} 
+      isFriendsLoading={!hasFetchedFriends.current}
+      activities={activitiesRef.current || []}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />;
+  }
 };
 
 export default AuthWrapper(HomePage);

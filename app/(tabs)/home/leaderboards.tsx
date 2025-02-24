@@ -10,7 +10,7 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
 import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 function _LeaderboardsScreen({
   users,
@@ -143,24 +143,27 @@ const LeaderboardsPage = (props: any) => {
     );
   }
 
-  /*return LeaderboardsScreen({
-    users: usersRef.current,
-    isUsersLoading: !hasFetchedUsers.current,
-    friends: friendsRef.current,
-    isFriendsLoading: !hasFetchedFriends.current,
-    // Tab Status
-    scopeView: scopeView,
-    onFriendsPress: onFriendsPress,
-    onGlobalPress: onGlobalPress,
-    activeView: activeView,
-    setActiveView: setActiveView,
-  });*/
-  return LeaderboardScreen({
-    users: usersRef.current,
-    isUsersLoading: !hasFetchedUsers.current,
-    friends: friendsRef.current,
-    isFriendsLoading: !hasFetchedFriends.current,
-  });
+  if (pageDisplay) {
+    return <LeaderboardScreen
+      users={usersRef.current}
+      isUsersLoading={!hasFetchedUsers.current}
+      friends={friendsRef.current}
+      isFriendsLoading={!hasFetchedFriends.current}
+    />;
+  } else {
+    return <_LeaderboardsScreen
+      users={usersRef.current}
+      isUsersLoading={!hasFetchedUsers.current}
+      friends={friendsRef.current}
+      isFriendsLoading={!hasFetchedFriends.current}
+      // Tab Status
+      scopeView={scopeView}
+      onFriendsPress={onFriendsPress}
+      onGlobalPress={onGlobalPress}
+      activeView={activeView}
+      setActiveView={setActiveView}
+    />;
+  }
 }
 
 export default AuthWrapper(LeaderboardsPage);

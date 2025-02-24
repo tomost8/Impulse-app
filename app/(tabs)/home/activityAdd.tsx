@@ -8,7 +8,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import AddDailyGoalsScreen from '@/components/screens/AddDailyGoals';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 import { router } from 'expo-router';
 
 function AddActivityScreen({
@@ -100,12 +100,21 @@ const AddActivityPage = (props: any) => {
     console.log("Rendering AddActivityPage");
   }
 
-  return <AddActivityScreen //AddDailyGoalsScreen
-    selectedActivities={selectedActivities}
-    handleSelectActivity={handleSelectActivity}
-    handleCreateActivity={handleCreateActivity}
-    isSubmitting={isCreatingActivity}
-  />
+  if (pageDisplay) {
+    return <AddDailyGoalsScreen
+      selectedActivities={selectedActivities}
+      handleSelectActivity={handleSelectActivity}
+      handleCreateActivity={handleCreateActivity}
+      isSubmitting={isCreatingActivity}
+    />;
+  } else {
+    return <AddActivityScreen 
+      selectedActivities={selectedActivities}
+      handleSelectActivity={handleSelectActivity}
+      handleCreateActivity={handleCreateActivity}
+      isSubmitting={isCreatingActivity}
+    />;
+  }
 }
 
 export default AuthWrapper(AddActivityPage);
