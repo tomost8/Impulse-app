@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 60, // Ensures padding around text
     marginHorizontal: 10, // Adds spacing on sides
-    marginBottom: 5, // Matches Figma spacing at the bottom
+    marginBottom: 15, // Matches Figma spacing at the bottom
   },
   buttonText: {
     fontSize: 18, // Matches the Figma font size

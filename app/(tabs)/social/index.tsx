@@ -11,6 +11,7 @@ import { useGetFeedCommunities, useGetFeedFriends } from '@/hooks/graphql/posts/
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import PostCard from '@/components/PostCard';
+import FeedScreen from '@/components/screens/SocialPage/FeedScreen';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
@@ -236,12 +237,12 @@ const SocialPage = (props: any) => {
   }
   
   return (
-    <SocialScreen 
-      communityMembers={communitiesRef.current}
+    <FeedScreen //SocialScreen
+      communityMembers={communitiesRef.current || []}
       isCommunityMembersLoading={!hasFetchedCommunities.current}
-      friendsFeed={friendsFeedRef.current}
+      friendsFeed={friendsFeedRef.current || []}
       isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
-      communityFeed={communityFeedRef.current}
+      communityFeed={communityFeedRef.current || []}
       isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}

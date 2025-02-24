@@ -14,7 +14,7 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header */}
-      <GoalsHeader onBackPress={() => console.log("Back Pressed")} />
+      <GoalsHeader onBackPress={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Section Title - "Goals for the Day" */}
@@ -22,7 +22,7 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
 
         {/* Goals List */}
         <View style={styles.activitiesContainer}>
-          <GoalsList /> {/* ✅ Displays all daily goals */}
+          <GoalsList/> {/* ✅ Displays all daily goals */}
         </View>
       </ScrollView>
 
@@ -50,16 +50,16 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
       width: "100%",
     },
     sectionTitle: {
-        fontSize: 18,
-        fontFamily: "Poppins",
-        fontWeight: "600",
-        color: "#242020", // Dark color from Figma
-        marginTop: 20, // Adjust spacing as per Figma
-        paddingLeft: 25,
-      },
-      activitiesContainer: {
-        marginTop: 0, // Space below the section title
-      },
+      fontSize: 18,
+      fontFamily: "Poppins",
+      fontWeight: "600",
+      color: "#242020", // Dark color from Figma
+      marginTop: 20, // Adjust spacing as per Figma
+      paddingLeft: 25,
+    },
+    activitiesContainer: {
+      marginTop: 0, // Space below the section title
+    },
   });
   
   export default DailyGoalsScreen;

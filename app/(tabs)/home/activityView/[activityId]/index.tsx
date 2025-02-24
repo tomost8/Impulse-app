@@ -7,6 +7,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useUpdateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
+import EditDailyGoalsScreen from '@/components/screens/EditDailyGoals';
 // Debug
 import { debugRenders } from '@/constants/debug';
 
@@ -115,7 +116,7 @@ const ActivityDetailsPage = (props: any) => {
   }
 
   return (
-    <ActivityDetailsScreen
+    <EditDailyGoalsScreen //ActivityDetailsScreen
       formData={formData}
       handleFormDataChange={handleFormDataChange}
       handleFormSubmit={handleUpdateActivity}
