@@ -11,10 +11,10 @@ import { useGetFeedCommunities, useGetFeedFriends } from '@/hooks/graphql/posts/
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import PostCard from '@/components/PostCard';
+import FeedScreen from '@/components/screens/SocialPage/FeedScreen';
 // Debug
-import { debugRenders } from '@/constants/debug';
-// Services
-import { useUserPreferences } from '@/services/UserPreferencesContext';
+import { pageDisplay, debugRenders } from '@/constants/debug';
+import { useUserPreferences } from '@/services/UserContext';
 
 function SocialScreen({
   communityMembers,
@@ -236,14 +236,15 @@ const SocialPage = (props: any) => {
       "Timezone:", timezone
     );
   }
-  
-  return (
-    <SocialScreen 
-      communityMembers={communitiesRef.current}
+
+  if (pageDisplay) {
+    return (
+      <FeedScreen //SocialScreen
+      communityMembers={communitiesRef.current || []}
       isCommunityMembersLoading={!hasFetchedCommunities.current}
-      friendsFeed={friendsFeedRef.current}
+      friendsFeed={friendsFeedRef.current || []}
       isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
-      communityFeed={communityFeedRef.current}
+      communityFeed={communityFeedRef.current || []}
       isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
@@ -252,6 +253,23 @@ const SocialPage = (props: any) => {
       updatePostLikeState={updatePostLikeState}
     />
   );
+  } else {
+    return (
+      <SocialScreen 
+      communityMembers={communitiesRef.current || []}
+      isCommunityMembersLoading={!hasFetchedCommunities.current}
+      friendsFeed={friendsFeedRef.current || []}
+      isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
+      communityFeed={communityFeedRef.current || []}
+      isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
+      handleLikePost={handleLikePost}
+      handleUnlikePost={handleUnlikePost}
+      isHandlingLike={isHandlingLike}
+      isHandlingUnlike={isHandlingUnlike}
+      updatePostLikeState={updatePostLikeState}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(SocialPage);

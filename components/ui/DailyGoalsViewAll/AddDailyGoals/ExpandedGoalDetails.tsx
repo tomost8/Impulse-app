@@ -1,0 +1,161 @@
+import React from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
+
+// Importing assets
+const foodIcon = require("@/assets/icons/food.png");
+const goalSelectedIcon = require("@/assets/icons/goalselected.png");
+const dropdownIcon = require("@/assets/icons/arrow-down.png");
+
+interface ExpandedGoalDetailsProps {
+  title: string;
+  isSelected: boolean;
+  icon: any;
+  onSelect: () => void; // Fix: Adding function to toggle expansion
+}
+
+const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
+    title,
+    icon,
+    isSelected,
+    onSelect,
+  }) => {
+    return (
+        <View style={[styles.container, isSelected ? styles.selectedContainer : null]}>
+        {/* Header Section - Clickable */}
+
+        <TouchableOpacity
+          style={styles.header}
+          onPress={() => {
+            console.log("Header clicked for:", title); // ✅ Log clicks
+            onSelect();
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+            <View style={styles.iconContainer}>
+              <Image source={icon} style={styles.icon} />
+            </View>
+            <Text style={styles.title}>{title}</Text>
+          </View>
+          {/* Dropdown Icon with Rotation */}
+          <Image
+            source={dropdownIcon}
+            style={[styles.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
+          />
+  
+          {/* Green Checkmark for Selected State */}
+          {isSelected && <Image source={goalSelectedIcon} style={styles.checkmark} />}
+
+        </TouchableOpacity>
+  
+        {/* Details Section */}
+        {isSelected && (
+          <View style={styles.detailsContainer}>
+            {/* Start Time Input */}
+            <View>
+              <Text style={styles.label}>Start Time (optional)</Text>
+              <View style={styles.inputContainer}>
+                <Text style={styles.input}>Choose</Text>
+                <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
+              </View>
+            </View>
+  
+            {/* Activity Duration Input */}
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles.label}>Activity Duration (optional)</Text>
+              <View style={styles.inputContainer}>
+                <Text style={styles.input}>Choose</Text>
+                <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
+              </View>
+            </View>
+  
+            {/* Description Input */}
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles.label}>Description (optional)</Text>
+              <View style={[styles.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
+                <Text style={styles.input}>Choose</Text>
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: "#FFF",
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: "#E1E1E1",
+      padding: 10,
+      marginBottom: 10,
+    },
+    selectedContainer: {
+      borderColor: "#DE728D",
+    },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    iconContainer: {
+      width: 50,
+      height: 50,
+    },
+    icon: {
+      width: "100%",
+      height: "100%",
+      resizeMode: "contain",
+    },
+    title: {
+      flex: 1,
+      fontSize: 16,
+      fontWeight: "600",
+      color: "#242020",
+      fontFamily: "Open Sans",
+      marginLeft: 10,
+    },
+    dropdownIcon: {
+      width: 15,
+      height: 15,
+      marginRight: 10,
+    },
+    checkmark: {
+      width: 25,
+      height: 25,
+    },
+    detailsContainer: {
+      marginTop: 10,
+    },
+    label: {
+      fontSize: 13,
+      fontWeight: "400",
+      color: "#000",
+      fontFamily: "Open Sans",
+      marginBottom: 10,
+    },
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: "#E1E1E1",
+      borderRadius: 30,
+      height: 40,
+      paddingHorizontal: 20,
+      justifyContent: "space-between",
+      marginBottom: 5,
+    },
+    input: {
+      flex: 1,
+      fontSize: 12.98,
+      fontFamily: "Open Sans",
+      color: "#A4ACBC",
+    },
+    inputDropdownIcon: {
+      width: 16,
+      height: 16,
+    },
+  });
+  
+  export default ExpandedGoalDetails;

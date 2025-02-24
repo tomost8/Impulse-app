@@ -7,8 +7,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useUpdateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
+import EditDailyGoalsScreen from '@/components/screens/EditDailyGoals';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 function ActivityDetailsScreen({
   formData,
@@ -114,14 +115,21 @@ const ActivityDetailsPage = (props: any) => {
     console.log('ActivityDetailsPage rendered');
   }
 
-  return (
-    <ActivityDetailsScreen
+  if (pageDisplay) {
+    return <EditDailyGoalsScreen
       formData={formData}
       handleFormDataChange={handleFormDataChange}
       handleFormSubmit={handleUpdateActivity}
       isSubmitting={isUpdatingActivity}
-    />
-  );
+    />;
+  } else {
+    return <ActivityDetailsScreen
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      handleFormSubmit={handleUpdateActivity}
+      isSubmitting={isUpdatingActivity}
+    />;
+  }
 }
 
 export default ActivityDetailsPage;

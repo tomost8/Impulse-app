@@ -1,15 +1,13 @@
-import HomeDesign from '@/components/screens/HomeDesign';
-import HomeScreen from '@/components/screens/notneeded';
-
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
-
+import HomeDesign from '@/components/screens/HomeDesign';
+import HomeScreen from '@/components/screens/notneeded';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 // Services
 import { useUserInfo } from '@/services/UserContext';
@@ -56,13 +54,22 @@ const HomePage = () => {
       "Camera Clickable:", cameraClickable
     );
   }
-  
-  return <HomeScreen
-    friends={friendsRef.current || []} 
-    isFriendsLoading={!hasFetchedFriends.current}
-    activities={activitiesRef.current || []}
-    isActivitiesLoading={!hasFetchedActivities.current}
-  />;
+
+  if (pageDisplay) {
+    return <HomeDesign
+      friends={friendsRef.current || []} 
+      isFriendsLoading={!hasFetchedFriends.current}
+      activities={activitiesRef.current || []}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />;
+  } else {
+    return <HomeScreen
+      friends={friendsRef.current || []} 
+      isFriendsLoading={!hasFetchedFriends.current}
+      activities={activitiesRef.current || []}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />;
+  }
 };
 
 export default AuthWrapper(HomePage);

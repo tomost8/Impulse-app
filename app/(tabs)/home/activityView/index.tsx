@@ -9,7 +9,7 @@ import { router } from 'expo-router';
 import ActivitiesModal from '@/components/modals/ActivitiesModal';
 import DailyGoalsScreen from '@/components/screens/DailyGoalsScreen';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/constants/debug';
 
 function ViewActivityScreen({
   activities,
@@ -90,12 +90,17 @@ const ViewActivityPage = (props: any) => {
     );
   }
 
-  return (//ViewActivityScreen
-    <DailyGoalsScreen 
+  if (pageDisplay) {
+    return <DailyGoalsScreen 
       activities={activitiesRef.current || []}
       isActivitiesLoading={!hasFetchedActivities.current}
-    />
-  );
+    />;
+  } else {
+    return <ViewActivityScreen
+      activities={activitiesRef.current || []}
+      isActivitiesLoading={!hasFetchedActivities.current}
+    />;
+  }
 }
 
 export default AuthWrapper(ViewActivityPage);

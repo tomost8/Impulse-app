@@ -3,123 +3,127 @@ import { View, Text, Image, StyleSheet } from "react-native";
 
 // Define Props
 interface PodiumUser {
-  position: number; // 1, 2, or 3
+  position: number;
   name: string;
   points: number;
-  profileImage: string;
+  profileImage: any;
 }
 
 interface LeaderboardPodiumProps {
-  podiumData: PodiumUser[]; // Array of top 3 users
+  podiumData: PodiumUser[];
 }
 
-// ✅ Leaderboard Podium Component
 const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData }) => {
+  // Ensure users are sorted correctly (2nd, 1st, 3rd for correct layout)
+  const sortedPodium = [
+    podiumData.find(user => user.position === 2),
+    podiumData.find(user => user.position === 1),
+    podiumData.find(user => user.position === 3),
+  ];
+
   return (
     <View style={styles.container}>
       <View style={styles.podiumRow}>
-        {podiumData.map((user) => (
-          <View key={user.position} style={[styles.podiumBlock, getPodiumStyle(user.position)]}>
-            <Image source={{ uri: user.profileImage }} style={styles.profileImage} />
-            <Text style={styles.username}>{user.name}</Text>
-            <Text style={styles.points}>{user.points} Pts</Text>
-            <Text style={[styles.podiumNumber, getNumberOffset(user.position)]}>{user.position}</Text>
-          </View>
-        ))}
+        {sortedPodium.map((user, index) =>
+          user ? (
+            <View key={user.position} style={[styles.podiumColumn, getPodiumStyle(user.position)]}>
+              {/* Profile Image */}
+              <Image source={user.profileImage} style={styles.profileImage} />
+
+              {/* Username */}
+              <Text style={styles.username}>{user.name}</Text>
+
+              {/* Points */}
+              <Text style={styles.points}>{user.points} Pts</Text>
+
+              {/* Podium Block */}
+              <View style={[styles.podiumBlock, getBlockStyle(user.position)]}>
+                <Text style={styles.podiumNumber}>{user.position}</Text>
+              </View>
+            </View>
+          ) : null
+        )}
       </View>
     </View>
   );
 };
 
-// ✅ Function to adjust the podium block styles dynamically
+// ✅ Function to adjust the column positioning
 const getPodiumStyle = (position: number) => {
   switch (position) {
     case 1:
-      return {
-        width: 120,
-        height: 120,
-        backgroundColor: "#DE728D",
-        marginTop: 0, // Highest podium
-        zIndex: 3, // Ensures it stays on top
-      };
+      return { marginTop: 0, zIndex: 3 }; // Center, highest
     case 2:
-      return {
-        width: 113,
-        height: 87.5,
-        backgroundColor: "#C35A74",
-        marginTop: 32.5, // Lower than 1st place
-        zIndex: 2,
-      };
+      return { marginTop: 20, zIndex: 2 }; // Left, lower than 1st
     case 3:
-      return {
-        width: 110.8,
-        height: 64.91,
-        backgroundColor: "#9F4A5F",
-        marginTop: 55.09, // Lowest podium
-        zIndex: 1,
-      };
+      return { marginTop: 40, zIndex: 1 }; // Right, lowest
     default:
       return {};
   }
 };
 
-// ✅ Function to adjust number positioning
-const getNumberOffset = (position: number) => {
+// ✅ Function to adjust the block heights
+const getBlockStyle = (position: number) => {
   switch (position) {
     case 1:
-      return { marginTop: -30 }; // Moves the number slightly down
+      return { height: 100, backgroundColor: "#DE728D" }; // Highest
     case 2:
-      return { marginTop: -10 }; // Adjusts position based on podium height
+      return { height: 80, backgroundColor: "#C35A74" }; // Middle
     case 3:
-      return { marginTop: 0 }; // Moves the number down for shortest podium
+      return { height: 65, backgroundColor: "#9F4A5F" }; // Lowest
     default:
       return {};
   }
 };
 
+// ✅ Styles
 const styles = StyleSheet.create({
   container: {
+    marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 30, // ✅ Adds space between podium and leaderboard list
+    marginBottom: 0,
   },
-
   podiumRow: {
     flexDirection: "row",
-    alignItems: "flex-end", // ✅ Ensures all podium blocks start at the same baseline
+    alignItems: "flex-end",
     justifyContent: "center",
   },
-
-  podiumBlock: {
+  podiumColumn: {
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
-    paddingVertical: 10,
+    width: 100,
   },
-
   profileImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    marginBottom: 5,
+    marginBottom: 10,
   },
-
   username: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "#242020",
+    textAlign: "center",
+    marginBottom: 5,
   },
-
   points: {
     fontSize: 12,
     fontWeight: "500",
-    color: "#FFFFFF",
+    color: "#5C5C5C",
+    textAlign: "center",
+    marginBottom: 10,
   },
-
+  podiumBlock: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
   podiumNumber: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: "700",
-    fontFamily: "Open Sans",
     color: "#FFFFFF",
     textAlign: "center",
   },
