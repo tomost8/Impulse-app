@@ -14,7 +14,7 @@ import PostCard from '@/components/PostCard';
 import FeedScreen from '@/components/screens/SocialPage/FeedScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/constants/debug';
-import { useUserPreferences } from '@/services/UserContext';
+import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 function SocialScreen({
   communityMembers,
