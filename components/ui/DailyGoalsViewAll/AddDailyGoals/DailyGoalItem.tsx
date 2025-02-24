@@ -13,27 +13,33 @@ type DailyGoalItemProps = {
   icon: any; // Icon image (require from assets)
   title: string;
   isSelected: boolean;
-  onPress: () => void;
+  onSelect: () => void;
 };
 
-const DailyGoalItem: React.FC<DailyGoalItemProps> = ({ icon, title, isSelected, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, isSelected && styles.selectedContainer]}>
-      {/* Icon */}
-      <View style={styles.iconContainer}>
-        <Image source={icon} style={styles.icon} />
-      </View>
-
-      {/* Title */}
-      <Text style={styles.title}>{title}</Text>
-
-      {/* Selection Circle */}
-      <View style={[styles.circle, isSelected && styles.circleSelected]}>
-        {isSelected && <SvgXml xml={checkmarkSvg} width={18} height={18} />}
-      </View>
-    </TouchableOpacity>
-  );
-};
+const DailyGoalItem: React.FC<DailyGoalItemProps> = ({ icon, title, isSelected, onSelect }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          console.log(`🟢 Clicked Goal: ${title}`); // ✅ Debug log
+          onSelect();
+        }}
+        style={[styles.container, isSelected && styles.selectedContainer]}
+      >
+        {/* Icon */}
+        <View style={styles.iconContainer}>
+          <Image source={icon} style={styles.icon} />
+        </View>
+  
+        {/* Title */}
+        <Text style={styles.title}>{title}</Text>
+  
+        {/* Selection Circle */}
+        <View style={[styles.circle, isSelected && styles.circleSelected]}>
+          {isSelected && <SvgXml xml={checkmarkSvg} width={18} height={18} />}
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
 const styles = StyleSheet.create({
   container: {
@@ -56,13 +62,12 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "rgba(222, 114, 189, 0.2)",
     alignItems: "center",
     justifyContent: "center",
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     resizeMode: "contain",
   },
   title: {

@@ -24,19 +24,21 @@ const Header: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 70, // Match Figma height
+    height: 60, // Match Figma height
     backgroundColor: "#E0EDFD",
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
     justifyContent: "flex-start",
+    marginBottom: 15,
   },
   backButton: {
     padding: 10, // Adds touchable area
-    marginRight: 15, // Moves the title slightly to the right
+    marginRight: 5, // Moves the title slightly to the right
+    marginLeft: -5
   },
   backIcon: {
-    width: 10,
+    width: 11,
     height: 17,
     tintColor: "#242020", // Dark color from Figma
   },
