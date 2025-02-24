@@ -3,7 +3,20 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 const exploreIcon = require("@/assets/icons/explore.png"); // Importing the explore icon
 
-const FeedScreen: React.FC = () => {
+interface FeedScreenProps {
+  communityMembers: any[];
+  isCommunityMembersLoading: boolean;
+  friendsFeed: any[];
+  isFriendsFeedLoading: boolean;
+  communityFeed: any[];
+  isCommunityFeedLoading: boolean;
+  handleLikePost: (postId: number) => void;
+  handleUnlikePost: (postId: number) => void;
+  isHandlingLike: boolean;
+  isHandlingUnlike: boolean;
+  updatePostLikeState: (postId: number, newLikeState: boolean) => void;
+}
+const FeedScreen: React.FC<FeedScreenProps> = ({ communityMembers, isCommunityMembersLoading, friendsFeed, isFriendsFeedLoading, communityFeed, isCommunityFeedLoading, handleLikePost, handleUnlikePost, isHandlingLike, isHandlingUnlike, updatePostLikeState }) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
