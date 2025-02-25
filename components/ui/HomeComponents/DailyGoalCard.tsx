@@ -1,15 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { SvgXml } from "react-native-svg"; // For SVG icons
-
-// Placeholder Sun Icon (Replace dynamically later)
-const PlaceholderIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12 4V2M12 22V20M4.22 4.22L3 3M21 21L19.78 19.78M2 12H4M20 12H22M4.22 19.78L3 21M21 3L19.78 4.22M16 12C16 14.2091 14.2091 16 12 16C9.79086 16 8 14.2091 8 12C8 9.79086 9.79086 8 12 8C14.2091 8 16 9.79086 16 12Z" stroke="#D77A7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>`;
+import { View, Text, StyleSheet, Image } from "react-native";
 
 // Props for reusability
 type DailyGoalCardProps = {
-  icon?: string; // SVG XML string (default: Placeholder)
+  icon?: any; // Updated to accept an image source
   title: string;
   timeRange: string;
   status: string;
@@ -17,7 +11,7 @@ type DailyGoalCardProps = {
 };
 
 const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
-  icon = PlaceholderIcon,
+  icon = require("@/assets/icons/riseshine.png"), // ✅ Changed to use riseshine.png
   title,
   timeRange,
   status,
@@ -27,9 +21,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
     <View style={styles.container}>
       {/* Icon */}
       <View style={styles.iconContainer}>
-        <View style={styles.iconBackground}>
-          <SvgXml xml={icon} width={30} height={30} />
-        </View>
+        <Image source={icon} style={styles.icon} /> {/* ✅ Replaced SVG with Image */}
       </View>
 
       {/* Text Content */}
@@ -70,7 +62,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 24, // ✅ Ensures a perfect circle
     overflow: "hidden", // ✅ Prevents any overflow issues
-    position: "relative", // Ensures the icon will move properly within the container
+  },
+  icon: {
+    width: 48,  // ✅ Adjusted width to fit properly
+    height: 48, // ✅ Adjusted height to fit properly
+    resizeMode: "contain", // ✅ Ensures no background is visible
   },
   iconBackground: {
     backgroundColor: "rgba(222, 114, 189, 0.2)",

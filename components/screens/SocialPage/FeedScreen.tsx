@@ -1,31 +1,43 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import Feed from "@/components/ui/SocialPage/FriendFeedComponents/Feed";
+import TabSelector from "@/components/ui/SocialPage/FriendFeedComponents/TabSelector";
 
-const exploreIcon = require("@/assets/icons/explore.png"); // Importing the explore icon
+// Import local assets
+const exploreIcon = require("@/assets/icons/explore.png");
+const postImage = require("@/assets/images/feedpost.png"); // ✅ Post image
+const profileImage = require("@/assets/images/andrew.png"); // ✅ Profile image
 
-interface FeedScreenProps {
-  communityMembers: any[];
-  isCommunityMembersLoading: boolean;
-  friendsFeed: any[];
-  isFriendsFeedLoading: boolean;
-  communityFeed: any[];
-  isCommunityFeedLoading: boolean;
-  handleLikePost: (postId: number) => void;
-  handleUnlikePost: (postId: number) => void;
-  isHandlingLike: boolean;
-  isHandlingUnlike: boolean;
-  updatePostLikeState: (postId: number, newLikeState: boolean) => void;
-}
-const FeedScreen: React.FC<FeedScreenProps> = ({ communityMembers, isCommunityMembersLoading, friendsFeed, isFriendsFeedLoading, communityFeed, isCommunityFeedLoading, handleLikePost, handleUnlikePost, isHandlingLike, isHandlingUnlike, updatePostLikeState }) => {
+const FeedScreen: React.FC = () => {
+  console.log("✅ FeedScreen Loaded!");
+
+  // ✅ Single post for testing
+  const testPost = {
+    author: { 
+      profileImage: profileImage,
+    },
+    username: "Andrew",
+    timeAgo: "2 mins ago",
+    initialLikes: 67,
+    initialComments: 12,
+  };
+
+  console.log("📌 Post Data: ", testPost); // ✅ Debugging to confirm data
+
   return (
     <View style={styles.container}>
-      {/* Header Section */}
       <View style={styles.header}>
         <Text style={styles.headerText}>Feed</Text>
         <TouchableOpacity>
-          <Image source={exploreIcon} style={styles.exploreIcon} />
+          <Image 
+            source={require("@/assets/icons/explore.png")} 
+            style={styles.exploreIcon} 
+          />
         </TouchableOpacity>
       </View>
+      
+      <TabSelector />
+      <Feed />
     </View>
   );
 };
@@ -34,13 +46,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF",
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 35, 
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 25,
+    paddingTop: 10,
+    paddingBottom: 5,
   },
   headerText: {
     fontSize: 22,
@@ -49,10 +63,10 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
   },
   exploreIcon: {
-    width: 23,
-    height: 23,
+    width: 25,
+    height: 25,
+    resizeMode: "contain",
   },
 });
 
 export default FeedScreen;
-

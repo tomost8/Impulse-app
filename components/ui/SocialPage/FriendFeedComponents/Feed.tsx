@@ -2,54 +2,25 @@ import React from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import PostCard from "./PostCard";
 
-// Dummy data for posts
-const posts = [
-  {
-    id: "1",
-    profileImage: require("../assets/images/andrew.png"),
-    username: "User K",
-    timeAgo: "3 mins ago",
-    imageUrl: require("../assets/images/feedpost.png"),
-    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-    initialLikes: 67,
-    initialComments: 12,
+// Sample post data
+const posts = Array(6).fill({
+  caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
+  author: {
+    profileImage: require("@/assets/images/andrew.png"),
   },
-  {
-    id: "2",
-    profileImage: require("../assets/images/andrew.png"),
-    username: "User K",
-    timeAgo: "3 mins ago",
-    imageUrl: require("../assets/images/feedpost.png"),
-    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-    initialLikes: 67,
-    initialComments: 12,
-  },
-  {
-    id: "3",
-    profileImage: require("../assets/images/andrew.png"),
-    username: "User K",
-    timeAgo: "3 mins ago",
-    imageUrl: require("../assets/images/feedpost.png"),
-    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-    initialLikes: 67,
-    initialComments: 12,
-  },
-  {
-    id: "4",
-    profileImage: require("../assets/images/andrew.png"),
-    username: "User K",
-    timeAgo: "3 mins ago",
-    imageUrl: require("../assets/images/feedpost.png"),
-    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-    initialLikes: 67,
-    initialComments: 12,
-  },
-];
+  username: "User K",
+  timeAgo: "3 mins ago",
+  initialLikes: 67,
+  initialComments: 12,
+}).map((post, index) => ({
+  ...post,
+  id: index.toString(),
+}));
 
 const Feed = () => {
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
-      <PostCard {...item} />
+      <PostCard post={item} />
     </View>
   );
 
@@ -58,7 +29,7 @@ const Feed = () => {
       data={posts}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
-      numColumns={2} // Two-column grid layout
+      numColumns={2}
       contentContainerStyle={styles.feedContainer}
       columnWrapperStyle={styles.columnWrapper}
       showsVerticalScrollIndicator={false}
@@ -68,15 +39,17 @@ const Feed = () => {
 
 const styles = StyleSheet.create({
   feedContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 7,
+    paddingTop: 10,
+    paddingBottom: 90,
   },
   columnWrapper: {
     justifyContent: "space-between",
+    gap: 5,
+    paddingHorizontal: 5,
   },
   postContainer: {
-    flex: 1,
-    marginBottom: 15,
+    marginBottom: 14,
   },
 });
 

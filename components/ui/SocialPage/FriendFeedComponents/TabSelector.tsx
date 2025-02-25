@@ -20,13 +20,16 @@ const TabSelector: React.FC = () => {
           <Text
             style={[
               styles.tabText,
-              selectedTab === "Friends" && styles.activeTabText,
+              selectedTab === "Friends" && styles.selectedText,
             ]}
           >
             Friends
           </Text>
           {selectedTab === "Friends" && (
-            <Image source={underlineImage} style={styles.underline} />
+            <Image
+              source={require("@/assets/icons/underline.png")}
+              style={styles.underline}
+            />
           )}
         </TouchableOpacity>
 
@@ -37,13 +40,16 @@ const TabSelector: React.FC = () => {
           <Text
             style={[
               styles.tabText,
-              selectedTab === "My Communities" && styles.activeTabText,
+              selectedTab === "My Communities" && styles.selectedText,
             ]}
           >
             My Communities
           </Text>
           {selectedTab === "My Communities" && (
-            <Image source={underlineImage} style={styles.underline} />
+            <Image
+              source={require("@/assets/icons/underline.png")}
+              style={styles.underline}
+            />
           )}
         </TouchableOpacity>
       </View>
@@ -53,27 +59,24 @@ const TabSelector: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
+    paddingVertical: 10,
   },
   tabContainer: {
     flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
+    gap: 32,
   },
   tab: {
     alignItems: "center",
-    paddingVertical: 10,
   },
   tabText: {
     fontSize: 14,
-    fontWeight: "500",
     color: "#242020",
     fontFamily: "Poppins",
+    marginBottom: 4,
   },
-  activeTabText: {
-    fontWeight: "700",
+  selectedText: {
+    fontWeight: "600",
   },
   underline: {
     marginTop: 4,

@@ -3,46 +3,53 @@ import { View, StyleSheet } from "react-native";
 import PostContent from "./PostContent";
 import PostFooter from "./PostFooter";
 
-interface PostCardProps {
-  imageUrl?: string;
-  caption: string;
-  profileImage: string;
-  username: string;
-  timeAgo: string;
-  initialLikes?: number;
-  initialComments?: number;
-}
+// Import placeholder images
+const defaultPostImage = require("@/assets/images/feedpost.png");
+const defaultProfileImage = require("@/assets/images/andrew.png");
 
-const PostCard: React.FC<PostCardProps> = ({
-  imageUrl = require("../assets/images/feedpost.png"), // Default image
-  caption,
-  profileImage = require("../assets/images/andrew.png"), // Default profile image
-  username,
-  timeAgo,
-  initialLikes = 67,
-  initialComments = 12,
-}) => {
-  return (
-    <View style={styles.container}>
-      <PostContent imageUrl={imageUrl} caption={caption} />
-      <PostFooter
-        profileImage={profileImage}
-        username={username}
-        timeAgo={timeAgo}
-        initialLikes={initialLikes}
-        initialComments={initialComments}
-      />
-    </View>
-  );
-};
+interface PostCardProps {
+    post?: {
+      caption?: string;
+      author?: {
+        profileImage?: string; // ✅ Ensure it matches `PostFooter.tsx`
+      };
+      username?: string;
+      timeAgo?: string;
+      initialLikes?: number;
+      initialComments?: number;
+    };
+  }
+  
+  // ✅ Ensure `post` always has default values
+  const PostCard: React.FC<PostCardProps> = ({ post = {} }) => {
+    console.log("🛠️ PostCard received post:", post); // ✅ Debugging output
+  
+    return (
+      <View style={styles.container}>
+        <PostContent
+          caption={post?.caption || "Lorem ipsum dolor sit amet consectetur. Mollis."}
+        />
+        <PostFooter
+          profileImage={post?.author?.profileImage || defaultProfileImage}
+          username={post?.username || "Andrew"}
+          timeAgo={post?.timeAgo || "2 mins ago"}
+          initialLikes={post?.initialLikes ?? 67}
+          initialComments={post?.initialComments ?? 12}
+        />
+      </View>
+    );
+  };
 
 const styles = StyleSheet.create({
   container: {
+    width: 182,
+    height: 324,
     backgroundColor: "#fff",
-    borderRadius: 10,
-    overflow: "hidden",
-    marginBottom: 15,
-    width: "48%", // Adjusted for grid layout
+    borderRadius: 5,
+    padding: 7,
+    gap: 5,
+    display: "flex",
+    flexDirection: "column",
   },
 });
 
