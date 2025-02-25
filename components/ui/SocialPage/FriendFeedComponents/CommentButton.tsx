@@ -1,34 +1,47 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 
 interface CommentButtonProps {
   initialComments?: number;
+  onPress?: () => void;
 }
 
-const CommentButton: React.FC<CommentButtonProps> = ({ initialComments = 0 }) => {
+const CommentButton: React.FC<CommentButtonProps> = ({ 
+  initialComments = 0,
+  onPress 
+}) => {
   const [commentCount, setCommentCount] = useState(initialComments);
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.commentCount}>{commentCount}</Text>
-      <MaterialCommunityIcons name="comment-outline" size={20} color="#000" />
+      <Image 
+        source={require("../../../../assets/icons/comment.png")}
+        style={styles.icon}
+      />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: 4,
+    justifyContent: "center",
+    gap: 1,
   },
   commentCount: {
-    fontSize: 12,
+    fontSize: 8,
     fontFamily: "Lato",
     fontWeight: "400",
     color: "#000",
     textAlign: "center",
+    lineHeight: 8,
+  },
+  icon: {
+    width: 19,
+    height: 19,
+    resizeMode: "contain",
   },
 });
 

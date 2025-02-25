@@ -21,7 +21,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({ initialLikes = 67 }) => {
       <MaterialCommunityIcons
         name={liked ? "heart" : "heart-outline"}
         size={20}
-        color={liked ? "#FF3B30" : "#000"}
+        color={liked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
+        style={styles.icon}
       />
     </TouchableOpacity>
   );
@@ -29,16 +30,22 @@ const LikeButton: React.FC<LikeButtonProps> = ({ initialLikes = 67 }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    gap: 4,
+    justifyContent: "center",
+    gap: 1,
   },
   likeCount: {
-    fontSize: 12,
+    fontSize: 8,
     fontFamily: "Lato",
     fontWeight: "400",
     color: "#000",
     textAlign: "center",
+    lineHeight: 8,
+  },
+  icon: {
+    width: 21,
+    height: 21,
   },
 });
 
