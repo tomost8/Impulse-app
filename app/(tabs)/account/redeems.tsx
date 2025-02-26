@@ -5,9 +5,10 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
-import RedeemsScreen from '@/components/screens/RedeemsScreen';
+import RedeemsScreen from '@/components/screens/profile/RewardsScreen';
+import RedeemsScreenOld from '@/components/screens/old/RedeemsScreen';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders, pageDisplay } from '@/constants/debug';
 
 const RedeemsPage = (props: any) => {
   const { userId, authToken } = props;
@@ -75,16 +76,29 @@ const RedeemsPage = (props: any) => {
     );
   }
 
-  return (
-    <RedeemsScreen 
-      user={userRef.current} 
-      isUserLoading={!hasFetchedUser.current}
-      rewards={rewardsRef.current}
-      isRewardsLoading={!hasFetchedRewards.current}
-      handleCreateRedeem={handleCreateRedeem}
-      isCreatingRedeem={isCreatingRedeem}
-    />
-  );
+  if (pageDisplay) {
+    return (
+      <RedeemsScreen 
+        user={userRef.current} 
+        isUserLoading={!hasFetchedUser.current}
+        rewards={rewardsRef.current}
+        isRewardsLoading={!hasFetchedRewards.current}
+        handleCreateRedeem={handleCreateRedeem}
+        isCreatingRedeem={isCreatingRedeem}
+      />
+    );
+  } else {
+    return (
+      <RedeemsScreenOld 
+        user={userRef.current} 
+        isUserLoading={!hasFetchedUser.current}
+        rewards={rewardsRef.current}
+        isRewardsLoading={!hasFetchedRewards.current}
+        handleCreateRedeem={handleCreateRedeem}
+        isCreatingRedeem={isCreatingRedeem}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(RedeemsPage);

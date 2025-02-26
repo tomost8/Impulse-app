@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import React from 'react';
 
 // Home Screen Component for rendering the UI
-function HomeScreen({ 
+export default function HomeScreenOld({ 
   friends, 
   isFriendsLoading,
   activities, 
@@ -72,5 +72,3 @@ function HomeScreen({
     </ScrollView>
   );
 }
-
-export default HomeScreen; 

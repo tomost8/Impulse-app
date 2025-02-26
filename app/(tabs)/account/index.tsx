@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
-import AccountScreen from '@/components/screens/AccountScreen';
+import AccountScreenOld from '@/components/screens/old/AccountScreen';
 import AccountProfile from '@/components/screens/AccountProfile';
 // Debug
 import { pageDisplay, debugRenders } from '@/constants/debug';
@@ -43,7 +43,7 @@ const AccountPage = (props: any) => {
       isUserLoading={!hasFetchedUser.current} 
     />;
   } else {
-    return <AccountScreen 
+    return <AccountScreenOld
       user={userRef.current} 
       isUserLoading={!hasFetchedUser.current} 
     />;

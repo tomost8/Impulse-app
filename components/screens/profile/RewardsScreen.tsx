@@ -8,7 +8,16 @@ import {
   ScrollView,
 } from "react-native";
 
-const RewardsScreen = () => {
+interface RewardsScreenProps {
+  user: any;
+  isUserLoading: boolean;
+  rewards: any;
+  isRewardsLoading: boolean;
+  handleCreateRedeem: (rewardId: number) => void;
+  isCreatingRedeem: boolean;
+}
+
+const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewards, isRewardsLoading, handleCreateRedeem, isCreatingRedeem }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>

@@ -1,12 +1,10 @@
 import styles from '@/constants/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { router, useRouter, useLocalSearchParams } from 'expo-router';
-
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import RedeemsModal from '@/components/modals/RedeemsModal';
 import RedeemButton from '@/components/RedeemButton';
 
-function RedeemsScreen({ 
+export default function RedeemsScreenOld({ 
   user, 
   isUserLoading,
   rewards, 
@@ -60,5 +58,3 @@ function RedeemsScreen({
     </View>
   );
 }
-
-export default RedeemsScreen;

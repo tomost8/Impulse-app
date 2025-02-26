@@ -5,7 +5,7 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
 import HomeDesign from '@/components/screens/HomeDesign';
-import HomeScreen from '@/components/screens/notneeded';
+import HomeScreenOld from '@/components/screens/old/HomeScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/constants/debug';
 
@@ -63,7 +63,7 @@ const HomePage = () => {
       isActivitiesLoading={!hasFetchedActivities.current}
     />;
   } else {
-    return <HomeScreen
+    return <HomeScreenOld
       friends={friendsRef.current || []} 
       isFriendsLoading={!hasFetchedFriends.current}
       activities={activitiesRef.current || []}

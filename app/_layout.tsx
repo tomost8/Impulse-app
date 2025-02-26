@@ -1,64 +1,3 @@
-/*import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-import { ApolloProvider } from '@apollo/client';
-import { client } from '../services/client';
-import { PaperProvider } from 'react-native-paper';
-import { UserProvider } from '@/services/UserContext';
-import { useColorScheme } from 'react-native';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/Inter-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return (
-    <PaperProvider>
-      <UserProvider>
-        <ApolloProvider client={client}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen 
-              name="community/[id]" 
-              options={{
-                headerShown: true,
-                headerTitle: "Community",
-              }} 
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-        </ApolloProvider>
-      </UserProvider>
-    </PaperProvider>
-  );
-}
-*/
-
-
-
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -71,7 +10,7 @@ import { UserProvider } from '@/services/UserContext';
 import { useColorScheme } from 'react-native';
 import { UserPreferencesProvider } from '@/services/UserPreferencesContext';
 import { InitialDataLoader } from '@/components/InitialDataLoader';
-import { useFonts } from 'expo-font';
+
 import { useEffect } from 'react';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -81,20 +20,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
-
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/Inter-Regular.ttf'),
-  });
-
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+    // Hide splash screen once the app is ready
+    SplashScreen.hideAsync();
+  }, []);
 
   return (
     <ApolloProvider client={client}>

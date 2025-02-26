@@ -8,7 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const ProfileScreen: React.FC = () => {
+interface ProfileScreenProps {  
+  user: any;
+  isUserLoading: boolean;
+}
+
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) => {
   const infoItems = [
     { label: "Email", value: "Johndoe@gmail.com" },
     { label: "First Name", value: "Devon" },

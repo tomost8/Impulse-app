@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
+import { router } from 'expo-router';
 
 interface AccountProfileProps {
   user: any;
@@ -21,13 +22,13 @@ export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => 
     <ScrollView style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>My Account</Text>
-          <Image
-            source={{
-              uri: "assets/images/Account/bigInfo.png",
-            }}
-            style={styles.settingsIcon}
-            accessibilityLabel="Settings"
-          />
+          <TouchableOpacity onPress={() => router.push('/account/settings')}>
+            <Image
+              source={require('@/assets/images/Account/bigInfo.png')}
+              style={styles.settingsIcon}
+              accessibilityLabel="Settings"
+            />
+          </TouchableOpacity>
       </View>
 
       <View style={styles.mainContent}>
@@ -50,7 +51,9 @@ export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => 
           <View style={styles.progressContainer}>
             <View style={styles.progressBar} />
           </View>
-          <Text style={styles.redeem}>Redeem</Text>
+          <TouchableOpacity onPress={() => router.push('/account/redeems')}>
+            <Text style={styles.redeem}>Redeem</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Stats Section */}
