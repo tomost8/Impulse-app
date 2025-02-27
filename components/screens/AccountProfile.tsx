@@ -6,114 +6,125 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { router } from 'expo-router';
-import { getLabelByCategory } from '@/constants/goals';
+import { getLabelByCategory } from '@/utils/goals';
 
 interface AccountProfileProps {
   user: any;
   isUserLoading: boolean;
 }
 
-export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => {
+export const AccountProfile: React.FC<AccountProfileProps> = ({ 
+  user, 
+  isUserLoading 
+}) => {
   if (isUserLoading) {
     return <Text>Loading...</Text>;
   }
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>My Account</Text>
-          <TouchableOpacity onPress={() => router.push('/account/settings')}>
-            <Image
-              source={require('@/assets/images/Account/bigInfo.png')}
-              style={styles.settingsIcon}
-              accessibilityLabel="Settings"
-            />
+            <Text style={styles.headerTitle}>My Account</Text>
+            <TouchableOpacity onPress={() => router.push('/account/settings')}>
+              <Image
+                source={require('@/assets/images/Account/bigInfo.png')}
+                style={styles.settingsIcon}
+                accessibilityLabel="Settings"
+              />
+            </TouchableOpacity>
+        </View>
+
+        <View style={styles.mainContent}>
+          <Image
+            source={{
+              uri: user.profile_picture,
+            }}
+            style={styles.profileImage}
+            accessibilityLabel="Profile picture"
+          />
+          <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
+          <Text style={styles.username}>@{user.username}</Text>
+
+          {/* Points Section */}
+          <View style={styles.pointsContainer}>
+            <View style={styles.pointsHeader}>
+              <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+              <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
+            </View>
+            <View style={styles.progressContainer}>
+              <View style={styles.progressBar} />
+            </View>
+            <TouchableOpacity onPress={() => router.push('/account/redeems')}>
+              <Text style={styles.redeem}>Redeem</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Stats Section */}
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>4</Text>
+              <Text style={styles.statLabel}>Communities</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>15</Text>
+              <Text style={styles.statLabel}>Friends</Text>
+            </View>
+          </View>
+
+          <Text style={styles.bioText}>
+            {user.bio}
+          </Text>
+
+          {/* Working Section */}
+          <View style={styles.workingSection}>
+            <Text style={styles.sectionTitle}>What I'm Working On</Text>
+            <View style={styles.workItem}>
+              <Text style={styles.workText}>{getLabelByCategory(user.primary_goal)}</Text>
+              <Text style={styles.workType}>(Primary)</Text>
+            </View>
+            <View style={styles.workItem}>
+              <Text style={styles.workText}>{getLabelByCategory(user.secondary_goal)}</Text>
+              <Text style={styles.workType}>(Secondary)</Text>
+            </View>
+          </View>
+
+          {/* Info Section */}
+          <View style={styles.infoSection}>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoLabel}>Gender</Text>
+              <Text style={styles.infoValue}>{user.gender}</Text>
+            </View>
+            <View style={styles.infoColumn}>
+              <Text style={styles.infoLabel}>Timezone</Text>
+              <Text style={styles.infoValue}>{user.timezone}</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.memoriesButton}
+            accessibilityRole="button"
+          >
+            <Text style={styles.memoriesButtonText}>View All Memories</Text>
           </TouchableOpacity>
-      </View>
-
-      <View style={styles.mainContent}>
-        <Image
-          source={{
-            uri: user.profile_picture,
-          }}
-          style={styles.profileImage}
-          accessibilityLabel="Profile picture"
-        />
-        <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
-        <Text style={styles.username}>@{user.username}</Text>
-
-        {/* Points Section */}
-        <View style={styles.pointsContainer}>
-          <View style={styles.pointsHeader}>
-            <Text style={styles.pointsGuide}>Points Earning Guide</Text>
-            <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
-          </View>
-          <View style={styles.progressContainer}>
-            <View style={styles.progressBar} />
-          </View>
-          <TouchableOpacity onPress={() => router.push('/account/redeems')}>
-            <Text style={styles.redeem}>Redeem</Text>
-          </TouchableOpacity>
         </View>
-
-        {/* Stats Section */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>4</Text>
-            <Text style={styles.statLabel}>Communities</Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>15</Text>
-            <Text style={styles.statLabel}>Friends</Text>
-          </View>
-        </View>
-
-        <Text style={styles.bioText}>
-          {user.bio}
-        </Text>
-
-        {/* Working Section */}
-        <View style={styles.workingSection}>
-          <Text style={styles.sectionTitle}>What I'm Working On</Text>
-          <View style={styles.workItem}>
-            <Text style={styles.workText}>{getLabelByCategory(user.primary_goal)}</Text>
-            <Text style={styles.workType}>(Primary)</Text>
-          </View>
-          <View style={styles.workItem}>
-            <Text style={styles.workText}>{getLabelByCategory(user.secondary_goal)}</Text>
-            <Text style={styles.workType}>(Secondary)</Text>
-          </View>
-        </View>
-
-        {/* Info Section */}
-        <View style={styles.infoSection}>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Gender</Text>
-            <Text style={styles.infoValue}>{user.gender}</Text>
-          </View>
-          <View style={styles.infoColumn}>
-            <Text style={styles.infoLabel}>Timezone</Text>
-            <Text style={styles.infoValue}>{user.timezone}</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.memoriesButton}
-          accessibilityRole="button"
-        >
-          <Text style={styles.memoriesButtonText}>View All Memories</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "white",
+  },
+  scrollView: {
+    padding: 0,
+    paddingBottom: 80,
+    // backgroundColor: "red", // Testing padding - visual check
   },
   timeContainer: {
     paddingLeft: 37,

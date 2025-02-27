@@ -3,10 +3,10 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function DeletionScreen({
   formData,

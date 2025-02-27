@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { router } from 'expo-router';
 
 export default function ProfileScreenOld({

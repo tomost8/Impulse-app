@@ -1,17 +1,12 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-
+import { router } from 'expo-router';
 // Importing the new "add-goal.png" icon from the assets folder
 const addGoalIcon = require("@/assets/icons/add-goal.png");
 
 const AddDailyGoalsBox: React.FC = () => {
-  const handlePress = () => {
-    console.log("Add Daily Goal button clicked");
-    // Navigate or trigger action here
-  };
-
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
+    <TouchableOpacity style={styles.container} onPress={() => router.push("/home/activityAdd")}>
       <Image source={addGoalIcon} style={styles.icon} />
       <Text style={styles.text}>Add Daily Goal</Text>
     </TouchableOpacity>
@@ -20,7 +15,7 @@ const AddDailyGoalsBox: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 335,
+    width: 335, // shouldn't be fixed or hardcoded lol
     height:75,
     borderRadius: 16,
     borderWidth: 1,

@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TextInput, TouchableOpacity,  Image } from 'react-native';
 import { Switch } from 'react-native-paper';
 import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
@@ -9,7 +9,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function CreateGroupScreen({
   formData,

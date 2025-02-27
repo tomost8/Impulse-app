@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { useUserPreferences } from '@/services/UserPreferencesContext';
 import { getTimeAgo, convertUtcToLocal } from '@/utils/timezoneProcessing';
 

@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Modal, Portal, Checkbox } from 'react-native-paper';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 import { useState, useContext } from 'react';
 import { CameraHeaderContext, SocialDataContext } from '@/app/(tabs)/camera/_layout';
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 

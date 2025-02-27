@@ -5,14 +5,14 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, Platform } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { router } from 'expo-router';
-import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 import { Picker } from '@react-native-picker/picker';
-import { GENDER_OPTIONS, GOAL_OPTIONS } from '@/constants/userOptions';
+import { GENDER_OPTIONS, GOAL_OPTIONS } from '@/utils/userOptions';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 function EditProfileScreen({
   user,

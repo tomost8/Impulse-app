@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { collection, query, where, getDocs } from 'firebase/firestore';

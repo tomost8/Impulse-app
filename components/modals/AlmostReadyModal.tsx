@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import { Modal, Portal, Button } from 'react-native-paper';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 interface AlmostReadyModalProps {
   visible: boolean;

@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 export default function NotificationsScreen() {
   return (

@@ -5,9 +5,9 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 // Components: export FriendScreen to a different file
 import { router } from 'expo-router';
 import { View, Text, TouchableOpacity } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function FriendScreen({ 
   friends, 

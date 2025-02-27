@@ -1,4 +1,4 @@
-import styles from "@/constants/testStyles";
+import styles from "@/utils/testStyles";
 import { View, Image, TouchableOpacity, Text } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { useState, useEffect, useRef, useContext } from 'react';
@@ -7,7 +7,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetActivities } from "@/hooks/graphql/activities/queries";
 // Components
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 import SendPhotoModal from "@/components/modals/SendPhotoModal";
 
 const DisplayPicturePage = (props: any) => {

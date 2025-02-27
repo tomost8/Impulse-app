@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import React from 'react';

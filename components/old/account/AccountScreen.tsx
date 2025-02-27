@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import PointsModal from '@/components/modals/PointsModal';
 

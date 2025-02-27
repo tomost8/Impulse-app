@@ -2,7 +2,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { storage } from '@/config/firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 
 interface PhotoInput {

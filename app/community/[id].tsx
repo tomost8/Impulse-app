@@ -6,9 +6,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '../../hooks/graphql/communities/queries';
 // Components
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 const CommunityScreen = (props: any) => {
   const { id } = useLocalSearchParams(); // communityId

@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Linking } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 export default function FeedbackScreen() {
   const handleFeedbackPress = () => {

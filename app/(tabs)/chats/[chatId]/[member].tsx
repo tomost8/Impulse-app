@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { useLocalSearchParams } from 'expo-router';
 
 import {useState, useEffect, useRef} from 'react';
@@ -8,7 +8,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function PartnerScreen({
   user,

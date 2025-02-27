@@ -7,9 +7,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
 import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 const PostPage = (props: any) => {
   const { id, isLiked } = useLocalSearchParams(); // postId

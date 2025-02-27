@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import JoinGroupModal from '@/components/modals/JoinGroupModal';
@@ -10,7 +10,7 @@ import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function JoinGroupScreen({
   chats,

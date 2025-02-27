@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { debugQueries } from '@/constants/debug';
+import { debugQueries } from '@/utils/debug';
 
 
 const GET_FEED_COMMUNITIES = gql`

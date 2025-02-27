@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { router } from 'expo-router';
-import { getLabelByCategory } from '@/constants/goals';
+import { getLabelByCategory } from '@/utils/goals';
 
 interface ProfileScreenProps {  
   user: any;

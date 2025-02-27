@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, View, } from 'react-native';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 interface RedeemButtonProps {
     title: string;

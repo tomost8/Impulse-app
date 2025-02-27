@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator, Platform, Pressable } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import moment from 'moment-timezone';
 import { Picker } from '@react-native-picker/picker';
-import { GENDER_OPTIONS } from '@/constants/userOptions';
+import { GENDER_OPTIONS } from '@/utils/userOptions';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 
 export default function Signup2() {

@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import MyComponent from '@/components/TwoTab';
 

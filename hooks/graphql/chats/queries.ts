@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { debugQueries } from '@/constants/debug';
+import { debugQueries } from '@/utils/debug';
 
 // Query - Get All Chats
 export const GET_ALL_CHATS = gql`

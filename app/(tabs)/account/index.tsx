@@ -3,10 +3,10 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
-import AccountScreenOld from '@/components/screens/old/account/AccountScreen';
+import AccountScreenOld from '@/components/old/account/AccountScreen';
 import AccountProfile from '@/components/screens/AccountProfile';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 const AccountPage = (props: any) => {
   const { userId, authToken } = props;

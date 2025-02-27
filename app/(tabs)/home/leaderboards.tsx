@@ -5,9 +5,9 @@ import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
 import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
-import LeaderboardScreenOld from '@/components/screens/old/home/LeaderboardScreen';
+import LeaderboardScreenOld from '@/components/old/home/LeaderboardScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 
 const LeaderboardsPage = (props: any) => {

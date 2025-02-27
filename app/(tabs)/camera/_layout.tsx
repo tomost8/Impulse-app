@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { TouchableOpacity, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, Stack } from 'expo-router';
@@ -10,7 +10,7 @@ import { useGetUserChats } from "@/hooks/graphql/chats/queries";
 import { useGetUserCommunities } from "@/hooks/graphql/communities/queries";
 import { useUserInfo } from '@/services/UserContext';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 export const CameraHeaderContext = createContext<{
   id: number;

@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 
@@ -9,7 +9,7 @@ import { useUpdateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
 import EditDailyGoalsScreen from '@/components/screens/EditDailyGoals';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 function ActivityDetailsScreen({
   formData,

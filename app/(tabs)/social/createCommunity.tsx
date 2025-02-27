@@ -4,12 +4,12 @@ import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/u
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Checkbox } from 'react-native-paper';
-import { goals } from '@/constants/goals';
+import { goals } from '@/utils/goals';
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function CreateCommunityScreen({
   handleCreateCommunity,

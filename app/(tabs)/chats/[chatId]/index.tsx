@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import RemoveFriendModal from '@/components/modals/RemoveFriendModal';
 
 import { useState, useEffect, useRef } from 'react';
@@ -10,7 +10,7 @@ import { useGetChat, useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function ChatScreen({
   userId,

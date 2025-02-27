@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center", // ✅ Ensures icon is higher
-    flexDirection: "row", // ✅ Ensures elements stay in a row
     backgroundColor: "#F4F9FF",
     paddingVertical: 10,
     paddingHorizontal: 12,

@@ -1,4 +1,4 @@
-import { goals } from '@/constants/goals';
+import { goals } from '@/utils/goals';
 
 export const GENDER_OPTIONS = [
   { value: '', label: 'Select Gender' },

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import GoalSelector from '@/components/GoalSelector';
-import { goals, getCategoryById } from '@/constants/goals';
+import { goals, getCategoryById } from '@/utils/goals';
 
 import { auth } from '@/config/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -11,7 +11,7 @@ import { FIREBASE_AUTH} from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
 import { useMutation } from '@apollo/client';
 import { useUserInfo } from '@/services/UserContext';
-import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 export default function Signup4() {
   const params = useLocalSearchParams();

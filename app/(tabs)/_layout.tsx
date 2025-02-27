@@ -7,7 +7,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-import { debugRouting } from '@/constants/debug';
+import { debugRouting } from '@/utils/debug';
 import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
@@ -65,6 +65,9 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
             ...Platform.select({
               ios: {
                 position: 'absolute',
+                height: 49+35, // Standard iOS tab bar height (without safe area)
+                // for iphoneX and later, safearea adds another 34px
+                paddingBottom: 0, // Remove if you don't need extra padding
               },
               android: {
                 position: 'absolute',

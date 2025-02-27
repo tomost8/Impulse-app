@@ -1,7 +1,7 @@
 import React from "react";
 import { View, SafeAreaView, StyleSheet, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
-import styles from "@/constants/testStyles";
+import styles from "@/utils/testStyles";
 
 interface EditDailyGoalsScreenProps {
   formData: any, 

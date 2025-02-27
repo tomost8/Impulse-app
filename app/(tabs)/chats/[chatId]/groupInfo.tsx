@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router, Link, useLocalSearchParams } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
@@ -10,7 +10,7 @@ import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function GroupInfoScreen({
   userId,

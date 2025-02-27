@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
@@ -10,9 +10,9 @@ import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations'
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 import { Searchbar } from 'react-native-paper';
-import { goals } from '@/constants/goals'; // Import goals from goals.ts
+import { goals } from '@/utils/goals'; // Import goals from goals.ts
 import { RadioButton } from 'react-native-paper';
 
 

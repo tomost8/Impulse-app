@@ -4,9 +4,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileScreen';
-import _ProfileScreen from '@/components/screens/old/account/ProfileScreen';
+import _ProfileScreen from '@/components/old/account/ProfileScreen';
 // Debug
-import { debugRenders, pageDisplay } from '@/constants/debug';
+import { debugRenders, pageDisplay } from '@/utils/debug';
 
 const ProfilePage = (props: any) => {
   const { userId, authToken } = props;

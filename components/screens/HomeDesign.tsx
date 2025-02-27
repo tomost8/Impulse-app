@@ -21,9 +21,10 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
   activities, 
   isActivitiesLoading 
 }) => {
+  console.log(friends, activities);
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <TopSection />
         
         <View style={styles.quoteSection}>
@@ -31,8 +32,11 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
         </View>
         
         <View style={styles.section}>
-  <       DailyGoals activities={activities} isActivitiesLoading={isActivitiesLoading} />
-          <AddDailyGoalsBox />  // ✅ Add this below DailyGoals
+          {activities.length > 0 ? (
+            <DailyGoals activities={activities} isActivitiesLoading={isActivitiesLoading} />
+          ) : (
+            <AddDailyGoalsBox />
+          )}
         </View>
 
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
@@ -52,11 +56,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
-  content: {
+  scrollView: {
     flexGrow: 1, // ✅ Fix: Ensures the content expands and prevents cutoff
     padding: 16,
     paddingBottom: 80, // ✅ Increased padding to avoid bottom cutoff
     paddingTop: 0,
+    //backgroundColor: "red", // Testing padding - visual check
   },
   quoteSection: {
     marginTop: 35, // ✅ Adds spacing between TopSection & Quote Card

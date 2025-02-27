@@ -4,7 +4,7 @@ import { useUserInfo } from '@/services/UserContext';
 import { useUserPreferences } from '@/services/UserPreferencesContext';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
-import { DEFAULT_PROFILE_PICTURE } from '@/constants/userOptions';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId, authToken } = useUserInfo();

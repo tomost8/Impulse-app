@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import GoalSelector from '@/components/GoalSelector';

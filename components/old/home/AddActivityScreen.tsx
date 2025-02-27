@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 

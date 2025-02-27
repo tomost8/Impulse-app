@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import ActivitiesModal from '@/components/modals/ActivitiesModal';

@@ -6,9 +6,9 @@ import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
 import RedeemsScreen from '@/components/screens/profile/RewardsScreen';
-import RedeemsScreenOld from '@/components/screens/old/account/RedeemsScreen';
+import RedeemsScreenOld from '@/components/old/account/RedeemsScreen';
 // Debug
-import { debugRenders, pageDisplay } from '@/constants/debug';
+import { debugRenders, pageDisplay } from '@/utils/debug';
 
 const RedeemsPage = (props: any) => {
   const { userId, authToken } = props;

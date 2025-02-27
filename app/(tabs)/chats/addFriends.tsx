@@ -1,4 +1,4 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { useMutation } from '@apollo/client';
@@ -10,7 +10,7 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useSendFriendRequest, useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function AddFriendsScreen({
   users,

@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { debugQueries } from '@/constants/debug';
+import { debugQueries } from '@/utils/debug';
 
 export const GET_ACTIVITIES_BY_DATE = gql`
   query ActivitiesByDate($userId: Int!, $date: String!) {

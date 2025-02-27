@@ -4,9 +4,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetActivities } from '@/hooks/graphql/activities/queries';
 // Components
 import DailyGoalsScreen from '@/components/screens/DailyGoalsScreen';
-import ViewActivityScreenOld from '@/components/screens/old/home/ViewActivityScreen';
+import ViewActivityScreenOld from '@/components/old/home/ViewActivityScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 const ViewActivityPage = (props: any) => {
   const { userId, authToken } = props;

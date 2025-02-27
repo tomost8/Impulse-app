@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import SocialModal from '@/components/modals/SocialModal';
 
 import {useState, useEffect, useRef} from 'react';
@@ -12,7 +12,7 @@ import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
 // Components
 // Debug
-import { debugRenders } from '@/constants/debug';
+import { debugRenders } from '@/utils/debug';
 
 function ChatScreen({
   chats,

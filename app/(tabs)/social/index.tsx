@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image, Touchable } from 'react-native';
 import { router } from 'expo-router';
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { Button, RadioButton } from 'react-native-paper';
 
 import {useState, useEffect, useRef} from 'react';
@@ -13,7 +13,7 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 import PostCard from '@/components/PostCard';
 import FeedScreen from '@/components/screens/SocialPage/FeedScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useUserPreferences } from '@/services/UserPreferencesContext';
 
 function SocialScreen({

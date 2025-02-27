@@ -4,9 +4,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
 import AddDailyGoalsScreen from '@/components/screens/AddDailyGoals';
-import AddActivityScreenOld from '@/components/screens/old/home/AddActivityScreen';
+import AddActivityScreenOld from '@/components/old/home/AddActivityScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/constants/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 import { router } from 'expo-router';
 
 

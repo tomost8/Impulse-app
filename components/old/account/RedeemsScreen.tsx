@@ -1,8 +1,8 @@
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useState } from 'react';
-import RedeemsModal from '@/components/screens/old/account/RedeemsModal';
-import RedeemButton from '@/components/screens/old/account/RedeemButton';
+import RedeemsModal from '@/components/old/account/RedeemsModal';
+import RedeemButton from '@/components/old/account/RedeemButton';
 
 export default function RedeemsScreenOld({ 
   user, 

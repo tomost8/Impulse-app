@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
-import styles from '@/constants/testStyles';
+import styles from '@/utils/testStyles';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 
 function PasswordScreen({
