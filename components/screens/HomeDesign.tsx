@@ -5,6 +5,7 @@ import TopSection from "../ui/HomeComponents/HeaderComponents/TopSection"; // �
 import QuoteofDay from "../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
 import DailyGoals from "../ui/HomeComponents/DailyGoals";
 import LeaderboardFull from "../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
+import AddDailyGoalsBox from "../ui/HomeComponents/AddDailyGoalsBox"; // ✅ Importing the new component
 
 
 interface HomeDesignProps {
@@ -28,13 +29,10 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
         <View style={styles.quoteSection}>
           <QuoteofDay />
         </View>
-
-        {/* Daily Goals Section */}
+        
         <View style={styles.section}>
-          <DailyGoals 
-            activities={activities} 
-            isActivitiesLoading={isActivitiesLoading} 
-          />
+  <       DailyGoals activities={activities} isActivitiesLoading={isActivitiesLoading} />
+          <AddDailyGoalsBox />  // ✅ Add this below DailyGoals
         </View>
 
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
