@@ -44,8 +44,8 @@ const HomePage = () => {
     }
   }, [hasNewFriendsData, hasNewActivitiesData]); 
   
-  const loading = !hasFetchedFriends.current || !hasFetchedActivities.current;
-  if (debugRenders && !loading) {
+  const loadingData = !hasFetchedFriends.current || !hasFetchedActivities.current;
+  if (debugRenders && !loadingData) {
     console.log("Rendering HomePage.\n",
       "Friends:", friendsRef.current, "\n",
       "Activities:", activitiesRef.current, "\n",

@@ -9,8 +9,10 @@ interface DailyGoalsProps {
   isActivitiesLoading: boolean;
 }
 
-const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
-  console.log(activities);
+const DailyGoals = ({ 
+  activities, 
+  isActivitiesLoading 
+}: DailyGoalsProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -22,28 +24,22 @@ const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
       </View>
 
       {/* Daily Goals Cards */}
-      {activities.map((activity) => (
-        <DailyGoalCard
-          key={activity.id}
-          title={activity.category}
-          timeRange={activity.createdAt}
-          status={activity.status}
-          description={activity.description}
-        />
-      ))}
-
-      {/* Example Goal */}
-      <DailyGoalCard
-        title="Rise and Shine"
-        timeRange="02:00 PM to 03:00 PM"
-        status="In Progress"
-        description="activity description: test test test"
-      />
-
-      {/* Add Daily Goals Box */}
-      <View style={styles.addGoalContainer}>
-        <AddDailyGoalsBox />
-      </View>
+      {activities.length > 0 ? (
+        activities.map((activity) => (
+          <DailyGoalCard
+            key={activity.id}
+            category={activity.category}
+            scheduledDatetime={activity.scheduledDatetime}
+            duration={activity.duration}
+            status={activity.status}
+            description={activity.description}
+          />
+        ))
+      ) : (
+        <View style={styles.addGoalContainer}>
+          <AddDailyGoalsBox />
+        </View>
+      )}
     </View>
   );
 };

@@ -6,6 +6,10 @@ import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the 
 import DailyGoals from "../../ui/HomeComponents/DailyGoals";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
 
+import { convertUtcToLocal } from "@/utils/timezoneProcessing";
+import { useUserPreferences } from "@/services/UserPreferencesContext";
+
+
 interface HomeDesignProps {
   friends: any[]; 
   isFriendsLoading: boolean;
@@ -19,7 +23,6 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
   activities, 
   isActivitiesLoading 
 }) => {
-  console.log(friends, activities);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView}>

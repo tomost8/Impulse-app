@@ -8,7 +8,7 @@ import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId, authToken } = useUserInfo();
-  const { setTimezone, setCameraClickable } = useUserPreferences();
+  const { setTimezone, setCameraClickable, setLoading } = useUserPreferences();
 
   const [hasValidAuth, setHasValidAuth] = useState(false);
   const lastFetchedUserId = useRef<number | null>(null);
@@ -102,6 +102,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
     }
 
     if (hasFetchedUser.current && hasFetchedActivities.current) {
+      setLoading(false);
       console.log("render count +1: data fetched", 
         "\nuser ref values", hasFetchedUser.current, userRef.current,
         "\nactivities ref values", hasFetchedActivities.current, activitiesRef.current

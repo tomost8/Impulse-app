@@ -5,11 +5,14 @@ type UserPreferencesContextType = {
   setTimezone: (timezone: string) => void;
   cameraClickable: boolean;
   setCameraClickable: (status: boolean) => void;
+  loading: boolean;
+  setLoading: (status: boolean) => void;
 };
 
 const UserPreferencesContext = createContext<UserPreferencesContextType | undefined>(undefined);
 
 export const UserPreferencesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
 
@@ -18,6 +21,8 @@ export const UserPreferencesProvider: React.FC<{ children: React.ReactNode }> = 
     setTimezone,
     cameraClickable,
     setCameraClickable,
+    loading,
+    setLoading,
   };
 
   return (

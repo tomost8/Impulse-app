@@ -45,8 +45,12 @@ export const TIMEZONE_OPTIONS = TIMEZONE_LIST
     return { value: tz, label: `${tz} (GMT${offset})` }; // Create the object with value and label
 });
 
-export const convertUtcToLocal = (utcTimestamp: string, timezone: string) => {
-  return moment.utc(utcTimestamp).tz(timezone).format('YYYY-MM-DD HH:mm:ss');
+// Convert UTC timestamp to local time with optional duration added in minutes
+export const convertUtcToLocal = (utcTimestamp: string, timezone: string, duration: number=0) => {
+  return moment.utc(utcTimestamp)
+    .add(duration, 'minutes')
+    .tz(timezone)
+    .format('hh:mm A');
 };
 
 export const getTimeAgo = (utcTimestamp: string) => {
