@@ -13,6 +13,15 @@ import { router } from 'expo-router';
 const AddActivityPage = (props: any) => {
   const { userId, authToken } = props;
 
+  const handleSuccess = () => {
+    router.back();
+  }
+
+  const handleError = (error: any) => {
+    //handle error (show toast, etc)
+    console.error("Error creating activity:", error);
+  }
+
   // Mutations
   const { createActivity } = useCreateActivity();
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
@@ -57,10 +66,9 @@ const AddActivityPage = (props: any) => {
 
   if (pageDisplay) {
     return <AddDailyGoalsScreen
-      selectedActivities={selectedActivities}
-      handleSelectActivity={handleSelectActivity}
-      handleCreateActivity={handleCreateActivity}
-      isSubmitting={isCreatingActivity}
+      authToken={authToken}
+      onSuccess={handleSuccess}
+      onError={handleError}
     />;
   } else {
     return <AddActivityScreenOld 

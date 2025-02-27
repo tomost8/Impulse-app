@@ -17,6 +17,8 @@ type AddActivityCardProps = {
   isExpanded: boolean;
   onSelect: () => void;
   onCheckIconPress: () => void;
+  formData: any;
+  onFormDataChange: (field: string, value: string) => void;
 };
 
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
@@ -26,6 +28,8 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   isExpanded, // New prop for expanded state
   onSelect,
   onCheckIconPress,
+  formData,
+  onFormDataChange,
 }) => {
   return (
     <View>
@@ -35,8 +39,10 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
           icon={icon}
           isSelected={isSelected}
           onSelect={onSelect}
-          onCheckIconPress={onCheckIconPress}
           isExpanded={isExpanded}
+          onCheckIconPress={onCheckIconPress}
+          formData={formData}
+          onFormDataChange={onFormDataChange}
         />
       ) : (
         <TouchableOpacity

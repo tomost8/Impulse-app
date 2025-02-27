@@ -3,14 +3,44 @@ import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
 import AddActivityCard from "@/components/ui/common/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
-import { goals } from "@/utils/goals"; // Import goals from goals.ts
+import { goals } from "@/utils/goals";
+import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
 
-const AddDailyGoals: React.FC = () => {
-  const [selectedGoals, setSelectedGoals] = useState<number[]>([]); // Array of selected goals
-  const [expandedGoal, setExpandedGoal] = useState<number | null>(null); // Currently expanded goal
+interface GoalFormData {
+  startTime: string;
+  duration: string;
+  description: string;
+}
+
+interface AddDailyGoalsScreenProps {
+  authToken: string;
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+}
+
+const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScreenProps) => {
+  const { createActivity } = useCreateActivity();
+  const [selectedGoals, setSelectedGoals] = useState<number[]>([]);
+  const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
+  const [goalFormData, setGoalFormData] = useState<Record<number, GoalFormData>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const handleSelectGoal = (goalId: number) => {
-    setSelectedGoals((prev) => [...prev, goalId]);
+    // Only add goalId if it's not already in the array
+    if (!selectedGoals.includes(goalId)) {
+      setSelectedGoals((prev) => [...prev, goalId]);
+      // Initialize form data if it doesn't exist
+      if (!goalFormData[goalId]) {
+        setGoalFormData(prev => ({
+          ...prev,
+          [goalId]: {
+            startTime: '',
+            duration: '',
+            description: ''
+          }
+        }));
+      }
+    }
     if (expandedGoal === goalId) {
       setExpandedGoal(null);
     } else {
@@ -22,8 +52,54 @@ const AddDailyGoals: React.FC = () => {
     if (expandedGoal === goalId) {
       setExpandedGoal(null);
     }
-    setSelectedGoals(prev => prev.filter(id => id !== goalId)); // Remove the goal from selectedGoals
+    // Remove goal from selectedGoals and formData
+    setSelectedGoals(prev => prev.filter(id => id !== goalId));
+    setGoalFormData(prev => {
+      const newData = { ...prev };
+      delete newData[goalId];
+      return newData;
+    });
   }
+
+  const handleFormDataChange = (goalId: number, field: keyof GoalFormData, value: string) => {
+    setGoalFormData(prev => ({
+      ...prev,
+      [goalId]: {
+        ...prev[goalId],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleAddGoals = async () => {
+    setIsSubmitting(true);
+    try {
+      for (const goalId of selectedGoals) {
+        const formData = goalFormData[goalId];
+        if (formData) {
+          const input = {
+            category: goalId,
+            scheduledDatetime: formData.startTime || new Date(Date.now()),
+            duration: formData.duration,
+            description: formData.description,
+          };
+          console.log("input", input);
+          /*
+          const response = await createActivity(input, authToken);
+          if (!response.success) {
+            throw new Error(`Failed to create activity: ${goalId}`);
+          }
+          */
+        }
+      }
+      onSuccess?.();
+    } catch (error) {
+      console.error('Error adding goals:', error);
+      onError?.(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   
   return (
     <View style={styles.container}>
@@ -41,12 +117,16 @@ const AddDailyGoals: React.FC = () => {
             onSelect={() => handleSelectGoal(goal.id)}
             isExpanded={expandedGoal === goal.id}
             onCheckIconPress={() => handleCheckIconPress(goal.id)}
+            formData={goalFormData[goal.id]}
+            onFormDataChange={(field, value) => 
+              handleFormDataChange(goal.id, field as keyof GoalFormData, value)
+            }
           />
         ))}
       </ScrollView>
   
       {/* Add Goal Button */}
-      <AddGoalButton onPress={() => console.log("Goal Added")} />
+      <AddGoalButton onPress={handleAddGoals} />
     </View>
   );
 };
@@ -73,4 +153,4 @@ const styles = StyleSheet.create({
     },
 });
   
-export default AddDailyGoals;
+export default AddDailyGoalsScreen;

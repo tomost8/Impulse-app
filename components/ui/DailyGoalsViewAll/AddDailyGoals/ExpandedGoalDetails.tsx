@@ -12,6 +12,8 @@ interface ExpandedGoalDetailsProps {
   onSelect: () => void;
   onCheckIconPress: () => void;
   isExpanded: boolean;
+  formData: any;
+  onFormDataChange: (field: string, value: string) => void;
 }
 
 const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
@@ -21,6 +23,8 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
     onSelect,
     onCheckIconPress,
     isExpanded,
+    formData,
+    onFormDataChange,
   }) => {
     return (
         <View style={[styles.container, isSelected ? styles.selectedContainer : null]}>
@@ -61,7 +65,13 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <View>
               <Text style={styles.label}>Start Time (optional)</Text>
               <View style={styles.inputContainer}>
-                <Text style={styles.input}>Choose</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Choose"
+                  value={formData.startTime}
+                  onChangeText={(value) => onFormDataChange('startTime', value)}
+                  placeholderTextColor="#A4ACBC"
+                />
                 <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
               </View>
             </View>
@@ -70,7 +80,13 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <View style={{ marginTop: 10 }}>
               <Text style={styles.label}>Activity Duration (optional)</Text>
               <View style={styles.inputContainer}>
-                <Text style={styles.input}>Choose</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Choose"
+                  value={formData.duration}
+                  onChangeText={(value) => onFormDataChange('duration', value)}
+                  placeholderTextColor="#A4ACBC"
+                />
                 <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
               </View>
             </View>
@@ -79,7 +95,14 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <View style={{ marginTop: 10 }}>
               <Text style={styles.label}>Description (optional)</Text>
               <View style={[styles.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
-                <Text style={styles.input}>Choose</Text>
+                <TextInput
+                  style={[styles.input, { height: '100%', textAlignVertical: 'top' }]}
+                  placeholder="Choose"
+                  value={formData.description}
+                  onChangeText={(value) => onFormDataChange('description', value)}
+                  placeholderTextColor="#A4ACBC"
+                  multiline
+                />
               </View>
             </View>
           </View>
