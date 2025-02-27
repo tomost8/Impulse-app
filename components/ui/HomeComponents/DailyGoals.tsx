@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import DailyGoalCard from "./DailyGoalCard"; // Importing reusable component
+import DailyGoalCard from "../CommonComponents/DailyGoalCard";
+import AddDailyGoalsBox from "./AddDailyGoalsBox";
 import { router } from "expo-router";
 
 interface DailyGoalsProps {
@@ -20,6 +21,7 @@ const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
         </TouchableOpacity>
       </View>
 
+      {/* Daily Goals Cards */}
       {activities.map((activity) => (
         <DailyGoalCard
           key={activity.id}
@@ -37,6 +39,11 @@ const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
         status="In Progress"
         description="activity description: test test test"
       />
+
+      {/* Add Daily Goals Box */}
+      <View style={styles.addGoalContainer}>
+        <AddDailyGoalsBox />
+      </View>
     </View>
   );
 };
@@ -62,6 +69,12 @@ const styles = StyleSheet.create({
     color: "#DE728D",
     fontWeight: "bold",
     textDecorationLine: "underline",
+  },
+  addGoalContainer: {
+    marginTop: 20, // Add some space between the cards and the add box
+    alignSelf: "stretch", // Ensures it spans full width
+    alignItems: "center", // Centers content properly
+    marginLeft: -14,
   },
 });
 

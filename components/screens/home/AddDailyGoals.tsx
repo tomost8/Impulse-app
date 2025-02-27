@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, SafeAreaView, StyleSheet, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
 import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
-import DailyGoalItem from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/DailyGoalItem";
+import DailyGoalItem from "@/components/ui/CommonComponents/DailyGoalItem";
 import ExpandedGoalDetails from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/ExpandedGoalDetails";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
 

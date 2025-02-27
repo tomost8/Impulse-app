@@ -27,13 +27,12 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
 
   // Add this function to scroll to the input when focused
   const handleDescriptionFocus = () => {
-    // Small delay to ensure the keyboard is up
     setTimeout(() => {
       scrollViewRef?.current?.scrollTo({
-        y: 200, // Adjust this value based on your needs
+        y: 300, // Increased value to ensure description box is fully visible
         animated: true,
       });
-    }, 100);
+    }, 50); // Reduced delay for faster response
   };
 
   React.useEffect(() => {
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E1E1E1",
     padding: 10,
-    marginBottom: 10,
+    marginBottom: 200, // Add extra space at bottom to ensure visibility above keyboard
     width: '90%',
     alignSelf: 'center',
     zIndex: 1,

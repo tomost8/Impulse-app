@@ -5,8 +5,6 @@ import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; //
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
 import DailyGoals from "../../ui/HomeComponents/DailyGoals";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
-import AddDailyGoalsBox from "../../ui/HomeComponents/AddDailyGoalsBox"; // TODO: move this to DailyGoals.tsx since header should display too
-
 
 interface HomeDesignProps {
   friends: any[]; 
@@ -32,11 +30,10 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
         </View>
         
         <View style={styles.section}>
-          {activities.length > 0 ? (
-            <DailyGoals activities={activities} isActivitiesLoading={isActivitiesLoading} />
-          ) : (
-            <AddDailyGoalsBox />
-          )}
+          <DailyGoals 
+            activities={activities} 
+            isActivitiesLoading={isActivitiesLoading} 
+          />
         </View>
 
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
