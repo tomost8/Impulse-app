@@ -25,25 +25,34 @@ const dailyGoalsData = [
   },
 ];
 
-// Goals List Component
-const GoalsList: React.FC = () => {
-  // Function to handle edit button press
-  const handleEditGoal = (goalId: string) => {
-    router.push(`/home/activityView/${goalId}`);
-  };
+interface GoalsListProps {
+  onEditClick: (goal: { id: string; title: string; icon: any }) => void;
+  editingGoalId?: string;
+}
 
+// Goals List Component
+const GoalsList: React.FC<GoalsListProps> = ({ onEditClick, editingGoalId }) => {
   return (
     <View style={styles.container}>
       <FlatList
         data={dailyGoalsData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <DailyGoals
-            title={item.title}
-            timeRange={item.timeRange}
-            description={item.description}
-            onEditPress={() => handleEditGoal(item.id)}
-          />
+          <View style={[
+            styles.goalItem,
+            editingGoalId === item.id && styles.hiddenGoal
+          ]}>
+            <DailyGoals
+              title={item.title}
+              timeRange={item.timeRange}
+              description={item.description}
+              onEditPress={() => onEditClick({
+                id: item.id,
+                title: item.title,
+                icon: require("@/assets/icons/riseshine.png")
+              })}
+            />
+          </View>
         )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
@@ -60,6 +69,14 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20, // Prevents cutoff at bottom
+  },
+  goalItem: {
+    opacity: 1,
+  },
+  hiddenGoal: {
+    opacity: 0,
+    height: 0,
+    marginBottom: 0,
   },
 });
 
