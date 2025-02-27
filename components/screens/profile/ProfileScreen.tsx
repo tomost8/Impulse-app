@@ -7,34 +7,36 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { router } from 'expo-router';
+import { getLabelByCategory } from '@/constants/goals';
 
 interface ProfileScreenProps {  
   user: any;
   isUserLoading: boolean;
 }
 
+
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) => {
+  if (isUserLoading) {
+    return <Text>Loading...</Text>;
+  }
+  //console.log("ProfileScreen", user);
+  
   const infoItems = [
-    { label: "Email", value: "Johndoe@gmail.com" },
-    { label: "First Name", value: "Devon" },
-    { label: "Last Name", value: "Lane" },
-    { label: "Username", value: "devonlane21" },
-    { label: "Age", value: "21" },
-    { label: "Gender", value: "Male" },
-    { label: "Timezone", value: "Chicago / USA" },
-    {
-      label: "Bio",
-      value:
-        "Hey! I'm Nancy, 27, and I want to work on making good daily habits for myself. Extra Waking up early to workout, working on personal projects, reading, and the like. I look forward to getting better together!",
-    },
+    { label: "Email", value: user.email || "N/A" },
+    { label: "First Name", value: user.firstName || "N/A" },
+    { label: "Last Name", value: user.lastName || "N/A" },
+    { label: "Username", value: user.username || "N/A" },
+    { label: "Age", value: user.age ? user.age.toString() : "N/A" },
+    { label: "Gender", value: user.gender || "N/A" },
+    { label: "Timezone", value: user.timezone || "N/A" },
+    { label: "Bio", value: user.bio || "No bio available." },
   ];
 
   const goals = [
-    { type: "Primary Goal", points: 100, description: "Working Out" },
-    { type: "Secondary Goal", points: 75, description: "None selected" },
+    { type: "Primary Goal", points: 100, description: getLabelByCategory(user.primary_goal) || "N/A" },
+    { type: "Secondary Goal", points: 75, description: getLabelByCategory(user.secondary_goal) || "None Selected" },
   ];
-
-  const handleEditProfile = () => {};
 
   return (
     <ScrollView
@@ -63,7 +65,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
             accessibilityLabel="User profile picture"
             resizeMode="contain"
             source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/7a484ad07fd3f7b3d88c6c6e383c508994952b67cf2f4df0dc68858e68ec9480?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
+              uri: user.profile_picture,
             }}
             style={styles.avatar}
           />
@@ -91,7 +93,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
         </View>
         <TouchableOpacity
           style={styles.editProfileButton}
-          onPress={handleEditProfile}
+          onPress={() => router.push('/account/settings/profile/editProfile')}
           accessibilityLabel="Edit Profile"
           accessibilityRole="button"
         >

@@ -18,4 +18,9 @@ const getCategoryById = (id: number | null): string | null => {
     return goal ? goal.category : null;
 };
 
-export { goals, getCategoryById };
+const getLabelByCategory = (category: string | null): string | null => {
+    const goal = goals.find(goal => goal.category === category);
+    return goal ? goal.label : null;
+};
+
+export { goals, getCategoryById, getLabelByCategory };

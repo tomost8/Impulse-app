@@ -23,7 +23,7 @@ export default function HomeLayout() {
 
       {/* Leaderboard Screen */}
       <Stack.Screen 
-        name="leaderboard" 
+        name="leaderboards" 
         options={{ 
           headerShown: true, 
           headerTitle: "Leaderboard",

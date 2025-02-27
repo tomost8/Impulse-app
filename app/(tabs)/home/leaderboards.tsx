@@ -1,7 +1,3 @@
-import styles from '@/constants/testStyles';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import MyComponent from '@/components/TwoTab';
-
 import React, { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL Hooks
@@ -9,93 +5,10 @@ import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
 import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
+import LeaderboardScreenOld from '@/components/screens/old/home/LeaderboardScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/constants/debug';
 
-function _LeaderboardsScreen({
-  users,
-  isUsersLoading,
-  friends,
-  isFriendsLoading,
-  // Tab Status
-  scopeView,
-  onFriendsPress,
-  onGlobalPress,
-  activeView,
-  setActiveView,
-}: {
-  users: any;
-  isUsersLoading: boolean;
-  friends: any;
-  isFriendsLoading: boolean;
-  // Tab Status
-  scopeView: 'friends' | 'global';
-  onFriendsPress: () => void;
-  onGlobalPress: () => void;
-  activeView: 'weekly' | 'monthly' | 'all';
-  setActiveView: (view: 'weekly' | 'monthly' | 'all') => void;
-}) {
-  if (isUsersLoading || isFriendsLoading) {
-    return <Text>Loading...</Text>;
-  }
-  return (
-    <View style={styles.container}>
-      {/* Button for leaderboard view: weekly, monthly, or all */}
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => setActiveView('weekly')} style={styles.button}>
-          <Text style={styles.button}>Weekly</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveView('monthly')} style={styles.button}>
-          <Text style={styles.button}>Monthly</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveView('all')} style={styles.button}>
-          <Text style={styles.button}>All</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Button for scope view: friends or global */}
-      <MyComponent onLeftPress={onFriendsPress} onRightPress={onGlobalPress} value={scopeView} />
-      
-      {scopeView === 'friends' && (
-        <View style={styles.section}>
-          {/* Display friends leaderboard */}
-          {friends && friends.length > 0 ? (
-            friends.map((friend: any) => (
-              <View key={`friend_${friend.id}`} >
-                <Image source={{ uri: friend.friend.profile_picture }} style={styles.smallImage} />
-                <Text style={styles.text}>
-                  {friend.friend.username}, 
-                  {activeView === 'weekly' ? friend.friend.point.weekly_points : activeView === 'monthly' ? friend.friend.point.monthly_points : friend.friend.point.points}
-                </Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.text}>No friends found</Text>
-          )}
-        </View>
-      )}
-
-      {scopeView === 'global' && (
-        <View style={styles.section}>
-          {/* Display users from the leaderboard */}
-          {users && users.length > 0 ? (
-            users.map((user: any) => (
-              <View key={`user_${user.id}`} >
-                <Image source={{ uri: user.profile_picture }} style={styles.smallImage} />
-                <Text style={styles.text}>
-                  {user.username}, 
-                  {activeView === 'weekly' ? user.point.weekly_points : activeView === 'monthly' ? user.point.monthly_points : user.point.points}
-                </Text>
-              </View>
-            ))
-          ) : (
-            <Text style={styles.text}>No users found</Text>
-          )}
-        </View>
-      )}
-    </View>
-  );
-}
 
 const LeaderboardsPage = (props: any) => {
   const { userId, authToken } = props;
@@ -149,9 +62,15 @@ const LeaderboardsPage = (props: any) => {
       isUsersLoading={!hasFetchedUsers.current}
       friends={friendsRef.current}
       isFriendsLoading={!hasFetchedFriends.current}
+      // Tab Status
+      scopeView={scopeView}
+      onFriendsPress={onFriendsPress}
+      onGlobalPress={onGlobalPress}
+      activeView={activeView}
+      setActiveView={setActiveView}
     />;
   } else {
-    return <_LeaderboardsScreen
+    return <LeaderboardScreenOld
       users={usersRef.current}
       isUsersLoading={!hasFetchedUsers.current}
       friends={friendsRef.current}

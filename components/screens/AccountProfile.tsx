@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { router } from 'expo-router';
+import { getLabelByCategory } from '@/constants/goals';
 
 interface AccountProfileProps {
   user: any;
@@ -36,7 +37,7 @@ export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => 
           source={{
             uri: user.profile_picture,
           }}
-          style={styles.profileImage} //styles.test
+          style={styles.profileImage}
           accessibilityLabel="Profile picture"
         />
         <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
@@ -77,11 +78,11 @@ export const AccountProfile = ({ user, isUserLoading }: AccountProfileProps) => 
         <View style={styles.workingSection}>
           <Text style={styles.sectionTitle}>What I'm Working On</Text>
           <View style={styles.workItem}>
-            <Text style={styles.workText}>{user.primary_goal}</Text>
+            <Text style={styles.workText}>{getLabelByCategory(user.primary_goal)}</Text>
             <Text style={styles.workType}>(Primary)</Text>
           </View>
           <View style={styles.workItem}>
-            <Text style={styles.workText}>{user.secondary_goal}</Text>
+            <Text style={styles.workText}>{getLabelByCategory(user.secondary_goal)}</Text>
             <Text style={styles.workType}>(Secondary)</Text>
           </View>
         </View>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -18,6 +18,13 @@ interface RewardsScreenProps {
 }
 
 const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewards, isRewardsLoading, handleCreateRedeem, isCreatingRedeem }) => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+
+  if (isUserLoading || isRewardsLoading || isCreatingRedeem) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
@@ -46,6 +53,7 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewa
           <TouchableOpacity
             style={styles.rewardCard}
             accessibilityRole="button"
+            onPress={() => console.log("Redeem Reward")}
           >
             <View>
               <Text style={styles.rewardTitle}>
@@ -60,6 +68,7 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewa
           <TouchableOpacity
             style={styles.rewardCard}
             accessibilityRole="button"
+            onPress={() => console.log("Redeem Reward")}
           >
             <View>
               <Text style={styles.rewardTitle}>
