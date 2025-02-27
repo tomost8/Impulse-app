@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
 
 // Importing assets
-const foodIcon = require("@/assets/icons/food.png");
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
 
@@ -10,7 +9,9 @@ interface ExpandedGoalDetailsProps {
   title: string;
   isSelected: boolean;
   icon: any;
-  onSelect: () => void; // Fix: Adding function to toggle expansion
+  onSelect: () => void;
+  onCheckIconPress: () => void;
+  isExpanded: boolean;
 }
 
 const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
@@ -18,6 +19,8 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
     icon,
     isSelected,
     onSelect,
+    onCheckIconPress,
+    isExpanded,
   }) => {
     return (
         <View style={[styles.container, isSelected ? styles.selectedContainer : null]}>
@@ -26,7 +29,6 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
         <TouchableOpacity
           style={styles.header}
           onPress={() => {
-            console.log("Header clicked for:", title); // ✅ Log clicks
             onSelect();
           }}
         >
@@ -41,14 +43,19 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             source={dropdownIcon}
             style={[styles.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
           />
-  
-          {/* Green Checkmark for Selected State */}
-          {isSelected && <Image source={goalSelectedIcon} style={styles.checkmark} />}
 
+          {/* Check Icon for Selected State */}
+          {isSelected && (
+            <TouchableOpacity onPress={() => {
+              onCheckIconPress();
+            }}>
+              <Image source={goalSelectedIcon} style={styles.checkmark} />
+            </TouchableOpacity>
+          )}
         </TouchableOpacity>
   
-        {/* Details Section */}
-        {isSelected && (
+        {/* Details Section - Only show if isExpanded */}
+        {isExpanded && isSelected && (
           <View style={styles.detailsContainer}>
             {/* Start Time Input */}
             <View>
