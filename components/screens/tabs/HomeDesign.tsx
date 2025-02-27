@@ -1,11 +1,11 @@
 import React from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } from "react-native";
 
-import TopSection from "../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
-import QuoteofDay from "../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
-import DailyGoals from "../ui/HomeComponents/DailyGoals";
-import LeaderboardFull from "../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
-import AddDailyGoalsBox from "../ui/HomeComponents/AddDailyGoalsBox"; // ✅ Importing the new component
+import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
+import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
+import DailyGoals from "../../ui/HomeComponents/DailyGoals";
+import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
+import AddDailyGoalsBox from "../../ui/HomeComponents/AddDailyGoalsBox"; // TODO: move this to DailyGoals.tsx since header should display too
 
 
 interface HomeDesignProps {

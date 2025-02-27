@@ -9,6 +9,7 @@ interface DailyGoalsProps {
 }
 
 const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
+  console.log(activities);
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -18,6 +19,16 @@ const DailyGoals = ({ activities, isActivitiesLoading }: DailyGoalsProps) => {
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
+
+      {activities.map((activity) => (
+        <DailyGoalCard
+          key={activity.id}
+          title={activity.category}
+          timeRange={activity.createdAt}
+          status={activity.status}
+          description={activity.description}
+        />
+      ))}
 
       {/* Example Goal */}
       <DailyGoalCard

@@ -4,7 +4,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
-import HomeDesign from '@/components/screens/HomeDesign';
+import HomeDesign from '@/components/screens/tabs/HomeDesign';
 import HomeScreenOld from '@/components/old/home/HomeScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';

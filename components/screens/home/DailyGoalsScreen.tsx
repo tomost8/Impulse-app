@@ -9,10 +9,10 @@ import {
   Platform,
   Keyboard
 } from "react-native";
-import AddGoalButton from "../ui/DailyGoalsViewAll/AddGoalButton"; // ✅ Corrected Import
-import GoalsHeader from "../ui/DailyGoalsViewAll/GoalsHeader"; // ✅ Added GoalsHeader
-import GoalsList from "../ui/DailyGoalsViewAll/GoalsList"; // ✅ Added GoalsList
-import EditDailyGoal from "../ui/DailyGoalsViewAll/EditDailyGoal";
+import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton"; // ✅ Corrected Import
+import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader"; // ✅ Added GoalsHeader
+import GoalsList from "../../ui/DailyGoalsViewAll/GoalsList"; // ✅ Added GoalsList
+import EditDailyGoal from "../../ui/DailyGoalsViewAll/EditDailyGoal";
 import { router } from "expo-router";
 
 interface DailyGoalsScreenProps {
