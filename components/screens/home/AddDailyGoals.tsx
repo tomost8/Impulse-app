@@ -3,8 +3,10 @@ import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
 import AddActivityCard from "@/components/ui/common/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
-import { goals } from "@/utils/goals";
+import { goals, getCategoryById } from "@/utils/goals";
 import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
+import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { convertLocalToUtc } from "@/utils/timezoneProcessing";
 
 interface GoalFormData {
   startTime: string;
@@ -19,6 +21,9 @@ interface AddDailyGoalsScreenProps {
 }
 
 const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScreenProps) => {
+  const {timezone, loading: timezoneLoading} = useUserPreferences();
+  
+
   const { createActivity } = useCreateActivity();
   const [selectedGoals, setSelectedGoals] = useState<number[]>([]);
   const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
@@ -74,22 +79,30 @@ const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScr
   const handleAddGoals = async () => {
     setIsSubmitting(true);
     try {
+      if (timezoneLoading) {
+        throw new Error('Timezone is still loading');
+      }
       for (const goalId of selectedGoals) {
         const formData = goalFormData[goalId];
         if (formData) {
+          // Get Mutation Input
+          const utcTime = formData.startTime 
+            ? convertLocalToUtc(formData.startTime, timezone)
+            : new Date(Date.now());
+          const totalMinutes = (formData.duration.hours * 60) + formData.duration.minutes;
           const input = {
-            category: goalId,
-            scheduledDatetime: formData.startTime || new Date(Date.now()),
-            duration: formData.duration,
-            description: formData.description,
+            category: getCategoryById(goalId),
+            scheduledDatetime: utcTime,
+            ...(totalMinutes > 0 && { duration: totalMinutes }),
+            ...(formData.description && { description: formData.description }),
           };
+          // Create Activities
           console.log("input", input);
-          /*
           const response = await createActivity(input, authToken);
           if (!response.success) {
             throw new Error(`Failed to create activity: ${goalId}`);
           }
-          */
+          console.log("response", response);
         }
       }
       onSuccess?.();

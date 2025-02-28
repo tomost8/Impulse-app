@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
-import DurationPicker from '@/components/ui/common/DurationPicker';
-
+import DurationPicker from '@/components/ui/common/pickers/DurationPicker';
+import TimePicker from '@/components/ui/common/pickers/TimePicker';
 // Importing assets
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
@@ -70,7 +70,10 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <View>
               <Text style={styles.label}>Start Time (optional)</Text>
               <View style={styles.inputContainer}>
-                <Text>time picker here</Text>
+                <TimePicker
+                  initialTime={formData.startTime}
+                  setTime={(time) => onFormDataChange('startTime', time)}
+                />
               </View>
             </View>
   

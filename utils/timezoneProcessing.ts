@@ -53,6 +53,13 @@ export const convertUtcToLocal = (utcTimestamp: string, timezone: string, durati
     .format('hh:mm A');
 };
 
+// timeStr is in HH:MM 24 hour format
+export const convertLocalToUtc = (timeStr: string, timezone: string): string => {
+  const today = moment().format('YYYY-MM-DD'); // User's current date in local timezone
+  const localDateTime = moment.tz(`${today} ${timeStr}`, 'YYYY-MM-DD HH:mm', timezone);
+  return localDateTime.utc().format();
+};
+
 export const getTimeAgo = (utcTimestamp: string) => {
   return moment.utc(utcTimestamp).fromNow();
 };
