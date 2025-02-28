@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
-import ProfileScreen from '@/components/screens/profile/ProfileScreen';
+import ProfileScreen from '@/components/screens/profile/ProfileSetting/ProfileScreen';
 import _ProfileScreen from '@/components/old/account/ProfileScreen';
 // Debug
 import { debugRenders, pageDisplay } from '@/utils/debug';
