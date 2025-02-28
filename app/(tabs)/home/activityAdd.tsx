@@ -14,7 +14,7 @@ const AddActivityPage = (props: any) => {
   const { userId, authToken } = props;
 
   const handleSuccess = () => {
-    router.back();
+    //router.back();
   }
 
   const handleError = (error: any) => {

@@ -8,7 +8,7 @@ import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
 
 interface GoalFormData {
   startTime: string;
-  duration: string;
+  duration: { hours: number; minutes: number };
   description: string;
 }
 
@@ -35,7 +35,7 @@ const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScr
           ...prev,
           [goalId]: {
             startTime: '',
-            duration: '',
+            duration: { hours: 0, minutes: 0 },
             description: ''
           }
         }));
@@ -119,7 +119,7 @@ const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScr
             onCheckIconPress={() => handleCheckIconPress(goal.id)}
             formData={goalFormData[goal.id]}
             onFormDataChange={(field, value) => 
-              handleFormDataChange(goal.id, field as keyof GoalFormData, value)
+              handleFormDataChange(goal.id, field as keyof GoalFormData, value as string)
             }
           />
         ))}

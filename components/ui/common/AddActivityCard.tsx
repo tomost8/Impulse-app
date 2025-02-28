@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
-import ExpandedGoalDetails from "../DailyGoalsViewAll/AddDailyGoals/ExpandedGoalDetails"; // Importing the ExpandedGoalDetails component
+import ExpandedGoalDetails from "./OpenActivityCard"; // Importing the ExpandedGoalDetails component
 
 // Green checkmark icon for selected state
 const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,8 +17,12 @@ type AddActivityCardProps = {
   isExpanded: boolean;
   onSelect: () => void;
   onCheckIconPress: () => void;
-  formData: any;
-  onFormDataChange: (field: string, value: string) => void;
+  formData: {
+    startTime: string;
+    duration: { hours: number; minutes: number };
+    description: string;
+  };
+  onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
 };
 
 const AddActivityCard: React.FC<AddActivityCardProps> = ({

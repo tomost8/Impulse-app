@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
+import DurationPicker from '@/components/ui/common/DurationPicker';
 
 // Importing assets
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
@@ -12,8 +13,12 @@ interface ExpandedGoalDetailsProps {
   onSelect: () => void;
   onCheckIconPress: () => void;
   isExpanded: boolean;
-  formData: any;
-  onFormDataChange: (field: string, value: string) => void;
+  formData: {
+    startTime: string;
+    duration: { hours: number; minutes: number };
+    description: string;
+  };
+  onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
 }
 
 const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
@@ -65,29 +70,21 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <View>
               <Text style={styles.label}>Start Time (optional)</Text>
               <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Choose"
-                  value={formData.startTime}
-                  onChangeText={(value) => onFormDataChange('startTime', value)}
-                  placeholderTextColor="#A4ACBC"
-                />
-                <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
+                <Text>time picker here</Text>
               </View>
             </View>
   
             {/* Activity Duration Input */}
             <View style={{ marginTop: 10 }}>
               <Text style={styles.label}>Activity Duration (optional)</Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Choose"
-                  value={formData.duration}
-                  onChangeText={(value) => onFormDataChange('duration', value)}
-                  placeholderTextColor="#A4ACBC"
+              <View style={[styles.inputContainer, { paddingHorizontal: 10 }]}>
+                <DurationPicker
+                  hours={formData.duration.hours}
+                  minutes={formData.duration.minutes}
+                  setDuration={(hours, minutes) => 
+                    onFormDataChange('duration', { hours, minutes })
+                  }
                 />
-                <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
               </View>
             </View>
   
