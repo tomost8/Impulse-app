@@ -1,8 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
-import ExpandedGoalDetails from "./OpenedActivityCard"; // Importing the ExpandedGoalDetails component
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
+
+import DurationPicker from '@/components/ui/common/pickers/DurationPicker';
+import TimePicker from '@/components/ui/common/pickers/TimePicker';
+// Importing assets
+const goalSelectedIcon = require("@/assets/icons/goalselected.png");
+const dropdownIcon = require("@/assets/icons/arrow-down.png");
 // Green checkmark icon for selected state
 const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="12" cy="12" r="12" fill="#4CAF50"/>
@@ -27,7 +32,7 @@ type AddActivityCardProps = {
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
   category,
   isSelected,
-  isExpanded, // New prop for expanded state
+  isExpanded,
   onSelect,
   onCheckIconPress,
   formData,
@@ -37,15 +42,82 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   return (
     <View>
       {isExpanded ? (
-        <ExpandedGoalDetails
-          category={category}
-          isSelected={isSelected}
-          onSelect={onSelect}
-          isExpanded={isExpanded}
-          onCheckIconPress={onCheckIconPress}
-          formData={formData}
-          onFormDataChange={onFormDataChange}
-        />
+        <View style={[styles2.container, isSelected ? styles2.selectedContainer : null]}>
+        {/* Header Section - Clickable */}
+
+        <TouchableOpacity
+          style={styles2.header}
+          onPress={() => {
+            onSelect();
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+            <View style={styles2.iconContainer}>
+              <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
+            </View>
+            <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
+          </View>
+          {/* Dropdown Icon with Rotation */}
+          <Image
+            source={dropdownIcon}
+            style={[styles2.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
+          />
+
+          {/* Check Icon for Selected State */}
+          {isSelected && (
+            <TouchableOpacity onPress={() => {
+              onCheckIconPress();
+            }}>
+              <Image source={goalSelectedIcon} style={styles2.checkmark} />
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+  
+        {/* Details Section - Only show if isExpanded */}
+        {isExpanded && isSelected && (
+          <View style={styles2.detailsContainer}>
+            {/* Start Time Input */}
+            <View>
+              <Text style={styles2.label}>Start Time (optional)</Text>
+              <View style={styles2.inputContainer}>
+                <TimePicker
+                  initialTime={formData.startTime}
+                  setTime={(time) => onFormDataChange('startTime', time)}
+                />
+              </View>
+            </View>
+  
+            {/* Activity Duration Input */}
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles2.label}>Activity Duration (optional)</Text>
+              <View style={[styles2.inputContainer, { paddingHorizontal: 10 }]}>
+                <DurationPicker
+                  hours={formData.duration.hours}
+                  minutes={formData.duration.minutes}
+                  setDuration={(hours, minutes) => 
+                    onFormDataChange('duration', { hours, minutes })
+                  }
+                />
+              </View>
+            </View>
+  
+            {/* Description Input */}
+            <View style={{ marginTop: 10 }}>
+              <Text style={styles2.label}>Description (optional)</Text>
+              <View style={[styles2.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
+                <TextInput
+                  style={[styles2.input, { height: '100%', textAlignVertical: 'top' }]}
+                  placeholder="Choose"
+                  value={formData.description}
+                  onChangeText={(value) => onFormDataChange('description', value)}
+                  placeholderTextColor="#A4ACBC"
+                  multiline
+                />
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
       ) : (
         <TouchableOpacity
           onPress={onSelect} // Toggle expansion on press
@@ -120,6 +192,82 @@ const styles = StyleSheet.create({
   circleSelected: {
     backgroundColor: "#4CAF50", // Green background
     borderColor: "#4CAF50",
+  },
+});
+
+const styles2 = StyleSheet.create({
+  container: {
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E1E1E1",
+    padding: 10,
+    marginBottom: 10,
+  },
+  selectedContainer: {
+    borderColor: "#DE728D",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  iconContainer: {
+    width: 50,
+    height: 50,
+  },
+  icon: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+  },
+  title: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#242020",
+    fontFamily: "Open Sans",
+    marginLeft: 10,
+  },
+  dropdownIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 10,
+  },
+  checkmark: {
+    width: 25,
+    height: 25,
+  },
+  detailsContainer: {
+    marginTop: 10,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: "400",
+    color: "#000",
+    fontFamily: "Open Sans",
+    marginBottom: 10,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E1E1E1",
+    borderRadius: 30,
+    height: 40,
+    paddingHorizontal: 20,
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  input: {
+    flex: 1,
+    fontSize: 12.98,
+    fontFamily: "Open Sans",
+    color: "#A4ACBC",
+  },
+  inputDropdownIcon: {
+    width: 16,
+    height: 16,
   },
 });
 

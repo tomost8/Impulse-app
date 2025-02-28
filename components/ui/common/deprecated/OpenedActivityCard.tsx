@@ -32,25 +32,25 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
   }) => {
     const defaultIcon = require("@/assets/icons/riseshine.png");
     return (
-        <View style={[styles.container, isSelected ? styles.selectedContainer : null]}>
+        <View style={[styles2.container, isSelected ? styles2.selectedContainer : null]}>
         {/* Header Section - Clickable */}
 
         <TouchableOpacity
-          style={styles.header}
+          style={styles2.header}
           onPress={() => {
             onSelect();
           }}
         >
           <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <View style={styles.iconContainer}>
-              <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+            <View style={styles2.iconContainer}>
+              <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
             </View>
-            <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+            <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
           </View>
           {/* Dropdown Icon with Rotation */}
           <Image
             source={dropdownIcon}
-            style={[styles.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
+            style={[styles2.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
           />
 
           {/* Check Icon for Selected State */}
@@ -58,18 +58,18 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
             <TouchableOpacity onPress={() => {
               onCheckIconPress();
             }}>
-              <Image source={goalSelectedIcon} style={styles.checkmark} />
+              <Image source={goalSelectedIcon} style={styles2.checkmark} />
             </TouchableOpacity>
           )}
         </TouchableOpacity>
   
         {/* Details Section - Only show if isExpanded */}
         {isExpanded && isSelected && (
-          <View style={styles.detailsContainer}>
+          <View style={styles2.detailsContainer}>
             {/* Start Time Input */}
             <View>
-              <Text style={styles.label}>Start Time (optional)</Text>
-              <View style={styles.inputContainer}>
+              <Text style={styles2.label}>Start Time (optional)</Text>
+              <View style={styles2.inputContainer}>
                 <TimePicker
                   initialTime={formData.startTime}
                   setTime={(time) => onFormDataChange('startTime', time)}
@@ -79,8 +79,8 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
   
             {/* Activity Duration Input */}
             <View style={{ marginTop: 10 }}>
-              <Text style={styles.label}>Activity Duration (optional)</Text>
-              <View style={[styles.inputContainer, { paddingHorizontal: 10 }]}>
+              <Text style={styles2.label}>Activity Duration (optional)</Text>
+              <View style={[styles2.inputContainer, { paddingHorizontal: 10 }]}>
                 <DurationPicker
                   hours={formData.duration.hours}
                   minutes={formData.duration.minutes}
@@ -93,10 +93,10 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
   
             {/* Description Input */}
             <View style={{ marginTop: 10 }}>
-              <Text style={styles.label}>Description (optional)</Text>
-              <View style={[styles.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
+              <Text style={styles2.label}>Description (optional)</Text>
+              <View style={[styles2.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
                 <TextInput
-                  style={[styles.input, { height: '100%', textAlignVertical: 'top' }]}
+                  style={[styles2.input, { height: '100%', textAlignVertical: 'top' }]}
                   placeholder="Choose"
                   value={formData.description}
                   onChangeText={(value) => onFormDataChange('description', value)}
@@ -112,7 +112,7 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
   };
 
   
-  const styles = StyleSheet.create({
+  const styles2 = StyleSheet.create({
     container: {
       backgroundColor: "#FFF",
       borderRadius: 20,
