@@ -67,10 +67,10 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   addGoalContainer: {
-    marginTop: 20, // Add some space between the cards and the add box
+    marginTop: 10, // Add some space between the cards and the add box
     alignSelf: "stretch", // Ensures it spans full width
     alignItems: "center", // Centers content properly
-    marginLeft: -14,
+    marginLeft: -3,
   },
 });
 

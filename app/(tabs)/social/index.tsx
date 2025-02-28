@@ -11,7 +11,7 @@ import { useGetFeedCommunities, useGetFeedFriends } from '@/hooks/graphql/posts/
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import PostCard from '@/components/PostCard';
-import FeedScreen from '@/components/screens/tabs/FeedScreen';
+import FeedScreen from '@/components/screens/tabs/SocialScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useUserPreferences } from '@/services/UserPreferencesContext';

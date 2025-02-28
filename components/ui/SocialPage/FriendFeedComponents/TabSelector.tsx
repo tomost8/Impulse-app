@@ -1,88 +1,71 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-// Import underline image
-import underlineImage from "@/assets/icons/underline.png";
+interface TabSelectorProps {
+  onTabChange: (tab: 'friends' | 'communities') => void;
+  selectedTab: 'friends' | 'communities'; // Add this prop
+}
 
-const TabSelector: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState<"Friends" | "My Communities">(
-    "Friends"
-  );
-
+const TabSelector: React.FC<TabSelectorProps> = ({ onTabChange, selectedTab }) => {
   return (
     <View style={styles.container}>
-      {/* Tabs */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => setSelectedTab("Friends")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              selectedTab === "Friends" && styles.selectedText,
-            ]}
-          >
-            Friends
-          </Text>
-          {selectedTab === "Friends" && (
-            <Image
-              source={require("@/assets/icons/underline.png")}
-              style={styles.underline}
-            />
-          )}
-        </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.tabButton} 
+        onPress={() => onTabChange('friends')}
+      >
+        <Text style={[
+          styles.tabText,
+          selectedTab === 'friends' && styles.selectedTabText
+        ]}>
+          Friends
+        </Text>
+        {selectedTab === 'friends' && <View style={styles.underline} />}
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.tab}
-          onPress={() => setSelectedTab("My Communities")}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              selectedTab === "My Communities" && styles.selectedText,
-            ]}
-          >
-            My Communities
-          </Text>
-          {selectedTab === "My Communities" && (
-            <Image
-              source={require("@/assets/icons/underline.png")}
-              style={styles.underline}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity 
+        style={styles.tabButton} 
+        onPress={() => onTabChange('communities')}
+      >
+        <Text style={[
+          styles.tabText,
+          selectedTab === 'communities' && styles.selectedTabText
+        ]}>
+          My Communities
+        </Text>
+        {selectedTab === 'communities' && <View style={styles.underline} />}
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E1E1',
+    marginLeft: 16,
   },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 32,
-  },
-  tab: {
-    alignItems: "center",
+  tabButton: {
+    paddingHorizontal: 20,
+    alignItems: 'center',
   },
   tabText: {
     fontSize: 14,
-    color: "#242020",
-    fontFamily: "Poppins",
-    marginBottom: 4,
+    color: '#242020',
+    fontFamily: 'Poppins',
+    marginBottom: 2,
   },
-  selectedText: {
-    fontWeight: "600",
+  selectedTabText: {
+    fontWeight: '600',
   },
   underline: {
-    marginTop: 4,
-    width: 90, // Adjust based on Figma design
-    height: 3,
-    resizeMode: "contain",
+    position: 'absolute',
+    bottom: -10,
+    width: '100%',
+    height: 2,
+    backgroundColor: '#242020',
   },
 });
 
