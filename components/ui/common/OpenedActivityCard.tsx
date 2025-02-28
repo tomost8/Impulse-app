@@ -2,13 +2,13 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
 import DurationPicker from '@/components/ui/common/pickers/DurationPicker';
 import TimePicker from '@/components/ui/common/pickers/TimePicker';
+import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 // Importing assets
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
 
 interface ExpandedGoalDetailsProps {
-  title: string;
-  icon: any;
+  category: string;
   isSelected: boolean;
   onSelect: () => void;
   isExpanded: boolean;
@@ -22,8 +22,7 @@ interface ExpandedGoalDetailsProps {
 }
 
 const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
-    title,
-    icon,
+    category,
     isSelected,
     onSelect,
     onCheckIconPress,
@@ -31,6 +30,7 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
     formData,
     onFormDataChange,
   }) => {
+    const defaultIcon = require("@/assets/icons/riseshine.png");
     return (
         <View style={[styles.container, isSelected ? styles.selectedContainer : null]}>
         {/* Header Section - Clickable */}
@@ -43,9 +43,9 @@ const ExpandedGoalDetails: React.FC<ExpandedGoalDetailsProps> = ({
         >
           <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
             <View style={styles.iconContainer}>
-              <Image source={icon} style={styles.icon} />
+              <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
             </View>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.title}>{getLabelByCategory(category)}</Text>
           </View>
           {/* Dropdown Icon with Rotation */}
           <Image

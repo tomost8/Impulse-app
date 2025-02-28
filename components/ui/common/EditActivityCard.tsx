@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, TextInput, Keyboard, ScrollView } from "react-native";
 import TimePicker from "./pickers/TimePicker";
 import DurationPicker from "./pickers/DurationPicker";
+import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 
 // Importing assets
 const foodIcon = require("@/assets/icons/food.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
 
 interface EditDailyGoalProps {
-  title: string;
-  icon: any;
+  category: string;
   isSelected: boolean; // Effectively the same as isExpanded
   onSelect: () => void;
   formData: {
@@ -23,8 +23,7 @@ interface EditDailyGoalProps {
 }
 
 const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
-  title,
-  icon,
+  category,
   isSelected,
   onSelect,
   formData,
@@ -32,7 +31,7 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
   onSave,
   scrollViewRef,
 }) => {
-  const [description, setDescription] = useState('');
+  const defaultIcon = require("@/assets/icons/riseshine.png");
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   const handleSubmitEditing = () => {
@@ -63,9 +62,9 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
       <TouchableOpacity style={styles.header} onPress={onSelect}>
         <View style={styles.headerContent}>
           <View style={styles.iconContainer}>
-            <Image source={icon} style={styles.icon} />
+            <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
           </View>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{getLabelByCategory(category)}</Text>
         </View>
       </TouchableOpacity>
 
@@ -130,7 +129,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E1E1E1",
     padding: 10,
-    marginBottom: 200, // Add extra space at bottom to ensure visibility above keyboard
+    marginBottom: 10,
+    //marginBottom: 200, // Add extra space at bottom to ensure visibility above keyboard
     width: '90%',
     alignSelf: 'center',
     zIndex: 1,

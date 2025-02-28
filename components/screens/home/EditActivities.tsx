@@ -11,12 +11,13 @@ import {
 } from "react-native";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
-import GoalsList from "../../ui/DailyGoalsViewAll/GoalsList";
+import GoalsList from "../../ui/common/deprecated/GoalsList";
 import { router } from "expo-router";
 import { useUpdateActivity } from "@/hooks/graphql/activities/mutations";
 import { useUserPreferences } from "@/services/UserPreferencesContext";
-import { convertLocalToUtc } from "@/utils/timezoneProcessing";
+import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
 import EditDailyGoal from "@/components/ui/common/EditActivityCard";
+import { getCategoryById } from "@/utils/goals";
 
 interface GoalFormData {
   startTime: string;
@@ -25,11 +26,12 @@ interface GoalFormData {
 }
 
 interface DailyGoalsScreenProps {
+  authToken: string;
   activities: any[];
   isActivitiesLoading: boolean;
 }
   
-const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading }) => {
+const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading, authToken }) => {
   const { updateActivity } = useUpdateActivity();
   const { timezone, loading: timezoneLoading } = useUserPreferences();
   const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
@@ -43,8 +45,30 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
   const handleSelectGoal = (goalId: number) => {
     if (expandedGoal === goalId) {
       setExpandedGoal(null);
+      // Reset form data
+      setGoalFormData({
+        startTime: '',
+        duration: { hours: 0, minutes: 0 },
+        description: ''
+      });
     } else {
       setExpandedGoal(goalId);
+      const selectedActivity = activities.find(activity => activity.id === goalId);
+      if (timezoneLoading) {
+        throw new Error('Timezone is still loading');
+      }
+      const activityData = {
+        startTime: convertUtcToLocal(selectedActivity?.scheduledDatetime, timezone),
+        duration: {
+          hours: Math.floor(selectedActivity?.duration / 60),
+          minutes: selectedActivity?.duration % 60
+        },
+        description: selectedActivity?.description || ''
+      }
+      console.log(selectedActivity, "activityData", activityData);
+      if (selectedActivity) {
+        setGoalFormData(activityData);
+      }
     }
   };
 
@@ -62,16 +86,32 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
       if (timezoneLoading) {
         throw new Error('Timezone is still loading');
       }
-      console.log("formData", goalFormData);
+      if (goalFormData) {
+        // Get Mutation Input
+        const utcTime = goalFormData.startTime 
+        ? convertLocalToUtc(goalFormData.startTime, timezone)
+        : new Date(Date.now());
+        const totalMinutes = (goalFormData.duration.hours * 60) + goalFormData.duration.minutes;
+        const input = {
+          scheduledDatetime: utcTime,
+          ...(totalMinutes > 0 && { duration: totalMinutes }),
+          ...(goalFormData.description && { description: goalFormData.description }),
+        };
+        // Update Activity
+        console.log("input", input);
+        const response = await updateActivity(expandedGoal || 0, input, authToken);
+        if (!response.success) {
+          throw new Error(`Failed to update activity: ${expandedGoal}`);
+        }
+        console.log("response", response);
+      }
       setExpandedGoal(null);
       // Reset form data
-      /*
       setGoalFormData({
         startTime: '',
         duration: { hours: 0, minutes: 0 },
         description: ''
       });
-      */
     } catch (error) {
       console.error('Error updating goal:', error);
     } finally {
@@ -126,8 +166,7 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
             {activities.map((activity) => (
               <EditDailyGoal
                 key={activity.id}
-                title={activity.category}
-                icon={require("@/assets/icons/riseshine.png")}
+                category={activity.category}
                 isSelected={expandedGoal === activity.id}
                 onSelect={() => handleSelectGoal(activity.id)}
                 formData={goalFormData}

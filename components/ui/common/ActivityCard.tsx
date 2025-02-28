@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 
 import { useUserPreferences } from "@/services/UserPreferencesContext";
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";
-
+import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 // Props for reusability
 type DailyGoalCardProps = {
   icon?: any; // Updated to accept an image source
@@ -15,24 +15,24 @@ type DailyGoalCardProps = {
 };
 
 const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
-  icon = require("@/assets/icons/riseshine.png"), // ✅ Changed to use riseshine.png
   category,
   scheduledDatetime,
   duration,
   status,
   description,
 }) => {
+  const defaultIcon = require("@/assets/icons/riseshine.png");
   const { timezone, loading } = useUserPreferences();
   return (
     <View style={styles.container}>
       {/* Icon */}
       <View style={styles.iconContainer}>
-        <Image source={icon} style={styles.icon} /> {/* ✅ Replaced SVG with Image */}
+        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} /> {/* ✅ Replaced SVG with Image */}
       </View>
 
       {/* Text Content */}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{category}</Text>
+        <Text style={styles.title}>{getLabelByCategory(category)}</Text>
         {duration && !loading && (
           <Text style={styles.time}>
             {`${convertUtcToLocal(scheduledDatetime, timezone)} to ${convertUtcToLocal(scheduledDatetime, timezone, duration)}`}

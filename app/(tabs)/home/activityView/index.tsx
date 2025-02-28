@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetActivities } from '@/hooks/graphql/activities/queries';
+import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
 import DailyGoalsScreen from '@/components/screens/home/EditActivities';
 import ViewActivityScreenOld from '@/components/old/home/ViewActivityScreen';
@@ -15,7 +15,8 @@ const ViewActivityPage = (props: any) => {
   // Queries for Loading State
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
-  const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId as number, authToken as string, !hasFetchedActivities.current);
+  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate, authToken as string, !hasFetchedActivities.current);
 
   useEffect(() => {
     if (!hasNewActivitiesData) {
@@ -43,6 +44,7 @@ const ViewActivityPage = (props: any) => {
     return <DailyGoalsScreen 
       activities={activitiesRef.current || []}
       isActivitiesLoading={!hasFetchedActivities.current}
+      authToken={authToken as string}
     />;
   } else {
     return <ViewActivityScreenOld

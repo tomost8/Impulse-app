@@ -23,7 +23,6 @@ interface AddDailyGoalsScreenProps {
 const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScreenProps) => {
   const {timezone, loading: timezoneLoading} = useUserPreferences();
   
-
   const { createActivity } = useCreateActivity();
   const [selectedGoals, setSelectedGoals] = useState<number[]>([]);
   const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
@@ -124,8 +123,7 @@ const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScr
         {goals.map((goal) => (
           <AddActivityCard
             key={goal.id}
-            title={goal.label}
-            icon={goal.icon}
+            category={goal.category}
             isSelected={selectedGoals.includes(goal.id)}
             onSelect={() => handleSelectGoal(goal.id)}
             isExpanded={expandedGoal === goal.id}

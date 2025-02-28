@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
 import ExpandedGoalDetails from "./OpenedActivityCard"; // Importing the ExpandedGoalDetails component
-
+import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 // Green checkmark icon for selected state
 const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="12" cy="12" r="12" fill="#4CAF50"/>
@@ -11,8 +11,7 @@ const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none
 
 // Props for AddActivityCard
 type AddActivityCardProps = {
-  icon: any; // Icon image (require from assets)
-  title: string;
+  category: string;
   isSelected: boolean;
   isExpanded: boolean;
   onSelect: () => void;
@@ -26,8 +25,7 @@ type AddActivityCardProps = {
 };
 
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
-  icon,
-  title,
+  category,
   isSelected,
   isExpanded, // New prop for expanded state
   onSelect,
@@ -35,12 +33,12 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
+  const defaultIcon = require("@/assets/icons/riseshine.png");
   return (
     <View>
       {isExpanded ? (
         <ExpandedGoalDetails
-          title={title}
-          icon={icon}
+          category={category}
           isSelected={isSelected}
           onSelect={onSelect}
           isExpanded={isExpanded}
@@ -55,11 +53,11 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
         >
           {/* Icon */}
           <View style={styles.iconContainer}>
-            <Image source={icon} style={styles.icon} />
+            <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
           </View>
 
           {/* Title */}
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title}>{getLabelByCategory(category)}</Text>
 
           {/* Selection Circle */}
           <TouchableOpacity onPress={isSelected ? onCheckIconPress : undefined}>
