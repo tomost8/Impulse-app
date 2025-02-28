@@ -11,13 +11,11 @@ import {
 } from "react-native";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
-import GoalsList from "../../ui/common/deprecated/GoalsList";
 import { router } from "expo-router";
 import { useUpdateActivity } from "@/hooks/graphql/activities/mutations";
 import { useUserPreferences } from "@/services/UserPreferencesContext";
 import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
-import EditDailyGoal from "@/components/ui/common/EditActivityCard";
-import { getCategoryById } from "@/utils/goals";
+import EditActivityCard from "@/components/ui/common/EditActivityCard";
 
 interface GoalFormData {
   startTime: string;
@@ -164,7 +162,7 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
           {/* Goals List */}
           <View style={styles.activitiesContainer}>
             {activities.map((activity) => (
-              <EditDailyGoal
+              <EditActivityCard
                 key={activity.id}
                 category={activity.category}
                 isSelected={expandedGoal === activity.id}

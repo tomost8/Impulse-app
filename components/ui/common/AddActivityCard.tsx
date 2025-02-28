@@ -1,25 +1,23 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput } from "react-native";
-import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
+import ActivityDetailsSection from './ActivityDetailsSection';
 
-import DurationPicker from '@/components/ui/common/pickers/DurationPicker';
-import TimePicker from '@/components/ui/common/pickers/TimePicker';
 // Importing assets
-const goalSelectedIcon = require("@/assets/icons/goalselected.png");
-const dropdownIcon = require("@/assets/icons/arrow-down.png");
-// Green checkmark icon for selected state
+import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
 const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="12" cy="12" r="12" fill="#4CAF50"/>
   <path d="M6 12L10 16L18 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>`;
+const goalSelectedIcon = require("@/assets/icons/goalselected.png");
+const dropdownIcon = require("@/assets/icons/arrow-down.png");
+const defaultIcon = require("@/assets/icons/riseshine.png");
 
-// Props for AddActivityCard
 type AddActivityCardProps = {
   category: string;
   isSelected: boolean;
-  isExpanded: boolean;
   onSelect: () => void;
+  isExpanded: boolean;
   onCheckIconPress: () => void;
   formData: {
     startTime: string;
@@ -32,13 +30,12 @@ type AddActivityCardProps = {
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
   category,
   isSelected,
-  isExpanded,
   onSelect,
+  isExpanded,
   onCheckIconPress,
   formData,
   onFormDataChange,
 }) => {
-  const defaultIcon = require("@/assets/icons/riseshine.png");
   return (
     <View>
       {isExpanded ? (
@@ -73,49 +70,12 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
           )}
         </TouchableOpacity>
   
-        {/* Details Section - Only show if isExpanded */}
+        {/* Details Dropdown Section*/}
         {isExpanded && isSelected && (
-          <View style={styles2.detailsContainer}>
-            {/* Start Time Input */}
-            <View>
-              <Text style={styles2.label}>Start Time (optional)</Text>
-              <View style={styles2.inputContainer}>
-                <TimePicker
-                  initialTime={formData.startTime}
-                  setTime={(time) => onFormDataChange('startTime', time)}
-                />
-              </View>
-            </View>
-  
-            {/* Activity Duration Input */}
-            <View style={{ marginTop: 10 }}>
-              <Text style={styles2.label}>Activity Duration (optional)</Text>
-              <View style={[styles2.inputContainer, { paddingHorizontal: 10 }]}>
-                <DurationPicker
-                  hours={formData.duration.hours}
-                  minutes={formData.duration.minutes}
-                  setDuration={(hours, minutes) => 
-                    onFormDataChange('duration', { hours, minutes })
-                  }
-                />
-              </View>
-            </View>
-  
-            {/* Description Input */}
-            <View style={{ marginTop: 10 }}>
-              <Text style={styles2.label}>Description (optional)</Text>
-              <View style={[styles2.inputContainer, { height: 98, alignItems: "flex-start", paddingVertical: 10 }]}>
-                <TextInput
-                  style={[styles2.input, { height: '100%', textAlignVertical: 'top' }]}
-                  placeholder="Choose"
-                  value={formData.description}
-                  onChangeText={(value) => onFormDataChange('description', value)}
-                  placeholderTextColor="#A4ACBC"
-                  multiline
-                />
-              </View>
-            </View>
-          </View>
+          <ActivityDetailsSection
+            formData={formData}
+            onFormDataChange={onFormDataChange}
+          />
         )}
       </View>
       ) : (

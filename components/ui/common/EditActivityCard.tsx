@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, TextInput, Keyboard, ScrollView } from "react-native";
-import TimePicker from "./pickers/TimePicker";
-import DurationPicker from "./pickers/DurationPicker";
+import React from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, Keyboard, ScrollView } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
+import ActivityDetailsSection from './ActivityDetailsSection';
 
 // Importing assets
-const foodIcon = require("@/assets/icons/food.png");
-const dropdownIcon = require("@/assets/icons/arrow-down.png");
+const defaultIcon = require("@/assets/icons/riseshine.png");
 
-interface EditDailyGoalProps {
+
+interface EditActivityCardProps {
   category: string;
   isSelected: boolean; // Effectively the same as isExpanded
   onSelect: () => void;
@@ -22,7 +21,7 @@ interface EditDailyGoalProps {
   scrollViewRef: React.RefObject<ScrollView>;
 }
 
-const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
+const EditActivityCard: React.FC<EditActivityCardProps> = ({
   category,
   isSelected,
   onSelect,
@@ -31,7 +30,6 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
   onSave,
   scrollViewRef,
 }) => {
-  const defaultIcon = require("@/assets/icons/riseshine.png");
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 
   const handleSubmitEditing = () => {
@@ -68,50 +66,15 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
         </View>
       </TouchableOpacity>
 
-      {/* Content - Only show when isSelected */}
+      {/* Details Dropdown Section*/}
       {isSelected && (
         <View style={styles.detailsContainer}>
-          {/* Start Time Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Start Time (optional)</Text>
-            <View style={styles.inputContainer}>
-              <TimePicker
-                initialTime={formData.startTime}
-                setTime={(time) => onFormDataChange('startTime', time)}
-              />
-            </View>
-          </View>
-
-          {/* Activity Duration Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Activity Duration (optional)</Text>
-            <View style={styles.inputContainer}>
-              <DurationPicker
-                hours={formData.duration.hours}
-                minutes={formData.duration.minutes}
-                setDuration={(hours, minutes) => 
-                  onFormDataChange('duration', { hours, minutes })
-                }
-              />
-            </View>
-          </View>
-
-          {/* Description Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Description (optional)</Text>
-            <TextInput
-              style={[styles.inputContainer, styles.descriptionInput]}
-              placeholder="Type description..."
-              placeholderTextColor="#A4ACBC"
-              multiline={true}
-              value={formData.description}
-              onChangeText={(value) => onFormDataChange('description', value)}
-              returnKeyType="done"
-              onSubmitEditing={handleSubmitEditing}
-              onFocus={handleDescriptionFocus}
-            />
-          </View>
-
+          <ActivityDetailsSection
+            formData={formData}
+            onFormDataChange={onFormDataChange}
+            onDescriptionFocus={handleDescriptionFocus}
+          />
+          
           {/* Save Changes Button */}
           <TouchableOpacity style={styles.saveButton} onPress={onSave}>
             <Text style={styles.saveButtonText}>Save Changes</Text>
@@ -224,4 +187,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditDailyGoal;
+export default EditActivityCard;
