@@ -2,25 +2,35 @@ import React from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import PostCard from "./PostCard";
 
-// Sample post data
-const posts = Array(6).fill({
-  caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-  author: {
-    profileImage: require("@/assets/images/andrew.png"),
-  },
-  username: "User K",
-  timeAgo: "3 mins ago",
-  initialLikes: 67,
-  initialComments: 12,
-}).map((post, index) => ({
-  ...post,
-  id: index.toString(),
-}));
+interface FeedProps {
+  currentTab: 'friends' | 'communities';
+}
 
-const Feed = () => {
+const Feed: React.FC<FeedProps> = ({ currentTab }) => {
+  // Sample post data with community info
+  const posts = Array(6).fill({
+    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
+    author: {
+      profileImage: require("@/assets/images/andrew.png"),
+    },
+    username: "User K",
+    timeAgo: "3 mins ago",
+    initialLikes: 67,
+    initialComments: 12,
+    community: {
+      name: "Gabe's Running Club"
+    }
+  }).map((post, index) => ({
+    ...post,
+    id: index.toString(),
+  }));
+
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
-      <PostCard post={item} />
+      <PostCard 
+        post={item}
+        showCommunityTag={currentTab === 'communities'}
+      />
     </View>
   );
 

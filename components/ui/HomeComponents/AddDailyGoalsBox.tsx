@@ -1,6 +1,10 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { router } from 'expo-router';
+
+// Get device screen width
+const screenWidth = Dimensions.get('window').width;
+
 // Importing the new "add-goal.png" icon from the assets folder
 const addGoalIcon = require("@/assets/icons/add-goal.png");
 
@@ -15,8 +19,8 @@ const AddDailyGoalsBox: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 335, // shouldn't be fixed or hardcoded lol
-    height:75,
+    width: '100%', // Take full width of parent
+    height: 75,
     borderRadius: 16,
     borderWidth: 1,
     borderStyle: "dashed",
@@ -25,10 +29,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10, // Space between icon and text
+    gap: 10,
     paddingHorizontal: 25,
-    alignSelf: "flex-start", // ✅ Ensures alignment with other elements
-    marginLeft: 15, // ✅ Adjust this to fine-tune the position
   },
   icon: {
     width: 25,
