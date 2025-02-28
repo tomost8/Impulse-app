@@ -45,10 +45,8 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
       {isSelected ? (
-        <TouchableOpacity onPress={onCheckIconPress}>
-          <View style={[styles.circle, styles.circleSelected]}>
-            <SvgXml xml={checkmarkSvg} width={18} height={18} />
-          </View>
+        <TouchableOpacity onPress={onCheckIconPress} style={[styles.circle, styles.circleSelected]}>
+          <SvgXml xml={checkmarkSvg} width={18} height={18} />
         </TouchableOpacity>
       ) : (
         <View style={styles.circle}>

@@ -4,6 +4,7 @@ import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import ActivityDetailsSection from './ActivityDetailsSection';
 
 // Importing assets
+const editIcon = require("@/assets/icons/editDailyGoal.png");
 const defaultIcon = require("@/assets/icons/riseshine.png");
 
 
@@ -61,6 +62,10 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
         <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+      {/* Edit Button */}
+      <TouchableOpacity onPress={onSelect} style={styles.editButton}>
+        <Image source={editIcon} style={styles.editIcon} />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 
@@ -183,6 +188,16 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     fontWeight: "600",
     textAlign: "center",
+  },
+  editButton: {
+    position: "absolute",
+    top: 14,
+    right: 14,
+  },
+  editIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: "contain",
   },
 });
 
