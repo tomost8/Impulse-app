@@ -36,69 +36,58 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
+  const renderCollapsedCard = () => (
+    <TouchableOpacity onPress={onSelect}
+      style={[styles.container, isSelected && styles.selectedContainer]}
+    >
+      <View style={styles.iconContainer}>
+        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+      </View>
+      <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+      {isSelected ? (
+        <TouchableOpacity onPress={onCheckIconPress}>
+          <View style={[styles.circle, styles.circleSelected]}>
+            <SvgXml xml={checkmarkSvg} width={18} height={18} />
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.circle}>
+          {/* Render an empty view or any other placeholder if not selected */}
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+
+  const renderExpandedCard = () => (
+    <View style={[styles2.container, isSelected ? styles.selectedContainer : null]}>
+      <TouchableOpacity onPress={onSelect} style={styles.header}>
+        <View style={styles2.iconContainer}>
+          <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
+        </View>
+        <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
+        <Image
+          source={dropdownIcon}
+          style={[styles.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
+        />
+        {isSelected && (
+          <TouchableOpacity onPress={onCheckIconPress}>
+            <Image source={goalSelectedIcon} style={styles.checkmark} />
+          </TouchableOpacity>
+        )}
+      </TouchableOpacity>
+
+      {isSelected && (
+        <ActivityDetailsSection
+          formData={formData}
+          onFormDataChange={onFormDataChange}
+        />
+      )}
+    </View>
+  );
+
   return (
     <View>
-      {isExpanded ? (
-        <View style={[styles2.container, isSelected ? styles2.selectedContainer : null]}>
-        {/* Header Section - Clickable */}
-
-        <TouchableOpacity
-          style={styles2.header}
-          onPress={() => {
-            onSelect();
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-            <View style={styles2.iconContainer}>
-              <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
-            </View>
-            <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
-          </View>
-          {/* Dropdown Icon with Rotation */}
-          <Image
-            source={dropdownIcon}
-            style={[styles2.dropdownIcon, { transform: [{ rotate: isSelected ? "180deg" : "0deg" }] }]}
-          />
-
-          {/* Check Icon for Selected State */}
-          {isSelected && (
-            <TouchableOpacity onPress={() => {
-              onCheckIconPress();
-            }}>
-              <Image source={goalSelectedIcon} style={styles2.checkmark} />
-            </TouchableOpacity>
-          )}
-        </TouchableOpacity>
-  
-        {/* Details Dropdown Section*/}
-        {isExpanded && isSelected && (
-          <ActivityDetailsSection
-            formData={formData}
-            onFormDataChange={onFormDataChange}
-          />
-        )}
-      </View>
-      ) : (
-        <TouchableOpacity
-          onPress={onSelect} // Toggle expansion on press
-          style={[styles.container, isSelected && styles.selectedContainer]}
-        >
-          {/* Icon */}
-          <View style={styles.iconContainer}>
-            <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
-          </View>
-
-          {/* Title */}
-          <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-
-          {/* Selection Circle */}
-          <TouchableOpacity onPress={isSelected ? onCheckIconPress : undefined}>
-            <View style={[styles.circle, isSelected && styles.circleSelected]}>
-              {isSelected && <SvgXml xml={checkmarkSvg} width={18} height={18} />}
-            </View>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      )}
+      {isExpanded ? renderExpandedCard() : renderCollapsedCard()}
     </View>
   );
 };
@@ -119,6 +108,12 @@ const styles = StyleSheet.create({
   },
   selectedContainer: {
     borderColor: "#DE728D", // Highlight selected item
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flex: 1,
   },
   iconContainer: {
     width: 50,
@@ -153,6 +148,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50", // Green background
     borderColor: "#4CAF50",
   },
+  dropdownIcon: {
+    width: 15,
+    height: 15,
+    marginRight: 10,
+  },
+  checkmark: {
+    width: 25,
+    height: 25,
+  },
 });
 
 const styles2 = StyleSheet.create({
@@ -163,14 +167,6 @@ const styles2 = StyleSheet.create({
     borderColor: "#E1E1E1",
     padding: 10,
     marginBottom: 10,
-  },
-  selectedContainer: {
-    borderColor: "#DE728D",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
   iconContainer: {
     width: 50,
@@ -188,46 +184,6 @@ const styles2 = StyleSheet.create({
     color: "#242020",
     fontFamily: "Open Sans",
     marginLeft: 10,
-  },
-  dropdownIcon: {
-    width: 15,
-    height: 15,
-    marginRight: 10,
-  },
-  checkmark: {
-    width: 25,
-    height: 25,
-  },
-  detailsContainer: {
-    marginTop: 10,
-  },
-  label: {
-    fontSize: 13,
-    fontWeight: "400",
-    color: "#000",
-    fontFamily: "Open Sans",
-    marginBottom: 10,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E1E1E1",
-    borderRadius: 30,
-    height: 40,
-    paddingHorizontal: 20,
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  input: {
-    flex: 1,
-    fontSize: 12.98,
-    fontFamily: "Open Sans",
-    color: "#A4ACBC",
-  },
-  inputDropdownIcon: {
-    width: 16,
-    height: 16,
   },
 });
 

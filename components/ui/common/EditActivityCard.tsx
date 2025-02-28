@@ -36,14 +36,13 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
     Keyboard.dismiss();
   };
 
-  // Add this function to scroll to the input when focused
   const handleDescriptionFocus = () => {
     setTimeout(() => {
       scrollViewRef?.current?.scrollTo({
-        y: 300, // Increased value to ensure description box is fully visible
+        y: 300,
         animated: true,
       });
-    }, 50); // Reduced delay for faster response
+    }, 50);
   };
 
   React.useEffect(() => {
@@ -54,33 +53,37 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
     }).start();
   }, []);
 
+  const renderCollapsedCard = () => (
+    <TouchableOpacity onPress={onSelect} 
+      style={styles.header}
+    >
+      <View style={styles.iconContainer}>
+        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+      </View>
+      <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+    </TouchableOpacity>
+  );
+
+  const renderExpandedCard = () => (
+    <>
+      {renderCollapsedCard()}
+      <View style={styles.detailsContainer}>
+        <ActivityDetailsSection
+          formData={formData}
+          onFormDataChange={onFormDataChange}
+          onDescriptionFocus={handleDescriptionFocus}
+        />
+        
+        <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </TouchableOpacity>
+      </View>
+    </>
+  );
+
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      {/* Header Section */}
-      <TouchableOpacity style={styles.header} onPress={onSelect}>
-        <View style={styles.headerContent}>
-          <View style={styles.iconContainer}>
-            <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
-          </View>
-          <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Details Dropdown Section*/}
-      {isSelected && (
-        <View style={styles.detailsContainer}>
-          <ActivityDetailsSection
-            formData={formData}
-            onFormDataChange={onFormDataChange}
-            onDescriptionFocus={handleDescriptionFocus}
-          />
-          
-          {/* Save Changes Button */}
-          <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      {isSelected ? renderExpandedCard() : renderCollapsedCard()}
     </Animated.View>
   );
 };
@@ -102,10 +105,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 15,
-  },
-  headerContent: {
-    flexDirection: "row",
-    alignItems: "center",
     flex: 1,
   },
   iconContainer: {
