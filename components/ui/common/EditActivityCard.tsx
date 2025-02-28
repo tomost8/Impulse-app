@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, TextInput, Keyboard, ScrollView } from "react-native";
+import TimePicker from "./pickers/TimePicker";
+import DurationPicker from "./pickers/DurationPicker";
 
 // Importing assets
 const foodIcon = require("@/assets/icons/food.png");
@@ -8,6 +10,14 @@ const dropdownIcon = require("@/assets/icons/arrow-down.png");
 interface EditDailyGoalProps {
   title: string;
   icon: any;
+  isSelected: boolean; // Effectively the same as isExpanded
+  onSelect: () => void;
+  formData: {
+    startTime: string;
+    duration: { hours: number; minutes: number };
+    description: string;
+  };
+  onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
   onSave: () => void;
   scrollViewRef: React.RefObject<ScrollView>;
 }
@@ -15,6 +25,10 @@ interface EditDailyGoalProps {
 const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
   title,
   icon,
+  isSelected,
+  onSelect,
+  formData,
+  onFormDataChange,
   onSave,
   scrollViewRef,
 }) => {
@@ -46,57 +60,65 @@ const EditDailyGoal: React.FC<EditDailyGoalProps> = ({
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       {/* Header Section */}
-      <View style={styles.header}>
+      <TouchableOpacity style={styles.header} onPress={onSelect}>
         <View style={styles.headerContent}>
           <View style={styles.iconContainer}>
             <Image source={icon} style={styles.icon} />
           </View>
           <Text style={styles.title}>{title}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
 
-      {/* Content */}
-      <View style={styles.detailsContainer}>
-        {/* Start Time Input */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Start Time (optional)</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.placeholder}>Choose</Text>
-            <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
+      {/* Content - Only show when isSelected */}
+      {isSelected && (
+        <View style={styles.detailsContainer}>
+          {/* Start Time Input */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Start Time (optional)</Text>
+            <View style={styles.inputContainer}>
+              <TimePicker
+                initialTime={formData.startTime}
+                setTime={(time) => onFormDataChange('startTime', time)}
+              />
+            </View>
           </View>
-        </View>
 
-        {/* Activity Duration Input */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Activity Duration (optional)</Text>
-          <View style={styles.inputContainer}>
-            <Text style={styles.placeholder}>Choose</Text>
-            <Image source={dropdownIcon} style={styles.inputDropdownIcon} />
+          {/* Activity Duration Input */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Activity Duration (optional)</Text>
+            <View style={styles.inputContainer}>
+              <DurationPicker
+                hours={formData.duration.hours}
+                minutes={formData.duration.minutes}
+                setDuration={(hours, minutes) => 
+                  onFormDataChange('duration', { hours, minutes })
+                }
+              />
+            </View>
           </View>
-        </View>
 
-        {/* Description Input */}
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Description (optional)</Text>
-          <TextInput
-            style={[styles.inputContainer, styles.descriptionInput]}
-            placeholder="Type description..."
-            placeholderTextColor="#A4ACBC"
-            multiline={true}
-            value={description}
-            onChangeText={setDescription}
-            returnKeyType="done"
-            onSubmitEditing={handleSubmitEditing}
-            blurOnSubmit={true}
-            onFocus={handleDescriptionFocus}
-          />
-        </View>
+          {/* Description Input */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Description (optional)</Text>
+            <TextInput
+              style={[styles.inputContainer, styles.descriptionInput]}
+              placeholder="Type description..."
+              placeholderTextColor="#A4ACBC"
+              multiline={true}
+              value={formData.description}
+              onChangeText={(value) => onFormDataChange('description', value)}
+              returnKeyType="done"
+              onSubmitEditing={handleSubmitEditing}
+              onFocus={handleDescriptionFocus}
+            />
+          </View>
 
-        {/* Save Changes Button */}
-        <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Save Changes Button */}
+          <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </Animated.View>
   );
 };

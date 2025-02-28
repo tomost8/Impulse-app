@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
-import ExpandedGoalDetails from "./OpenActivityCard"; // Importing the ExpandedGoalDetails component
+import ExpandedGoalDetails from "./OpenedActivityCard"; // Importing the ExpandedGoalDetails component
 
 // Green checkmark icon for selected state
 const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

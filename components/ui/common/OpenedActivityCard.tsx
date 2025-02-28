@@ -8,11 +8,11 @@ const dropdownIcon = require("@/assets/icons/arrow-down.png");
 
 interface ExpandedGoalDetailsProps {
   title: string;
-  isSelected: boolean;
   icon: any;
+  isSelected: boolean;
   onSelect: () => void;
-  onCheckIconPress: () => void;
   isExpanded: boolean;
+  onCheckIconPress: () => void;
   formData: {
     startTime: string;
     duration: { hours: number; minutes: number };

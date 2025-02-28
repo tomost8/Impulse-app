@@ -9,11 +9,20 @@ import {
   Platform,
   Keyboard
 } from "react-native";
-import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton"; // ✅ Corrected Import
-import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader"; // ✅ Added GoalsHeader
-import GoalsList from "../../ui/DailyGoalsViewAll/GoalsList"; // ✅ Added GoalsList
-import EditDailyGoal from "../../ui/DailyGoalsViewAll/EditDailyGoal";
+import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
+import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
+import GoalsList from "../../ui/DailyGoalsViewAll/GoalsList";
 import { router } from "expo-router";
+import { useUpdateActivity } from "@/hooks/graphql/activities/mutations";
+import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { convertLocalToUtc } from "@/utils/timezoneProcessing";
+import EditDailyGoal from "@/components/ui/common/EditActivityCard";
+
+interface GoalFormData {
+  startTime: string;
+  duration: { hours: number; minutes: number };
+  description: string;
+}
 
 interface DailyGoalsScreenProps {
   activities: any[];
@@ -21,11 +30,57 @@ interface DailyGoalsScreenProps {
 }
   
 const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading }) => {
-  const [editingGoal, setEditingGoal] = useState<{
-    id: string;
-    title: string;
-    icon: any;
-  } | null>(null);
+  const { updateActivity } = useUpdateActivity();
+  const { timezone, loading: timezoneLoading } = useUserPreferences();
+  const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
+  const [goalFormData, setGoalFormData] = useState<GoalFormData>({
+    startTime: '',
+    duration: { hours: 0, minutes: 0 },
+    description: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSelectGoal = (goalId: number) => {
+    if (expandedGoal === goalId) {
+      setExpandedGoal(null);
+    } else {
+      setExpandedGoal(goalId);
+    }
+  };
+
+  const handleFormDataChange = (field: keyof GoalFormData, value: any) => {
+    console.log("field", field, "value", value);
+    setGoalFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSaveChanges = async () => {
+    setIsSubmitting(true);
+    try {
+      if (timezoneLoading) {
+        throw new Error('Timezone is still loading');
+      }
+      console.log("formData", goalFormData);
+      setExpandedGoal(null);
+      // Reset form data
+      /*
+      setGoalFormData({
+        startTime: '',
+        duration: { hours: 0, minutes: 0 },
+        description: ''
+      });
+      */
+    } catch (error) {
+      console.error('Error updating goal:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Keyboard stuff idek
+
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const scrollViewRef = React.useRef<ScrollView>(null);
 
@@ -50,24 +105,12 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
     };
   }, []);
 
-  // Handle edit button click
-  const handleEditClick = (goal: { id: string; title: string; icon: any }) => {
-    setEditingGoal(goal);
-  };
-
-  // Handle save changes
-  const handleSaveChanges = () => {
-    setEditingGoal(null);
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        {/* Header */}
         <GoalsHeader onBackPress={() => router.back()} />
 
         <ScrollView 
@@ -80,18 +123,19 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
 
           {/* Goals List */}
           <View style={styles.activitiesContainer}>
-            <GoalsList 
-              onEditClick={handleEditClick}
-              editingGoalId={editingGoal?.id}
-            />
-            {editingGoal && (
+            {activities.map((activity) => (
               <EditDailyGoal
-                title={editingGoal.title}
+                key={activity.id}
+                title={activity.category}
                 icon={require("@/assets/icons/riseshine.png")}
+                isSelected={expandedGoal === activity.id}
+                onSelect={() => handleSelectGoal(activity.id)}
+                formData={goalFormData}
+                onFormDataChange={(field, value) => handleFormDataChange(field as keyof GoalFormData, value)}
                 onSave={handleSaveChanges}
                 scrollViewRef={scrollViewRef}
               />
-            )}
+            ))}
           </View>
         </ScrollView>
 

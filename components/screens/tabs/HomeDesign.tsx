@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } fr
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
-import DailyGoals from "../../ui/HomeComponents/DailyGoals";
+import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
 
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";

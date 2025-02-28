@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetActivities } from '@/hooks/graphql/activities/queries';
 // Components
-import DailyGoalsScreen from '@/components/screens/home/DailyGoalsScreen';
+import DailyGoalsScreen from '@/components/screens/home/EditActivities';
 import ViewActivityScreenOld from '@/components/old/home/ViewActivityScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
