@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -8,8 +8,30 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import PickerModal from "@/components/ui/common/pickers/PickerModal";
+import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
+import { GENDER_OPTIONS, GOAL_OPTIONS } from "@/utils/userOptions";
+import { getLabelByCategory } from "@/utils/goals";
 
-const ProfileScreen = () => {
+interface ProfileScreenProps {
+  user: any;
+  isUserLoading: boolean;
+  formData: any;
+  handleFormDataChange: (field: string, value: string) => void;
+  handleFormSubmit: (input: any) => void;
+  isSubmitting: boolean;
+}
+
+const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, handleFormSubmit, isSubmitting }: ProfileScreenProps) => {
+  if (isUserLoading) {
+    return <Text>Loading...</Text>;
+  }
+  // Modal States
+  const [isGenderModalVisible, setGenderModalVisible] = useState(false);
+  const [isTimezoneModalVisible, setTimezoneModalVisible] = useState(false);
+  const [isPrimaryGoalModalVisible, setPrimaryGoalModalVisible] = useState(false);
+  const [isSecondaryGoalModalVisible, setSecondaryGoalModalVisible] = useState(false);
+
   return (
     <ScrollView
       style={styles.container}
@@ -32,7 +54,7 @@ const ProfileScreen = () => {
 
       <Image
         source={{
-          uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/7a484ad07fd3f7b3d88c6c6e383c508994952b67cf2f4df0dc68858e68ec9480",
+          uri: user.profile_picture,
         }}
         style={styles.profileImage}
         accessibilityLabel="Profile picture"
@@ -40,21 +62,30 @@ const ProfileScreen = () => {
 
       <Text style={styles.sectionTitle}>Personal Profile</Text>
 
-      <ProfileField label="Email" value="Johndoe@gmail.com" />
-      <ProfileField label="First Name" value="Devon" />
-      <ProfileField label="Last Name" value="Lane" />
-      <ProfileField label="Username" value="devonlane21" />
+      <ProfileField label="Email" value={user.email} />
+      <ProfileField label="First Name" value={user.first_name} />
+      <ProfileField label="Last Name" value={user.last_name} />
+      <ProfileField label="Username" value={user.username} />
 
       <View style={styles.row}>
-        <ProfileField label="Age" value="21" style={styles.halfWidth} />
-        <ProfileDropdown label="Gender" value="Male" style={styles.halfWidth} />
+        <ProfileField label="Age" value={user.age} style={styles.halfWidth} />
+        <ProfileDropdown 
+          label="Gender" 
+          value={formData.gender} 
+          style={styles.halfWidth} 
+          onPress={() => setGenderModalVisible(true)}
+        />
       </View>
 
-      <ProfileDropdown label="Timezone" value="EST +5" />
+      <ProfileDropdown 
+        label="Timezone" 
+        value={formData.timezone} 
+        onPress={() => setTimezoneModalVisible(true)}
+      />
 
       <ProfileField
         label="Bio"
-        value="Tell others about yourself (Max 250 characters)"
+        value={user.bio}
         multiline
       />
 
@@ -65,7 +96,7 @@ const ProfileScreen = () => {
           <Text style={styles.goalLabel}>Primary Goal</Text>
           <Text style={styles.pointsText}>100 points</Text>
         </View>
-        <ProfileDropdown label="" value="Select one" />
+        <ProfileDropdown label="" value={getLabelByCategory(formData.primary_goal)} onPress={() => setPrimaryGoalModalVisible(true)} />
       </View>
 
       <View style={styles.goalContainer}>
@@ -73,21 +104,62 @@ const ProfileScreen = () => {
           <Text style={styles.goalLabel}>Secondary Goal</Text>
           <Text style={styles.pointsText}>75 points</Text>
         </View>
-        <ProfileDropdown label="" value="Select one" />
+        <ProfileDropdown label="" value={getLabelByCategory(formData.secondary_goal)} onPress={() => setSecondaryGoalModalVisible(true)} />
       </View>
 
       <TouchableOpacity
         style={styles.editButton}
         accessibilityRole="button"
         accessibilityLabel="Edit Profile"
+        onPress={() => console.log("Edit Profile Button Pressed")}
       >
         <Text style={styles.editButtonText}>Edit Profile</Text>
       </TouchableOpacity>
+
+      {/* Gender Picker Modal */}
+      <PickerModal
+        visible={isGenderModalVisible}
+        onClose={() => setGenderModalVisible(false)}
+        onValueSelected={(value) => handleFormDataChange('gender', value)}
+        selectedValue={formData.gender}
+        options={GENDER_OPTIONS}
+        placeholder="Select Gender"
+      />
+
+      {/* Timezone Picker Modal */}
+      <PickerModal
+        visible={isTimezoneModalVisible}
+        onClose={() => setTimezoneModalVisible(false)}
+        onValueSelected={(value) => handleFormDataChange('timezone', value)}
+        selectedValue={formData.timezone}
+        options={TIMEZONE_OPTIONS}
+        placeholder="Select Timezone"
+      />
+
+      {/* Primary Goal Picker Modal */}
+      <PickerModal
+        visible={isPrimaryGoalModalVisible}
+        onClose={() => setPrimaryGoalModalVisible(false)}
+        onValueSelected={(value) => handleFormDataChange('primary_goal', value)}
+        selectedValue={formData.primary_goal}
+        options={GOAL_OPTIONS}
+        placeholder="Select Primary Goal"
+      />
+
+      {/* Secondary Goal Picker Modal */}
+      <PickerModal
+        visible={isSecondaryGoalModalVisible}
+        onClose={() => setSecondaryGoalModalVisible(false)}
+        onValueSelected={(value) => handleFormDataChange('secondary_goal', value)}
+        selectedValue={formData.secondary_goal}
+        options={GOAL_OPTIONS}
+        placeholder="Select Secondary Goal"
+      />
     </ScrollView>
   );
 };
 
-const ProfileField = ({ label, value, multiline, style }) => {
+const ProfileField = ({ label, value, multiline, style}: { label: string, value: string, multiline?: boolean, style?: any }) => {
   return (
     <View style={[styles.fieldContainer, style]}>
       <Text style={styles.fieldLabel}>{label}</Text>
@@ -103,7 +175,7 @@ const ProfileField = ({ label, value, multiline, style }) => {
   );
 };
 
-const ProfileDropdown = ({ label, value, style }) => {
+const ProfileDropdown = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: () => void }) => {
   return (
     <View style={[styles.fieldContainer, style]}>
       {label && <Text style={styles.fieldLabel}>{label}</Text>}
@@ -111,6 +183,7 @@ const ProfileDropdown = ({ label, value, style }) => {
         style={styles.dropdown}
         accessibilityRole="button"
         accessibilityLabel={`Select ${label}: ${value}`}
+        onPress={onPress}
       >
         <Text style={styles.dropdownText}>{value}</Text>
         <Image

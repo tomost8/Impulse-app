@@ -26,9 +26,9 @@ const getCategoryById = (id: number | null): string | null => {
   return goal ? goal.category : null;
 };
 
-const getLabelByCategory = (category: string | null): string | null => {
+const getLabelByCategory = (category: string): string  => {
   const goal = goals.find(goal => goal.category === category);
-  return goal ? goal.label : null;
+  return goal ? goal.label : 'No Goal Selected';
 };
 
 const getIconByCategory = (category: string | null): string | null => {

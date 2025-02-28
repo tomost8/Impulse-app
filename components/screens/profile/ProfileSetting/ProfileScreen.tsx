@@ -24,8 +24,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
   
   const infoItems = [
     { label: "Email", value: user.email || "N/A" },
-    { label: "First Name", value: user.firstName || "N/A" },
-    { label: "Last Name", value: user.lastName || "N/A" },
+    { label: "First Name", value: user.first_name || "N/A" },
+    { label: "Last Name", value: user.last_name || "N/A" },
     { label: "Username", value: user.username || "N/A" },
     { label: "Age", value: user.age ? user.age.toString() : "N/A" },
     { label: "Gender", value: user.gender || "N/A" },

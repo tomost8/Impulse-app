@@ -1,15 +1,13 @@
 import { goals } from '@/utils/goals';
 
 export const GENDER_OPTIONS = [
-  { value: '', label: 'Select Gender' },
-  { value: 'male', label: 'Male' },
-  { value: 'female', label: 'Female' },
-  { value: 'non-binary', label: 'Non-binary' },
-  { value: 'prefer-not-to-say', label: 'Prefer not to say' }
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' },
+  { value: 'Non-binary', label: 'Non-binary' },
+  { value: 'Prefer not to say', label: 'Prefer not to say' }
 ];
 
 export const GOAL_OPTIONS = [
-  { value: '', label: 'Select Primary Goal' },
   ...goals.map(goal => ({ value: goal.category, label: goal.label }))
 ]; 
 
