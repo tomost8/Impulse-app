@@ -5,30 +5,10 @@ import FullPostCard from "../Post/fullpostcard";
 
 interface FeedProps {
   currentTab: 'friends' | 'communities';
-  posts_data: any[];
+  posts: any[];
 }
 
-const Feed: React.FC<FeedProps> = ({ currentTab, posts_data }) => {
-  // Sample post data with community info
-  const posts = Array(6).fill(null).map((_, index) => ({
-    id: index.toString(),
-    caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
-    author: {
-      profileImage: require("@/assets/images/andrew.png"),
-    },
-    username: "User K",
-    timeAgo: "3 mins ago",
-    initialLikes: 67,
-    initialComments: 12,
-    community: {
-      name: "Gabe's Running Club"
-    }
-  }));
-
-  console.log("posts_data:", posts_data,
-    "\nposts:", posts
-  );
-
+const Feed: React.FC<FeedProps> = ({ currentTab, posts }) => {
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
       <PostCard 

@@ -54,11 +54,22 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
       ) 
     : communityFeed;
 
+  const enrichedCommunityFeed = filteredCommunityFeed.map(post => {
+    const community = joinedCommunities.find(
+      comm => comm.id === post.post_targets[0].target_id
+    );
+    return {
+      ...post,
+      community: community
+    };
+  });
+
   console.log("tab:", selectedTab,
     "\njoinedCommunities:", joinedCommunities,
     "\ncommunityFeed:", communityFeed,
     "\nfilter:", selectedCommunities,
-    "\nfilteredCommunityFeed:", filteredCommunityFeed
+    "\nfilteredCommunityFeed:", filteredCommunityFeed,
+    "\nenrichedCommunityFeed:", enrichedCommunityFeed
   );
 
   return (
@@ -100,7 +111,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
           <View style={styles.feedSection}>
             <Feed 
               currentTab={selectedTab}
-              posts_data={selectedTab === 'friends' ? friendsFeed : filteredCommunityFeed}
+              posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
             />
           </View>
         </View>

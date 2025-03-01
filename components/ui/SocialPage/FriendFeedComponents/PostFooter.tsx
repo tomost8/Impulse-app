@@ -22,7 +22,7 @@ const PostFooter: React.FC<PostFooterProps> = ({
     <View style={styles.container}>
       <View style={styles.userInfo}>
         <Image
-          source={require("@/assets/images/andrew.png")}
+          source={{ uri: profileImage }}
           style={styles.profileImage}
         />
         <View style={styles.textContainer}>

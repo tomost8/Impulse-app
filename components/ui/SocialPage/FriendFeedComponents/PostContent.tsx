@@ -10,7 +10,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrl, caption }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require("@/assets/images/feedpost.png")}
+        source={{ uri: imageUrl }}
         style={styles.image}
       />
       <Text style={styles.caption}>{caption}</Text>

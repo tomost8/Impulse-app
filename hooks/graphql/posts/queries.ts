@@ -14,20 +14,17 @@ const GET_FEED_COMMUNITIES = gql`
         author {
           id
           profile_picture
+          username
           first_name
           last_name
         }
         created_at
-        expires_at
         post_targets {
           id
           target_type
           target_id
         }
         category
-        messages {
-          id
-        }
         commentCount
         liked
         likeCount
@@ -77,20 +74,17 @@ const GET_FEED_FRIENDS = gql`
         author {
           id
           profile_picture
+          username
           first_name
           last_name
         }
         created_at
-        expires_at
         post_targets {
           id
           target_type
           target_id
         }
         category
-        messages {
-          id
-        }
         commentCount
         liked
         likeCount

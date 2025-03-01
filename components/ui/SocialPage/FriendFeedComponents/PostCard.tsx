@@ -4,29 +4,31 @@ import PostContent from "./PostContent";
 import PostFooter from "./PostFooter";
 import { router } from "expo-router";
 
-// Import placeholder images
-const defaultPostImage = require("@/assets/images/feedpost.png");
-const defaultProfileImage = require("@/assets/images/andrew.png");
+import { getTimeAgo } from "@/utils/timezoneProcessing";
 
 interface PostCardProps {
   post: {
-    id?: string;
+    id: string;
+    mediaUrl?: string;
     caption?: string;
     author?: {
-      profileImage?: string;
+      profile_picture?: string;
+      username?: string;
     };
-    username?: string;
-    timeAgo?: string;
-    initialLikes?: number;
-    initialComments?: number;
+    created_at?: string;
+    commentCount?: number;
+    likeCount?: number;
     community?: {
+      id: number;
       name: string;
     };
   };
   showCommunityTag?: boolean;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
+  console.log("post:", post, "showCommunityTag:", showCommunityTag);
+
   const handlePostPress = () => {
     //console.log('Post pressed', post.id);
     router.push(`/post/${post.id}`);
@@ -39,7 +41,8 @@ const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
       activeOpacity={0.7}
     >
       <PostContent
-        caption={post?.caption || "Lorem ipsum dolor sit amet consectetur. Mollis."}
+        imageUrl={post?.mediaUrl}
+        caption={post?.caption || ""}
       />
       
       {showCommunityTag && post.community && (
@@ -49,11 +52,11 @@ const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
       )}
 
       <PostFooter
-        profileImage={post?.author?.profileImage}
-        username={post?.username || "User K"}
-        timeAgo={post?.timeAgo || "3 mins ago"}
-        initialLikes={post?.initialLikes ?? 67}
-        initialComments={post?.initialComments ?? 12}
+        profileImage={post?.author?.profile_picture}
+        username={post?.author?.username || ""}
+        timeAgo={getTimeAgo(post?.created_at || "")}
+        initialLikes={post?.likeCount ?? 0}
+        initialComments={post?.commentCount ?? 0}
       />
     </TouchableOpacity>
   );
