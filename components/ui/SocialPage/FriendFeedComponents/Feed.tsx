@@ -11,7 +11,8 @@ interface FeedProps {
 
 const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
   // Sample post data with community info
-  const posts = Array(6).fill({
+  const posts = Array(6).fill(null).map((_, index) => ({
+    id: index.toString(),
     caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
     author: {
       profileImage: require("@/assets/images/andrew.png"),
@@ -23,12 +24,10 @@ const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
     community: {
       name: "Gabe's Running Club"
     }
-  }).map((post, index) => ({
-    ...post,
-    id: index.toString(),
   }));
 
   // If it's a full post view, render FullPostCard
+  /*
   if (isFullPost && singlePost) {
     return (
       <View style={styles.fullPostContainer}>
@@ -45,7 +44,9 @@ const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
         />
       </View>
     );
-  }
+  }*/
+
+  //console.log(posts);
 
   // Otherwise render the regular feed
   const renderItem = ({ item }: { item: typeof posts[0] }) => (

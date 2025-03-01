@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import PostContent from "./PostContent";
 import PostFooter from "./PostFooter";
+import { router } from "expo-router";
 
 // Import placeholder images
 const defaultPostImage = require("@/assets/images/feedpost.png");
@@ -9,6 +10,7 @@ const defaultProfileImage = require("@/assets/images/andrew.png");
 
 interface PostCardProps {
   post: {
+    id?: string;
     caption?: string;
     author?: {
       profileImage?: string;
@@ -26,8 +28,8 @@ interface PostCardProps {
 
 const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
   const handlePostPress = () => {
-    // For now, just a placeholder for future navigation
-    console.log('Post pressed');
+    //console.log('Post pressed', post.id);
+    router.push(`/post/${post.id}`);
   };
 
   return (

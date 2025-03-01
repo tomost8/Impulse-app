@@ -6,6 +6,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
 import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
+import PostScreen from '@/components/screens/social/post';
 import PostScreenOld from '@/components/old/social/PostScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
@@ -134,27 +135,51 @@ const PostPage = (props: any) => {
     );
   }
 
-  return (
-    <PostScreenOld
-      postRef={postRef}
-      commentsRef={commentsRef}
-      isCommentBoxVisible={isCommentBoxVisible}
-      commentText={commentText}
-      setCommentText={setCommentText}
-      isHandlingCreateComment={isHandlingCreateComment}
-      handleCreateComment={handleCreateComment}
-      setIsCommentBoxVisible={setIsCommentBoxVisible}
-      replyingToCommentId={replyingToCommentId}
-      setReplyingToCommentId={setReplyingToCommentId}
-      replyText={replyText}
-      setReplyText={setReplyText}
-      updatePostLikeState={updatePostLikeState}
-      handleLikePost={handleLikePost}
-      handleUnlikePost={handleUnlikePost}
-      isHandlingLike={isHandlingLike}
-      isHandlingUnlike={isHandlingUnlike}
-    />
-  );
+  if (pageDisplay) {
+    return (
+      <PostScreen
+        postRef={postRef}
+        commentsRef={commentsRef}
+        isCommentBoxVisible={isCommentBoxVisible} 
+        commentText={commentText}
+        setCommentText={setCommentText}
+        isHandlingCreateComment={isHandlingCreateComment}
+        handleCreateComment={handleCreateComment}
+        setIsCommentBoxVisible={setIsCommentBoxVisible}
+        replyingToCommentId={replyingToCommentId} 
+        setReplyingToCommentId={setReplyingToCommentId}
+        replyText={replyText}
+        setReplyText={setReplyText}
+        updatePostLikeState={updatePostLikeState}
+        handleLikePost={handleLikePost}
+        handleUnlikePost={handleUnlikePost} 
+        isHandlingLike={isHandlingLike}
+        isHandlingUnlike={isHandlingUnlike}
+      />
+    );
+  } else {
+    return (
+      <PostScreenOld
+        postRef={postRef}
+        commentsRef={commentsRef}
+        isCommentBoxVisible={isCommentBoxVisible}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        isHandlingCreateComment={isHandlingCreateComment}
+        handleCreateComment={handleCreateComment}
+        setIsCommentBoxVisible={setIsCommentBoxVisible}
+        replyingToCommentId={replyingToCommentId}
+        setReplyingToCommentId={setReplyingToCommentId}
+        replyText={replyText}
+        setReplyText={setReplyText}
+        updatePostLikeState={updatePostLikeState}
+        handleLikePost={handleLikePost}
+        handleUnlikePost={handleUnlikePost}
+        isHandlingLike={isHandlingLike}
+        isHandlingUnlike={isHandlingUnlike}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(PostPage);
