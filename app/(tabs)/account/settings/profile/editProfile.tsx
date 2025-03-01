@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfileScreen';
 import EditProfileScreenOld from '@/components/old/account/EditProfileScreen';
-import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
-import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 
 
 
@@ -42,14 +41,12 @@ const EditProfilePage = (props: any) => {
   const handleFormSubmit = async (input: any) => {
     setIsSubmitting(true);
     try {
-      console.log('Form Data:', formData);
-      // Check if profile_picture has a value and process it
-      if (formData.profile_picture) {
-        console.log('Processing profile picture:', formData.profile_picture);
+      // Check if profile_picture is not already uploaded to Firestore
+      if (formData.profile_picture && !formData.profile_picture.includes("https://firebasestorage.googleapis.com")) {
+        console.log('Processing profile picture:');
         const downloadURL = await processAndUploadImage(formData.profile_picture);
-        formData.profile_picture = downloadURL; // Update the profile_picture with the download URL
+        formData.profile_picture = downloadURL;
       }
-
       const input = Object.fromEntries(
         Object.entries(formData)
           .filter(([key, value]) => value !== '' && key !== 'email')
@@ -58,11 +55,15 @@ const EditProfilePage = (props: any) => {
             key === 'age' ? Number(value) : value
           ])
       );
-      console.log('Input:', input);
+      console.log('Form Data:', formData, '\nInput:', input);
       const response = await updateUser(input, authToken);
-      console.log('User updated successfully:', response);
+      if (response.success) {
+        console.log('User Profile Updated', response.user);
+      } else {
+        throw new Error('updateUser response.success is false');
+      }
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error('Error updating user profile:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -105,14 +106,6 @@ const EditProfilePage = (props: any) => {
       secondary_goal: userRef.current.secondary_goal || '',
     });
   };
-
-  if (!userRef.current?.profile_picture) {
-    formData.profile_picture = DEFAULT_PROFILE_PICTURE;
-    console.log("Setting default profile picture", formData);
-  } else {
-    formData.profile_picture = '';
-    console.log("Resetting profile picture form data", formData);
-  }
 
   // Debug
   const loading = isSubmitting;

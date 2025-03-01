@@ -7,11 +7,14 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from "react-native";
 import PickerModal from "@/components/ui/common/pickers/PickerModal";
 import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
 import { GENDER_OPTIONS, GOAL_OPTIONS } from "@/utils/userOptions";
 import { getLabelByCategory } from "@/utils/goals";
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
+import { pickImage } from "@/utils/imageProcessing";
 
 interface ProfileScreenProps {
   user: any;
@@ -52,23 +55,30 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
         <Text style={styles.headerText}>Profile</Text>
       </View>
 
-      <Image
-        source={{
-          uri: user.profile_picture,
-        }}
-        style={styles.profileImage}
-        accessibilityLabel="Profile picture"
-      />
+      <TouchableWithoutFeedback onPress={() => pickImage(handleFormDataChange)}>
+        <Image
+          source={{
+            uri: formData.profile_picture ? formData.profile_picture : DEFAULT_PROFILE_PICTURE,
+          }}
+          style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
+          accessibilityLabel="Profile picture"
+        />
+      </TouchableWithoutFeedback>
 
       <Text style={styles.sectionTitle}>Personal Profile</Text>
 
-      <ProfileField label="Email" value={user.email} />
-      <ProfileField label="First Name" value={user.first_name} />
-      <ProfileField label="Last Name" value={user.last_name} />
-      <ProfileField label="Username" value={user.username} />
+      <ProfileField label="Email" value={formData.email} onChange={(newValue) => handleFormDataChange('email', newValue)} editable={false} />
+      <ProfileField label="First Name" value={formData.first_name} onChange={(newValue) => handleFormDataChange('first_name', newValue)} />
+      <ProfileField label="Last Name" value={formData.last_name} onChange={(newValue) => handleFormDataChange('last_name', newValue)} />
+      <ProfileField label="Username" value={formData.username} onChange={(newValue) => handleFormDataChange('username', newValue)} />
 
       <View style={styles.row}>
-        <ProfileField label="Age" value={user.age} style={styles.halfWidth} />
+        <ProfileNumberButton 
+          label="Age" 
+          value={formData.age} 
+          style={styles.halfWidth} 
+          onPress={(value) => handleFormDataChange('age', value)}
+        />
         <ProfileDropdown 
           label="Gender" 
           value={formData.gender} 
@@ -85,8 +95,9 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
 
       <ProfileField
         label="Bio"
-        value={user.bio}
+        value={formData.bio}
         multiline
+        onChange={(newValue) => handleFormDataChange('bio', newValue)}
       />
 
       <Text style={styles.sectionTitle}>Goal Setting</Text>
@@ -111,12 +122,12 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
         style={styles.editButton}
         accessibilityRole="button"
         accessibilityLabel="Edit Profile"
-        onPress={() => console.log("Edit Profile Button Pressed")}
+        onPress={() => handleFormSubmit(formData)}
       >
         <Text style={styles.editButtonText}>Edit Profile</Text>
       </TouchableOpacity>
 
-      {/* Gender Picker Modal */}
+      {/* Gender */}
       <PickerModal
         visible={isGenderModalVisible}
         onClose={() => setGenderModalVisible(false)}
@@ -159,7 +170,9 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
   );
 };
 
-const ProfileField = ({ label, value, multiline, style}: { label: string, value: string, multiline?: boolean, style?: any }) => {
+const ProfileField = ({ label, value, multiline, style, onChange, editable = true }: 
+  { label: string, value: string, multiline?: boolean, style?: any, onChange: (value: string) => void, editable?: boolean }
+) => {
   return (
     <View style={[styles.fieldContainer, style]}>
       <Text style={styles.fieldLabel}>{label}</Text>
@@ -168,7 +181,8 @@ const ProfileField = ({ label, value, multiline, style}: { label: string, value:
         value={value}
         multiline={multiline}
         numberOfLines={multiline ? 4 : 1}
-        editable={false}
+        editable={editable}
+        onChangeText={editable ? onChange : undefined}
         accessibilityLabel={`${label}: ${value}`}
       />
     </View>
@@ -193,6 +207,21 @@ const ProfileDropdown = ({ label, value, style, onPress }: { label: string, valu
           style={styles.dropdownIcon}
         />
       </TouchableOpacity>
+    </View>
+  );
+};
+
+const ProfileNumberButton = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: (value: string) => void }) => {
+  return (
+    <View style={[styles.fieldContainer, style]}>
+      {label && <Text style={styles.fieldLabel}>{label}</Text>}
+      <TextInput
+        style={styles.fieldInput}
+        value={value}
+        onChangeText={onPress}
+        keyboardType="number-pad"
+        accessibilityLabel={`Enter ${label}`}
+      />
     </View>
   );
 };
