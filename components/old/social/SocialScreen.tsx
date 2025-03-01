@@ -2,7 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import styles from '@/utils/testStyles';
 import { Button, RadioButton } from 'react-native-paper';
-import PostCard from '@/components/PostCard';
+import PostCard from '@/components/old/social/PostCard';
 import { useState } from 'react';
 
 

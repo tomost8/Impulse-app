@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
-import TabSelector from "@/components/ui/SocialPage/FriendFeedComponents/TabSelector";
-import ListWithProfiles from "@/components/ui/SocialPage/CommunityFeedComponents/ListWithProfiles";
-import Filter from "@/components/ui/SocialPage/CommunityFeedComponents/Filter";
-import Feed from "@/components/ui/SocialPage/FriendFeedComponents/Feed";
+import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
+import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
+import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
+import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
 
 const exploreIcon = require("@/assets/icons/explore.png");
 
@@ -63,14 +63,6 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
       community: community
     };
   });
-
-  console.log("tab:", selectedTab,
-    "\njoinedCommunities:", joinedCommunities,
-    "\ncommunityFeed:", communityFeed,
-    "\nfilter:", selectedCommunities,
-    "\nfilteredCommunityFeed:", filteredCommunityFeed,
-    "\nenrichedCommunityFeed:", enrichedCommunityFeed
-  );
 
   return (
     <View style={styles.container}>
