@@ -5,11 +5,10 @@ import FullPostCard from "../Post/fullpostcard";
 
 interface FeedProps {
   currentTab: 'friends' | 'communities';
-  isFullPost?: boolean;
-  singlePost?: any;
+  posts_data: any[];
 }
 
-const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
+const Feed: React.FC<FeedProps> = ({ currentTab, posts_data }) => {
   // Sample post data with community info
   const posts = Array(6).fill(null).map((_, index) => ({
     id: index.toString(),
@@ -26,29 +25,10 @@ const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
     }
   }));
 
-  // If it's a full post view, render FullPostCard
-  /*
-  if (isFullPost && singlePost) {
-    return (
-      <View style={styles.fullPostContainer}>
-        <FullPostCard 
-          post={{
-            username: singlePost.username,
-            timeAgo: singlePost.timeAgo,
-            profileImage: singlePost.profileImage,
-            caption: singlePost.caption,
-            image: singlePost.image,
-            likes: singlePost.likes,
-            comments: singlePost.comments,
-          }}
-        />
-      </View>
-    );
-  }*/
+  console.log("posts_data:", posts_data,
+    "\nposts:", posts
+  );
 
-  //console.log(posts);
-
-  // Otherwise render the regular feed
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
       <PostCard 

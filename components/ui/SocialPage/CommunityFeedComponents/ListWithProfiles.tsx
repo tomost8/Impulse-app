@@ -1,54 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 
-// Sample data for communities
-const communities = [
-  {
-    id: '1',
-    name: 'Community Name',
-    image: require('@/assets/images/community.png'),
-  },
-  {
-    id: '2',
-    name: 'Community Name',
-    image: require('@/assets/images/community.png'),
-  },
-  {
-    id: '3',
-    name: 'Community Name',
-    image: require('@/assets/images/community.png'),
-  },
-  {
-    id: '4',
-    name: 'Community Name',
-    image: require('@/assets/images/community.png'),
-  },
-  {
-    id: '5',
-    name: 'Community Name',
-    image: require('@/assets/images/community.png'),
-  },
-];
-
 interface CommunityListProps {
-  onCommunityPress?: (communityId: string) => void;
+  communities: any[];
 }
 
-const CommunityList: React.FC<CommunityListProps> = ({ onCommunityPress }) => {
+const CommunityList: React.FC<CommunityListProps> = ({ communities }) => {
   return (
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.container}
     >
-      {communities.map((community) => (
+      {communities?.map((community) => (
         <TouchableOpacity
           key={community.id}
           style={styles.communityItem}
-          onPress={() => onCommunityPress?.(community.id)}
+          onPress={() => console.log('Community pressed:', community.id)}
         >
           <Image
-            source={community.image}
+            source={community.thumbnail}
             style={styles.communityImage}
           />
           <Text style={styles.communityName}>{community.name}</Text>

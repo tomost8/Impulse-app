@@ -1,82 +1,107 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
-import Feed from "@/components/ui/SocialPage/FriendFeedComponents/Feed";
 import TabSelector from "@/components/ui/SocialPage/FriendFeedComponents/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/CommunityFeedComponents/ListWithProfiles";
 import Filter from "@/components/ui/SocialPage/CommunityFeedComponents/Filter";
+import Feed from "@/components/ui/SocialPage/FriendFeedComponents/Feed";
 
-// Import local assets
 const exploreIcon = require("@/assets/icons/explore.png");
-const filterIcon = require("@/assets/icons/filter.png");
-const postImage = require("@/assets/images/feedpost.png"); // ✅ Post image
-const profileImage = require("@/assets/images/andrew.png"); // ✅ Profile image
 
-interface SocialScreenProps {}
+interface SocialScreenProps {
+  communityMembers: any[];
+  isCommunityMembersLoading: boolean;
+  friendsFeed: any[];
+  isFriendsFeedLoading: boolean;
+  communityFeed: any[];
+  isCommunityFeedLoading: boolean;
+  handleLikePost: (postId: number) => Promise<void>;
+  handleUnlikePost: (postId: number) => Promise<void>;
+  isHandlingLike: boolean;
+  isHandlingUnlike: boolean;
+  updatePostLikeState: (postId: number, liked: boolean) => void;
+}
 
-const SocialScreen: React.FC<SocialScreenProps> = () => {
-  console.log("✅ FeedScreen Loaded!");
-
-  // ✅ Single post for testing
-  const testPost = {
-    author: { 
-      profileImage: profileImage,
-    },
-    username: "Andrew",
-    timeAgo: "2 mins ago",
-    initialLikes: 67,
-    initialComments: 12,
-  };
-
-  console.log("📌 Post Data: ", testPost); // ✅ Debugging to confirm data
-
+const SocialScreen: React.FC<SocialScreenProps> = ({
+  communityMembers,
+  isCommunityMembersLoading,
+  friendsFeed,
+  isFriendsFeedLoading,
+  communityFeed,
+  isCommunityFeedLoading,
+  handleLikePost,
+  handleUnlikePost,
+  isHandlingLike,
+  isHandlingUnlike,
+  updatePostLikeState,
+}) => {
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
-  const [selectedCommunities, setSelectedCommunities] = useState<string[]>([]);
-
   const handleTabChange = (tab: 'friends' | 'communities') => {
     setSelectedTab(tab);
   };
-
+  // selectedCommunities is a list of community IDs
+  const [selectedCommunities, setSelectedCommunities] = useState<string[]>([]);
   const handleFilterChange = (communities: string[]) => {
     setSelectedCommunities(communities);
-    // Add your filter logic here
   };
+
+  const joinedCommunities = communityMembers
+    .filter((member) => member.status === "ACCEPTED")
+    .map((member) => member.community);
+
+  const filteredCommunityFeed = selectedCommunities.length > 0 
+    ? communityFeed.filter((post) => 
+        selectedCommunities.includes(post.post_targets[0].target_id)
+      ) 
+    : communityFeed;
+
+  console.log("tab:", selectedTab,
+    "\njoinedCommunities:", joinedCommunities,
+    "\ncommunityFeed:", communityFeed,
+    "\nfilter:", selectedCommunities,
+    "\nfilteredCommunityFeed:", filteredCommunityFeed
+  );
 
   return (
     <View style={styles.container}>
-      {/* Fixed Header and Tab Selector */}
       <View style={styles.fixedContent}>
+        {/* Header + Explore Button */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Feed</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => console.log('Explore pressed')}>
             <Image source={exploreIcon} style={styles.exploreIcon} />
           </TouchableOpacity>
         </View>
-        
+        {/* Tab Selector */}
         <TabSelector 
           onTabChange={handleTabChange}
           selectedTab={selectedTab}
         />
       </View>
-
-      {/* Scrollable Content */}
       <ScrollView style={styles.scrollContainer}>
         <View style={styles.scrollContent}>
           {selectedTab === 'communities' && (
             <>
+              {/* Community List Section */}
               <View style={styles.communityListSection}>
                 <ListWithProfiles 
-                  onCommunityPress={(id) => console.log('Community pressed:', id)} 
+                  communities={joinedCommunities} 
                 />
               </View>
-              
+              {/* Community Filter Section */}
               <View style={styles.filterSection}>
-                <Filter onFilterChange={handleFilterChange} />
+                <Filter 
+                  communities={joinedCommunities} 
+                  handleFilterChange={handleFilterChange} 
+                />
               </View>
             </>
           )}
-          
+          {/* Feed */}
           <View style={styles.feedSection}>
-            <Feed currentTab={selectedTab} />
+            <Feed 
+              currentTab={selectedTab}
+              posts_data={selectedTab === 'friends' ? friendsFeed : filteredCommunityFeed}
+            />
           </View>
         </View>
       </ScrollView>

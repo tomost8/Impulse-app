@@ -164,6 +164,7 @@ export const GET_USER_COMMUNITIES = gql`
         community {
           id
           name
+          thumbnail
         }
         role
         status

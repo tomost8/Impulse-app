@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Animated } from 'react-native';
 
-// Sample data for communities (replace with real data later)
-const communities = [
-  { id: '1', name: 'Gabes Running Club' },
-  { id: '2', name: 'Morning Fun Run Club' },
-  { id: '3', name: 'Health is Wealth' },
-  { id: '4', name: 'Gym all day everyday 365' },
-];
-
 interface FilterProps {
-  onFilterChange?: (selectedCommunities: string[]) => void;
+  communities: any[];
+  handleFilterChange: (selectedCommunities: string[]) => void;
 }
 
-const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
+const Filter: React.FC<FilterProps> = ({ communities, handleFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCommunities, setSelectedCommunities] = useState<string[]>([]);
 
@@ -23,7 +16,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
         ? prev.filter(id => id !== communityId)
         : [...prev, communityId];
       
-      onFilterChange?.(newSelection);
+      handleFilterChange(newSelection);
       return newSelection;
     });
   };
@@ -43,7 +36,7 @@ const Filter: React.FC<FilterProps> = ({ onFilterChange }) => {
       {isOpen && (
         <View style={styles.communityTagsContainer}>
           <View style={styles.communityTags}>
-            {communities.map((community) => (
+            {communities?.map((community) => (
               <TouchableOpacity
                 key={community.id}
                 style={[
