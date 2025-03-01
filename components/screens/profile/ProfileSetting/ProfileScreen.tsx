@@ -67,7 +67,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
             source={{
               uri: user.profile_picture,
             }}
-            style={styles.avatar}
+            style={[styles.avatar, { borderWidth: 1, borderColor: 'black' }]}
           />
         </View>
         <View style={styles.personalInfoContainer}>

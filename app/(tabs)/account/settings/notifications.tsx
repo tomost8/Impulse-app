@@ -1,9 +1,16 @@
 import { View, Text } from 'react-native';
 import styles from '@/utils/testStyles';
+import { pageDisplay } from '@/utils/debug';
+import ReminderNotifications from '@/components/screens/profile/setting/ReminderNotifications';
 
 export default function NotificationsScreen() {
-  return (
-    <View style={styles.container}>
+  if (pageDisplay) {
+    return (
+      <ReminderNotifications />
+  );
+  } else {
+    return (
+        <View style={styles.container}>
         <Text style={styles.todoText}>
             Reminders and Notifications (TODO after backend implemented)
         </Text>
@@ -20,6 +27,7 @@ export default function NotificationsScreen() {
             Nudge Message
         </Text>
     </View>
-  );
+    );
+  }
 }
 

@@ -15,6 +15,10 @@ export default function AccountLayout() {
         name="friends" 
         options={{ headerShown: true }}
       />
+      <Stack.Screen 
+        name="communities" 
+        options={{ headerShown: true }}
+      />
     </Stack>
   );
 }

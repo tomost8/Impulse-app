@@ -55,6 +55,7 @@ const EditProfilePage = (props: any) => {
             key === 'age' ? Number(value) : value
           ])
       );
+      // TODO: handle the case where secondary_goal is '' because the user wants no goal, has to be on backend side i think
       console.log('Form Data:', formData, '\nInput:', input);
       const response = await updateUser(input, authToken);
       if (response.success) {
@@ -120,8 +121,6 @@ const EditProfilePage = (props: any) => {
   if (pageDisplay) {
     return (
       <ProfileScreen
-        user={userRef.current}
-        isUserLoading={!hasFetchedUser.current}
         formData={formData}
         handleFormDataChange={handleFormDataChange}
         handleFormSubmit={handleFormSubmit}

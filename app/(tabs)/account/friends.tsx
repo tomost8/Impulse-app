@@ -7,7 +7,9 @@ import { router } from 'expo-router';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/utils/testStyles';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders, pageDisplay } from '@/utils/debug';
+
+import FriendsList from '@/components/screens/profile/FriendsCommunityList/FriendsList';
 
 function FriendScreen({ 
   friends, 
@@ -65,13 +67,19 @@ const FriendsPage = (props: any) => {
       "Render Counter:", renderCounter
     );
   }
-  
-  return (
-    <FriendScreen 
-      friends={friendsRef.current} 
-      isFriendsLoading={!hasFetchedFriends.current} 
-    />
-  );
+
+  if (pageDisplay) {
+    return (
+      <FriendsList />
+    );
+  } else {
+    return (
+      <FriendScreen 
+        friends={friendsRef.current} 
+        isFriendsLoading={!hasFetchedFriends.current} 
+      />
+    );
+  }
 }
 
 export default AuthWrapper(FriendsPage);

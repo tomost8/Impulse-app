@@ -15,7 +15,7 @@ export default function SettingsScreen() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings/notifications')}>
             <Text style={styles.text}>
-                Reminders and Notifications (TODO after backend implemented)
+                Reminders and Notifications (TODO: Integration)
             </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings/feedback')}>

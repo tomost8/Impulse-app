@@ -42,7 +42,7 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
             source={{
               uri: user.profile_picture,
             }}
-            style={styles.profileImage}
+            style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
             accessibilityLabel="Profile picture"
           />
           <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
@@ -64,15 +64,15 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
 
           {/* Stats Section */}
           <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
+            <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
               <Text style={styles.statNumber}>4</Text>
               <Text style={styles.statLabel}>Communities</Text>
-            </View>
+            </TouchableOpacity>
             <View style={styles.divider} />
-            <View style={styles.statItem}>
+            <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
               <Text style={styles.statNumber}>15</Text>
               <Text style={styles.statLabel}>Friends</Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <Text style={styles.bioText}>

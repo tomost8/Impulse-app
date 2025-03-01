@@ -17,18 +17,13 @@ import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { pickImage } from "@/utils/imageProcessing";
 
 interface ProfileScreenProps {
-  user: any;
-  isUserLoading: boolean;
   formData: any;
   handleFormDataChange: (field: string, value: string) => void;
   handleFormSubmit: (input: any) => void;
   isSubmitting: boolean;
 }
 
-const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, handleFormSubmit, isSubmitting }: ProfileScreenProps) => {
-  if (isUserLoading) {
-    return <Text>Loading...</Text>;
-  }
+const ProfileScreen = ({ formData, handleFormDataChange, handleFormSubmit, isSubmitting }: ProfileScreenProps) => {
   // Modal States
   const [isGenderModalVisible, setGenderModalVisible] = useState(false);
   const [isTimezoneModalVisible, setTimezoneModalVisible] = useState(false);
@@ -75,7 +70,7 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
       <View style={styles.row}>
         <ProfileNumberButton 
           label="Age" 
-          value={formData.age} 
+          value={String(formData.age)} 
           style={styles.halfWidth} 
           onPress={(value) => handleFormDataChange('age', value)}
         />
@@ -151,7 +146,13 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
       <PickerModal
         visible={isPrimaryGoalModalVisible}
         onClose={() => setPrimaryGoalModalVisible(false)}
-        onValueSelected={(value) => handleFormDataChange('primary_goal', value)}
+        onValueSelected={(value) => {
+          // Clear secondary goal if it matches the new primary goal
+          if (value === formData.secondary_goal) {
+            handleFormDataChange('secondary_goal', '');
+          }
+          handleFormDataChange('primary_goal', value);
+        }}
         selectedValue={formData.primary_goal}
         options={GOAL_OPTIONS}
         placeholder="Select Primary Goal"
@@ -163,8 +164,10 @@ const ProfileScreen = ({ user, isUserLoading, formData, handleFormDataChange, ha
         onClose={() => setSecondaryGoalModalVisible(false)}
         onValueSelected={(value) => handleFormDataChange('secondary_goal', value)}
         selectedValue={formData.secondary_goal}
-        options={GOAL_OPTIONS}
-        placeholder="Select Secondary Goal"
+        options={[
+          { label: 'Select Secondary Goal', value: '' },
+          ...GOAL_OPTIONS.filter(goal => goal.value !== formData.primary_goal)
+        ]}
       />
     </ScrollView>
   );
@@ -189,6 +192,22 @@ const ProfileField = ({ label, value, multiline, style, onChange, editable = tru
   );
 };
 
+const ProfileNumberButton = ({ label, value, style, onPress }: 
+  { label: string, value: string, style?: any, onPress: (value: string) => void }) => {
+  return (
+    <View style={[styles.fieldContainer, style]}>
+      {label && <Text style={styles.fieldLabel}>{label}</Text>}
+      <TextInput
+        style={styles.fieldInput}
+        value={value}
+        onChangeText={onPress}
+        keyboardType="number-pad"
+        accessibilityLabel={`Enter ${label}`}
+      />
+    </View>
+  );
+};
+
 const ProfileDropdown = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: () => void }) => {
   return (
     <View style={[styles.fieldContainer, style]}>
@@ -207,21 +226,6 @@ const ProfileDropdown = ({ label, value, style, onPress }: { label: string, valu
           style={styles.dropdownIcon}
         />
       </TouchableOpacity>
-    </View>
-  );
-};
-
-const ProfileNumberButton = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: (value: string) => void }) => {
-  return (
-    <View style={[styles.fieldContainer, style]}>
-      {label && <Text style={styles.fieldLabel}>{label}</Text>}
-      <TextInput
-        style={styles.fieldInput}
-        value={value}
-        onChangeText={onPress}
-        keyboardType="number-pad"
-        accessibilityLabel={`Enter ${label}`}
-      />
     </View>
   );
 };
