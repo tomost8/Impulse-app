@@ -1,16 +1,14 @@
-import { View, Text, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetCommunity, useGetCommunityMembers } from '../../hooks/graphql/communities/queries';
+import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 // Components
-import styles from '@/utils/testStyles';
+import CommunityScreenOld from '@/components/old/social/community/CommunityScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 
-const CommunityScreen = (props: any) => {
+const CommunityPage = (props: any) => {
   const { id } = useLocalSearchParams(); // communityId
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
@@ -55,35 +53,12 @@ const CommunityScreen = (props: any) => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{communityRef.current?.name}</Text>
-      {isAdmin && (
-        <TouchableOpacity style={styles.button} onPress={() => console.log("Edit Community")}>
-          <Text style={styles.text}>Edit Community</Text>
-        </TouchableOpacity>
-      )}
-      <Text style={styles.text}>About</Text>
-      <Text style={styles.text}>{communityRef.current?.description}</Text>
-
-      <Text style={styles.text}>Founder</Text>
-      <Text style={styles.text}>{communityRef.current?.influencer?.first_name} {communityRef.current?.influencer?.last_name}</Text>
-
-      <Text style={styles.text}>Recent Announcement</Text>
-      {isAdmin && (
-        <TouchableOpacity style={styles.button} onPress={() => console.log("Create Announcement")}>
-          <Text style={styles.text}>Create Announcement</Text>
-        </TouchableOpacity>
-      )}
-
-      <Text style={styles.text}>Members</Text>
-      {membersRef.current?.map((member: any) => (
-        <View key={member.user.id}>
-          <Text style={styles.text}>{member.user.first_name} {member.user.last_name}</Text>
-          <Text style={styles.text}>{member.user.username}</Text>
-        </View>
-      ))}
-    </View>
+    <CommunityScreenOld 
+      community={communityRef.current}
+      members={membersRef.current || []}
+      isAdmin={true} //isAdmin
+    />
   );
 }
 
-export default AuthWrapper(CommunityScreen);
+export default AuthWrapper(CommunityPage);

@@ -46,7 +46,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
       />
       
       {showCommunityTag && post.community && (
-        <TouchableOpacity style={styles.communityTag}>
+        <TouchableOpacity onPress={() => router.push(`/community/${post.community?.id}`)} style={styles.communityTag}>
           <Text style={styles.communityTagText}>{post.community.name}</Text>
         </TouchableOpacity>
       )}
