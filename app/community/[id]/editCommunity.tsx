@@ -60,8 +60,7 @@ function EditCommunityScreen({
 
 const EditCommunityPage = () => {
  const { userId, authToken } = useUserInfo();
- const { id } = useLocalSearchParams(); // communityId, not retrieving properly
- console.log("id", id);
+ const { id } = useLocalSearchParams(); // communityId 
  // Mutations
  const {updateCommunity} = useUpdateCommunity();
  const [isUpdatingCommunity, setIsUpdatingCommunity] = useState(false);
@@ -71,12 +70,13 @@ const EditCommunityPage = () => {
     const thumbnail = formData.thumbnail 
       ? await processAndUploadImage(formData.thumbnail)
       : null;
+    // There is some issue with name being required or something?
     const input = {
       ...(formData.name && { name: formData.name }),
       ...(formData.description && { description: formData.description }),
       ...(thumbnail && { thumbnail })
     }
-    console.log(input);
+    console.log("input:", input);
     const response = await updateCommunity(Number(id), input);
     console.log(response);
   } catch (error) {

@@ -11,11 +11,11 @@ export default function CommunityScreenOld({ community, members, isAdmin }: {
     <View style={styles.container}>
       <Text style={styles.text}>{community?.name}</Text>
       {isAdmin && (
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/community/[id]/editCommunity")}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push(`/community/${community.id}/editCommunity`)}>
           <Text style={styles.text}>Edit Community</Text>
         </TouchableOpacity>
       )}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/community/[id]/leaderboard")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push(`/community/${community.id}/leaderboard`)}>
           <Text style={styles.text}>Leaderboard</Text>
         </TouchableOpacity>
       <Text style={styles.text}>About</Text>
@@ -28,7 +28,7 @@ export default function CommunityScreenOld({ community, members, isAdmin }: {
       </View>
   
       <Text style={styles.text}>Recent Announcement (TODO: figure out how to get announcement from backend)</Text>
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/community/[id]/announcements")}>
+      <TouchableOpacity style={styles.button} onPress={() => router.push(`/community/${community.id}/announcements`)}>
         <Text style={styles.text}>View Announcements</Text>
       </TouchableOpacity>
       {isAdmin && (
