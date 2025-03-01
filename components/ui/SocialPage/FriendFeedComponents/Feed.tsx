@@ -1,12 +1,15 @@
 import React from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import PostCard from "./PostCard";
+import FullPostCard from "../Post/fullpostcard";
 
 interface FeedProps {
   currentTab: 'friends' | 'communities';
+  isFullPost?: boolean;
+  singlePost?: any;
 }
 
-const Feed: React.FC<FeedProps> = ({ currentTab }) => {
+const Feed: React.FC<FeedProps> = ({ currentTab, isFullPost, singlePost }) => {
   // Sample post data with community info
   const posts = Array(6).fill({
     caption: "Lorem ipsum dolor sit amet consectetur. Mollis.",
@@ -25,6 +28,26 @@ const Feed: React.FC<FeedProps> = ({ currentTab }) => {
     id: index.toString(),
   }));
 
+  // If it's a full post view, render FullPostCard
+  if (isFullPost && singlePost) {
+    return (
+      <View style={styles.fullPostContainer}>
+        <FullPostCard 
+          post={{
+            username: singlePost.username,
+            timeAgo: singlePost.timeAgo,
+            profileImage: singlePost.profileImage,
+            caption: singlePost.caption,
+            image: singlePost.image,
+            likes: singlePost.likes,
+            comments: singlePost.comments,
+          }}
+        />
+      </View>
+    );
+  }
+
+  // Otherwise render the regular feed
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
       <PostCard 
@@ -51,7 +74,7 @@ const styles = StyleSheet.create({
   feedContainer: {
     paddingHorizontal: 7,
     paddingTop: 10,
-    paddingBottom: 90,
+    paddingBottom: 120,
   },
   columnWrapper: {
     justifyContent: "space-between",
@@ -59,7 +82,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   postContainer: {
-    marginBottom: 14,
+    marginBottom: 16,
+  },
+  fullPostContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
 });
 
