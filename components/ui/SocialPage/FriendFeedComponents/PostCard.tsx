@@ -25,8 +25,17 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
+  const handlePostPress = () => {
+    // For now, just a placeholder for future navigation
+    console.log('Post pressed');
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity 
+      style={styles.container}
+      onPress={handlePostPress}
+      activeOpacity={0.7}
+    >
       <PostContent
         caption={post?.caption || "Lorem ipsum dolor sit amet consectetur. Mollis."}
       />
@@ -44,7 +53,7 @@ const PostCard: React.FC<PostCardProps> = ({ post = {}, showCommunityTag }) => {
         initialLikes={post?.initialLikes ?? 67}
         initialComments={post?.initialComments ?? 12}
       />
-    </View>
+    </TouchableOpacity>
   );
 };
 
