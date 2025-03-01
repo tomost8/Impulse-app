@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
+import { processAndUploadImage, pickImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
@@ -26,13 +26,6 @@ function CreateCommunityScreen({
   communityCategories: string[];
   handleCategoryChange: (category: string) => void;
 }) {
-  const pickImage = async () => {
-    const uri = await pickImageFromProcessing(handleFormDataChange);
-    if (uri) {
-      console.log('Picked image URI:', uri);
-      handleFormDataChange('thumbnail', uri);
-    }
-  };
   if (isCreatingCommunity) {
     return <Text>Loading...</Text>;
   }
@@ -54,7 +47,7 @@ function CreateCommunityScreen({
         onChangeText={(text) => handleFormDataChange('description', text)}
       />
       <View style={styles.profileImageContainer}>
-      <TouchableOpacity onPress={pickImage}>
+      <TouchableOpacity onPress={() => pickImage(handleFormDataChange, 'thumbnail')}>
           {formData.thumbnail ? (
             <Image source={{ uri: formData.thumbnail }} style={styles.profileImage} />
           ) : (

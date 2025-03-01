@@ -65,6 +65,39 @@ export function useCreateCommunityCategory() {
   return { createCommunityCategory };
 }
 
+// Input: name, description, thumbnail
+const UPDATE_COMMUNITY = gql`
+  mutation ($id: Int!, $input: UpdateCommunityInput!) {
+    updateCommunity(id: $id, input: $input) {
+      success
+      community { 
+        id name description thumbnail 
+        influencer { id first_name last_name email } 
+      }
+      errors { field message }
+    }
+  }
+`;
+
+export function useUpdateCommunity() {
+  const [updateCommunityMutation] = useMutation(UPDATE_COMMUNITY);
+  const updateCommunity = async (id: number, input: any) => {
+    try {
+      const response = await updateCommunityMutation({
+        variables: {
+          id: id,
+          input: input
+        }
+      }); 
+      return response.data.updateCommunity;
+    } catch (error) {
+      console.error('Update Community failed:', error);
+      throw error;
+    }
+  };  
+  return { updateCommunity };
+}
+
 const CREATE_COMMUNITY_MEMBER = gql`
   mutation ($input: CreateCommunityMemberInput!) {
     createCommunityMember(input: $input) {

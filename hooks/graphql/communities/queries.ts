@@ -92,7 +92,7 @@ export const GET_COMMUNITY = gql`
           id
           first_name
           last_name
-          email
+          profile_picture
         }
       }
     }
@@ -124,7 +124,7 @@ export const GET_COMMUNITY_MEMBERS = gql`
     getCommunityMembers(id: $communityId) {
       success
       community_members {
-        user { id first_name last_name username}
+        user { id first_name last_name username profile_picture }
         role
         status
       }
