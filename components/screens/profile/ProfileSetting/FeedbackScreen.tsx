@@ -6,12 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
   Text,
+  Linking,
 } from "react-native";
 
 const FeedbackScreen = () => {
   const [feedback, setFeedback] = useState("");
 
   const handleSubmit = () => {
+    Linking.openURL('https://share.hsforms.com/1XRfLG1DsS929ZXpTqtXcrAscwc9');
     console.log("Feedback submitted:", feedback);
   };
 

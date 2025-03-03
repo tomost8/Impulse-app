@@ -105,6 +105,7 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
           </View>
 
           <TouchableOpacity
+            onPress={() => router.push('/account/memories')}
             style={styles.memoriesButton}
             accessibilityRole="button"
           >

@@ -9,13 +9,15 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const CommunityScreen = () => {
-  const communities = [
-    { id: "1", name: "Supercharged" },
-    { id: "2", name: "Supercharged" },
-    { id: "3", name: "Supercharged" },
-    { id: "4", name: "Supercharged" },
-  ];
+const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoading: boolean }) => {
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+  console.log("Communities:", communities);
 
   return (
     <View style={styles.container} accessibilityRole="main">
@@ -55,20 +57,23 @@ const CommunityScreen = () => {
             />
           </View>
           {communities.map((community) => (
-            <View key={community.id} style={styles.communityItem}>
+            <View key={community.community.id} style={styles.communityItem}>
               <Image
-                accessibilityLabel={`${community.name} community icon`}
+                accessibilityLabel={`${community.community.name} community icon`}
                 resizeMode="contain"
                 source={{
-                  uri: "URL",
+                  uri: community.community.thumbnail,
                 }}
                 style={styles.communityIcon}
               />
               <View style={styles.communityInfo}>
-                <Text style={styles.communityName}>{community.name}</Text>
+                <Text style={styles.communityName}>{community.community.name}</Text>
                 <TouchableOpacity
+                  onPress={() => {
+                    console.log("Leaving community:", community.community.id);
+                  }}
                   style={styles.leaveButton}
-                  accessibilityLabel={`Leave ${community.name} group`}
+                  accessibilityLabel={`Leave ${community.community.name} group`}
                   accessibilityRole="button"
                 >
                   <Text style={styles.leaveButtonText}>Leave Group</Text>

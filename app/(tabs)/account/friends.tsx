@@ -70,7 +70,10 @@ const FriendsPage = (props: any) => {
 
   if (pageDisplay) {
     return (
-      <FriendsList />
+      <FriendsList 
+        friends={friendsRef.current} 
+        isLoading={!hasFetchedFriends.current} 
+      />
     );
   } else {
     return (

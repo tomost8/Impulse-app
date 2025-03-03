@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetFriends } from '@/hooks/graphql/friends/queries';
+import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 // Components
 import CommunityScreen from '@/components/screens/profile/FriendsCommunityList/CommunityScreen';
 // Debug
@@ -11,33 +11,36 @@ const CommunitiesPage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
-  const friendsRef = useRef<any | null>(null);
-  const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
+  const communitiesRef = useRef<any | null>(null);
+  const hasFetchedCommunities = useRef(false);
+  const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
 
   useEffect(() => {
-    if (!hasNewFriendsData) {
+    if (!hasNewCommunitiesData) {
       return;
     }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
+    if (hasNewCommunitiesData) {
+      communitiesRef.current = communityMembers;
+      hasFetchedCommunities.current = true;
     }
-    if (hasFetchedFriends.current) {
+    if (hasFetchedCommunities.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData]); 
+  }, [hasNewCommunitiesData]); 
 
-  const loading = !hasFetchedFriends.current;
+  const loading = !hasFetchedCommunities.current;
   if (debugRenders && !loading) {
-    console.log("Rendering FriendsPage\n",
-      "Friends:", friendsRef.current, "\n",
+    console.log("Rendering CommunitiesPage\n",
+      "Communities:", communitiesRef.current, "\n",
       "Render Counter:", renderCounter
     );
   }
 
   return (
-    <CommunityScreen />
+    <CommunityScreen
+      communities={communitiesRef.current}
+      isLoading={loading}
+    />
   );
 }
 

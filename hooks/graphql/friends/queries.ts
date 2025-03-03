@@ -13,13 +13,6 @@ export const GET_FRIENDS = gql`
           last_name
           username
           profile_picture
-          email
-          point {
-            points
-            spending_points
-            weekly_points
-            monthly_points
-          }
         }
         role
         status

@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Linking,
 } from "react-native";
 import { AccessibilityInfo } from "react-native";
 
@@ -15,6 +16,7 @@ const SupportScreen = () => {
   };
 
   const handleDeleteAccountPress = () => {
+    Linking.openURL('https://share.hsforms.com/1w35t-H25T2CMEpiTciIoyAscwc9');
     AccessibilityInfo.announceForAccessibility("Opening account deletion form");
   };
 
@@ -44,14 +46,14 @@ const SupportScreen = () => {
         <Text
           style={styles.title}
           accessibilityRole="header"
-          accessibilityLevel={1}
+          //accessibilityLevel={1}
         >
           Support
         </Text>
       </View>
       <View
         style={styles.emailSection}
-        accessibilityRole="region"
+        //accessibilityRole="region"
         accessibilityLabel="Email Support"
       >
         <View style={styles.emailContainer}>

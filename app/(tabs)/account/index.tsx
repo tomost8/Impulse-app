@@ -4,7 +4,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 import AccountScreenOld from '@/components/old/account/AccountScreen';
-import AccountProfile from '@/components/screens/tabs/AccountProfile';
+import AccountProfile from '@/components/screens/tabs/AccountScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 

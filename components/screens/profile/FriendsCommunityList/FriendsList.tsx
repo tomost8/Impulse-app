@@ -9,18 +9,21 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const FriendsList = () => {
+const FriendsList = ({ friends, isLoading }: { friends: any[], isLoading: boolean }) => {
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
   const [searchQuery, setSearchQuery] = useState("");
 
-  const friends = [
-    { id: 1, name: "Courtney", username: "courtney123" },
-    { id: 2, name: "Alex", username: "alex456" },
-    { id: 3, name: "Sam", username: "sam789" },
-    { id: 4, name: "Jordan", username: "jordan101" },
-  ];
+  console.log("Friends:", friends);
 
-  const handleRemoveFriend = (id) => {
+  const handleRemoveFriend = (id: number) => {
     // Implementation for removing friend
+    console.log("Removing friend:", id);
   };
 
   return (
@@ -57,23 +60,23 @@ const FriendsList = () => {
         </View>
         <ScrollView style={styles.friendsList}>
           {friends.map((friend) => (
-            <View key={friend.id} style={styles.friendItem}>
+            <View key={friend.friend.id} style={styles.friendItem}>
               <Image
                 source={{
-                  uri: "URI",
+                  uri: friend.friend.profile_picture,
                 }}
                 style={styles.friendAvatar}
-                accessibilityLabel={`${friend.name}'s avatar`}
+                accessibilityLabel={`${friend.friend.name}'s avatar`}
               />
               <View style={styles.friendInfo}>
                 <View>
-                  <Text style={styles.friendName}>{friend.name}</Text>
-                  <Text style={styles.friendUsername}>{friend.username}</Text>
+                  <Text style={styles.friendName}>{friend.friend.first_name} {friend.friend.last_name}</Text>
+                  <Text style={styles.friendUsername}>{friend.friend.username}</Text>
                 </View>
                 <TouchableOpacity
                   style={styles.removeButton}
-                  onPress={() => handleRemoveFriend(friend.id)}
-                  accessibilityLabel={`Remove ${friend.name} from friends list`}
+                  onPress={() => handleRemoveFriend(friend.friend.id)}
+                  accessibilityLabel={`Remove ${friend.friend.first_name} ${friend.friend.last_name} from friends list`}
                 >
                   <Text style={styles.removeButtonText}>Remove Friend</Text>
                 </TouchableOpacity>

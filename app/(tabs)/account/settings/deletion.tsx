@@ -77,14 +77,6 @@ const DeletionPage = (props: any) => {
       />
     )
   }
-  return (
-    <DeletionScreenOld
-      formData={formData}
-      handleFormDataChange={handleFormDataChange}
-      handleFormSubmit={handleFormSubmit}
-      isSubmitting={isSubmitting}
-    />
-  );
 }
 
 export default AuthWrapper(DeletionPage);
