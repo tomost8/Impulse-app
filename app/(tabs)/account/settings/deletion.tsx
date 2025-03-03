@@ -3,54 +3,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
-import styles from '@/utils/testStyles';
-import { View, Text, TextInput, TouchableOpacity, Linking } from 'react-native';
+import DeletionScreen from '@/components/screens/profile/ProfileSetting/SupportScreen';
+import DeletionScreenOld from '@/components/old/account/DeletionScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function DeletionScreen({
-  formData,
-  handleFormDataChange,
-  handleFormSubmit, 
-  isSubmitting,
-}: {
-  formData: any, 
-  handleFormDataChange: any,
-  handleFormSubmit: any, 
-  isSubmitting: boolean,
-}) {
-  if (isSubmitting) {
-    return <Text>Loading...</Text>;
-  }
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>
-          Email Us At
-      </Text>
-      <Text style={styles.text}>
-          support@findyourimpulse.com
-      </Text>
-      <Text style={styles.text}>
-          Community Leader Code
-      </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter given code"
-        placeholderTextColor="gray"
-        value={formData.code}
-        onChangeText={(value) => handleFormDataChange('code', value)}
-      />
-      <TouchableOpacity style={styles.button} 
-      onPress={handleFormSubmit}>
-          <Text style={styles.text}>Apply</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} 
-      onPress={() => Linking.openURL('https://share.hsforms.com/1w35t-H25T2CMEpiTciIoyAscwc9')}>
-        <Text style={styles.text}>Account Deletion Form</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 const DeletionPage = (props: any) => {
   const { userId, authToken } = props;
@@ -101,8 +58,27 @@ const DeletionPage = (props: any) => {
     console.log("Rendering DeletionPage");
   }
 
+  if (pageDisplay) {
+    return (
+      <DeletionScreen
+        formData={formData}
+        handleFormDataChange={handleFormDataChange}
+        handleFormSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+      />
+    )
+  } else {
+    return (
+      <DeletionScreenOld
+        formData={formData}
+        handleFormDataChange={handleFormDataChange}
+        handleFormSubmit={handleFormSubmit}
+        isSubmitting={isSubmitting}
+      />
+    )
+  }
   return (
-    <DeletionScreen
+    <DeletionScreenOld
       formData={formData}
       handleFormDataChange={handleFormDataChange}
       handleFormSubmit={handleFormSubmit}
