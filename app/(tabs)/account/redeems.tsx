@@ -5,13 +5,15 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
-import RedeemsScreen from '@/components/screens/profile/RewardsScreen';
+import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScreen2';
 import RedeemsScreenOld from '@/components/old/account/RedeemsScreen';
 // Debug
 import { debugRenders, pageDisplay } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 
-const RedeemsPage = (props: any) => {
-  const { userId, authToken } = props;
+const RedeemsPage = () => {
+  const { userId, authToken } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -78,7 +80,7 @@ const RedeemsPage = (props: any) => {
 
   if (pageDisplay) {
     return (
-      <RedeemsScreen 
+      <RewardsScreen 
         user={userRef.current} 
         isUserLoading={!hasFetchedUser.current}
         rewards={rewardsRef.current}

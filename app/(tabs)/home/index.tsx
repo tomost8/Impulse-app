@@ -46,12 +46,11 @@ const HomePage = () => {
   
   const loadingData = !hasFetchedFriends.current || !hasFetchedActivities.current;
   if (debugRenders && !loadingData) {
-    console.log("Rendering HomePage.\n",
-      "Friends:", friendsRef.current, "\n",
-      "Activities:", activitiesRef.current, "\n",
-      "Render Counter:", renderCounter, "\n",
-      "Timezone:", timezone, "\n",
-      "Camera Clickable:", cameraClickable
+    console.log("Rendering HomePage. Counter: ", renderCounter,
+      "\nFriends:", friendsRef.current,
+      "\nActivities:", activitiesRef.current,
+      "\nTimezone:", timezone,
+      "\nCamera Clickable:", cameraClickable
     );
   }
 

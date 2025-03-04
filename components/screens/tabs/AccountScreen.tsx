@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,19 +10,27 @@ import {
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
+import PointEarningGuide from "../profile/popups/PointEarningGuide";
 
 interface AccountProfileProps {
   user: any;
-  isUserLoading: boolean;
+  isLoading: boolean;
+  numCommunities: number;
+  numFriends: number;
 }
 
 export const AccountProfile: React.FC<AccountProfileProps> = ({ 
   user, 
-  isUserLoading 
+  isLoading,
+  numCommunities,
+  numFriends
 }) => {
-  if (isUserLoading) {
+  if (isLoading) {
     return <Text>Loading...</Text>;
   }
+
+  const [pointsModalVisible, setPointsModalVisible] = useState(false);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -51,7 +59,9 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
           {/* Points Section */}
           <View style={styles.pointsContainer}>
             <View style={styles.pointsHeader}>
-              <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+              <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
+                <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+              </TouchableOpacity>
               <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
             </View>
             <View style={styles.progressContainer}>
@@ -65,12 +75,12 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
           {/* Stats Section */}
           <View style={styles.statsContainer}>
             <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
-              <Text style={styles.statNumber}>4</Text>
+              <Text style={styles.statNumber}>{numCommunities}</Text>
               <Text style={styles.statLabel}>Communities</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
-              <Text style={styles.statNumber}>15</Text>
+              <Text style={styles.statNumber}>{numFriends}</Text>
               <Text style={styles.statLabel}>Friends</Text>
             </TouchableOpacity>
           </View>
@@ -113,6 +123,10 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <PointEarningGuide
+        visible={pointsModalVisible}
+        onClose={() => setPointsModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };

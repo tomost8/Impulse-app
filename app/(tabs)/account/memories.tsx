@@ -6,6 +6,9 @@ import styles from '@/utils/testStyles';
 import { View, Text } from 'react-native';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
+
 
 
 function MemoriesScreen({ parameters }: { parameters?: any }) {
@@ -17,8 +20,8 @@ function MemoriesScreen({ parameters }: { parameters?: any }) {
 }
 
 
-const MemoriesPage = (props: any) => {
-const { userId, authToken } = props;
+const MemoriesPage = () => {
+const { userId, authToken } = useUserInfo();
 return (
   <MemoriesScreen />
 );

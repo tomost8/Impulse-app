@@ -7,7 +7,6 @@ export const GET_ACTIVITIES_BY_DATE = gql`
       success
       activities {
         id
-        name
         category
         description
         duration

@@ -6,9 +6,11 @@ import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 import CommunityScreen from '@/components/screens/profile/FriendsCommunityList/CommunityScreen';
 // Debug
 import { debugRenders, pageDisplay } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 
-const CommunitiesPage = (props: any) => {
-  const { userId, authToken } = props;
+const CommunitiesPage = () => {
+  const { userId, authToken } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const communitiesRef = useRef<any | null>(null);

@@ -17,13 +17,25 @@ const rewardsData = [
   },
 ];
 
-function RewardsScreen() {
+interface RewardsScreenProps {
+  user: any;
+  isUserLoading: boolean;
+  rewards: any;
+  isRewardsLoading: boolean;
+  handleCreateRedeem: (rewardId: number) => void;
+  isCreatingRedeem: boolean;
+}
+
+const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewards, isRewardsLoading, handleCreateRedeem, isCreatingRedeem }) => {
+  console.log("User: ", user, "\nRewards: ", rewards);
   return (
     <ScrollView
       style={styles.scrollView}
       contentContainerStyle={styles.scrollViewContent}
     >
-      <View style={styles.container} accessibilityRole="main">
+      <View style={styles.container} 
+      //accessibilityRole="main"
+      >
         <Header />
         <View style={styles.content}>
           <PointsDisplay points={9205} maxPoints={15000} />

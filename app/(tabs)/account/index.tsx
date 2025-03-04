@@ -2,45 +2,68 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
+import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
+import { useGetFriends } from '@/hooks/graphql/friends/queries';
 // Components
 import AccountScreenOld from '@/components/old/account/AccountScreen';
 import AccountProfile from '@/components/screens/tabs/AccountScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 
-const AccountPage = (props: any) => {
-  const { userId, authToken } = props;
+const AccountPage = () => {
+  const { userId, authToken } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
   const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
 
+  const communitiesRef = useRef<any[] | null>(null);
+  const hasFetchedCommunities = useRef(false);
+  const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
+
+  const friendsRef = useRef<any[] | null>(null);
+  const hasFetchedFriends = useRef(false);
+  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
+
   useEffect(() => {
-    if (!hasNewUserData) {
+    if (!hasNewUserData && !hasNewCommunitiesData && !hasNewFriendsData) {
       return;
     }
     if (hasNewUserData) {
       userRef.current = user;
       hasFetchedUser.current = true;
     }
-    if (hasFetchedUser.current) {
+    if (hasNewCommunitiesData) {
+      communitiesRef.current = communityMembers;
+      hasFetchedCommunities.current = true;
+    }
+    if (hasNewFriendsData) {
+      friendsRef.current = friends;
+      hasFetchedFriends.current = true;
+    }
+    if (hasFetchedUser.current && hasFetchedCommunities.current && hasFetchedFriends.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewUserData]); 
+  }, [hasNewUserData, hasNewCommunitiesData, hasNewFriendsData]); 
 
-  const loading = !hasFetchedUser.current;
+  const loading = !hasFetchedUser.current || !hasFetchedCommunities.current || !hasFetchedFriends.current;
   if (debugRenders && !loading) {
-    console.log("Rendering AccountPage\n",
-      "User:", userRef.current, "\n",
-      "Render Counter:", renderCounter
+    console.log("Rendering AccountPage. Counter: ", renderCounter,
+      "\nUser:", userRef.current, 
+      "\nCommunities:", communitiesRef.current, 
+      "\nFriends:", friendsRef.current,
     );
   }
 
   if (pageDisplay) {
     return <AccountProfile
       user={userRef.current} 
-      isUserLoading={!hasFetchedUser.current} 
+      isLoading={loading} 
+      numCommunities={communitiesRef.current?.length || 0}
+      numFriends={friendsRef.current?.length || 0}
     />;
   } else {
     return <AccountScreenOld

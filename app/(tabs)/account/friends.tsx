@@ -6,10 +6,11 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { router } from 'expo-router';
 import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/utils/testStyles';
+import FriendsList from '@/components/screens/profile/FriendsCommunityList/FriendsList';
 // Debug
 import { debugRenders, pageDisplay } from '@/utils/debug';
-
-import FriendsList from '@/components/screens/profile/FriendsCommunityList/FriendsList';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 
 function FriendScreen({ 
   friends, 
@@ -39,8 +40,8 @@ function FriendScreen({
   );
 }
 
-const FriendsPage = (props: any) => {
-  const { userId, authToken } = props;
+const FriendsPage = () => {
+  const { userId, authToken } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);
