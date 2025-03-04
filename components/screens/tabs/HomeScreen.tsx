@@ -1,32 +1,28 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
 import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
 
-import { convertUtcToLocal } from "@/utils/timezoneProcessing";
-import { useUserData } from "@/services/UserPreferencesContext";
-
-
-interface HomeDesignProps {
+interface HomeScreenProps {
+  isLoading: boolean;
+  name: string;
   friends: any[]; 
-  isFriendsLoading: boolean;
   activities: any[]; 
-  isActivitiesLoading: boolean;
 }
 
-const HomeDesign: React.FC<HomeDesignProps> = ({ 
+const HomeScreen: React.FC<HomeScreenProps> = ({ 
+  isLoading,
+  name,
   friends, 
-  isFriendsLoading, 
   activities, 
-  isActivitiesLoading 
 }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView}>
-        <TopSection />
+        <TopSection name={name} />
         
         <View style={styles.quoteSection}>
           <QuoteofDay />
@@ -35,7 +31,7 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
         <View style={styles.section}>
           <DailyGoals 
             activities={activities} 
-            isActivitiesLoading={isActivitiesLoading} 
+            isActivitiesLoading={isLoading} 
           />
         </View>
 
@@ -43,7 +39,7 @@ const HomeDesign: React.FC<HomeDesignProps> = ({
         <View style={styles.leaderboardWrapper}>
           <LeaderboardFull 
             friends={friends}
-            isFriendsLoading={isFriendsLoading}
+            isFriendsLoading={isLoading}
           />
         </View>
       </ScrollView>
@@ -78,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeDesign;
+export default HomeScreen;

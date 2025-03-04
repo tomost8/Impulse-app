@@ -5,11 +5,11 @@ import StreakTracker from "./StreakTracker"; // ✅ Import StreakTracker compone
 import StreakBadge from "./StreakBadge"; // ✅ Importing StreakBadge
 
 
-const TopSectionContainer: React.FC = () => {
+const TopSectionContainer: React.FC<{ name: string }> = ({ name }) => {
     return (
       <View style={styles.container}>
         {/* Greeting */}
-        <Greeting name="Gabriel" />
+        <Greeting name={name} />
   
         {/* Streak Section */}
         <View style={styles.streakWrapper}>

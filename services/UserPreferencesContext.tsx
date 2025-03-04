@@ -8,6 +8,7 @@ type UserDataContextType = {
   friends: any[]; setFriends: (friends: any[]) => void;
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
+  debugLog: () => void;
 };
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
@@ -23,6 +24,18 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
 
+  const debugLog = () => {
+    console.log("=== User Data Debug Log ===",
+      "\nFetching:", fetching,
+      "\nUser:", user,
+      "\nActivities:", activities,
+      "\nCommunities:", communities,
+      "\nFriends:", friends,
+      "\nTimezone:", timezone,
+      "\nCamera Clickable:", cameraClickable
+    );
+  };
+
   const value = {
     fetching, setFetching,
     user, setUser,
@@ -31,6 +44,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     friends, setFriends,
     timezone, setTimezone,
     cameraClickable, setCameraClickable,
+    debugLog
   };
 
   return (

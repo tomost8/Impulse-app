@@ -11,7 +11,7 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId, authToken } = useUserInfo();
-  const { setFetching,
+  const { setFetching, debugLog,
     setCommunities, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable 
   } = useUserData();

@@ -2,73 +2,54 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
-import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
-import HomeDesign from '@/components/screens/tabs/HomeDesign';
-import HomeScreenOld from '@/components/old/home/HomeScreen';
+import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
-
+import { debugRenders } from '@/utils/debug';
 // Services
 import { useUserInfo } from '@/services/UserContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 const HomePage = () => {
   const { userId, authToken } = useUserInfo();
-  const { timezone, cameraClickable } = useUserData();
+  const { fetching, user, activities, friends, timezone} = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
+  /* friends but for friends leaderboard 
   const friendsRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
   const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
-  
-  const activitiesRef = useRef<any[] | null>(null);
-  const hasFetchedActivities = useRef(false);
-  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
-  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate, authToken as string, !hasFetchedActivities.current);
 
   useEffect(() => {
-    if (!hasNewFriendsData && !hasNewActivitiesData) {
+    if (!hasNewFriendsData) {
       return;
     }
     if (hasNewFriendsData) {
       friendsRef.current = friends;
       hasFetchedFriends.current = true;
-    }
-    if (hasNewActivitiesData) {
-      activitiesRef.current = activities;
-      hasFetchedActivities.current = true;
-    }
-    if (hasFetchedFriends.current && hasFetchedActivities.current) {
+    } 
+    if (hasFetchedFriends.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData, hasNewActivitiesData]); 
-  
-  const loadingData = !hasFetchedFriends.current || !hasFetchedActivities.current;
-  if (debugRenders && !loadingData) {
+  }, [hasNewFriendsData]); 
+
+  const loadingData = !hasFetchedFriends.current;
+  */
+
+  if (debugRenders && !fetching) {
     console.log("Rendering HomePage. Counter: ", renderCounter,
-      "\nFriends:", friendsRef.current,
-      "\nActivities:", activitiesRef.current,
+      "\nFriends:", friends,
+      "\nActivities:", activities,
       "\nTimezone:", timezone,
-      "\nCamera Clickable:", cameraClickable
     );
   }
 
-  if (pageDisplay) {
-    return <HomeDesign
-      friends={friendsRef.current || []} 
-      isFriendsLoading={!hasFetchedFriends.current}
-      activities={activitiesRef.current || []}
-      isActivitiesLoading={!hasFetchedActivities.current}
-    />;
-  } else {
-    return <HomeScreenOld
-      friends={friendsRef.current || []} 
-      isFriendsLoading={!hasFetchedFriends.current}
-      activities={activitiesRef.current || []}
-      isActivitiesLoading={!hasFetchedActivities.current}
-    />;
-  }
+  return <HomeScreen  
+    isLoading={fetching}
+    name={user.first_name}
+    friends={friends} 
+    activities={activities}
+  />;
 };
 
 export default AuthWrapper(HomePage);
