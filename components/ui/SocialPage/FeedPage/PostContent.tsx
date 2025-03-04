@@ -1,27 +1,36 @@
 import React from "react";
-import { View, Image, Text, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 
 interface PostContentProps {
   imageUrl?: string;
-  caption: string;
+  caption?: string;
 }
 
 const PostContent: React.FC<PostContentProps> = ({ imageUrl, caption }) => {
+  const hasCaption = caption && caption.trim().length > 0;
+  
   return (
-    <View style={styles.container}>
+    <View style={[
+      styles.container,
+      !hasCaption && styles.containerNoCaption
+    ]}>
       <Image
         source={{ uri: imageUrl }}
         style={styles.image}
       />
-      <Text style={styles.caption}>{caption}</Text>
+      {hasCaption && (
+        <Text style={styles.caption}>{caption}</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    gap: 7,
+    gap: 8,
+  },
+  containerNoCaption: {
+    gap: 0,
   },
   image: {
     width: "100%",
