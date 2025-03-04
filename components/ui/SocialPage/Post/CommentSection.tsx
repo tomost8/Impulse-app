@@ -1,0 +1,108 @@
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+
+interface Comment {
+  id: string;
+  username: string;
+  profilePicture?: string;
+  text: string;
+  timestamp: string;
+}
+
+interface CommentSectionProps {
+  comments: Comment[];
+  onReply?: (commentId: string) => void;
+}
+
+const CommentSection: React.FC<CommentSectionProps> = ({ 
+  comments = [],
+  onReply 
+}) => {
+  return (
+    <ScrollView style={styles.container}>
+      {comments.map((comment) => (
+        <View key={comment.id} style={styles.commentContainer}>
+          <View style={styles.commentHeader}>
+            <View style={styles.userInfo}>
+              <Image
+                source={comment.profilePicture ? { uri: comment.profilePicture } : require("@/assets/images/andrew.png")}
+                style={styles.profilePicture}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.username}>{comment.username}</Text>
+                <Text style={styles.commentText}>{comment.text}</Text>
+              </View>
+            </View>
+            <Text style={styles.timestamp}>{comment.timestamp}</Text>
+          </View>
+          <TouchableOpacity 
+            style={styles.replyButton}
+            onPress={() => onReply?.(comment.id)}
+          >
+            <Text style={styles.replyText}>Reply</Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  commentContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  userInfo: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 8,
+  },
+  profilePicture: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  username: {
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#242020',
+    marginBottom: 4,
+  },
+  commentText: {
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+    lineHeight: 17,
+  },
+  timestamp: {
+    fontSize: 10,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+    marginLeft: 8,
+  },
+  replyButton: {
+    alignSelf: 'flex-start',
+    marginLeft: 40,
+  },
+  replyText: {
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+  },
+});
+
+export default CommentSection;

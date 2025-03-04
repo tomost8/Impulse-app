@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { View, Text, Image, StyleSheet } from 'react-native';
 
 interface HeaderProps {
   username?: string;
@@ -15,29 +14,16 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.backButton}
-        onPress={() => router.back()}
-      >
-        <Image 
-          source={require("@/assets/icons/backArrow.png")}
-          style={styles.backIcon}
-        />
-      </TouchableOpacity>
-
       <View style={styles.userInfo}>
-        <View style={styles.profileImageContainer}>
+        <View style={styles.profileContainer}>
           <Image 
             source={profileImage ? { uri: profileImage } : require("@/assets/images/andrew.png")}
-            style={styles.profileImage}
+            style={styles.profilePicture}
           />
         </View>
-        
-        <View style={styles.textContainer}>
-          <Text style={styles.username}>{username}</Text>
-          <Text style={styles.timeAgo}>{timeAgo}</Text>
-        </View>
+        <Text style={styles.username}>{username}</Text>
       </View>
+      <Text style={styles.timeAgo}>{timeAgo}</Text>
     </View>
   );
 };
@@ -46,36 +32,31 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#F8F8F8',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E1E1E1',
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 12,
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    gap: 12,
   },
-  profileImageContainer: {
-    marginRight: 12,
+  profileContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F5F5F5',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  profileImage: {
-    width: 29,
-    height: 29,
-    borderRadius: 14.5,
-  },
-  textContainer: {
-    flex: 1,
+  profilePicture: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 16,
   },
   username: {
     fontSize: 14,
@@ -84,10 +65,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   timeAgo: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Open Sans',
     color: '#979797',
-    fontWeight: '400',
   },
 });
 

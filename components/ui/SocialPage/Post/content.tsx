@@ -1,46 +1,51 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-interface ContentProps {
+interface PostContentProps {
+  imageUrl?: string;
   caption?: string;
-  image?: string;
 }
 
-const Content: React.FC<ContentProps> = ({ 
-  caption = "Lorem ipsum dolor sit amet consectetur. Ultricies diam aenean vestibulum sit nam quis quis dolor eu.",
-  image 
-}) => {
+const PostContent: React.FC<PostContentProps> = ({ imageUrl, caption }) => {
+  const hasCaption = caption && caption.trim().length > 0;
+  
   return (
-    <View style={styles.container}>
-      <Image 
-        source={image ? { uri: image } : require("@/assets/images/feedpost.png")}
+    <View style={[
+      styles.container,
+      !hasCaption && styles.containerNoCaption
+    ]}>
+      <Image
+        source={typeof imageUrl === 'string' ? { uri: imageUrl } : imageUrl}
         style={styles.image}
+        resizeMode="cover"
       />
-      <Text style={styles.caption}>{caption}</Text>
+      {hasCaption && (
+        <Text style={styles.caption}>{caption}</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 14,
-    alignSelf: 'stretch',
+    gap: 8,
+  },
+  containerNoCaption: {
+    gap: 0,
   },
   image: {
-    width: 390,
-    height: 601,
-    resizeMode: 'cover',
+    width: "100%",
+    height: 472, // Adjusted height to match Figma specs
+    borderRadius: 5,
   },
   caption: {
-    paddingHorizontal: 16,
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#000000',
-    alignSelf: 'stretch',
+    fontSize: 12,
+    fontFamily: "Lato",
+    color: "#5E6676",
+    lineHeight: 17,
+    paddingLeft: 13,
+    paddingBottom: 10,
   },
 });
 
-export default Content;
+export default PostContent;

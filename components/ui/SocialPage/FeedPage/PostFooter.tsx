@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     paddingRight: 0,
+    paddingTop: 8,
   },
   userInfo: {
     flexDirection: "row",
