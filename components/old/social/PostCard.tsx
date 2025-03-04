@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router } from 'expo-router';
 import styles from '@/utils/testStyles';
-import { useUserPreferences } from '@/services/UserPreferencesContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 import { getTimeAgo, convertUtcToLocal } from '@/utils/timezoneProcessing';
 
 
@@ -41,7 +41,7 @@ export default function PostCard({
   communityId,
   communityName,
 }: PostCardProps) {
-  const { timezone } = useUserPreferences();
+  const { timezone } = useUserData();
   return (
     <View key={post.id} style={styles.section}>
       <TouchableOpacity onPress={() => router.push({

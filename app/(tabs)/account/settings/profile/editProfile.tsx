@@ -2,42 +2,65 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
-import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfileScreen';
-import EditProfileScreenOld from '@/components/old/account/EditProfileScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
 
-const EditProfilePage = (props: any) => {
-  const { userId, authToken } = props;
-  const [renderCounter, setRenderCounter] = useState(0);
+const EditProfilePage = () => {
+  const { userId, authToken } = useUserInfo();
+  const { fetching, user } = useUserData();
 
-  // Queries for Loading State
-  const userRef = useRef<any | null>(null);
-  const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
-
+  // Form Data
+  const [formData, setFormData] = useState({
+    email: '',
+    first_name: '',
+    last_name: '',
+    username: '',
+    age: '',
+    gender: '',
+    profile_picture: '',
+    timezone: '',
+    bio: '',
+    primary_goal: '',
+    secondary_goal: '',
+  });
+  
   useEffect(() => {
-    if (!hasNewUserData) {
-      return;
+    if (user) {
+      setFormData({
+        profile_picture: user.profile_picture || '',
+        email: user.email || '',
+        first_name: user.first_name || '',
+        last_name: user.last_name || '',
+        username: user.username || '',
+        age: user.age || '',
+        gender: user.gender || '',
+        timezone: user.timezone || '',
+        bio: user.bio || '',
+        primary_goal: user.primary_goal || '',
+        secondary_goal: user.secondary_goal || '',
+      });
     }
-    if (hasNewUserData) {
-      userRef.current = user;
-      initializeFormData();
-      hasFetchedUser.current = true;
-    }
-    if (hasFetchedUser.current) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [hasNewUserData]);
+  }, [user]);
+
+  const handleFormDataChange = (field: string, value: string) => {
+    setFormData((formData) => ({
+      ...formData,
+      [field]: value,
+    }));
+  };
 
   // Mutations
   const { updateUser } = useUpdateUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleFormSubmit = async (input: any) => {
     setIsSubmitting(true);
     try {
@@ -57,7 +80,7 @@ const EditProfilePage = (props: any) => {
       );
       // TODO: handle the case where secondary_goal is '' because the user wants no goal, has to be on backend side i think
       console.log('Form Data:', formData, '\nInput:', input);
-      const response = await updateUser(input, authToken);
+      const response = await updateUser(input, authToken as string);
       if (response.success) {
         console.log('User Profile Updated', response.user);
       } else {
@@ -69,76 +92,24 @@ const EditProfilePage = (props: any) => {
       setIsSubmitting(false);
     }
   };
-  
-  // Form Data
-  const [formData, setFormData] = useState({
-    email: '',
-    first_name: '',
-    last_name: '',
-    username: '',
-    age: '',
-    gender: '',
-    profile_picture: '',
-    timezone: '',
-    bio: '',
-    primary_goal: '',
-    secondary_goal: '',
-  });
-
-  const handleFormDataChange = (field: string, value: string) => {
-    setFormData((formData) => ({
-      ...formData,
-      [field]: value,
-    }));
-  };
-
-  const initializeFormData = () => {
-    setFormData({
-      profile_picture: userRef.current.profile_picture || '',
-      email: userRef.current.email || '',
-      first_name: userRef.current.first_name || '',
-      last_name: userRef.current.last_name || '',
-      username: userRef.current.username || '',
-      age: userRef.current.age || '',
-      gender: userRef.current.gender || '',
-      timezone: userRef.current.timezone || '',
-      bio: userRef.current.bio || '',
-      primary_goal: userRef.current.primary_goal || '',
-      secondary_goal: userRef.current.secondary_goal || '',
-    });
-  };
 
   // Debug
   const loading = isSubmitting;
   if (debugRenders && !loading) {
     console.log("Rendering EditProfilePage\n",
-      "User:", userRef.current, "\n",
-      "Render Counter:", renderCounter, "\n",
+      "User:", user, "\n",
       "Form Data:", formData, "\n",
     );
   }
 
-  if (pageDisplay) {
-    return (
-      <ProfileScreen
-        formData={formData}
-        handleFormDataChange={handleFormDataChange}
-        handleFormSubmit={handleFormSubmit}
-        isSubmitting={isSubmitting}
-      />
-    );
-  } else {
-    return (
-      <EditProfileScreenOld
-        user={userRef.current}
-        isUserLoading={!hasFetchedUser.current}
-        formData={formData}
-        handleFormDataChange={handleFormDataChange}
-        handleFormSubmit={handleFormSubmit}
-        isSubmitting={isSubmitting}
-      />
-    );
-  }
+  return (
+    <ProfileScreen
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      handleFormSubmit={handleFormSubmit}
+      isSubmitting={isSubmitting}
+    />
+  );
 }
 
 export default AuthWrapper(EditProfilePage);

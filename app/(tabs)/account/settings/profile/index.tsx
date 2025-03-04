@@ -1,55 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-// GraphQL hooks
-import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/ProfileScreen';
-import _ProfileScreen from '@/components/old/account/ProfileScreen';
 // Debug
-import { debugRenders, pageDisplay } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserData } from '@/services/UserPreferencesContext';
 
-const ProfilePage = (props: any) => {
-  const { userId, authToken } = props;
-  const [renderCounter, setRenderCounter] = useState(0);
-
-  const userRef = useRef<any | null>(null);
-  const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(userId as number, !hasFetchedUser.current);
-
-  // Queries for Loading State
-  useEffect(() => {
-    if (!hasNewUserData) {
-      return;
-    }
-    if (hasNewUserData) {
-      userRef.current = user;
-      hasFetchedUser.current = true;
-    }
-    if (hasFetchedUser.current) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [hasNewUserData]);
+const ProfilePage = () => {
+  const { fetching, user } = useUserData();
 
   // Debug
-  const loading = !hasFetchedUser.current;
-  if (debugRenders && !loading) {
+  if (debugRenders && !fetching) {
     console.log("Rendering ProfilePage\n",
-      "User:", userRef.current, "\n",
-      "Render Counter:", renderCounter, "\n",
+      "User:", user,
     );
   }
   
-  if (pageDisplay) {
-    return <ProfileScreen
-      user={userRef.current}
-      isUserLoading={!hasFetchedUser.current}
-    />
-  } else {
-    return <_ProfileScreen
-      user={userRef.current}
-      isUserLoading={!hasFetchedUser.current}
-    />
-  }
+  return <ProfileScreen
+    user={user}
+    isUserLoading={fetching}
+  />
+  
 }
 
 export default AuthWrapper(ProfilePage);

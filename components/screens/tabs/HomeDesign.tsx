@@ -7,7 +7,7 @@ import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
 
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";
-import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { useUserData } from "@/services/UserPreferencesContext";
 
 
 interface HomeDesignProps {

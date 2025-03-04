@@ -5,7 +5,7 @@ import AddActivityCard from "@/components/ui/common/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
 import { goals, getCategoryById } from "@/utils/goals";
 import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
-import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { useUserData } from "@/services/UserPreferencesContext";
 import { convertLocalToUtc } from "@/utils/timezoneProcessing";
 
 interface GoalFormData {
@@ -21,7 +21,7 @@ interface AddDailyGoalsScreenProps {
 }
 
 const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScreenProps) => {
-  const {timezone, loading: timezoneLoading} = useUserPreferences();
+  const {timezone, loading: timezoneLoading} = useUserData();
   
   const { createActivity } = useCreateActivity();
   const [selectedGoals, setSelectedGoals] = useState<number[]>([]);

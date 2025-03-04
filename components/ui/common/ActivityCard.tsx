@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 
-import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { useUserData } from "@/services/UserPreferencesContext";
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 // Props for reusability
@@ -22,7 +22,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
   description,
 }) => {
   const defaultIcon = require("@/assets/icons/riseshine.png");
-  const { timezone, loading } = useUserPreferences();
+  const { timezone, loading } = useUserData();
   return (
     <View style={styles.container}>
       {/* Icon */}

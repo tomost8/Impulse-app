@@ -8,7 +8,7 @@ import { client } from '../services/client';
 import { PaperProvider } from 'react-native-paper';
 import { UserProvider } from '@/services/UserContext';
 import { useColorScheme } from 'react-native';
-import { UserPreferencesProvider } from '@/services/UserPreferencesContext';
+import { UserDataProvider } from '@/services/UserPreferencesContext';
 import { InitialDataLoader } from '@/components/InitialDataLoader';
 import { useEffect } from 'react';
 
@@ -27,7 +27,7 @@ export default function RootLayout() {
   return (
     <ApolloProvider client={client}>
       <UserProvider>
-        <UserPreferencesProvider>
+        <UserDataProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <PaperProvider>
               <Stack>
@@ -47,7 +47,7 @@ export default function RootLayout() {
               </InitialDataLoader>
             </PaperProvider>
           </ThemeProvider>
-        </UserPreferencesProvider>
+        </UserDataProvider>
       </UserProvider>
     </ApolloProvider>
   );

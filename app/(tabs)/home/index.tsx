@@ -11,11 +11,11 @@ import { pageDisplay, debugRenders } from '@/utils/debug';
 
 // Services
 import { useUserInfo } from '@/services/UserContext';
-import { useUserPreferences } from '@/services/UserPreferencesContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 const HomePage = () => {
   const { userId, authToken } = useUserInfo();
-  const { timezone, cameraClickable } = useUserPreferences();
+  const { timezone, cameraClickable } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const friendsRef = useRef<any | null>(null);

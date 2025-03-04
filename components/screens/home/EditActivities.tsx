@@ -13,7 +13,7 @@ import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
 import { router } from "expo-router";
 import { useUpdateActivity } from "@/hooks/graphql/activities/mutations";
-import { useUserPreferences } from "@/services/UserPreferencesContext";
+import { useUserData } from "@/services/UserPreferencesContext";
 import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
 import EditActivityCard from "@/components/ui/common/EditActivityCard";
 
@@ -31,7 +31,7 @@ interface DailyGoalsScreenProps {
   
 const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading, authToken }) => {
   const { updateActivity } = useUpdateActivity();
-  const { timezone, loading: timezoneLoading } = useUserPreferences();
+  const { timezone, loading: timezoneLoading } = useUserData();
   const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
   const [goalFormData, setGoalFormData] = useState<GoalFormData>({
     startTime: '',

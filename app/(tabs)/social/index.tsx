@@ -9,12 +9,12 @@ import SocialScreen from '@/components/screens/tabs/SocialScreen';
 import SocialScreenOld from '@/components/old/social/SocialScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
-import { useUserPreferences } from '@/services/UserPreferencesContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const SocialPage = (props: any) => {
   const { userId, authToken} = props;
-  const { timezone } = useUserPreferences();
+  const { timezone } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State

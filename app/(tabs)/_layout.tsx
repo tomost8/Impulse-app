@@ -8,13 +8,13 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { debugRouting } from '@/utils/debug';
-import { useUserPreferences } from '@/services/UserPreferencesContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
   const pathname = usePathname();
 
-  const {cameraClickable} = useUserPreferences();
+  const {cameraClickable} = useUserData();
 
   // Add debug logging
   if (debugRouting) {
