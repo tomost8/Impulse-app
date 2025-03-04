@@ -4,7 +4,7 @@ import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
 import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
-
+import { router } from "expo-router";
 const exploreIcon = require("@/assets/icons/explore.png");
 
 interface SocialScreenProps {
@@ -70,7 +70,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         {/* Header + Explore Button */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Feed</Text>
-          <TouchableOpacity onPress={() => console.log('Explore pressed')}>
+          <TouchableOpacity onPress={() => router.push('/social/explore')}>
             <Image source={exploreIcon} style={styles.exploreIcon} />
           </TouchableOpacity>
         </View>
