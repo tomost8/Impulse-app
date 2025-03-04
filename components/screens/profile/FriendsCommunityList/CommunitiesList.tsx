@@ -10,6 +10,8 @@ import {
 } from "react-native";
 
 const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoading: boolean }) => {
+  const [searchText, setSearchText] = React.useState("");
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -17,10 +19,16 @@ const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoa
       </View>
     );
   }
-  console.log("Communities:", communities);
+
+  const filteredCommunities = communities.filter(community => 
+    searchText === "" || 
+    community.community.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
-    <View style={styles.container} accessibilityRole="main">
+    <View style={styles.container} 
+    //accessibilityRole="main"
+    >
       <View style={styles.header}>
         <Text style={styles.time} accessibilityRole="text">
           9:41
@@ -32,7 +40,7 @@ const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoa
             accessibilityLabel="Back arrow"
             resizeMode="contain"
             source={{
-              uri: "URL",
+              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
             }}
             style={styles.backArrow}
           />
@@ -54,9 +62,11 @@ const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoa
               style={styles.searchInput}
               placeholder="Search communities"
               accessibilityLabel="Search communities"
+              value={searchText}
+              onChangeText={setSearchText}
             />
           </View>
-          {communities.map((community) => (
+          {filteredCommunities.map((community) => (
             <View key={community.community.id} style={styles.communityItem}>
               <Image
                 accessibilityLabel={`${community.community.name} community icon`}

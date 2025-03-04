@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     paddingTop: 11,
     paddingHorizontal: 16,
+    backgroundColor: "#FFFFFF",
   },
   statusBar: {
     alignItems: "center",

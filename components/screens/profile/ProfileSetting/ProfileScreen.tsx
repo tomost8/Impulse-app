@@ -48,14 +48,18 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
           9:41
         </Text>
         <View style={styles.titleContainer}>
-          <Image
-            accessibilityLabel="Back arrow"
-            resizeMode="contain"
-            source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
-            }}
+          <TouchableOpacity
+            onPress={() => router.back()}
+          >
+            <Image
+              accessibilityLabel="Back arrow"
+              resizeMode="contain"
+              source={{
+                uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
+              }}
             style={styles.backArrow}
           />
+          </TouchableOpacity>
           <Text style={styles.title}>Profile</Text>
         </View>
       </View>

@@ -14,7 +14,7 @@ export default function SettingsLayout() {
       />    
       <Stack.Screen 
         name="profile" 
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen 
         name="notifications" 

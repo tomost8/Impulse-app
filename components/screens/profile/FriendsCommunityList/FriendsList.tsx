@@ -10,6 +10,8 @@ import {
 } from "react-native";
 
 const FriendsList = ({ friends, isLoading }: { friends: any[], isLoading: boolean }) => {
+  const [searchText, setSearchText] = useState("");
+
   if (isLoading) {
     return (
       <View style={styles.container}>
@@ -17,7 +19,11 @@ const FriendsList = ({ friends, isLoading }: { friends: any[], isLoading: boolea
       </View>
     );
   }
-  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredFriends = friends.filter(friend =>
+    searchText === "" ||
+    friend.friend.username.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   console.log("Friends:", friends);
 
@@ -35,7 +41,7 @@ const FriendsList = ({ friends, isLoading }: { friends: any[], isLoading: boolea
         <View style={styles.titleContainer}>
           <Image
             source={{
-              uri: "URI",
+              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
             }}
             style={styles.backIcon}
             accessibilityLabel="Back button"
@@ -53,13 +59,13 @@ const FriendsList = ({ friends, isLoading }: { friends: any[], isLoading: boolea
           <TextInput
             style={styles.searchInput}
             placeholder="Search username"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
+            value={searchText}
+            onChangeText={setSearchText}
             accessibilityLabel="Search username input"
           />
         </View>
         <ScrollView style={styles.friendsList}>
-          {friends.map((friend) => (
+          {filteredFriends.map((friend) => (
             <View key={friend.friend.id} style={styles.friendItem}>
               <Image
                 source={{

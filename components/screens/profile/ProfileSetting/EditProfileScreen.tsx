@@ -15,6 +15,7 @@ import { GENDER_OPTIONS, GOAL_OPTIONS } from "@/utils/userOptions";
 import { getLabelByCategory } from "@/utils/goals";
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { pickImage } from "@/utils/imageProcessing";
+import { router } from "expo-router";
 
 interface ProfileScreenProps {
   formData: any;
@@ -37,6 +38,7 @@ const ProfileScreen = ({ formData, handleFormDataChange, handleFormSubmit, isSub
     >
       <View style={styles.header}>
         <TouchableOpacity
+          onPress={() => router.back()}
           accessibilityRole="button"
           accessibilityLabel="Go back"
         >

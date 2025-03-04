@@ -46,7 +46,7 @@ const HomePage = () => {
 
   return <HomeScreen  
     isLoading={fetching}
-    name={user.first_name}
+    name={user?.first_name}
     friends={friends} 
     activities={activities}
   />;

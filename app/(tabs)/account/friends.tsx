@@ -11,6 +11,7 @@ import FriendsList from '@/components/screens/profile/FriendsCommunityList/Frien
 import { debugRenders, pageDisplay } from '@/utils/debug';
 // Services
 import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 function FriendScreen({ 
   friends, 
@@ -41,49 +42,14 @@ function FriendScreen({
 }
 
 const FriendsPage = () => {
-  const { userId, authToken } = useUserInfo();
-  const [renderCounter, setRenderCounter] = useState(0);
+  const { fetching, friends } = useUserData();
 
-  const friendsRef = useRef<any | null>(null);
-  const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
-
-  useEffect(() => {
-    if (!hasNewFriendsData) {
-      return;
-    }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
-    }
-    if (hasFetchedFriends.current) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [hasNewFriendsData]); 
-
-  const loading = !hasFetchedFriends.current;
-  if (debugRenders && !loading) {
-    console.log("Rendering FriendsPage\n",
-      "Friends:", friendsRef.current, "\n",
-      "Render Counter:", renderCounter
-    );
-  }
-
-  if (pageDisplay) {
-    return (
-      <FriendsList 
-        friends={friendsRef.current} 
-        isLoading={!hasFetchedFriends.current} 
-      />
-    );
-  } else {
-    return (
-      <FriendScreen 
-        friends={friendsRef.current} 
-        isFriendsLoading={!hasFetchedFriends.current} 
-      />
-    );
-  }
+  return (
+    <FriendsList 
+      friends={friends} 
+      isLoading={fetching} 
+    />
+  );
 }
 
 export default AuthWrapper(FriendsPage);

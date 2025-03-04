@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     marginLeft: "auto",
     marginRight: "auto",
     overflow: "hidden",
+    backgroundColor: "#FFFFFF",
   },
   statusBar: {
     paddingTop: 11,
