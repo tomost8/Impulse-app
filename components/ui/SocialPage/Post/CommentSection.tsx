@@ -1,12 +1,15 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { getTimeAgo } from '@/utils/timezoneProcessing';
 
 interface Comment {
-  id: string;
-  username: string;
-  profilePicture?: string;
-  text: string;
-  timestamp: string;
+  id: number;
+  user: {
+    username: string;
+    profile_picture: string;
+  };
+  content: string;
+  created_at: string;
 }
 
 interface CommentSectionProps {
@@ -25,19 +28,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({
           <View style={styles.commentHeader}>
             <View style={styles.userInfo}>
               <Image
-                source={comment.profilePicture ? { uri: comment.profilePicture } : require("@/assets/images/andrew.png")}
+                source={comment.user.profile_picture ? { uri: comment.user.profile_picture } : require("@/assets/images/andrew.png")}
                 style={styles.profilePicture}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.username}>{comment.username}</Text>
-                <Text style={styles.commentText}>{comment.text}</Text>
+                <Text style={styles.username}>{comment.user.username}</Text>
+                <Text style={styles.commentText}>{comment.content}</Text>
               </View>
             </View>
-            <Text style={styles.timestamp}>{comment.timestamp}</Text>
+            <Text style={styles.timestamp}>{getTimeAgo(comment.created_at)}</Text>
           </View>
           <TouchableOpacity 
             style={styles.replyButton}
-            onPress={() => onReply?.(comment.id)}
+            onPress={() => onReply?.(comment.id.toString())}
           >
             <Text style={styles.replyText}>Reply</Text>
           </TouchableOpacity>

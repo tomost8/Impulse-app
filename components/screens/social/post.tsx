@@ -6,42 +6,33 @@ import Content from '@/components/ui/SocialPage/Post/content';
 import CommentInput from '@/components/ui/SocialPage/Post/CommentInput';
 import CommentSection from '@/components/ui/SocialPage/Post/CommentSection';
 import Reply from '@/components/ui/SocialPage/Post/reply';
+import { getTimeAgo } from '@/utils/timezoneProcessing';
 
-const PostScreen = () => {
+interface PostScreenProps {
+  post: any;
+  comments: any[];
+  loading: boolean;
+  createComment: (comment: string, parentCommentId?: number) => void;
+}
+
+const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps) => {
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+  console.log('PostScreen', post, comments);
   const params = useLocalSearchParams();
   const [showReply, setShowReply] = useState(false);
   const [selectedComment, setSelectedComment] = useState<any>(null);
-  
-  // Sample data for testing
-  const samplePost = {
-    username: "User K",
-    timeAgo: "18 minutes ago",
-    profileImage: require("@/assets/images/andrew.png"),
-    caption: "Lorem ipsum dolor sit amet consectetur. Ultricies diam aenean vestibulum sit nam quis quis dolor eu.",
-    image: require("@/assets/images/feedpost.png"),
-    likes: 67,
-    comments: 10,
-  };
-
-  const sampleComments = [
-    {
-      id: '1',
-      username: 'donastro',
-      text: 'Wow amazing photo 😉',
-      timestamp: '5:10:55 PM'
-    },
-    {
-      id: '2',
-      username: 'johndoe',
-      text: 'Great shot!',
-      timestamp: '5:15:20 PM'
-    }
-  ];
 
   const handleReply = (commentId: string) => {
-    const comment = sampleComments.find(c => c.id === commentId);
+    const comment = comments.find(c => c.id.toString() === commentId);
     setSelectedComment(comment);
     setShowReply(true);
+    console.log('Setting selected comment:', selectedComment);
   };
 
   const handleCommentSubmit = (comment: string) => {
@@ -53,6 +44,7 @@ const PostScreen = () => {
       setSelectedComment(null);
     }
     // Handle comment submission
+    createComment(comment, selectedComment?.id);
   };
 
   return (
@@ -74,20 +66,20 @@ const PostScreen = () => {
       <ScrollView style={styles.scrollContainer}>
         {/* Post Header */}
         <Header
-          username={samplePost.username}
-          timeAgo={samplePost.timeAgo}
-          profileImage={samplePost.profileImage}
+          username={post.author.username}
+          timeAgo={getTimeAgo(post.created_at)}
+          profileImage={post.author.profile_picture}
         />
 
         {/* Post Content */}
         <Content
-          caption={samplePost.caption}
-          imageUrl={samplePost.image}
+          caption={post.caption}
+          imageUrl={post.mediaUrl}
         />
 
         {/* Comments Section */}
         <CommentSection
-          comments={sampleComments}
+          comments={comments}
           onReply={handleReply}
         />
       </ScrollView>
@@ -100,9 +92,10 @@ const PostScreen = () => {
         {/* Reply Section (if active) */}
         {showReply && selectedComment && (
           <Reply
-            username={selectedComment.username}
-            timestamp={selectedComment.timestamp}
-            comment={selectedComment.text}
+            profileImage={selectedComment.user.profile_picture}
+            username={selectedComment.user.username}
+            timestamp={getTimeAgo(selectedComment.created_at)}
+            comment={selectedComment.content}
             onClose={() => {
               setShowReply(false);
               setSelectedComment(null);

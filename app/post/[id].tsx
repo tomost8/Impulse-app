@@ -126,7 +126,7 @@ const PostPage = (props: any) => {
   const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
 
   // Debug
-  const loading = !hasFetchedPost.current;
+  const loading = !hasFetchedPost.current || !hasFetchedComments.current;
   if (debugRenders && !loading) {
     console.log("Rendering PostPage\n",
       "Post:", postRef.current, "\n",
@@ -138,23 +138,10 @@ const PostPage = (props: any) => {
   if (pageDisplay) {
     return (
       <PostScreen
-        postRef={postRef}
-        commentsRef={commentsRef}
-        isCommentBoxVisible={isCommentBoxVisible} 
-        commentText={commentText}
-        setCommentText={setCommentText}
-        isHandlingCreateComment={isHandlingCreateComment}
-        handleCreateComment={handleCreateComment}
-        setIsCommentBoxVisible={setIsCommentBoxVisible}
-        replyingToCommentId={replyingToCommentId} 
-        setReplyingToCommentId={setReplyingToCommentId}
-        replyText={replyText}
-        setReplyText={setReplyText}
-        updatePostLikeState={updatePostLikeState}
-        handleLikePost={handleLikePost}
-        handleUnlikePost={handleUnlikePost} 
-        isHandlingLike={isHandlingLike}
-        isHandlingUnlike={isHandlingUnlike}
+        loading={loading}
+        post={postRef.current}
+        comments={commentsRef.current}
+        createComment={handleCreateComment}
       />
     );
   } else {

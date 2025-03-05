@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 interface ReplyProps {
+  profileImage: string;
   username: string;
   timestamp: string;
   comment: string;
@@ -9,9 +10,10 @@ interface ReplyProps {
 }
 
 const Reply: React.FC<ReplyProps> = ({
-  username = "donastros",
-  timestamp = "5:10:55 PM",
-  comment = "Wow amazing photo 😉",
+  profileImage,
+  username,
+  timestamp,
+  comment,
   onClose
 }) => {
   return (
@@ -30,7 +32,7 @@ const Reply: React.FC<ReplyProps> = ({
         <View style={styles.commentHeader}>
           <View style={styles.userInfo}>
             <Image
-              source={require("@/assets/images/andrew.png")}
+              source={{uri: profileImage}}
               style={styles.profilePicture}
             />
             <View style={styles.textContainer}>

@@ -137,6 +137,7 @@ const GET_POST = gql`
           profile_picture
           first_name
           last_name
+          username
         }
         created_at
         expires_at
