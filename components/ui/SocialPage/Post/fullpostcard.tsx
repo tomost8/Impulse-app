@@ -25,7 +25,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
       />
       <Content 
         caption={post.caption}
-        image={post.image}
+        imageUrl={post.image}
       />
       <View style={styles.interactionContainer}>
         <View style={styles.interactionGroup}>

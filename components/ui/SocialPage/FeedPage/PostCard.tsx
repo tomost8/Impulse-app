@@ -39,7 +39,8 @@ const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
     <TouchableOpacity 
       style={[
         styles.container,
-        !hasCaption && styles.containerNoCaption
+        !hasCaption && styles.containerNoCaption,
+        { paddingBottom: showCommunityTag ? 3 : 0 }
       ]}
       onPress={handlePostPress}
       activeOpacity={0.7}
@@ -78,14 +79,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 5,
     padding: 7,
-    paddingBottom: 3,
-    gap: 8,
+    gap: 4,
     display: "flex",
     flexDirection: "column",
   },
   containerNoCaption: {
     gap: 0,
-    paddingBottom: 0,
   },
   communityTag: {
     backgroundColor: '#FFF',
@@ -95,12 +94,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     alignSelf: 'flex-start',
-    marginTop: 10,
-    marginBottom: 6,
+    marginTop: 0,
+    marginBottom: 0,
   },
   communityTagNoCaption: {
-    marginTop: 8,
-    marginBottom: 1,
+    marginTop: 4,
+    marginBottom: 0,
   },
   communityTagText: {
     color: '#DE728D',
