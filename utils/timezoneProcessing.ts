@@ -60,6 +60,13 @@ export const convertLocalToUtc = (timeStr: string, timezone: string): string => 
   return localDateTime.utc().format();
 };
 
+// Returns YYYY-MM-DD format
+export const getLocalDay = (utcTimestamp: string, timezone: string) => {
+  return moment.utc(utcTimestamp)
+    .tz(timezone)
+    .format('YYYY-MM-DD');
+};
+
 export const getTimeAgo = (utcTimestamp: string) => {
   return moment.utc(utcTimestamp).fromNow();
 };

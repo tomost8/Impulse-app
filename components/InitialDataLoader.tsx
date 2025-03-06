@@ -9,6 +9,8 @@ import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 
+import { getLocalDay } from '@/utils/timezoneProcessing';
+
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId, authToken } = useUserInfo();
   const { setFetching, debugLog,
@@ -27,8 +29,8 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
-  const currentDate = useRef(new Date().toISOString().split('T')[0]).current;
-  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate, authToken as string, !hasFetchedActivities.current && hasValidAuth);
+  const currentDate = useRef('');  // Initialize empty
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate.current, authToken as string, !hasFetchedActivities.current && hasValidAuth && currentDate.current !== '');
 
   const communitiesRef = useRef<any[] | null>(null);
   const hasFetchedCommunities = useRef(false);
@@ -80,6 +82,11 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       hasFetchedUser.current = true;
       setUser(user);
       setTimezone(user.timezone);    
+      
+      // Set current date after we have the user's timezone
+      currentDate.current = getLocalDay(new Date().toISOString(), user.timezone);
+      console.log("Current Date:", currentDate.current);
+      
       // Set default profile picture if it doesn't exist
       if (!user.profile_picture && !isUpdating) {
         setIsUpdating(true);
