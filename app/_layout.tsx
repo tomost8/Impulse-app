@@ -5,12 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/client';
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider, adaptNavigationTheme } from 'react-native-paper';
 import { UserProvider } from '@/services/UserContext';
 import { useColorScheme } from 'react-native';
 import { UserDataProvider } from '@/services/UserPreferencesContext';
 import { InitialDataLoader } from '@/components/InitialDataLoader';
 import { useEffect } from 'react';
+import { lightTheme, darkTheme } from './theme/theme';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -26,10 +27,10 @@ export default function RootLayout() {
 
   return (
     <ApolloProvider client={client}>
+    <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
       <UserProvider>
         <UserDataProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <PaperProvider>
               <Stack>
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -41,10 +42,10 @@ export default function RootLayout() {
               <InitialDataLoader>
                 <StatusBar style="auto" />
               </InitialDataLoader>
-            </PaperProvider>
           </ThemeProvider>
         </UserDataProvider>
-      </UserProvider>
+        </UserProvider>
+      </PaperProvider>
     </ApolloProvider>
   );
 }
