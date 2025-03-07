@@ -53,8 +53,8 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
+    paddingVertical: 10,
+    gap: 5,
   },
   categoryButton: {
     paddingHorizontal: 16,
