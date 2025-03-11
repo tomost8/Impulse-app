@@ -5,7 +5,7 @@ import Header from '@/components/ui/SocialPage/Communities/home/header';
 import About from '@/components/ui/SocialPage/Communities/home/about';
 import Announcement from '@/components/ui/SocialPage/Communities/home/announcement';
 import MembersList from '@/components/ui/SocialPage/Communities/home/memberslist';
-
+import { router } from 'expo-router';
 interface CommunityMainScreenProps {
   community: any;
   members: any[];
@@ -19,22 +19,17 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
 }) => {
   const handleLeaderboardPress = () => {
     // Handle leaderboard navigation
-    console.log('Navigate to leaderboard');
-  };
-
-  const handleEdit = () => {
-    // Handle community edit
-    console.log('Edit community');
+    router.push(`/community/${community?.id}/leaderboard`);
   };
 
   const handleViewAllAnnouncements = () => {
     // Handle view all announcements
-    console.log('View all announcements');
+    router.push(`/community/${community?.id}/announcements`);
   };
 
   const handleMakeAnnouncement = () => {
     // Handle make announcement
-    console.log('Make announcement');
+    router.push(`/community/${community?.id}/announcements`);
   };
 
   const handleViewProfile = (memberId: string) => {
