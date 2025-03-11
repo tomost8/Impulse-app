@@ -14,7 +14,7 @@ const { id } = useLocalSearchParams();
  const { userId, authToken } = props;
  console.log("communityId", id);
  return (
-  <LeaderboardScreen communityId={id as string} />
+  <LeaderboardScreen />
  );
 };
 
