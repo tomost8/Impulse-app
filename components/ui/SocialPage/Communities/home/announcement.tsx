@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 15,
+    fontSize: 14,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
@@ -77,9 +77,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   makeAnnouncementText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Open Sans',
     color: '#DE728D',
+    fontWeight: '600',
   },
 });
 

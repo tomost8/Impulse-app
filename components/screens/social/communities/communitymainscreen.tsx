@@ -6,7 +6,17 @@ import About from '@/components/ui/SocialPage/Communities/home/about';
 import Announcement from '@/components/ui/SocialPage/Communities/home/announcement';
 import MembersList from '@/components/ui/SocialPage/Communities/home/memberslist';
 
-const CommunityMainScreen = () => {
+interface CommunityMainScreenProps {
+  community: any;
+  members: any[];
+  isAdmin: boolean;
+}
+
+const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
+  community,
+  members,
+  isAdmin
+}) => {
   const handleLeaderboardPress = () => {
     // Handle leaderboard navigation
     console.log('Navigate to leaderboard');
@@ -37,9 +47,9 @@ const CommunityMainScreen = () => {
       <TopBar onLeaderboardPress={handleLeaderboardPress} />
       <ScrollView>
         <Header
-          name="Community Name"
-          memberCount={25}
-          onEdit={handleEdit}
+          name={community?.name || "Community Name"}
+          memberCount={members?.length || 25}
+          communityId={community?.id}
         />
         <About
           description="Lorem ipsum dolor sit amet consectetur. Arcu elit mi fringilla pharetra morbi eget ultrices cursus. Habitant ut eu sapien etiam. Tortor lorem eget tincidunt scelerisque."

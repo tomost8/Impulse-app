@@ -34,8 +34,8 @@ const TopBar: React.FC<TopBarProps> = ({ onLeaderboardPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 44,
-    backgroundColor: '#0066FF',
+    height: 65,
+    backgroundColor: '#E0EDFD',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -45,19 +45,19 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   backIcon: {
-    width: 24,
-    height: 24,
+    width: 18,
+    height: 18,
     resizeMode: 'contain',
-    tintColor: '#FFFFFF',
+    tintColor: '#242020',
   },
   leaderboardButton: {
     padding: 8,
   },
   leaderboardIcon: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
-    tintColor: '#FFFFFF',
+    tintColor: '#DE728D',
   },
 });
 

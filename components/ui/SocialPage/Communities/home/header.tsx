@@ -1,19 +1,26 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 
 interface HeaderProps {
   name: string;
   memberCount: number;
   profileImage?: string;
   onEdit?: () => void;
+  communityId: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
   name = "Community Name",
   memberCount = 25,
   profileImage,
-  onEdit
+  onEdit,
+  communityId
 }) => {
+  const handleEdit = () => {
+    router.push(`/community/${communityId}/editCommunity`);
+  };
+
   return (
     <View style={styles.container}>
       <Image
@@ -24,7 +31,7 @@ const Header: React.FC<HeaderProps> = ({
       <View style={styles.contentContainer}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>{name}</Text>
-          <TouchableOpacity onPress={onEdit}>
+          <TouchableOpacity onPress={handleEdit}>
             <Image 
               source={require("@/assets/icons/edit.png")}
               style={styles.editIcon}
@@ -58,7 +65,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
@@ -70,7 +77,7 @@ const styles = StyleSheet.create({
     tintColor: '#DE728D',
   },
   memberCount: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Open Sans',
     color: '#979797',
   },

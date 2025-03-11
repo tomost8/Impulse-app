@@ -59,10 +59,11 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 14,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
+    paddingLeft: 6,
   },
   membersList: {
     gap: 10,
@@ -71,9 +72,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#FFF2F5',
+    paddingVertical: 5,
+    paddingHorizontal: 5,
     borderRadius: 10,
   },
   memberInfo: {
@@ -82,15 +82,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   profileImage: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
     borderRadius: 24,
   },
   textContainer: {
     gap: 4,
   },
   name: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   viewProfileText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',

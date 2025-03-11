@@ -36,11 +36,11 @@ const About: React.FC<AboutProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingVertical: 15,
     gap: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 14,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#000000',
-    lineHeight: 21,
+    lineHeight: 20,
   },
   founderCard: {
     flexDirection: 'row',
@@ -60,22 +60,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   founderImage: {
-    width: 64,
-    height: 64,
+    width: 50,
+    height: 50,
     borderRadius: 32,
   },
   founderInfo: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
   founderName: {
-    fontSize: 16,
+    fontSize: 12,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
   },
   founderBio: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Open Sans',
     color: '#979797',
     lineHeight: 18,
