@@ -30,7 +30,9 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
+      <Text>Leaderboard</Text>
       {/* Top Bar */}
+      {/*
       <View style={styles.topBar}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -50,12 +52,17 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
           />
         </TouchableOpacity>
       </View>
+      */}
 
       {/* Podium Section */}
+      {/*
       <LeaderboardPodium users={topThree} />
+      */}
 
       {/* List Section */}
+      {/*
       <LeaderboardList users={remainingUsers} />
+      */}
     </SafeAreaView>
   );
 };
