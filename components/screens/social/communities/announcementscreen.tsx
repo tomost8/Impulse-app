@@ -63,6 +63,7 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
             placeholderTextColor="#979797"
             multiline
           />
+          {/*
           <TouchableOpacity 
             style={styles.sendButton}
             onPress={handleSend}
@@ -72,6 +73,7 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
               style={styles.sendIcon}
             />
           </TouchableOpacity>
+          */}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

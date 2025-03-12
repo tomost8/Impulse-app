@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 
 const Header = () => {
   const handleCreate = () => {
-    router.push('/(tabs)/social/communities/createCommunity');
+    router.push('/social/createCommunity');
   };
 
   return (

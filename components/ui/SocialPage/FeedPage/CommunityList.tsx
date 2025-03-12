@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { router } from 'expo-router';
 
 interface CommunityListProps {
   communities: any[];
@@ -16,7 +17,7 @@ const CommunityList: React.FC<CommunityListProps> = ({ communities }) => {
         <TouchableOpacity
           key={community.id}
           style={styles.communityItem}
-          onPress={() => console.log('Community pressed:', community.id)}
+          onPress={() => router.push(`/community/${community.id}`)}
         >
           <Image
             source={community.thumbnail}

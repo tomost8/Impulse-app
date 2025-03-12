@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({
   communityId
 }) => {
   const handleEdit = () => {
-    router.push(`/(tabs)/social/communities/${communityId}/editMembers`);
+    router.push(`/community/${communityId}/editCommunity`);
   };
 
   return (

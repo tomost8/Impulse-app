@@ -8,10 +8,11 @@ import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, TextInput, Image } from 'react-native';
 import { Checkbox } from 'react-native-paper';
 import { goals } from '@/utils/goals';
+import CreateCommunityScreen from '@/components/screens/social/communities/createcommunityscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function CreateCommunityScreen({
+function CreateCommunityScreenOld({
   handleCreateCommunity,
   isCreatingCommunity,
   formData,
@@ -151,14 +152,25 @@ const CreateCommunityPage = (props: any) => {
     console.log("Rendering CreateCommunityPage");
   }
 
-  return <CreateCommunityScreen
-    handleCreateCommunity={handleCreateCommunity}
-    isCreatingCommunity={isCreatingCommunity}
-    formData={formData}
-    handleFormDataChange={handleFormDataChange}
-    communityCategories={communityCategories}
-    handleCategoryChange={handleCategoryChange}
-  />;
+  if (pageDisplay) {
+    return <CreateCommunityScreen
+      handleCreateCommunity={handleCreateCommunity}
+      isCreatingCommunity={isCreatingCommunity}
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      communityCategories={communityCategories}
+      handleCategoryChange={handleCategoryChange}
+    />;
+  } else {
+    return <CreateCommunityScreenOld
+      handleCreateCommunity={handleCreateCommunity}
+      isCreatingCommunity={isCreatingCommunity}
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      communityCategories={communityCategories}
+      handleCategoryChange={handleCategoryChange}
+    />;
+  }
 };
 
 export default AuthWrapper(CreateCommunityPage);
