@@ -6,7 +6,6 @@ interface HeaderProps {
   name: string;
   memberCount: number;
   profileImage?: string;
-  onEdit?: () => void;
   communityId: string;
 }
 
@@ -14,11 +13,10 @@ const Header: React.FC<HeaderProps> = ({
   name = "Community Name",
   memberCount = 25,
   profileImage,
-  onEdit,
   communityId
 }) => {
   const handleEdit = () => {
-    router.push(`/community/${communityId}/editCommunity`);
+    router.push(`/(tabs)/social/communities/${communityId}/editMembers`);
   };
 
   return (

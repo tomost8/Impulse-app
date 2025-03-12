@@ -11,11 +11,12 @@ const ExploreScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  // Sample data - replace with real data later
-  const sampleCommunities = Array(6).fill({
+  // Updated sample data to include IDs
+  const sampleCommunities = Array(6).fill(null).map((_, index) => ({
+    id: index.toString(),
     name: "Hiking Adventures",
     memberCount: 25,
-  });
+  }));
 
   const handleSearch = (text: string) => {
     setSearchQuery(text);

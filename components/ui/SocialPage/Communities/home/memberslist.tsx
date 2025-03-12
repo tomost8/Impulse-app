@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   membersList: {
-    gap: 10,
+    gap: 6,
   },
   memberCard: {
     flexDirection: 'row',

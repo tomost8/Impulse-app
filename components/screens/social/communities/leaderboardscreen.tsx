@@ -21,6 +21,10 @@ const podiumUsers = [
 const friendsLeaderboard = [
   { rank: 4, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
   { rank: 5, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
+  { rank: 6, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
+  { rank: 7, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
+  { rank: 8, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
+  { rank: 9, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
 ];
 
 // Dummy Data for Global Leaderboard
@@ -50,10 +54,14 @@ const LeaderboardScreen: React.FC = () => {
           */}
   
           {/* Podium */}
-          <LeaderboardPodium podiumData={podiumUsers} />
+          <View style={styles.podiumContainer}>
+            <LeaderboardPodium podiumData={podiumUsers} />
+          </View>
   
           {/* Conditional Leaderboard List */}
-          <LeaderboardList users={friendsLeaderboard} />
+          <View style={styles.listContainer}>
+            <LeaderboardList users={friendsLeaderboard} />
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
@@ -65,7 +73,15 @@ const LeaderboardScreen: React.FC = () => {
       backgroundColor: "#F8F8F8",
     },
     scrollContent: {
-      paddingBottom: 20, // Prevents cutoff
+      flexGrow: 1,
+    },
+    podiumContainer: {
+      paddingHorizontal: 10, // Reduced horizontal padding
+      marginTop: 20,
+    },
+    listContainer: {
+      paddingHorizontal: 5, // Reduced horizontal padding
+      marginTop: 20,
     },
     headerContainer: {
         flexDirection: "row",

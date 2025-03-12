@@ -7,7 +7,9 @@ import {
   TextInput,
   StyleSheet, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -76,111 +78,119 @@ const EditCommunityScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {/* Top Bar */}
-        <View style={styles.topBar}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Top Bar */}
+          <View style={styles.topBar}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={handleBack}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.pageTitle}>Manage</Text>
+            <Text style={styles.editText}>Edit Members</Text>
+          </View>
+
+          {/* Profile Image Section */}
           <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleBack}
+            style={styles.profileImageContainer}
+            onPress={handleImagePick}
           >
-            <Image 
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
+            <Image
+              source={profileImage ? { uri: profileImage } : require("@/assets/images/communityprofile.png")}
+              style={styles.profileImage}
             />
           </TouchableOpacity>
-          <Text style={styles.pageTitle}>Manage</Text>
-          <Text style={styles.editText}>Edit Members</Text>
-        </View>
 
-        {/* Profile Image Section */}
-        <TouchableOpacity 
-          style={styles.profileImageContainer}
-          onPress={handleImagePick}
-        >
-          <Image
-            source={profileImage ? { uri: profileImage } : require("@/assets/images/communityprofile.png")}
-            style={styles.profileImage}
-          />
-        </TouchableOpacity>
-
-        {/* Community Name Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Community Name</Text>
-          <TextInput
-            style={styles.textInput}
-            value={communityName}
-            onChangeText={setCommunityName}
-            placeholder="Enter community name"
-            placeholderTextColor="#979797"
-          />
-        </View>
-
-        {/* Description Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Description (optional)</Text>
-          <TextInput
-            style={[styles.textInput, styles.descriptionInput]}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Add a description for your community"
-            placeholderTextColor="#979797"
-            multiline
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-        </View>
-
-        {/* Goal Category Selection */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Goal Category Selection</Text>
-          <View style={styles.categoriesGrid}>
-            {CATEGORIES.map((category) => (
-              <TouchableOpacity
-                key={category.id}
-                style={[
-                  styles.categoryButton,
-                  selectedCategories.includes(category.id) && styles.selectedCategory
-                ]}
-                onPress={() => toggleCategory(category.id)}
-              >
-                <Image
-                  source={category.icon}
-                  style={[
-                    styles.categoryIcon,
-                    selectedCategories.includes(category.id) && styles.selectedCategoryIcon
-                  ]}
-                />
-                <Text style={[
-                  styles.categoryText,
-                  selectedCategories.includes(category.id) && styles.selectedCategoryText
-                ]}>
-                  {category.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          {/* Community Name Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Community Name</Text>
+            <TextInput
+              style={styles.textInput}
+              value={communityName}
+              onChangeText={setCommunityName}
+              placeholder="Enter community name"
+              placeholderTextColor="#979797"
+            />
           </View>
-        </View>
 
-        {/* Join Code Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Community Join Code</Text>
-          <TextInput
-            style={styles.textInput}
-            value={joinCode}
-            onChangeText={setJoinCode}
-            placeholder="Enter join code"
-            placeholderTextColor="#979797"
-          />
-        </View>
+          {/* Description Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Description (optional)</Text>
+            <TextInput
+              style={[styles.textInput, styles.descriptionInput]}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Add a description for your community"
+              placeholderTextColor="#979797"
+              multiline
+              numberOfLines={4}
+              textAlignVertical="top"
+            />
+          </View>
 
-        {/* Save Changes Button */}
-        <TouchableOpacity 
-          style={styles.saveButton}
-          onPress={handleSaveChanges}
-        >
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-      </ScrollView>
+          {/* Goal Category Selection */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Goal Category Selection</Text>
+            <View style={styles.categoriesGrid}>
+              {CATEGORIES.map((category) => (
+                <TouchableOpacity
+                  key={category.id}
+                  style={[
+                    styles.categoryButton,
+                    selectedCategories.includes(category.id) && styles.selectedCategory
+                  ]}
+                  onPress={() => toggleCategory(category.id)}
+                >
+                  <Image
+                    source={category.icon}
+                    style={[
+                      styles.categoryIcon,
+                      selectedCategories.includes(category.id) && styles.selectedCategoryIcon
+                    ]}
+                  />
+                  <Text style={[
+                    styles.categoryText,
+                    selectedCategories.includes(category.id) && styles.selectedCategoryText
+                  ]}>
+                    {category.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Join Code Input */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Community Join Code</Text>
+            <TextInput
+              style={styles.textInput}
+              value={joinCode}
+              onChangeText={setJoinCode}
+              placeholder="Enter join code"
+              placeholderTextColor="#979797"
+            />
+          </View>
+
+          {/* Save Changes Button */}
+          <TouchableOpacity 
+            style={styles.saveButton}
+            onPress={handleSaveChanges}
+          >
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -196,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    justifyContent: 'space-between',
+    
   },
   backButton: {
     padding: 8,
@@ -215,14 +225,18 @@ const styles = StyleSheet.create({
   editText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
+    fontWeight: '600',
     color: '#DE728D',
+    paddingLeft: 175,
+    paddingTop: 2,
   },
   profileImageContainer: {
     width: '100%',
-    height: 200,
+    height: 140,
     backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: 10,
   },
   profileImage: {
     width: '100%',
@@ -308,6 +322,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 });
 
