@@ -102,11 +102,7 @@ const EditCommunityPage = () => {
 
  if (pageDisplay) {
   return (
-    <EditCommunityScreen 
-      formData={formData}
-      handleFormDataChange={handleFormDataChange}
-      isUpdatingCommunity={isUpdatingCommunity}
-      handleUpdateCommunity={handleUpdateCommunity}
+    <EditCommunityScreen
     />
   );
  } else {

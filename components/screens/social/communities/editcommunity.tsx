@@ -11,7 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
 interface Category {
@@ -35,6 +35,7 @@ const EditCommunityScreen = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [joinCode, setJoinCode] = useState('Run4Fun');
+  const { id } = useLocalSearchParams();
 
   const handleBack = () => {
     router.back();
@@ -98,7 +99,9 @@ const EditCommunityScreen = () => {
               />
             </TouchableOpacity>
             <Text style={styles.pageTitle}>Manage</Text>
-            <Text style={styles.editText}>Edit Members</Text>
+            <TouchableOpacity onPress={() => router.push(`/community/${id}/editMembers`)}>
+              <Text style={styles.editText}>Edit Members</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Profile Image Section */}
