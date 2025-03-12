@@ -6,13 +6,14 @@ import { useUpdateCommunity } from '@/hooks/graphql/communities/mutations';
 // Components
 import styles from '@/utils/testStyles';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import EditCommunityScreen from '@/components/screens/social/communities/editcommunity';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 // Services
 import { useUserInfo } from '@/services/UserContext';
 import { pickImage, processAndUploadImage } from '@/utils/imageProcessing';
 
-function EditCommunityScreen({ 
+function EditCommunityScreenOld({ 
     formData, handleFormDataChange, isUpdatingCommunity, handleUpdateCommunity 
 }: { 
     formData: any, 
@@ -99,14 +100,21 @@ const EditCommunityPage = () => {
   }));
  };
 
- return (
-   <EditCommunityScreen 
-    formData={formData}
-    handleFormDataChange={handleFormDataChange}
-    isUpdatingCommunity={isUpdatingCommunity}
-    handleUpdateCommunity={handleUpdateCommunity}
-   />
- );
+ if (pageDisplay) {
+  return (
+    <EditCommunityScreen
+    />
+  );
+ } else {
+  return (
+    <EditCommunityScreenOld 
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      isUpdatingCommunity={isUpdatingCommunity}
+      handleUpdateCommunity={handleUpdateCommunity}
+    />
+  );
+ }
 };
 
 export default AuthWrapper(EditCommunityPage);

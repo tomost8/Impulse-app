@@ -4,9 +4,10 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 // Components
+import CommunityMainScreen from '@/components/screens/social/communities/communitymainscreen';
 import CommunityScreenOld from '@/components/old/social/community/CommunityScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 const CommunityPage = (props: any) => {
   const { id } = useLocalSearchParams(); // communityId
@@ -52,13 +53,23 @@ const CommunityPage = (props: any) => {
     );
   }
 
-  return (
-    <CommunityScreenOld 
-      community={communityRef.current}
-      members={membersRef.current || []}
-      isAdmin={true} //isAdmin
-    />
-  );
+  if (pageDisplay) {
+    return (
+      <CommunityMainScreen 
+        community={communityRef.current}
+        members={membersRef.current || []}
+        isAdmin={true} //isAdmin
+      />
+    );
+  } else {
+    return (
+      <CommunityScreenOld 
+        community={communityRef.current}
+        members={membersRef.current || []}
+        isAdmin={true} //isAdmin
+      />
+    );
+  }
 }
 
 export default AuthWrapper(CommunityPage);

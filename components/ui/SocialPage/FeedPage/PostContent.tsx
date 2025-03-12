@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 239,
     borderRadius: 5,
+    paddingBottom: 2, 
   },
   caption: {
     fontSize: 12,
