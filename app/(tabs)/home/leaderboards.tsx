@@ -11,7 +11,7 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const LeaderboardsPage = () => {
-  const { fetching, user} = useUserData();
+  const { fetching, user } = useUserData();
   const [selectedPeriod, setSelectedPeriod] = useState<'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL'>('POINTS_WEEKLY');
   const [renderCounter, setRenderCounter] = useState(0);
 

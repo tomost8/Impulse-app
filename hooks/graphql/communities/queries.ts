@@ -156,6 +156,43 @@ export function useGetCommunityMembers(communityId: number, shouldFetch: boolean
   };
 }
 
+// Query - Get Community Leaderboard (by Community ID)
+export const GET_COMMUNITY_LEADERBOARD = gql` 
+  query ($communityId: Int!, $sort_by: UserSortType!) {
+    getCommunityMembers(id: $communityId, sort_by: $sort_by) {
+      success
+      community_members {
+        user { id first_name last_name }
+        role
+        status
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetCommunityLeaderboard(communityId: number, sort_by: string, shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_COMMUNITY_LEADERBOARD, {
+    variables: { communityId, sort_by },
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetCommunityLeaderboard data", data, error ? 'error:' + error : '');
+  }
+  return {
+    communityLeaderboard: data?.getCommunityMembers.community_members || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
 // Query - Get User Communities (by User ID)
 export const GET_USER_COMMUNITIES = gql`
   query ($userId: Int!) {
