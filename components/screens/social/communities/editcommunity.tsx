@@ -210,13 +210,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins',
     color: '#242020',
+    fontWeight: '600',
+    marginLeft: 4,
   },
   editText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#DE728D',
-    paddingLeft: 175,
+    paddingLeft: 165,
     paddingTop: 2,
   },
   profileImageContainer: {
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
   textInput: {
     height: 48,
     borderWidth: 1,
-    borderColor: '#DE728D',
+    borderColor: '#E1E1E1',
     borderRadius: 10,
     paddingHorizontal: 16,
     fontSize: 14,

@@ -8,10 +8,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
+import StartGroupScreen from '@/components/screens/connect/startgroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function CreateGroupScreen({
+function CreateGroupScreenOld({
   formData,
   handleFormDataChange,
   handleCreateGroup, 
@@ -160,16 +161,22 @@ const CreateGroupPage = (props: any) => {
     console.log("Rendering CreateGroupPage");
   }
 
-  return (
-    <CreateGroupScreen
-      formData={formData}
-      handleFormDataChange={handleFormDataChange}
-      handleCreateGroup={handleCreateGroup}
-      isCreatingGroup={isCreatingGroup}
-      isPasswordOptional={isPasswordOptional}
-      setIsPasswordOptional={setIsPasswordOptional}
-    />
-  );
+  if (pageDisplay) {
+    return (
+      <StartGroupScreen />
+    );
+  } else {
+    return (
+      <CreateGroupScreenOld
+        formData={formData}
+        handleFormDataChange={handleFormDataChange}
+        handleCreateGroup={handleCreateGroup}
+        isCreatingGroup={isCreatingGroup}
+        isPasswordOptional={isPasswordOptional}
+        setIsPasswordOptional={setIsPasswordOptional}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(CreateGroupPage);

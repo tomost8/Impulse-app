@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
 import styles from '@/utils/testStyles';
@@ -51,6 +51,7 @@ function ChatScreen({
   };
 
   return (
+    <SafeAreaView>
     <ScrollView>
       <TouchableOpacity style={styles.button} onPress={showModal}>
         <Text style={styles.text}>
@@ -112,6 +113,7 @@ function ChatScreen({
         </View>
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
