@@ -7,26 +7,35 @@ import {
   TextInput,
   StyleSheet, 
   SafeAreaView,
-  ScrollView
+  ScrollView 
 } from 'react-native';
 import { router } from 'expo-router';
 
-interface PendingFriend {
+interface Friend {
   id: string;
   name: string;
   username: string;
   profileImage: any;
+  isPending?: boolean;
 }
 
 const FindFriendScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Sample pending friends data
-  const pendingFriends: PendingFriend[] = [
-    { id: '1', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
-    { id: '2', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
-    { id: '3', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
+  // Combined friend data
+  const friends: Friend[] = [
+    // Pending requests
+    { id: '1', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
+    { id: '2', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
+    { id: '3', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
+    // Add friend profiles
+    { id: '4', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
+    { id: '5', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
+    { id: '6', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
   ];
+
+  const pendingFriends = friends.filter(friend => friend.isPending);
+  const addFriends = friends.filter(friend => !friend.isPending);
 
   const handleBack = () => {
     router.back();
@@ -34,12 +43,14 @@ const FindFriendScreen = () => {
 
   const handleSearch = () => {
     console.log('Search query:', searchQuery);
-    // Handle search logic
   };
 
   const handleCancel = (friendId: string) => {
     console.log('Cancel friend request:', friendId);
-    // Handle cancel request logic
+  };
+
+  const handleAddFriend = (friendId: string) => {
+    console.log('Add friend:', friendId);
   };
 
   return (
@@ -75,11 +86,39 @@ const FindFriendScreen = () => {
         />
       </View>
 
-      {/* Pending Requests Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
-        <ScrollView style={styles.friendsList}>
-          {pendingFriends.map((friend) => (
+      <ScrollView style={styles.content}>
+        {/* Pending Requests Section */}
+        {pendingFriends.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
+            {pendingFriends.map((friend) => (
+              <View key={friend.id} style={styles.friendCard}>
+                <View style={styles.friendInfo}>
+                  <Image 
+                    source={friend.profileImage}
+                    style={styles.profileImage}
+                  />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.name}>{friend.name}</Text>
+                    <Text style={styles.username}>{friend.username}</Text>
+                  </View>
+                </View>
+                <TouchableOpacity 
+                  onPress={() => handleCancel(friend.id)}
+                >
+                  <Image 
+                    source={require("@/assets/icons/cancel.png")}
+                    style={styles.cancelIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Add Friends Section */}
+        <View style={styles.section}>
+          {addFriends.map((friend) => (
             <View key={friend.id} style={styles.friendCard}>
               <View style={styles.friendInfo}>
                 <Image 
@@ -92,17 +131,15 @@ const FindFriendScreen = () => {
                 </View>
               </View>
               <TouchableOpacity 
-                onPress={() => handleCancel(friend.id)}
+                style={styles.addButton}
+                onPress={() => handleAddFriend(friend.id)}
               >
-                <Image 
-                  source={require("@/assets/icons/cancel.png")}
-                  style={styles.cancelIcon}
-                />
+                <Text style={styles.addButtonText}>Add Friend</Text>
               </TouchableOpacity>
             </View>
           ))}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -159,9 +196,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     color: '#000000',
   },
-  section: {
+  content: {
     flex: 1,
+  },
+  section: {
     paddingHorizontal: 16,
+    paddingTop: 16,
   },
   sectionTitle: {
     fontSize: 16,
@@ -169,9 +209,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000000',
     marginBottom: 16,
-  },
-  friendsList: {
-    flex: 1,
   },
   friendCard: {
     flexDirection: 'row',
@@ -210,6 +247,18 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
     tintColor: '#DE728D',
+  },
+  addButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    backgroundColor: '#DE728D',
+    borderRadius: 100,
+  },
+  addButtonText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });
 

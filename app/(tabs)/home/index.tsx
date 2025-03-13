@@ -34,7 +34,7 @@ const HomePage = () => {
       }));
       if (user) {
         // Test pushing multiple copies for testing purposes (remove this later)
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 3; i++) {
           combinedLeaderboard.push({
             id: user.id,
             username: user.username,
