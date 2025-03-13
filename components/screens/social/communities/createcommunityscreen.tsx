@@ -228,7 +228,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins',
     color: '#242020',
-    marginLeft: 8,
+    fontWeight: '600',
+    marginLeft: 6,
   },
   profileImageContainer: {
     width: '100%',
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
   textInput: {
     height: 48,
     borderWidth: 1,
-    borderColor: '#DE728D',
+    borderColor: '#E1E1E1',
     borderRadius: 10,
     paddingHorizontal: 16,
     fontSize: 14,

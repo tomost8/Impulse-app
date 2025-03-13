@@ -146,6 +146,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins',
     color: '#242020',
+    fontWeight: '600',
+    paddingLeft: 4,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 48,
     borderWidth: 1,
-    borderColor: '#DE728D',
+    borderColor: '#E1E1E1',
     borderRadius: 100,
   },
   searchIcon: {
@@ -215,6 +217,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#DE728D',
+    fontWeight: '600',
   },
 });
 

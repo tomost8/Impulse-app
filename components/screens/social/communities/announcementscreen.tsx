@@ -8,7 +8,9 @@ import {
   StyleSheet, 
   SafeAreaView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
 import { router } from 'expo-router';
 
@@ -32,50 +34,53 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleBack}
-          >
-            <Image 
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.title}>{communityName}</Text>
-        </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.innerContainer}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={handleBack}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.title}>{communityName}</Text>
+          </View>
 
-        {/* Messages will go here */}
-        <View style={styles.messagesContainer} />
+          {/* Messages Container */}
+          <View style={styles.messagesContainer} />
 
-        {/* Announcement Input */}
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={announcement}
-            onChangeText={setAnnouncement}
-            placeholder="Make announcement..."
-            placeholderTextColor="#979797"
-            multiline
-          />
-          {/*
-          <TouchableOpacity 
-            style={styles.sendButton}
-            onPress={handleSend}
+          {/* Input Container with KeyboardAvoidingView */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+            style={styles.keyboardAvoidView}
           >
-            <Image 
-              source={require("@/assets/icons/send.png")}
-              style={styles.sendIcon}
-            />
-          </TouchableOpacity>
-          */}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={announcement}
+                onChangeText={setAnnouncement}
+                placeholder="Make announcement..."
+                placeholderTextColor="#979797"
+                multiline
+              />
+              <TouchableOpacity 
+                style={styles.sendButton}
+                onPress={handleSend}
+              >
+                <Image 
+                  source={require("@/assets/icons/Sent.png")}
+                  style={styles.sendIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
         </View>
-      </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
@@ -85,7 +90,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  keyboardAvoidingView: {
+  innerContainer: {
     flex: 1,
   },
   header: {
@@ -108,10 +113,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins',
     color: '#242020',
-    marginLeft: 8,
+    marginLeft: 6,
+    fontWeight: '600',
   },
   messagesContainer: {
     flex: 1,
+  },
+  keyboardAvoidView: {
+    width: '100%',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -124,19 +133,20 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 40,
+    minHeight: 40,
+    maxHeight: 100,
     backgroundColor: '#F5F5F5',
     borderRadius: 20,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     marginRight: 12,
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#000000',
   },
   sendButton: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
     backgroundColor: '#DE728D',
     justifyContent: 'center',
