@@ -4,6 +4,8 @@ import LeaderboardCard from "./LeaderboardCard";
 import LeaderboardList from "./LeaderboardList";
 import { router } from "expo-router";
 
+import LeaderboardCard2 from "./LeaderboardCard2"; // same as normal leaderboard podium
+
 interface LeaderboardFullProps {
   users: any[];
   isUsersLoading: boolean;
@@ -24,7 +26,11 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
       </View>
 
       {/* Leaderboard Card with Podium */}
+      {/*
       <LeaderboardCard users={podiumUsers} />
+      */}
+      
+      <LeaderboardCard2 podiumData={podiumUsers} />
       
       {/* Leaderboard List (Ranks 4+) */}
       {listUsers.length > 0 && (
