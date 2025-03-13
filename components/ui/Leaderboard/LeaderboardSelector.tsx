@@ -3,16 +3,24 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, FlatList } from "react
 import { Ionicons } from "@expo/vector-icons"; // Using Ionicons for dropdown arrow
 
 // Options for the leaderboard selector
-const leaderboardOptions = ["Weekly", "Monthly", "All Time"];
+type LeaderboardPeriod = 'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL';
+const leaderboardOptions: LeaderboardPeriod[] = ['POINTS_WEEKLY', 'POINTS_MONTHLY', 'POINTS_ALL'];
+const displayOptions = ["Weekly", "Monthly", "All Time"];
 
 interface LeaderboardSelectorProps {
-  selectedOption: string;
-  setSelectedOption: (option: string) => void;
+  selectedPeriod: LeaderboardPeriod;
+  setSelectedPeriod: (period: LeaderboardPeriod) => void;
 }
 
+// Updated helper function to get display text from option value
+const getDisplayText = (value: LeaderboardPeriod): string => {
+  const index = leaderboardOptions.indexOf(value);
+  return index !== -1 ? displayOptions[index] : value;
+};
+
 const LeaderboardSelector: React.FC<LeaderboardSelectorProps> = ({
-  selectedOption,
-  setSelectedOption,
+  selectedPeriod,
+  setSelectedPeriod,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -20,7 +28,7 @@ const LeaderboardSelector: React.FC<LeaderboardSelectorProps> = ({
     <View style={styles.container}>
       {/* Button to open dropdown */}
       <TouchableOpacity style={styles.selectorButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.buttonText}>{selectedOption}</Text>
+        <Text style={styles.buttonText}>{getDisplayText(selectedPeriod)}</Text>
         <Ionicons name="chevron-down" size={16} color="white" style={styles.icon} />
       </TouchableOpacity>
 
@@ -40,14 +48,14 @@ const LeaderboardSelector: React.FC<LeaderboardSelectorProps> = ({
                 <TouchableOpacity
                   style={[
                     styles.option,
-                    item === selectedOption && styles.selectedOption,
+                    item === selectedPeriod && styles.selectedOption,
                   ]}
                   onPress={() => {
-                    setSelectedOption(item);
+                    setSelectedPeriod(item as LeaderboardPeriod);
                     setModalVisible(false);
                   }}
                 >
-                  <Text style={styles.optionText}>{item}</Text>
+                  <Text style={styles.optionText}>{getDisplayText(item)}</Text>
                 </TouchableOpacity>
               )}
             />

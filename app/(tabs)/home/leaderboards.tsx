@@ -5,84 +5,77 @@ import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
 import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
-import LeaderboardScreenOld from '@/components/old/home/LeaderboardScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
-const LeaderboardsPage = (props: any) => {
-  const { userId, authToken } = props;
+const LeaderboardsPage = () => {
+  const { fetching, user} = useUserData();
+  const [selectedPeriod, setSelectedPeriod] = useState<'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL'>('POINTS_WEEKLY');
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Tab Status: Have to figure out how to separate these to components
-  const [scopeView, setScopeView] = useState<'friends' | 'global'>('friends');
-  const onFriendsPress = () => { setScopeView('friends');};
-  const onGlobalPress = () => { setScopeView('global');};
-  const [activeView, setActiveView] = useState<'weekly' | 'monthly' | 'all'>('weekly');
-
   // Queries for Loading State
-  const usersRef = useRef<any | null>(null);
-  const hasFetchedUsers = useRef(false);
-  const { users, fetched: hasNewUserData } = useGetUsersLeaderboard(activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedUsers.current);
+  const allLeaderboardRef = useRef<any | null>(null);
+  const hasFetchedAllLeaderboard = useRef(false);
+  const { users: allLeaderboard, fetched: hasNewAllLeaderboardData } = useGetUsersLeaderboard(selectedPeriod, !hasFetchedAllLeaderboard.current);
 
-  const friendsRef = useRef<any | null>(null);
-  const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedFriends.current);
+  const friendsLeaderboardRef = useRef<any | null>(null);
+  const hasFetchedFriendsLeaderboard = useRef(false);
+  const { friends: friendsLeaderboard, fetched: hasNewFriendsLeaderboardData } = useGetFriendsLeaderboard(user?.id as number, selectedPeriod, !hasFetchedFriendsLeaderboard.current && !fetching);
 
   useEffect(() => {
-    if (!hasNewUserData && !hasNewFriendsData) {
+    if (!hasNewAllLeaderboardData && !hasNewFriendsLeaderboardData) {
       return;
     }
-    if (hasNewUserData) {
-      usersRef.current = users;
-      hasFetchedUsers.current = true;
+    if (hasNewAllLeaderboardData) {
+      allLeaderboardRef.current = allLeaderboard;
+      hasFetchedAllLeaderboard.current = true;
     }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
+    if (hasNewFriendsLeaderboardData) {
+      // Combined leaderboard with friends and user
+      const combinedLeaderboard = friendsLeaderboard.map((item: any) => ({
+        id: item.friend.id,
+        username: item.friend.username,
+        profile_picture: item.friend.profile_picture,
+        point: item.friend.point
+      }));
+      if (user) {
+        combinedLeaderboard.push({
+          id: user.id,
+          username: user.username,
+          profile_picture: user.profile_picture,
+          point: user.point
+        });
+      }
+      // Sort by weekly points in descending order
+      combinedLeaderboard.sort((a: any, b: any) => b.point.weekly_points - a.point.weekly_points);
+      friendsLeaderboardRef.current = combinedLeaderboard;
+      hasFetchedFriendsLeaderboard.current = true;
     }
-    if (hasFetchedUsers.current && hasFetchedFriends.current) {
+    if (hasFetchedAllLeaderboard.current && hasFetchedFriendsLeaderboard.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewUserData, hasNewFriendsData]);
+  }, [hasNewAllLeaderboardData, hasNewFriendsLeaderboardData]);
 
   // Debug
-  const loading = !hasFetchedUsers.current || !hasFetchedFriends.current;
+  const loading = !hasFetchedAllLeaderboard.current || !hasFetchedFriendsLeaderboard.current;
   if (debugRenders && !loading) {
     console.log('Rendering LeaderboardsPage\n',
-      'Users:', usersRef.current, '\n',
-      'Friends:', friendsRef.current, '\n',
+      'All Users Leaderboard:', allLeaderboardRef.current, '\n',
+      'Friends Leaderboard:', friendsLeaderboardRef.current, '\n',
+      'Selected Period:', selectedPeriod, '\n',
       'Render Counter:', renderCounter, '\n',
     );
   }
 
-  if (pageDisplay) {
-    return <LeaderboardScreen
-      users={usersRef.current}
-      isUsersLoading={!hasFetchedUsers.current}
-      friends={friendsRef.current}
-      isFriendsLoading={!hasFetchedFriends.current}
-      // Tab Status
-      scopeView={scopeView}
-      onFriendsPress={onFriendsPress}
-      onGlobalPress={onGlobalPress}
-      activeView={activeView}
-      setActiveView={setActiveView}
-    />;
-  } else {
-    return <LeaderboardScreenOld
-      users={usersRef.current}
-      isUsersLoading={!hasFetchedUsers.current}
-      friends={friendsRef.current}
-      isFriendsLoading={!hasFetchedFriends.current}
-      // Tab Status
-      scopeView={scopeView}
-      onFriendsPress={onFriendsPress}
-      onGlobalPress={onGlobalPress}
-      activeView={activeView}
-      setActiveView={setActiveView}
-    />;
-  }
+  return <LeaderboardScreen
+    isLoading={loading}
+    allLeaderboard={allLeaderboardRef.current}
+    friendsLeaderboard={friendsLeaderboardRef.current}
+    selectedPeriod={selectedPeriod}
+    setSelectedPeriod={setSelectedPeriod}
+  />;
 }
 
 export default AuthWrapper(LeaderboardsPage);

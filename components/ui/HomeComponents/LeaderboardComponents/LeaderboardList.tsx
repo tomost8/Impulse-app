@@ -11,7 +11,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ users }) => {
     <View style={styles.container}>
       {users.map((user, index) => (
         <LeaderboardListItem
-          key={user.id}
+          key={index}
           rank={index + 4} // Adding 4 because we're starting from 4th place
           name={user.username}
           points={user.point.weekly_points.toLocaleString()}

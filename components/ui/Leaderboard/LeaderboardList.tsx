@@ -2,30 +2,20 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import LeaderboardRow from "./LeaderboardRow";
 
-// Importing Andrew's profile image as a placeholder
-const placeholderImage = require("@/assets/images/andrew.png");
+interface LeaderboardListProps {
+  leaderboardData: any[];
+}
 
-// Mock leaderboard data (Top 10 users)
-const leaderboardData = [
-  { rank: 4, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 5, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 6, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 7, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 8, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 9, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-  { rank: 10, name: "Rodrigo", points: "800", imageUrl: placeholderImage },
-];
-
-const LeaderboardList: React.FC = () => {
+const LeaderboardList: React.FC<LeaderboardListProps> = ({ leaderboardData }) => {
   return (
     <View style={styles.container}>
-      {leaderboardData.map((user) => (
+      {leaderboardData.map((user, index) => (
         <LeaderboardRow
-          key={user.rank}
-          rank={user.rank}
-          name={user.name}
-          points={user.points}
-          imageUrl={user.imageUrl}
+          key={index}
+          rank={index + 4}
+          name={user.username}
+          points={user.point.weekly_points.toLocaleString()}
+          imageUrl={user.profile_picture}
         />
       ))}
     </View>

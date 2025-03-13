@@ -1,48 +1,39 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
-// Define Props
-interface PodiumUser {
-  position: number;
-  name: string;
-  points: number;
-  profileImage: any;
-}
 
 interface LeaderboardPodiumProps {
-  podiumData: PodiumUser[];
+  podiumData: any[];
 }
 
 const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData }) => {
   // Ensure users are sorted correctly (2nd, 1st, 3rd for correct layout)
   const sortedPodium = [
-    podiumData.find(user => user.position === 2),
-    podiumData.find(user => user.position === 1),
-    podiumData.find(user => user.position === 3),
+    podiumData[1],
+    podiumData[0],
+    podiumData[2],
   ];
 
   return (
     <View style={styles.container}>
       <View style={styles.podiumRow}>
-        {sortedPodium.map((user, index) =>
-          user ? (
-            <View key={user.position} style={[styles.podiumColumn, getPodiumStyle(user.position)]}>
-              {/* Profile Image */}
-              <Image source={user.profileImage} style={styles.profileImage} />
+        {sortedPodium.map((user, index) => (
+          <View key={index} style={[styles.podiumColumn, getPodiumStyle(getOriginalPosition(index))]}>
+            {/* Profile Image, Username, and Points only shown if user exists */}
+            {user && (
+              <>
+                <Image source={user.profile_picture} style={styles.profileImage} />
+                <Text style={styles.username}>{user.username}</Text>
+                <Text style={styles.points}>{user.point.weekly_points} Pts</Text>
+              </>
+            )}
 
-              {/* Username */}
-              <Text style={styles.username}>{user.name}</Text>
-
-              {/* Points */}
-              <Text style={styles.points}>{user.points} Pts</Text>
-
-              {/* Podium Block */}
-              <View style={[styles.podiumBlock, getBlockStyle(user.position)]}>
-                <Text style={styles.podiumNumber}>{user.position}</Text>
-              </View>
+            {/* Podium Block always shown */}
+            <View style={[styles.podiumBlock, getBlockStyle(getOriginalPosition(index))]}>
+              <Text style={styles.podiumNumber}>{getOriginalPosition(index)}</Text>
             </View>
-          ) : null
-        )}
+          </View>
+        ))}
       </View>
     </View>
   );
@@ -73,6 +64,16 @@ const getBlockStyle = (position: number) => {
       return { height: 65, backgroundColor: "#9F4A5F" }; // Lowest
     default:
       return {};
+  }
+};
+
+// Convert the display index back to the original position
+const getOriginalPosition = (displayIndex: number): number => {
+  switch (displayIndex) {
+    case 0: return 2; // First display position shows 2nd place
+    case 1: return 1; // Middle display position shows 1st place
+    case 2: return 3; // Last display position shows 3rd place
+    default: return displayIndex + 1;
   }
 };
 

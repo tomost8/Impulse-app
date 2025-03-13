@@ -92,9 +92,6 @@ export const GET_USERS_LEADERBOARD = gql`
       success
       users {
         id
-        firebase_uid
-        first_name
-        last_name
         username
         profile_picture
         point {

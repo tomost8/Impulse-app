@@ -6,13 +6,15 @@ import { StatusBar } from "react-native";
 // Import the back arrow icon
 const backArrow = require("@/assets/icons/backArrow.png");
 
+type LeaderboardPeriod = 'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL';
+
 interface LeaderboardHeaderProps {
   onBackPress: () => void;
-  selectedOption: string;
-  setSelectedOption: (option: string) => void;
+  selectedPeriod: LeaderboardPeriod;
+  setSelectedPeriod: (period: LeaderboardPeriod) => void;
 }
 
-const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ onBackPress, selectedOption, setSelectedOption }) => {
+const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ onBackPress, selectedPeriod, setSelectedPeriod }) => {
     return (
       <View style={styles.container}>
         {/* Left: Back Button & Title */}
@@ -25,7 +27,7 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ onBackPress, sele
   
         {/* Right: Leaderboard Selector */}
         <View style={styles.selectorContainer}>
-          <LeaderboardSelector selectedOption={selectedOption} setSelectedOption={setSelectedOption} />
+          <LeaderboardSelector selectedPeriod={selectedPeriod as LeaderboardPeriod} setSelectedPeriod={setSelectedPeriod} />
         </View>
       </View>
     );

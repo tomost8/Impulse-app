@@ -18,7 +18,7 @@ const HomePage = () => {
   /* friends leaderboard */
   const leaderboardRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); // backend needs to be only accepted friends
+  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); 
 
   useEffect(() => {
     if (!hasNewLeaderboardData) {
@@ -33,8 +33,8 @@ const HomePage = () => {
         point: item.friend.point
       }));
       if (user) {
-        // Push 3 copies for testing purposes (remove this later)
-        for (let i = 0; i < 3; i++) {
+        // Test pushing multiple copies for testing purposes (remove this later)
+        for (let i = 0; i < 1; i++) {
           combinedLeaderboard.push({
             id: user.id,
             username: user.username,

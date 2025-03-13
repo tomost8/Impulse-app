@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
 import LeaderboardHeader from "../ui/Leaderboard/LeaderboardHeader";
 import LeaderboardPodium from "../ui/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "../ui/Leaderboard/LeaderboardList";
@@ -7,31 +7,21 @@ import LeaderboardTabs from "../ui/Leaderboard/LeaderboardTabs";
 
 import { router } from "expo-router";
 
-// Import Andrew's image as a placeholder (for all profile images)
-const AndrewProfile = require("@/assets/images/andrew.png");
+type LeaderboardPeriod = 'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL';
 
-// Dummy Data for Podium (Top 3 Users)
-const podiumUsers = [
-  { position: 1, name: "Pedro", points: 3645, profileImage: AndrewProfile },
-  { position: 2, name: "Andrew", points: 3496, profileImage: AndrewProfile },
-  { position: 3, name: "Freida", points: 3178, profileImage: AndrewProfile },
-];
+interface LeaderboardScreenProps {
+  isLoading: boolean;
+  allLeaderboard: any[];
+  friendsLeaderboard: any[];
+  selectedPeriod: LeaderboardPeriod;
+  setSelectedPeriod: (period: LeaderboardPeriod) => void;
+}
 
-// Dummy Data for Friends Leaderboard
-const friendsLeaderboard = [
-  { rank: 4, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
-  { rank: 5, name: "Rodrigo", points: 800, profileImage: AndrewProfile },
-];
-
-// Dummy Data for Global Leaderboard
-const globalLeaderboard = [
-  { rank: 4, name: "Michael", points: 900, profileImage: AndrewProfile },
-  { rank: 5, name: "Sophia", points: 850, profileImage: AndrewProfile },
-];
-
-const LeaderboardScreen: React.FC = () => {
+const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLeaderboard, friendsLeaderboard, selectedPeriod, setSelectedPeriod }) => {
     const [activeTab, setActiveTab] = useState<"Friends" | "All Users">("Friends");
-    const [selectedPeriod, setSelectedPeriod] = useState("Weekly");
+    if (isLoading) {
+        return <Text>Loading...</Text>;
+    }
   
     return (
       <SafeAreaView style={styles.container}>
@@ -39,23 +29,27 @@ const LeaderboardScreen: React.FC = () => {
           {/* Header + Leaderboard Selector */}
           <LeaderboardHeader
             onBackPress={() => router.back()}
-            selectedOption={selectedPeriod}
-            setSelectedOption={setSelectedPeriod}
+            selectedPeriod={selectedPeriod}
+            setSelectedPeriod={setSelectedPeriod}
           />
   
           {/* Tabs Section - Fixing Alignment */}
-          <View style={styles.tabsContainer}>
+          <View>
             <LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           </View>
   
           {/* Podium */}
-          <LeaderboardPodium podiumData={podiumUsers} />
+          {activeTab === "Friends" ? (
+            <LeaderboardPodium podiumData={friendsLeaderboard.slice(0, 3)} />
+          ) : (
+            <LeaderboardPodium podiumData={allLeaderboard.slice(0, 3)} />
+          )}
   
           {/* Conditional Leaderboard List */}
           {activeTab === "Friends" ? (
-            <LeaderboardList users={friendsLeaderboard} />
+            <LeaderboardList leaderboardData={friendsLeaderboard.slice(3)} />
           ) : (
-            <LeaderboardList users={globalLeaderboard} />
+            <LeaderboardList leaderboardData={allLeaderboard.slice(3)} />
           )}
         </ScrollView>
       </SafeAreaView>
