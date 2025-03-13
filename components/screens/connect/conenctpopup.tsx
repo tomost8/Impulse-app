@@ -19,17 +19,17 @@ const ConnectPopup: React.FC<ConnectPopupProps> = ({
   onClose,
 }) => {
   const handleFindFriend = () => {
-    router.push('/connect/findFriend');
+    router.push('/chats/addFriends');
     onClose();
   };
 
   const handleStartGroup = () => {
-    router.push('/connect/startGroup');
+    router.push('/chats/groupCreate');
     onClose();
   };
 
   const handleJoinGroup = () => {
-    router.push('/connect/joinGroup');
+    router.push('/chats/groupJoin');
     onClose();
   };
 

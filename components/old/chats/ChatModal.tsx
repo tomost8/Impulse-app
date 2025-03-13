@@ -11,8 +11,8 @@ interface SocialModalProps {
 
 export default function SocialModal({ visible, hideModal }: SocialModalProps) {
     const handleNavigate = (path: string) => {
-        hideModal(); // First, hide the modal
-        router.push(path); // Then, navigate to the specified path
+      hideModal(); // First, hide the modal
+      router.push(path as any); // Then, navigate to the specified path
     };
 
   return (
