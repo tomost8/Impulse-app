@@ -3,14 +3,41 @@ import { View, StyleSheet } from "react-native";
 import LeaderboardProfile from "./LeaderboardProfile";
 import LeaderboardPodium from "./LeaderboardPodium";
 
-const LeaderboardCard: React.FC = () => {
+interface LeaderboardCardProps {
+  users: any[];
+}
+
+const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ users }) => {
   return (
     <View style={styles.container}>
       <View style={styles.topProfiles}>
-        {/* ✅ Fixed: Using require() directly instead of import */}
-        <LeaderboardProfile name="Andrew" points="3,496" imageUrl={require("@/assets/images/andrew.png")} rank={2} />
-        <LeaderboardProfile name="Pedro" points="3,645" imageUrl={require("@/assets/images/andrew.png")} rank={1} />
-        <LeaderboardProfile name="Freida" points="3,178" imageUrl={require("@/assets/images/andrew.png")} rank={3} />
+        {/* Second Place */}
+        {users[1] && (
+          <LeaderboardProfile
+            name={users[1].username}
+            points={users[1].point.weekly_points.toLocaleString()}
+            imageUrl={users[1].profile_picture}
+            rank={2}
+          />
+        )}
+        {/* First Place */}
+        {users[0] && (
+          <LeaderboardProfile
+            name={users[0].username}
+            points={users[0].point.weekly_points.toLocaleString()}
+            imageUrl={users[0].profile_picture}
+            rank={1}
+          />
+        )}
+        {/* Third Place */}
+        {users[2] && (
+          <LeaderboardProfile
+            name={users[2].username}
+            points={users[2].point.weekly_points.toLocaleString()}
+            imageUrl={users[2].profile_picture}
+            rank={3}
+          />
+        )}
       </View>
 
       <View style={styles.podiumContainer}>

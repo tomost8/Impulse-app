@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView, Text } from "react-native";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
@@ -9,16 +9,19 @@ import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/Leade
 interface HomeScreenProps {
   isLoading: boolean;
   name: string;
-  friends: any[]; 
   activities: any[]; 
+  friendsLeaderboard: any[]; 
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ 
   isLoading,
   name,
-  friends, 
-  activities, 
+  activities,
+  friendsLeaderboard,
 }) => {
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -38,8 +41,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
         <View style={styles.leaderboardWrapper}>
           <LeaderboardFull 
-            friends={friends}
-            isFriendsLoading={isLoading}
+            users={friendsLeaderboard}
+            isUsersLoading={isLoading}
           />
         </View>
       </ScrollView>

@@ -12,43 +12,61 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 const HomePage = () => {
   const { userId, authToken } = useUserInfo();
-  const { fetching, user, activities, friends, timezone} = useUserData();
+  const { fetching, user, activities, timezone} = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  /* friends but for friends leaderboard 
-  const friendsRef = useRef<any | null>(null);
+  /* friends leaderboard */
+  const leaderboardRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current); // backend needs to be only accepted friends
+  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); // backend needs to be only accepted friends
 
   useEffect(() => {
-    if (!hasNewFriendsData) {
+    if (!hasNewLeaderboardData) {
       return;
     }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
+    if (hasNewLeaderboardData) {
+      // Combined leaderboard with friends and user
+      const combinedLeaderboard = friends.map((item: any) => ({
+        id: item.friend.id,
+        username: item.friend.username,
+        profile_picture: item.friend.profile_picture,
+        point: item.friend.point
+      }));
+      if (user) {
+        // Push 3 copies for testing purposes (remove this later)
+        for (let i = 0; i < 3; i++) {
+          combinedLeaderboard.push({
+            id: user.id,
+            username: user.username,
+            profile_picture: user.profile_picture,
+            point: user.point
+          });
+        }
+      }
+      // Sort by weekly points in descending order
+      combinedLeaderboard.sort((a: any, b: any) => b.point.weekly_points - a.point.weekly_points);
+      leaderboardRef.current = combinedLeaderboard;
       hasFetchedFriends.current = true;
     } 
     if (hasFetchedFriends.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData]); 
+  }, [hasNewLeaderboardData]);
 
-  const loadingData = !hasFetchedFriends.current;
-  */
-
-  if (debugRenders && !fetching) {
+  const loadingData = !hasFetchedFriends.current || fetching;
+  if (debugRenders && !loadingData) {
     console.log("Rendering HomePage. Counter: ", renderCounter,
-      "\nFriends:", friends,
       "\nActivities:", activities,
+      "\nLeaderboard:", leaderboardRef.current,
       "\nTimezone:", timezone,
     );
   }
 
   return <HomeScreen  
-    isLoading={fetching}
+    isLoading={loadingData}
     name={user?.first_name}
-    friends={friends} 
     activities={activities}
+    friendsLeaderboard={leaderboardRef.current}
   />;
 };
 

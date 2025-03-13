@@ -5,11 +5,13 @@ import LeaderboardList from "./LeaderboardList";
 import { router } from "expo-router";
 
 interface LeaderboardFullProps {
-  friends: any[];
-  isFriendsLoading: boolean;
+  users: any[];
+  isUsersLoading: boolean;
 }
 
-const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ friends, isFriendsLoading }) => {
+const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading }) => {
+  const podiumUsers = users.slice(0, 3);
+  const listUsers = users.slice(3, 10);
   return (
     <View style={styles.container}>
       
@@ -22,10 +24,12 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ friends, isFriendsLoa
       </View>
 
       {/* Leaderboard Card with Podium */}
-      <LeaderboardCard />
+      <LeaderboardCard users={podiumUsers} />
       
-      {/* Leaderboard List (Ranks 4-6) */}
-      <LeaderboardList />
+      {/* Leaderboard List (Ranks 4+) */}
+      {listUsers.length > 0 && (
+        <LeaderboardList users={listUsers} />
+      )}
     </View>
   );
 };
