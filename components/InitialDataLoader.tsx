@@ -81,11 +81,15 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       userRef.current = user;
       hasFetchedUser.current = true;
       setUser(user);
-      setTimezone(user.timezone);    
-      
-      // Set current date after we have the user's timezone
-      currentDate.current = getLocalDay(new Date().toISOString(), user.timezone);
-      console.log("Current Date:", currentDate.current);
+      if (user.timezone) {
+        setTimezone(user.timezone);
+        currentDate.current = getLocalDay(new Date().toISOString(), user.timezone);
+      } else {
+        let defaultTimezone = 'America/New_York';
+        console.log("No timezone found for user, setting to", defaultTimezone);
+        setTimezone(defaultTimezone);
+        currentDate.current = getLocalDay(new Date().toISOString(), defaultTimezone);
+      }
       
       // Set default profile picture if it doesn't exist
       if (!user.profile_picture && !isUpdating) {
