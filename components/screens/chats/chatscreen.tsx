@@ -80,7 +80,9 @@ const ChatScreen = () => {
       </View>
 
       {/* Requests Count */}
-      <Text style={styles.requestsText}>Requests (2)</Text>
+      <TouchableOpacity onPress={() => router.push('/chats/requests')}>
+        <Text style={styles.requestsText}>Requests (2)</Text>
+      </TouchableOpacity>
 
       {/* Messages List */}
       <ScrollView style={styles.messagesList}>

@@ -19,6 +19,10 @@ export default function ChatsLayout() {
         name="groupJoin" 
         options={{ headerShown: true }}
       />    
+      <Stack.Screen 
+        name="requests" 
+        options={{ headerShown: true }}
+      />
     </Stack>
   );
 }

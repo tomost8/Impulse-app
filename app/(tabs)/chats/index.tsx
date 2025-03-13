@@ -1,5 +1,3 @@
-
-
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
@@ -7,9 +5,10 @@ import { useGetUserChats } from '../../../hooks/graphql/chats/queries';
 import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
 // Components
+import ChatScreen from '@/components/screens/chats/chatscreen';
 import ChatScreenOld from '@/components/old/chats/ChatScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
 
 const ChatPage = (props: any) => {
@@ -83,16 +82,20 @@ const ChatPage = (props: any) => {
     );
   }
 
-  return <ChatScreenOld 
-    chats={chatsRef.current}
-    isChatsLoading={!hasFetchedChats.current}
-    friendRequests={friendRequestsRef.current}
-    isFriendRequestsLoading={!hasFetchedFriendRequests.current}
-    sentRequests={sentRequestsRef.current}
-    isSentRequestsLoading={!hasFetchedSentRequests.current}
-    handleAcceptFriendRequest={handleAcceptFriendRequest}
-    isAcceptingFriendRequest={isAcceptingFriendRequest}
-  />;
+  if (pageDisplay) {
+    return <ChatScreen />
+  } else {
+    return <ChatScreenOld 
+      chats={chatsRef.current}
+      isChatsLoading={!hasFetchedChats.current}
+      friendRequests={friendRequestsRef.current}
+      isFriendRequestsLoading={!hasFetchedFriendRequests.current}
+      sentRequests={sentRequestsRef.current}
+      isSentRequestsLoading={!hasFetchedSentRequests.current}
+      handleAcceptFriendRequest={handleAcceptFriendRequest}
+      isAcceptingFriendRequest={isAcceptingFriendRequest}
+    />;
+  }
 }
 
 export default AuthWrapper(ChatPage);
