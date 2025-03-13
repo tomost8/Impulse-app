@@ -10,15 +10,15 @@ import { debugRenders } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 const LeaderboardPage = () => { 
-  const { id } = useLocalSearchParams();
-  const { fetching, user } = useUserData();
+  const { id } = useLocalSearchParams(); // community ID
+  //const { fetching, user } = useUserData();
   const [selectedPeriod, setSelectedPeriod] = useState<'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL'>('POINTS_WEEKLY');
   const [renderCounter, setRenderCounter] = useState(0);
-  console.log("communityId", id);
+  //console.log("communityId", id);
 
   const communityLeaderboardRef = useRef<any | null>(null);
   const hasFetchedCommunityLeaderboard = useRef(false);
-  const { communityLeaderboard, fetched: hasNewCommunityLeaderboardData } = useGetCommunityLeaderboard(Number(id), selectedPeriod, !hasFetchedCommunityLeaderboard.current && !fetching);
+  const { communityLeaderboard, fetched: hasNewCommunityLeaderboardData } = useGetCommunityLeaderboard(Number(id), selectedPeriod, !hasFetchedCommunityLeaderboard.current);
 
   useEffect(() => {
     if (!hasNewCommunityLeaderboardData) {
@@ -26,7 +26,13 @@ const LeaderboardPage = () => {
     }
     if (hasNewCommunityLeaderboardData) {
       // need to filter for only accepted + add points to the query
-      communityLeaderboardRef.current = communityLeaderboard;
+      const filteredLeaderboard = communityLeaderboard.filter((item: any) => item.status === 'ACCEPTED').map((item: any) => ({
+        id: item.user.id,
+        username: item.user.username,
+        profile_picture: item.user.profile_picture,
+        point: item.user.point
+      }));
+      communityLeaderboardRef.current = filteredLeaderboard;
       hasFetchedCommunityLeaderboard.current = true;
     }
     if (hasFetchedCommunityLeaderboard.current) {
@@ -34,7 +40,7 @@ const LeaderboardPage = () => {
     }
   }, [hasNewCommunityLeaderboardData]);
 
-  const loading = !hasFetchedCommunityLeaderboard.current || fetching;
+  const loading = !hasFetchedCommunityLeaderboard.current;
   if (debugRenders && !loading) {
     console.log('Rendering LeaderboardsPage\n',
       'Community Leaderboard:', communityLeaderboardRef.current, '\n',
@@ -45,7 +51,7 @@ const LeaderboardPage = () => {
   return (
     <LeaderboardScreen 
       isLoading={loading}
-      communityLeaderboard={[]}
+      communityLeaderboard={communityLeaderboardRef.current}
       selectedPeriod={selectedPeriod}
       setSelectedPeriod={setSelectedPeriod}
     />

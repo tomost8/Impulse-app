@@ -162,7 +162,16 @@ export const GET_COMMUNITY_LEADERBOARD = gql`
     getCommunityMembers(id: $communityId, sort_by: $sort_by) {
       success
       community_members {
-        user { id first_name last_name }
+        user { 
+          id 
+          profile_picture 
+          username 
+          point {
+            points
+            weekly_points
+            monthly_points
+          }
+        } 
         role
         status
       }
