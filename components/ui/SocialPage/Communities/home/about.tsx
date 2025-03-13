@@ -5,14 +5,14 @@ interface AboutProps {
   description: string;
   founderName: string;
   founderBio: string;
-  founderImage?: string;
+  founderImage: string;
 }
 
 const About: React.FC<AboutProps> = ({
-  description = "Lorem ipsum dolor sit amet consectetur. Arcu elit mi fringilla pharetra morbi eget ultrices cursus. Habitant ut eu sapien etiam. Tortor lorem eget tincidunt scelerisque.",
+  description = "",
   founderName = "Founder Name",
   founderBio = "Lorem ipsum dolor sit amet consectetur. Bibendum vestibulum purus sed gravida aenean. At amet.",
-  founderImage,
+  founderImage = require("@/assets/images/andrew.png"),
 }) => {
   return (
     <View style={styles.container}>
@@ -21,7 +21,7 @@ const About: React.FC<AboutProps> = ({
       
       <View style={styles.founderCard}>
         <Image
-          source={founderImage ? { uri: founderImage } : require("@/assets/images/andrew.png")}
+          source={founderImage}
           style={styles.founderImage}
         />
         <View style={styles.founderInfo}>

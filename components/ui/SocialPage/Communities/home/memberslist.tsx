@@ -5,21 +5,15 @@ interface Member {
   id: string;
   name: string;
   username: string;
-  profileImage?: string;
+  profile_picture?: string;
 }
 
-interface MembersListProps {
+interface MemberListProps {
   members?: Member[];
-  onViewProfile?: (memberId: string) => void;
 }
 
-const MembersList: React.FC<MembersListProps> = ({
-  members = Array(5).fill({
-    id: '1',
-    name: 'Courtney',
-    username: 'username',
-  }),
-  onViewProfile,
+const MembersList: React.FC<MemberListProps> = ({
+  members = [],
 }) => {
   return (
     <View style={styles.container}>
@@ -30,7 +24,7 @@ const MembersList: React.FC<MembersListProps> = ({
           <View key={member.id + index} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image
-                source={member.profileImage ? { uri: member.profileImage } : require("@/assets/images/andrew.png")}
+                source={member.profile_picture ? { uri: member.profile_picture } : require("@/assets/images/andrew.png")}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
@@ -41,7 +35,7 @@ const MembersList: React.FC<MembersListProps> = ({
             
             <TouchableOpacity 
               style={styles.viewProfileButton}
-              onPress={() => onViewProfile?.(member.id)}
+              onPress={() => console.log("View Profile", member.id)}
             >
               <Text style={styles.viewProfileText}>View Profile</Text>
             </TouchableOpacity>

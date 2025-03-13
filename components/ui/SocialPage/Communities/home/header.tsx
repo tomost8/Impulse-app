@@ -5,14 +5,14 @@ import { router } from 'expo-router';
 interface HeaderProps {
   name: string;
   memberCount: number;
-  profileImage?: string;
+  thumbnail: string;
   communityId: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
   name = "Community Name",
   memberCount = 25,
-  profileImage,
+  thumbnail,
   communityId
 }) => {
   const handleEdit = () => {
@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={profileImage ? { uri: profileImage } : require("@/assets/images/communityprofile.png")}
+        source={thumbnail ? { uri: thumbnail } : require("@/assets/images/communityprofile.png")}
         style={styles.coverImage}
       />
       

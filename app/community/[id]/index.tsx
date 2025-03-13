@@ -32,7 +32,10 @@ const CommunityPage = (props: any) => {
       hasFetchedCommunity.current = true;
     }
     if (hasNewMembersData) {
-      membersRef.current = communityMembers;
+      let filteredMembers = communityMembers
+        .filter((member: any) => member.status === "ACCEPTED")
+        .map((member: any) => member.user);
+      membersRef.current = filteredMembers;
       hasFetchedMembers.current = true;
     }
     if (hasFetchedCommunity.current && hasFetchedMembers.current) {

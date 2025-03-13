@@ -13,27 +13,13 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
-
-interface Category {
-  id: string;
-  name: string;
-  icon: any;
-}
-
-const CATEGORIES: Category[] = [
-  { id: 'workout', name: 'Workout', icon: require('@/assets/icons/categoryworkout.png') },
-  { id: 'studying', name: 'Studying / Working', icon: require('@/assets/icons/categorystudying.png') },
-  { id: 'wellness', name: 'Wellness', icon: require('@/assets/icons/categorywellness.png') },
-  { id: 'riseshine', name: 'Rise & Shine', icon: require('@/assets/icons/categoryriseshine.png') },
-  { id: 'passion', name: 'My Passion / Hobby', icon: require('@/assets/icons/categorypassion.png') },
-  { id: 'food', name: 'Food', icon: require('@/assets/icons/categoryfood.png') },
-];
+import { goals } from '@/utils/goals';
 
 const EditCommunityScreen = () => {
   const [communityName, setCommunityName] = useState('Community Name');
   const [description, setDescription] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [joinCode, setJoinCode] = useState('Run4Fun');
   const { id } = useLocalSearchParams();
 
@@ -58,7 +44,7 @@ const EditCommunityScreen = () => {
     }
   };
 
-  const toggleCategory = (categoryId: string) => {
+  const toggleCategory = (categoryId: number) => {
     setSelectedCategories(prev => 
       prev.includes(categoryId) 
         ? prev.filter(id => id !== categoryId)
@@ -146,27 +132,27 @@ const EditCommunityScreen = () => {
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Goal Category Selection</Text>
             <View style={styles.categoriesGrid}>
-              {CATEGORIES.map((category) => (
+              {goals.map((goal) => (
                 <TouchableOpacity
-                  key={category.id}
+                  key={goal.id}
                   style={[
                     styles.categoryButton,
-                    selectedCategories.includes(category.id) && styles.selectedCategory
+                    selectedCategories.includes(goal.id) && styles.selectedCategory
                   ]}
-                  onPress={() => toggleCategory(category.id)}
+                  onPress={() => toggleCategory(goal.id)}
                 >
                   <Image
-                    source={category.icon}
+                    source={goal.categoryIcon || require('@/assets/icons/categoryworkout.png')}
                     style={[
                       styles.categoryIcon,
-                      selectedCategories.includes(category.id) && styles.selectedCategoryIcon
+                      selectedCategories.includes(goal.id) && styles.selectedCategoryIcon
                     ]}
                   />
                   <Text style={[
                     styles.categoryText,
-                    selectedCategories.includes(category.id) && styles.selectedCategoryText
+                    selectedCategories.includes(goal.id) && styles.selectedCategoryText
                   ]}>
-                    {category.name}
+                    {goal.label}
                   </Text>
                 </TouchableOpacity>
               ))}

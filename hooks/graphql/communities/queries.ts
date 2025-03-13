@@ -93,6 +93,7 @@ export const GET_COMMUNITY = gql`
           first_name
           last_name
           profile_picture
+          bio
         }
       }
     }

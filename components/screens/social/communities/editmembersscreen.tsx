@@ -16,20 +16,17 @@ interface Member {
   id: string;
   name: string;
   username: string;
-  profileImage: any;
+  profile_picture: any;
 }
 
-const EditMembersScreen = () => {
+interface EditMembersScreenProps {
+  members: Member[];
+}
+
+const EditMembersScreen = ({ members }: EditMembersScreenProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isRemovePopupVisible, setIsRemovePopupVisible] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
-
-  // Sample member data
-  const members: Member[] = [
-    { id: '1', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
-    { id: '2', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
-    { id: '3', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png') },
-  ];
 
   const handleBack = () => {
     router.back();
@@ -91,7 +88,7 @@ const EditMembersScreen = () => {
           <View key={member.id} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image 
-                source={member.profileImage}
+                source={member.profile_picture}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
