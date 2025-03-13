@@ -10,6 +10,7 @@ import {
   ScrollView
 } from 'react-native';
 import { router } from 'expo-router';
+import JoinSuccessPopup from './joinsuccesspopup';
 
 interface Group {
   id: string;
@@ -19,6 +20,7 @@ interface Group {
 
 const JoinGroupScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
 
   // Sample group data
   const groups: Group[] = [
@@ -34,12 +36,16 @@ const JoinGroupScreen = () => {
 
   const handleJoin = (groupId: string) => {
     console.log('Join group:', groupId);
-    // Handle join logic
+    setIsSuccessPopupVisible(true);
   };
 
   const handleSearch = () => {
     console.log('Search query:', searchQuery);
     // Handle search logic
+  };
+
+  const handleCloseSuccessPopup = () => {
+    setIsSuccessPopupVisible(false);
   };
 
   return (
@@ -95,6 +101,12 @@ const JoinGroupScreen = () => {
           </View>
         ))}
       </ScrollView>
+
+      {/* Add Success Popup */}
+      <JoinSuccessPopup 
+        isVisible={isSuccessPopupVisible}
+        onClose={handleCloseSuccessPopup}
+      />
     </SafeAreaView>
   );
 };
