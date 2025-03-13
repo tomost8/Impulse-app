@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import MyComponent from '@/components/TwoTab';
 import styles from '@/utils/testStyles';
 import SocialModal from '@/components/old/chats/ChatModal';
-import ConnectPopup from '@/components/screens/connect/conenctpopup';
+import ConnectPopup from '@/components/screens/connect/connectpopup';
 import { useState } from 'react';
 
 export default function ChatScreenOld({

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -9,6 +9,7 @@ import {
   ScrollView 
 } from 'react-native';
 import { router } from 'expo-router';
+import ConnectPopup from '@/components/screens/connect/connectpopup';
 
 interface ChatMessage {
   id: string;
@@ -52,6 +53,11 @@ const ChatScreen = () => {
     router.push('/chats/addFriends');
   };
 
+  const [visible, setVisible] = useState(false);
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -70,7 +76,7 @@ const ChatScreen = () => {
         </View>
         <TouchableOpacity 
           style={styles.addButton}
-          onPress={handleAddFriend}
+          onPress={showModal}
         >
           <Image 
             source={require("@/assets/icons/addFriend.png")}
@@ -107,6 +113,12 @@ const ChatScreen = () => {
           </View>
         ))}
       </ScrollView>
+
+      {/* Connect Popup Modal */}
+      <ConnectPopup
+        isVisible={visible}
+        onClose={hideModal}
+      />
     </SafeAreaView>
   );
 };
