@@ -9,10 +9,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
+import JoinGroupScreen from '@/components/screens/connect/joingroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function JoinGroupScreen({
+function JoinGroupScreenOld({
   chats,
   isChatsLoading,
   chatMembers,
@@ -145,18 +146,33 @@ const JoinGroupPage = (props: any) => {
     );
   }
 
-  return (
-    <JoinGroupScreen 
-      chats={chatsRef.current}
-      isChatsLoading={!hasFetchedChats.current}
-      chatMembers={chatMembersRef.current}
-      isChatMembersLoading={!hasFetchedChatMembers.current}
-      handleJoinGroup={handleJoinGroup}
-      isJoiningGroup={isJoiningGroup}
-      //Extra
-      userId={userId as number}
-    />
-  );
+  if (pageDisplay) {
+    return (
+      <JoinGroupScreen 
+        chats={chatsRef.current}
+        isChatsLoading={!hasFetchedChats.current}
+        chatMembers={chatMembersRef.current}
+        isChatMembersLoading={!hasFetchedChatMembers.current}
+        handleJoinGroup={handleJoinGroup}
+        isJoiningGroup={isJoiningGroup}
+        //Extra
+        userId={userId as number}
+      />
+    );
+  } else {
+    return (
+      <JoinGroupScreenOld 
+        chats={chatsRef.current}
+        isChatsLoading={!hasFetchedChats.current}
+        chatMembers={chatMembersRef.current}
+        isChatMembersLoading={!hasFetchedChatMembers.current}
+        handleJoinGroup={handleJoinGroup}
+        isJoiningGroup={isJoiningGroup}
+        //Extra
+        userId={userId as number}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(JoinGroupPage);
