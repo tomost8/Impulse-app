@@ -10,10 +10,11 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
+import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function GroupInviteScreen({
+function GroupInviteScreenOld({
   chatId,
   friends,
   isFriendsLoading,
@@ -135,17 +136,21 @@ const GroupInvitePage = (props: any) => {
     );
   }
 
-  return (
-    <GroupInviteScreen
-      chatId={Number(chatId)}
-      friends={friendsRef.current}
-      isFriendsLoading={!hasFetchedFriends.current}
-      chatMembers={chatMembersRef.current}
-      isChatMembersLoading={!hasFetchedChatMembers.current}
-      handleInviteUserToChat={handleInviteUserToChat}
-      isInvitingUserToChat={isInvitingUserToChat}
-    />
-  );
+  if (pageDisplay) {
+    return <InviteToGroupScreen />
+  } else {
+    return (
+      <GroupInviteScreenOld
+        chatId={Number(chatId)}
+        friends={friendsRef.current}
+        isFriendsLoading={!hasFetchedFriends.current}
+        chatMembers={chatMembersRef.current}
+        isChatMembersLoading={!hasFetchedChatMembers.current}
+        handleInviteUserToChat={handleInviteUserToChat}
+        isInvitingUserToChat={isInvitingUserToChat}
+      />
+    );
+  }
 }
 
 export default AuthWrapper(GroupInvitePage);

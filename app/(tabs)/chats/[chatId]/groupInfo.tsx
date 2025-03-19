@@ -9,10 +9,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
 // Components
+import GroupInfoScreen from '@/components/screens/chats/groups/groupinfo';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/utils/debug';
 
-function GroupInfoScreen({
+function GroupInfoScreenOld({
   userId,
   chatId,
   chatMembers,
@@ -151,20 +152,24 @@ const GroupInfoPage = (props: any) => {
     );
   }
 
-  return GroupInfoScreen({
-    userId: userId,
-    chatId: Number(chatId),
-    chatMembers: chatMembersRef.current,
-    isChatMembersLoading: !hasFetchedChatMembers.current,
-    chatLeaderboard: chatLeaderboardRef.current,
-    isChatLeaderboardLoading: !hasFetchedChatLeaderboard.current,
-    // Tab Status
-    tabView: tabView,
-    onMembersPress: onMembersPress,
-    onLeaderboardPress: onLeaderboardPress,
-    activeView: activeView,
-    setActiveView: setActiveView,
-  });
+  if (pageDisplay) {
+    return <GroupInfoScreen />
+  } else {
+    return GroupInfoScreenOld({
+      userId: userId,
+      chatId: Number(chatId),
+      chatMembers: chatMembersRef.current,
+      isChatMembersLoading: !hasFetchedChatMembers.current,
+      chatLeaderboard: chatLeaderboardRef.current,
+      isChatLeaderboardLoading: !hasFetchedChatLeaderboard.current,
+      // Tab Status
+      tabView: tabView,
+      onMembersPress: onMembersPress,
+      onLeaderboardPress: onLeaderboardPress,
+      activeView: activeView,
+      setActiveView: setActiveView,
+    });
+  }
 }
 
 export default AuthWrapper(GroupInfoPage);

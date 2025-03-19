@@ -25,10 +25,13 @@ const InviteSentPopup: React.FC<InviteSentPopupProps> = ({
     >
       <View style={styles.overlay}>
         <View style={styles.popup}>
+          {/* Success Icon */}
+          {/*
           <Image 
             source={require("@/assets/icons/success.png")}
             style={styles.successIcon}
           />
+          */}
           <Text style={styles.title}>Invitation Sent</Text>
           <TouchableOpacity 
             style={styles.okayButton}

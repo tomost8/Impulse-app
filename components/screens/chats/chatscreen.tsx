@@ -24,21 +24,14 @@ const ChatScreen = () => {
   const messages: ChatMessage[] = [
     { 
       id: '1', 
-      name: 'Alicia Torreaux', 
+      name: 'Alicia Torreaux (Direct)', 
       message: 'message', 
       time: '13:02',
       profileImage: require('@/assets/images/andrew.png')
     },
     { 
       id: '2', 
-      name: 'Alicia Torreaux', 
-      message: 'message', 
-      time: '13:02',
-      profileImage: require('@/assets/images/andrew.png')
-    },
-    { 
-      id: '3', 
-      name: 'Alicia Torreaux', 
+      name: 'Alicia Torreaux (Group)', 
       message: 'message', 
       time: '13:02',
       profileImage: require('@/assets/images/andrew.png')
@@ -93,7 +86,8 @@ const ChatScreen = () => {
       {/* Messages List */}
       <ScrollView style={styles.messagesList}>
         {messages.map((message) => (
-          <View key={message.id} style={styles.messageCard}>
+          
+            <TouchableOpacity key={message.id} style={styles.messageCard} onPress={() => router.push(`/chats/${message.id}`)}>
             <View style={styles.messageInfo}>
               <Image 
                 source={message.profileImage}
@@ -110,7 +104,8 @@ const ChatScreen = () => {
                 <Text style={styles.unreadCount}>02</Text>
               </View>
             </View>
-          </View>
+            </TouchableOpacity>
+          
         ))}
       </ScrollView>
 
