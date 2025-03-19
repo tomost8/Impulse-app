@@ -78,7 +78,7 @@ function ChatScreen({
           <View>
             <Text style={styles.todoText}>Leave Button</Text>
             <TouchableOpacity style={styles.button} onPress={() => router.push(`/chats/${chatId}/groupInfo`)}>
-              <Text style={styles.text}>Member/Leaderboard</Text>
+              <Text style={styles.text}>Group Info</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={() => router.push(`/chats/${chatId}/invite`)}>
               <Text style={styles.text}>Invite Friend</Text>

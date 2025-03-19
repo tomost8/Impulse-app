@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Open Sans",
     color: "#000000", // Black for name text
+    marginBottom: 3,
   },
   points: {
     fontSize: 14,

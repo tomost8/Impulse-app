@@ -24,7 +24,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ users }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 345, // Matches Figma specifications
+    width: 302, // Matches Figma specifications
     height: 230, // Matches Figma specifications
     backgroundColor: "#FDE9EE", // Light pink background from Figma
     borderRadius: 32, // Matches Figma

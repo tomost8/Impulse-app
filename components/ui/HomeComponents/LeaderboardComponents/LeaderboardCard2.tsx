@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 0,
+    marginBottom: -20,
   },
   podiumRow: {
     flexDirection: "row",
@@ -122,10 +122,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   podiumNumber: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "700",
     color: "#FFFFFF",
     textAlign: "center",
+    fontFamily: "Lato"
   },
 });
 

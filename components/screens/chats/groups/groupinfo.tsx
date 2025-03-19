@@ -1,0 +1,269 @@
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  Image, 
+  TouchableOpacity, 
+  StyleSheet, 
+  SafeAreaView,
+  ScrollView 
+} from 'react-native';
+import { router } from 'expo-router';
+import LeavePopup from './leavepopup';
+
+interface Member {
+  id: string;
+  name: string;
+  username: string;
+  profileImage: any;
+}
+
+const GroupInfoScreen = () => {
+  const [activeTab, setActiveTab] = useState<'Members (25)' | 'Leaderboard'>('Members (25)');
+  const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
+
+  // Sample member data
+  const members: Member[] = [
+    { 
+      id: '1', 
+      name: 'Courtney', 
+      username: 'username', 
+      profileImage: require('@/assets/images/andrew.png')
+    },
+    { 
+      id: '2', 
+      name: 'Courtney', 
+      username: 'username', 
+      profileImage: require('@/assets/images/andrew.png')
+    },
+    { 
+      id: '3', 
+      name: 'Courtney', 
+      username: 'username', 
+      profileImage: require('@/assets/images/andrew.png')
+    },
+  ];
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleViewProfile = (memberId: string) => {
+    console.log('View profile:', memberId);
+  };
+
+  const handleLeaveClick = () => {
+    setIsLeavePopupVisible(true);
+  };
+
+  const handleLeaveConfirm = () => {
+    setIsLeavePopupVisible(false);
+    router.back();
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={handleBack}
+          >
+            <Image 
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.title}>Teaching Assistants</Text>
+        </View>
+        <TouchableOpacity 
+          style={styles.leaveButton}
+          onPress={handleLeaveClick}
+        >
+          <Text style={styles.leaveButtonText}>Leave</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Tab Selector */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'Members (25)' && styles.activeTab]}
+          onPress={() => setActiveTab('Members (25)')}
+        >
+          <Text style={[styles.tabText, activeTab === 'Members (25)' && styles.activeTabText]}>
+            Members (25)
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.tab, activeTab === 'Leaderboard' && styles.activeTab]}
+          onPress={() => setActiveTab('Leaderboard')}
+        >
+          <Text style={[styles.tabText, activeTab === 'Leaderboard' && styles.activeTabText]}>
+            Leaderboard
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Members List */}
+      <ScrollView style={styles.membersList}>
+        {members.map((member) => (
+          <View key={member.id} style={styles.memberCard}>
+            <View style={styles.memberInfo}>
+              <Image 
+                source={member.profileImage}
+                style={styles.profileImage}
+              />
+              <View style={styles.textContainer}>
+                <Text style={styles.name}>{member.name}</Text>
+                <Text style={styles.username}>{member.username}</Text>
+              </View>
+            </View>
+            <TouchableOpacity 
+              style={styles.viewProfileButton}
+              onPress={() => handleViewProfile(member.id)}
+            >
+              <Text style={styles.viewProfileText}>View Profile</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+
+      <LeavePopup
+        isVisible={isLeavePopupVisible}
+        onClose={() => setIsLeavePopupVisible(false)}
+        onLeave={handleLeaveConfirm}
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    height: 65,
+    backgroundColor: '#E0EDFD',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backButton: {
+    padding: 8,
+  },
+  backIcon: {
+    width: 18,
+    height: 18,
+    resizeMode: 'contain',
+    tintColor: '#242020',
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    color: '#242020',
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  leaveButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 100,
+  },
+  leaveButtonText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(222, 114, 141, 0.25)',
+    borderRadius: 15,
+    height: 48,
+    alignItems: 'center',
+    padding: 5,
+    marginHorizontal: 20,
+    marginTop: 12,
+  },
+  tab: {
+    flex: 1,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+  },
+  activeTab: {
+    backgroundColor: '#DE728D',
+  },
+  tabText: {
+    fontSize: 16,
+    fontWeight: '700',
+    fontFamily: 'Open Sans',
+    color: '#242020',
+    opacity: 0.7,
+  },
+  activeTabText: {
+    color: '#FFFFFF',
+    opacity: 1,
+  },
+  membersList: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  memberCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  memberInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  textContainer: {
+    gap: 4,
+  },
+  name: {
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#000000',
+  },
+  username: {
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+  },
+  viewProfileButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    backgroundColor: '#DE728D',
+    borderRadius: 100,
+  },
+  viewProfileText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+});
+
+export default GroupInfoScreen;

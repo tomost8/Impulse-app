@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import JoinSuccessPopup from './joinsuccesspopup';
+import PasswordPopup from './passwordpopup';
 
 interface Group {
   id: string;
@@ -21,6 +22,7 @@ interface Group {
 const JoinGroupScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
+  const [isPasswordPopupVisible, setIsPasswordPopupVisible] = useState(false);
 
   // Sample group data
   const groups: Group[] = [
@@ -34,9 +36,8 @@ const JoinGroupScreen = () => {
     router.back();
   };
 
-  const handleJoin = (groupId: string) => {
-    console.log('Join group:', groupId);
-    setIsSuccessPopupVisible(true);
+  const handleJoin = () => {
+    setIsPasswordPopupVisible(true);
   };
 
   const handleSearch = () => {
@@ -46,6 +47,12 @@ const JoinGroupScreen = () => {
 
   const handleCloseSuccessPopup = () => {
     setIsSuccessPopupVisible(false);
+  };
+
+  const handlePasswordSubmit = (password: string) => {
+    console.log('Password submitted:', password);
+    setIsPasswordPopupVisible(false);
+    // Handle join with password logic
   };
 
   return (
@@ -94,7 +101,7 @@ const JoinGroupScreen = () => {
             </View>
             <TouchableOpacity 
               style={styles.joinButton}
-              onPress={() => handleJoin(group.id)}
+              onPress={() => handleJoin()}
             >
               <Text style={styles.joinButtonText}>Join</Text>
             </TouchableOpacity>
@@ -106,6 +113,12 @@ const JoinGroupScreen = () => {
       <JoinSuccessPopup 
         isVisible={isSuccessPopupVisible}
         onClose={handleCloseSuccessPopup}
+      />
+
+      <PasswordPopup
+        isVisible={isPasswordPopupVisible}
+        onClose={() => setIsPasswordPopupVisible(false)}
+        onSubmit={handlePasswordSubmit}
       />
     </SafeAreaView>
   );
