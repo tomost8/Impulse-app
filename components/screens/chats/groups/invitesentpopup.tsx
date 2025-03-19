@@ -1,0 +1,88 @@
+import React from 'react';
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  Image,
+  StyleSheet, 
+  Modal 
+} from 'react-native';
+
+interface InviteSentPopupProps {
+  isVisible: boolean;
+  onClose: () => void;
+}
+
+const InviteSentPopup: React.FC<InviteSentPopupProps> = ({
+  isVisible,
+  onClose,
+}) => {
+  return (
+    <Modal
+      visible={isVisible}
+      transparent={true}
+      animationType="fade"
+    >
+      <View style={styles.overlay}>
+        <View style={styles.popup}>
+          <Image 
+            source={require("@/assets/icons/success.png")}
+            style={styles.successIcon}
+          />
+          <Text style={styles.title}>Invitation Sent</Text>
+          <TouchableOpacity 
+            style={styles.okayButton}
+            onPress={onClose}
+          >
+            <Text style={styles.okayButtonText}>Okay</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  popup: {
+    width: '90%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+  },
+  successIcon: {
+    width: 64,
+    height: 64,
+    resizeMode: 'contain',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 24,
+  },
+  okayButton: {
+    width: '100%',
+    height: 48,
+    backgroundColor: '#DE728D',
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  okayButtonText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+});
+
+export default InviteSentPopup;

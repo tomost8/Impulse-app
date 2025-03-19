@@ -170,8 +170,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color: '#DE728D',
     paddingHorizontal: 16,
+    fontWeight: '500',
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 6,
+    marginLeft: 272,
   },
   messagesList: {
     flex: 1,

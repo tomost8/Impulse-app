@@ -206,6 +206,7 @@ const styles = StyleSheet.create({
     height: 24,
     resizeMode: 'contain',
     tintColor: '#DE728D',
+    paddingLeft: 2,
   },
   content: {
     flex: 1,
@@ -283,8 +284,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   cancelIcon: {
-    width: 24,
-    height: 24,
+    width: 16,
+    height: 16,
     resizeMode: 'contain',
     tintColor: '#DE728D',
   },

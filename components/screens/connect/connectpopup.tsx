@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   popup: {
-    width: '90%',
+    width: '85%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 24,
@@ -133,13 +133,14 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   closeIcon: {
-    width: 24,
-    height: 24,
+    width: 14,
+    height: 14,
     resizeMode: 'contain',
     tintColor: '#979797',
   },
   section: {
     marginBottom: 24,
+    width: '100%',
   },
   sectionTitle: {
     fontSize: 16,
@@ -149,23 +150,25 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   optionButton: {
+    width: '100%',
+    height: 68,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#F5F9FF',
+    backgroundColor: '#E0EDFD',
     borderRadius: 12,
     marginBottom: 8,
   },
   optionIcon: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
     resizeMode: 'contain',
-    tintColor: '#DE728D',
     marginRight: 12,
   },
   optionText: {
     fontSize: 14,
     fontFamily: 'Poppins',
+    fontWeight: '600',
     color: '#000000',
   },
 });

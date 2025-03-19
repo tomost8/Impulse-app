@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color: '#242020',
     marginLeft: 8,
+    fontWeight: "600",
   },
   content: {
     flex: 1,

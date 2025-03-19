@@ -243,10 +243,11 @@ const styles = StyleSheet.create({
     color: '#979797',
   },
   cancelIcon: {
-    width: 24,
-    height: 24,
+    width: 16,
+    height: 16,
     resizeMode: 'contain',
     tintColor: '#DE728D',
+    marginRight: 4,
   },
   addButton: {
     paddingVertical: 8,
