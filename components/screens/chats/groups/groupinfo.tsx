@@ -37,7 +37,7 @@ const GroupInfoScreen = () => {
       profileImage: require('@/assets/images/andrew.png')
     },
     { 
-      id: '3', 
+      id: '31', 
       name: 'Courtney', 
       username: 'username', 
       profileImage: require('@/assets/images/andrew.png')
@@ -50,6 +50,7 @@ const GroupInfoScreen = () => {
 
   const handleViewProfile = (memberId: string) => {
     console.log('View profile:', memberId);
+    router.push(`/user/${memberId}`);
   };
 
   const handleLeaveClick = () => {

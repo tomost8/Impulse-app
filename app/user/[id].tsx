@@ -6,9 +6,14 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
+import { useGetFriends } from '@/hooks/graphql/friends/queries';
 // Components
+import FriendViewScreen from '@/components/screens/connect/profiles/friendview';
+import NonFriendViewScreen from '@/components/screens/connect/profiles/nonfriendview';
 // Debug
 import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserData } from '@/services/UserPreferencesContext';
 
 function UserScreen({
   user,
@@ -54,43 +59,62 @@ function UserScreen({
   );
 }
 
-const UserPage = (props: any) => {
+const UserPage = () => {
   const { id } = useLocalSearchParams();
+  const { fetching, user } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
   const userRef = useRef<any | null>(null);
   const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData } = useGetUser(Number(id), !hasFetchedUser.current);
+  const { user: profileUser, fetched: hasNewUserData } = useGetUser(Number(id), !hasFetchedUser.current);
+
+  const friendsRef = useRef<any[] | null>(null);
+  const hasFetchedFriends = useRef(false);
+  const { friends, fetched: hasNewFriendsData } = useGetFriends(user.id, !hasFetchedFriends.current && !fetching);
 
   useEffect(() => {
-    if (!hasNewUserData) {
+    if (!hasNewUserData && !hasNewFriendsData) {
       return;
     }
     if (hasNewUserData) {
-      userRef.current = user;
+      userRef.current = profileUser;
       hasFetchedUser.current = true;
     }
-    if (hasFetchedUser.current) {
+    if (hasNewFriendsData) {
+      friendsRef.current = friends;
+      hasFetchedFriends.current = true;
+    }
+    if (hasFetchedUser.current && hasFetchedFriends.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewUserData]);
+  }, [hasNewUserData, hasNewFriendsData]);
+
+  // Check if the profile user is an accepted friend
+  const isAcceptedFriend = friendsRef.current?.some(
+    friendship => friendship.friend.id === Number(id) && friendship.status === 'ACCEPTED'
+  ) ?? false;
 
   // Debug
   const loading = !hasFetchedUser.current;
   if (debugRenders && !loading) {
-    console.log("Rendering UserPage\n",
-      "User:", userRef.current, "\n",
+    console.log("Rendering UserPage for user:", id, "\n",
+      "ProfileUser:", userRef.current, "\n",
+      "Friends:", friendsRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
+      "Is Accepted Friend:", isAcceptedFriend, "\n",
     );
   }
 
-  return (
-    <UserScreen
-      user={userRef.current}
-      isUserLoading={!hasFetchedUser.current}
-    />
-  );
+  if (isAcceptedFriend) {
+    return (
+      <FriendViewScreen/>
+    );
+  } else {
+    return (
+      <NonFriendViewScreen/>
+    );
+  }
 }
 
 export default UserPage; // not sure if need authwrapper
