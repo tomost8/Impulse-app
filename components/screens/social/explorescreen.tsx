@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, Text } from 'react-native';
 import { 
   Header, 
   SearchBar, 
@@ -7,30 +7,28 @@ import {
   CommunityCard 
 } from '@/components/ui/SocialPage/Explore';
 
-const ExploreScreen = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+interface ExploreScreenProps {
+  loading: boolean;
+  communities: any[];
+  selectedCategory: string;
+  handleCategorySelect: (category: string) => void;
+  handleJoinCommunity: (communityId: number) => void;
+}
 
-  // Updated sample data to include IDs
-  const sampleCommunities = Array(6).fill(null).map((_, index) => ({
-    id: index.toString(),
-    name: "Hiking Adventures",
-    memberCount: 25,
-  }));
+const ExploreScreen = ({ loading, communities, selectedCategory, handleCategorySelect, handleJoinCommunity }: ExploreScreenProps) => {
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+  const [filteredCommunities, setFilteredCommunities] = useState(communities);
+
+  //const [searchQuery, setSearchQuery] = useState('');
+  //console.log('ExploreScreen Communities:', communities, filteredCommunities);
 
   const handleSearch = (text: string) => {
-    setSearchQuery(text);
-    // Handle search logic here
-  };
-
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category === selectedCategory ? '' : category);
-    // Handle category filter logic here
-  };
-
-  const handleJoinCommunity = (communityId: string) => {
-    console.log('Join community pressed:', communityId);
-    // Handle join logic here
+    const filtered = communities.filter(community => 
+      text === '' || community.name.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredCommunities(filtered);
   };
 
   return (
@@ -48,12 +46,14 @@ const ExploreScreen = () => {
           />
           <View style={styles.feedContainer}>
             <View style={styles.cardGrid}>
-              {sampleCommunities.map((community, index) => (
+              {filteredCommunities.map((community) => (
                 <CommunityCard
-                  key={index}
+                  key={community.id}
+                  id={community.id}
                   name={community.name}
-                  memberCount={community.memberCount}
-                  onJoin={() => handleJoinCommunity(index.toString())}
+                  image={community.thumbnail}
+                  memberCount={25} // TODO: fetch this
+                  onJoin={() => handleJoinCommunity(Number(community.id))}
                 />
               ))}
             </View>

@@ -13,21 +13,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { goals } from '@/utils/goals';
 
-interface Category {
-  id: string;
-  name: string;
-  icon: any;
-}
-
-const CATEGORIES: Category[] = [
-  { id: 'workout', name: 'Workout', icon: require('@/assets/icons/categoryworkout.png') },
-  { id: 'studying', name: 'Studying / Working', icon: require('@/assets/icons/categorystudying.png') },
-  { id: 'wellness', name: 'Wellness', icon: require('@/assets/icons/categorywellness.png') },
-  { id: 'riseshine', name: 'Rise & Shine', icon: require('@/assets/icons/categoryriseshine.png') },
-  { id: 'passion', name: 'My Passion / Hobby', icon: require('@/assets/icons/categorypassion.png') },
-  { id: 'food', name: 'Food', icon: require('@/assets/icons/categoryfood.png') },
-];
 
 const CreateCommunityScreen = () => {
   const [communityName, setCommunityName] = useState('');
@@ -151,27 +138,27 @@ const CreateCommunityScreen = () => {
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Goal Category Selection</Text>
             <View style={styles.categoriesGrid}>
-              {CATEGORIES.map((category) => (
+              {goals.map((goal) => (
                 <TouchableOpacity
-                  key={category.id}
+                  key={goal.id}
                   style={[
                     styles.categoryButton,
-                    selectedCategories.includes(category.id) && styles.selectedCategory
+                    selectedCategories.includes(goal.id.toString()) && styles.selectedCategory
                   ]}
-                  onPress={() => toggleCategory(category.id)}
+                  onPress={() => toggleCategory(goal.id.toString())}
                 >
                   <Image
-                    source={category.icon}
+                    source={goal.categoryIcon || require('@/assets/icons/categoryworkout.png')}
                     style={[
                       styles.categoryIcon,
-                      selectedCategories.includes(category.id) && styles.selectedCategoryIcon
+                      selectedCategories.includes(goal.id.toString()) && styles.selectedCategoryIcon
                     ]}
                   />
                   <Text style={[
                     styles.categoryText,
-                    selectedCategories.includes(category.id) && styles.selectedCategoryText
+                    selectedCategories.includes(goal.id.toString()) && styles.selectedCategoryText
                   ]}>
-                    {category.name}
+                    {goal.label}
                   </Text>
                 </TouchableOpacity>
               ))}
