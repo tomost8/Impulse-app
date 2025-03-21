@@ -35,9 +35,11 @@ function PartnerScreen({
       <Text style={styles.todoText}>
           Todo: Daily Goals + Joined communities + Nudge
       </Text>
+      {/*
       <Text style={styles.text}>
           Points: {user.point.points}
       </Text>
+      */}
       <Text style={styles.text}>
           Bio: {user.bio}
       </Text>
