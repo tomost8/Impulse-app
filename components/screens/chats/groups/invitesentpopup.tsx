@@ -25,13 +25,10 @@ const InviteSentPopup: React.FC<InviteSentPopupProps> = ({
     >
       <View style={styles.overlay}>
         <View style={styles.popup}>
-          {/* Success Icon */}
-          {/*
           <Image 
-            source={require("@/assets/icons/success.png")}
-            style={styles.successIcon}
+            source={require("@/assets/icons/confirmationfull.png")}
+            style={styles.confirmationIcon}
           />
-          */}
           <Text style={styles.title}>Invitation Sent</Text>
           <TouchableOpacity 
             style={styles.okayButton}
@@ -53,15 +50,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   popup: {
-    width: '90%',
+    width: '75%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 24,
     alignItems: 'center',
   },
-  successIcon: {
-    width: 64,
-    height: 64,
+  confirmationIcon: {
+    width: 90,
+    height: 90,
     resizeMode: 'contain',
     marginBottom: 16,
   },

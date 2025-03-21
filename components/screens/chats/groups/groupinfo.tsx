@@ -61,6 +61,14 @@ const GroupInfoScreen = () => {
     router.back();
   };
 
+  const handleTabChange = (tab: 'Members (25)' | 'Leaderboard') => {
+    if (tab === 'Leaderboard') {
+      router.push('/chats/groups/groupleaderboard');
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -98,7 +106,7 @@ const GroupInfoScreen = () => {
 
         <TouchableOpacity
           style={[styles.tab, activeTab === 'Leaderboard' && styles.activeTab]}
-          onPress={() => setActiveTab('Leaderboard')}
+          onPress={() => handleTabChange('Leaderboard')}
         >
           <Text style={[styles.tabText, activeTab === 'Leaderboard' && styles.activeTabText]}>
             Leaderboard
@@ -175,14 +183,16 @@ const styles = StyleSheet.create({
   leaveButton: {
     paddingVertical: 8,
     paddingHorizontal: 24,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#A4ACBC',
   },
   leaveButtonText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: '600',
-    color: '#242020',
+    color: '#A4ACBC',
   },
   tabContainer: {
     flexDirection: 'row',
@@ -254,7 +264,7 @@ const styles = StyleSheet.create({
   },
   viewProfileButton: {
     paddingVertical: 8,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     backgroundColor: '#DE728D',
     borderRadius: 100,
   },

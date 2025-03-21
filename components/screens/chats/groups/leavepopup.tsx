@@ -67,8 +67,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   leaveIcon: {
-    width: 64,
-    height: 64,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
     marginBottom: 16,
   },
