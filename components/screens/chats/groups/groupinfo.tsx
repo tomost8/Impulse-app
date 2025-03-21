@@ -63,7 +63,8 @@ const GroupInfoScreen = () => {
 
   const handleTabChange = (tab: 'Members (25)' | 'Leaderboard') => {
     if (tab === 'Leaderboard') {
-      router.push('/chats/groups/groupleaderboard');
+      //router.push('/chats/groups/groupleaderboard');
+      setActiveTab('Leaderboard');
     } else {
       setActiveTab(tab);
     }
