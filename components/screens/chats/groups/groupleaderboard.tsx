@@ -15,25 +15,27 @@ interface LeaderboardUser {
   id: string;
   rank: number;
   name: string;
-  points: number;
+  points: {
+    points: number;
+  };
   profileImage: any;
 }
 
 const GroupLeaderboardScreen = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<'Weekly' | 'Monthly' | 'All Time'>('Weekly');
 
-  // Sample leaderboard data
+  // Updated sample data structure to match GraphQL schema
   const leaderboardData: LeaderboardUser[] = [
-    { id: '1', rank: 1, name: 'Pedro', points: 3645, profileImage: require('@/assets/images/andrew.png') },
-    { id: '2', rank: 2, name: 'Andrew', points: 3496, profileImage: require('@/assets/images/andrew.png') },
-    { id: '3', rank: 3, name: 'Freida', points: 3178, profileImage: require('@/assets/images/andrew.png') },
-    { id: '4', rank: 4, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '5', rank: 5, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '6', rank: 6, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '7', rank: 7, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '8', rank: 8, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '9', rank: 9, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
-    { id: '10', rank: 10, name: 'Rodrigo', points: 800, profileImage: require('@/assets/images/andrew.png') },
+    { id: '1', rank: 1, name: 'Pedro', points: { points: 3645 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '2', rank: 2, name: 'Andrew', points: { points: 3496 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '3', rank: 3, name: 'Freida', points: { points: 3178 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '4', rank: 4, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '5', rank: 5, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '6', rank: 6, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '7', rank: 7, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '8', rank: 8, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '9', rank: 9, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '10', rank: 10, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
   ];
 
   const handleBack = () => {
@@ -75,9 +77,9 @@ const GroupLeaderboardScreen = () => {
         <View style={styles.podium}>
           {/* Second Place */}
           <View style={styles.podiumItem}>
-            <Image source={topThree[1].profileImage} style={styles.podiumImage} />
-            <Text style={styles.podiumName}>{topThree[1].name}</Text>
-            <Text style={styles.podiumPoints}>{topThree[1].points} Pts</Text>
+            <Image source={leaderboardData[1].profileImage} style={styles.podiumImage} />
+            <Text style={styles.podiumName}>{leaderboardData[1].name}</Text>
+            <Text style={styles.podiumPoints}>{leaderboardData[1].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.secondPlace]}>
               <Text style={styles.podiumNumber}>2</Text>
             </View>
@@ -85,9 +87,9 @@ const GroupLeaderboardScreen = () => {
 
           {/* First Place */}
           <View style={[styles.podiumItem, styles.firstPlaceItem]}>
-            <Image source={topThree[0].profileImage} style={styles.podiumImage} />
-            <Text style={styles.podiumName}>{topThree[0].name}</Text>
-            <Text style={styles.podiumPoints}>{topThree[0].points} Pts</Text>
+            <Image source={leaderboardData[0].profileImage} style={styles.podiumImage} />
+            <Text style={styles.podiumName}>{leaderboardData[0].name}</Text>
+            <Text style={styles.podiumPoints}>{leaderboardData[0].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.firstPlace]}>
               <Text style={styles.podiumNumber}>1</Text>
             </View>
@@ -95,9 +97,9 @@ const GroupLeaderboardScreen = () => {
 
           {/* Third Place */}
           <View style={styles.podiumItem}>
-            <Image source={topThree[2].profileImage} style={styles.podiumImage} />
-            <Text style={styles.podiumName}>{topThree[2].name}</Text>
-            <Text style={styles.podiumPoints}>{topThree[2].points} Pts</Text>
+            <Image source={leaderboardData[2].profileImage} style={styles.podiumImage} />
+            <Text style={styles.podiumName}>{leaderboardData[2].name}</Text>
+            <Text style={styles.podiumPoints}>{leaderboardData[2].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.thirdPlace]}>
               <Text style={styles.podiumNumber}>3</Text>
             </View>
@@ -106,7 +108,7 @@ const GroupLeaderboardScreen = () => {
 
         {/* Remaining Rankings */}
         <View style={styles.rankings}>
-          {remainingUsers.map((user) => (
+          {leaderboardData.slice(3, 10).map((user) => (
             <View key={user.id} style={styles.rankingItem}>
               <View style={styles.rankInfo}>
                 <View style={styles.rankBadge}>
@@ -115,7 +117,7 @@ const GroupLeaderboardScreen = () => {
                 <Image source={user.profileImage} style={styles.rankImage} />
                 <Text style={styles.rankName}>{user.name}</Text>
               </View>
-              <Text style={styles.rankPoints}>{user.points}</Text>
+              <Text style={styles.rankPoints}>{user.points.points}</Text>
             </View>
           ))}
         </View>

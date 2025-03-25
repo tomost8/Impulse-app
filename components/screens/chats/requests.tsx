@@ -202,10 +202,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   addIcon: {
-    width: 24,
-    height: 24,
+    width: 22,
+    height: 22,
     resizeMode: 'contain',
-    tintColor: '#DE728D',
+    tintColor: '#242020',
     paddingLeft: 2,
   },
   content: {

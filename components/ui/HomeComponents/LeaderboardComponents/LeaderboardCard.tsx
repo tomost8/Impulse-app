@@ -8,8 +8,17 @@ interface LeaderboardCardProps {
 }
 
 const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ users }) => {
+  // Calculate remaining users (after top 3)
+  const remainingUsers = users.slice(3);
+  
+  // Calculate dynamic height based on number of remaining users
+  // Base height (260) - some space if there are no remaining users
+  const dynamicHeight = remainingUsers.length > 0 
+    ? 260  // Full height with users
+    : 200; // Reduced height when no additional users
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height: dynamicHeight }]}>
       <View style={styles.topProfiles}>
         {/* Second Place */}
         {users[1] && (
@@ -52,7 +61,7 @@ const LeaderboardCard: React.FC<LeaderboardCardProps> = ({ users }) => {
 const styles = StyleSheet.create({
   container: {
     width: 348,
-    height: 260,
+    // height is now set dynamically
     backgroundColor: "#FFFFFF",
     borderRadius: 32,
     paddingTop: 28,

@@ -1,7 +1,9 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import ActivityDetailsSection from './ActivityDetailsSection';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
 
 // Importing assets
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
@@ -27,6 +29,75 @@ type AddActivityCardProps = {
   onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
 };
 
+const PickerModal = ({ visible, onClose, onSelect, items, selectedValue, title }) => (
+  <Modal
+    visible={visible}
+    transparent={true}
+    animationType="slide"
+  >
+    <View style={styles.modalOverlay}>
+      <View style={styles.modalContent}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>{title}</Text>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={styles.modalDoneButton}>Done</Text>
+          </TouchableOpacity>
+        </View>
+        <Picker
+          selectedValue={selectedValue}
+          onValueChange={onSelect}
+          style={styles.picker}
+          itemStyle={styles.pickerItem}
+        >
+          {items}
+        </Picker>
+      </View>
+    </View>
+  </Modal>
+);
+
+const TimeInput = ({ 
+  value, 
+  placeholder, 
+  onPress, 
+  type, 
+  onChangeText, 
+  width = '100%' 
+}) => {
+  if (type === 'description') {
+    return (
+      <TextInput
+        style={[styles.inputContainer, { width, height: 100, textAlignVertical: 'top' }]}
+        placeholder={placeholder}
+        placeholderTextColor="#979797"
+        value={value}
+        onChangeText={onChangeText}
+        multiline
+        returnKeyType="done"
+        blurOnSubmit={true}
+        onSubmitEditing={() => {
+          Keyboard.dismiss();
+        }}
+      />
+    );
+  }
+
+  return (
+    <TouchableOpacity 
+      style={[styles.inputContainer, { width }]}
+      onPress={onPress}
+    >
+      <Text style={value ? styles.inputText : styles.placeholderText}>
+        {value || placeholder}
+      </Text>
+      <Image 
+        source={require('@/assets/icons/arrow-down-grey.png')}
+        style={styles.arrowIcon}
+      />
+    </TouchableOpacity>
+  );
+};
+
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
   category,
   isSelected,
@@ -36,6 +107,36 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showHoursPicker, setShowHoursPicker] = useState(false);
+  const [showMinsPicker, setShowMinsPicker] = useState(false);
+
+  const handleTimeChange = (event, selectedDate) => {
+    setShowTimePicker(false);
+    if (selectedDate) {
+      onFormDataChange('startTime', selectedDate.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit'
+      }));
+    }
+  };
+
+  const handleHoursChange = (hours) => {
+    setShowHoursPicker(false);
+    onFormDataChange('duration', { 
+      ...formData.duration, 
+      hours: parseInt(hours) 
+    });
+  };
+
+  const handleMinutesChange = (minutes) => {
+    setShowMinsPicker(false);
+    onFormDataChange('duration', { 
+      ...formData.duration, 
+      minutes: parseInt(minutes) 
+    });
+  };
+
   const renderCollapsedCard = () => (
     <TouchableOpacity onPress={onSelect}
       style={[styles.container, isSelected && styles.selectedContainer]}
@@ -75,10 +176,80 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
       </TouchableOpacity>
 
       {isSelected && (
-        <ActivityDetailsSection
-          formData={formData}
-          onFormDataChange={onFormDataChange}
-        />
+        <View style={styles.formContainer}>
+          {/* Start Time */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Start Time (optional)</Text>
+            <TimeInput
+              value={formData?.startTime}
+              placeholder="Choose"
+              onPress={() => setShowTimePicker(true)}
+            />
+            {showTimePicker && (
+              <DateTimePicker
+                value={new Date()}
+                mode="time"
+                is24Hour={false}
+                display="default"
+                onChange={handleTimeChange}
+              />
+            )}
+          </View>
+
+          {/* Duration */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Activity Duration (optional)</Text>
+            <View style={styles.durationContainer}>
+              <TimeInput
+                value={formData?.duration?.hours ? `${formData.duration.hours} hrs` : "0 hrs"}
+                placeholder="0 hrs"
+                onPress={() => setShowHoursPicker(true)}
+                width="48%"
+              />
+              <TimeInput
+                value={formData?.duration?.minutes ? `${formData.duration.minutes} mins` : "0 mins"}
+                placeholder="0 mins"
+                onPress={() => setShowMinsPicker(true)}
+                width="48%"
+              />
+            </View>
+            
+            {/* Hours Picker Modal */}
+            <PickerModal
+              visible={showHoursPicker}
+              onClose={() => setShowHoursPicker(false)}
+              onSelect={handleHoursChange}
+              selectedValue={formData?.duration?.hours?.toString()}
+              title="Select Hours"
+              items={Array.from({ length: 11 }, (_, i) => (
+                <Picker.Item key={i} label={`${i} hrs`} value={i.toString()} />
+              ))}
+            />
+
+            {/* Minutes Picker Modal */}
+            <PickerModal
+              visible={showMinsPicker}
+              onClose={() => setShowMinsPicker(false)}
+              onSelect={handleMinutesChange}
+              selectedValue={formData?.duration?.minutes?.toString()}
+              title="Select Minutes"
+              items={Array.from({ length: 60 }, (_, i) => (
+                <Picker.Item key={i} label={`${i} mins`} value={i.toString()} />
+              ))}
+            />
+          </View>
+
+          {/* Description */}
+          <View style={styles.inputSection}>
+            <Text style={styles.label}>Description (optional)</Text>
+            <TimeInput
+              type="description"
+              value={formData?.description}
+              placeholder="Enter description"
+              onChangeText={(text) => onFormDataChange('description', text)}
+            />
+          </View>
+        </View>
       )}
     </View>
   );
@@ -154,6 +325,88 @@ const styles = StyleSheet.create({
   checkmark: {
     width: 25,
     height: 25,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+  },
+  inputText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  placeholderText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+  },
+  arrowIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
+    tintColor: '#979797',
+  },
+  durationContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  inputSection: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+    marginBottom: 8,
+  },
+  formContainer: {
+    padding: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 20,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E1E1',
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  modalDoneButton: {
+    fontSize: 16,
+    fontFamily: 'Open Sans',
+    color: '#DE728D',
+    fontWeight: '600',
+  },
+  picker: {
+    height: 200,
+  },
+  pickerItem: {
+    color: '#242020',
+    fontSize: 20,
+    fontFamily: 'Open Sans',
   },
 });
 

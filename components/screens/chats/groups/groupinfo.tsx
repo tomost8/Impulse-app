@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import LeavePopup from './leavepopup';
+import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardCard';
 
 interface Member {
   id: string;
@@ -37,11 +38,35 @@ const GroupInfoScreen = () => {
       profileImage: require('@/assets/images/andrew.png')
     },
     { 
-      id: '3', 
+      id: '31', 
       name: 'Courtney', 
       username: 'username', 
       profileImage: require('@/assets/images/andrew.png')
     },
+  ];
+
+  // Sample leaderboard data
+  const leaderboardUsers = [
+    {
+      username: 'williamwang',
+      point: { weekly_points: 100 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 80 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 60 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 40 },
+      profile_picture: require('@/assets/images/andrew.png')
+    }
   ];
 
   const handleBack = () => {
@@ -50,6 +75,7 @@ const GroupInfoScreen = () => {
 
   const handleViewProfile = (memberId: string) => {
     console.log('View profile:', memberId);
+    router.push(`/user/${memberId}`);
   };
 
   const handleLeaveClick = () => {
@@ -59,6 +85,50 @@ const GroupInfoScreen = () => {
   const handleLeaveConfirm = () => {
     setIsLeavePopupVisible(false);
     router.back();
+  };
+
+  const handleTabChange = (tab: 'Members (25)' | 'Leaderboard') => {
+    if (tab === 'Leaderboard') {
+      //router.push('/chats/groups/groupleaderboard');
+      setActiveTab('Leaderboard');
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
+  const renderContent = () => {
+    if (activeTab === 'Members (25)') {
+      return (
+        <View style={styles.membersList}>
+          {members.map((member) => (
+            <View key={member.id} style={styles.memberCard}>
+              <View style={styles.memberInfo}>
+                <Image 
+                  source={member.profileImage}
+                  style={styles.profileImage}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{member.name}</Text>
+                  <Text style={styles.username}>{member.username}</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.viewProfileButton}
+                onPress={() => handleViewProfile(member.id)}
+              >
+                <Text style={styles.viewProfileText}>View Profile</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.leaderboardContainer}>
+          <LeaderboardCard users={leaderboardUsers} />
+        </View>
+      );
+    }
   };
 
   return (
@@ -98,7 +168,7 @@ const GroupInfoScreen = () => {
 
         <TouchableOpacity
           style={[styles.tab, activeTab === 'Leaderboard' && styles.activeTab]}
-          onPress={() => setActiveTab('Leaderboard')}
+          onPress={() => handleTabChange('Leaderboard')}
         >
           <Text style={[styles.tabText, activeTab === 'Leaderboard' && styles.activeTabText]}>
             Leaderboard
@@ -106,28 +176,9 @@ const GroupInfoScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Members List */}
-      <ScrollView style={styles.membersList}>
-        {members.map((member) => (
-          <View key={member.id} style={styles.memberCard}>
-            <View style={styles.memberInfo}>
-              <Image 
-                source={member.profileImage}
-                style={styles.profileImage}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.name}>{member.name}</Text>
-                <Text style={styles.username}>{member.username}</Text>
-              </View>
-            </View>
-            <TouchableOpacity 
-              style={styles.viewProfileButton}
-              onPress={() => handleViewProfile(member.id)}
-            >
-              <Text style={styles.viewProfileText}>View Profile</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+      {/* Content */}
+      <ScrollView>
+        {renderContent()}
       </ScrollView>
 
       <LeavePopup
@@ -175,14 +226,16 @@ const styles = StyleSheet.create({
   leaveButton: {
     paddingVertical: 8,
     paddingHorizontal: 24,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'transparent',
     borderRadius: 100,
+    borderWidth: 1,
+    borderColor: '#A4ACBC',
   },
   leaveButtonText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: '600',
-    color: '#242020',
+    color: '#A4ACBC',
   },
   tabContainer: {
     flexDirection: 'row',
@@ -254,7 +307,7 @@ const styles = StyleSheet.create({
   },
   viewProfileButton: {
     paddingVertical: 8,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     backgroundColor: '#DE728D',
     borderRadius: 100,
   },
@@ -263,6 +316,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  leaderboardContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
   },
 });
 
