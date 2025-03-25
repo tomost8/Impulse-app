@@ -1,10 +1,11 @@
-import React from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView, Text } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Image } from "react-native";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
 import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
 import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
+import DailyAddPopup from "../home/dailyaddpopup";
 
 interface HomeScreenProps {
   isLoading: boolean;
@@ -19,14 +20,27 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   activities,
   friendsLeaderboard,
 }) => {
+  const [showDailyAddPopup, setShowDailyAddPopup] = useState(false);
+
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      <View style={styles.header}>
         <TopSection name={name} />
-        
+        <TouchableOpacity 
+          style={styles.checkButton}
+          onPress={() => setShowDailyAddPopup(true)}
+        >
+          <Image 
+            source={require("@/assets/icons/greencheck.png")}
+            style={styles.checkIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      
+      <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.quoteSection}>
           <QuoteofDay />
         </View>
@@ -46,6 +60,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           />
         </View>
       </ScrollView>
+
+      <DailyAddPopup 
+        isVisible={showDailyAddPopup}
+        onClose={() => setShowDailyAddPopup(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -74,6 +93,20 @@ const styles = StyleSheet.create({
     flex: 1, // ✅ Fix: Allows LeaderboardFull to expand dynamically
     justifyContent: "center",
     alignItems: "center",
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
+  checkButton: {
+    padding: 8,
+  },
+  checkIcon: {
+    width: 25,
+    height: 25,
+    resizeMode: 'contain',
   },
 });
 

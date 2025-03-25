@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import LeavePopup from './leavepopup';
+import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardCard';
 
 interface Member {
   id: string;
@@ -44,6 +45,30 @@ const GroupInfoScreen = () => {
     },
   ];
 
+  // Sample leaderboard data
+  const leaderboardUsers = [
+    {
+      username: 'williamwang',
+      point: { weekly_points: 100 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 80 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 60 },
+      profile_picture: require('@/assets/images/andrew.png')
+    },
+    {
+      username: 'TestUser',
+      point: { weekly_points: 40 },
+      profile_picture: require('@/assets/images/andrew.png')
+    }
+  ];
+
   const handleBack = () => {
     router.back();
   };
@@ -68,6 +93,41 @@ const GroupInfoScreen = () => {
       setActiveTab('Leaderboard');
     } else {
       setActiveTab(tab);
+    }
+  };
+
+  const renderContent = () => {
+    if (activeTab === 'Members (25)') {
+      return (
+        <View style={styles.membersList}>
+          {members.map((member) => (
+            <View key={member.id} style={styles.memberCard}>
+              <View style={styles.memberInfo}>
+                <Image 
+                  source={member.profileImage}
+                  style={styles.profileImage}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{member.name}</Text>
+                  <Text style={styles.username}>{member.username}</Text>
+                </View>
+              </View>
+              <TouchableOpacity 
+                style={styles.viewProfileButton}
+                onPress={() => handleViewProfile(member.id)}
+              >
+                <Text style={styles.viewProfileText}>View Profile</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.leaderboardContainer}>
+          <LeaderboardCard users={leaderboardUsers} />
+        </View>
+      );
     }
   };
 
@@ -116,28 +176,9 @@ const GroupInfoScreen = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Members List */}
-      <ScrollView style={styles.membersList}>
-        {members.map((member) => (
-          <View key={member.id} style={styles.memberCard}>
-            <View style={styles.memberInfo}>
-              <Image 
-                source={member.profileImage}
-                style={styles.profileImage}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.name}>{member.name}</Text>
-                <Text style={styles.username}>{member.username}</Text>
-              </View>
-            </View>
-            <TouchableOpacity 
-              style={styles.viewProfileButton}
-              onPress={() => handleViewProfile(member.id)}
-            >
-              <Text style={styles.viewProfileText}>View Profile</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+      {/* Content */}
+      <ScrollView>
+        {renderContent()}
       </ScrollView>
 
       <LeavePopup
@@ -275,6 +316,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  leaderboardContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
   },
 });
 

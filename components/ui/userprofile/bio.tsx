@@ -40,7 +40,7 @@ const Bio: React.FC<BioProps> = ({
         </View>
         <View style={styles.activityRow}>
           <Image 
-            source={require('@/assets/icons/sunrise.png')}
+            source={require('@/assets/icons/riseshine.png')}
             style={styles.activityIcon}
           />
           <Text style={styles.activityText}>
@@ -67,12 +67,13 @@ const Bio: React.FC<BioProps> = ({
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingHorizontal: 24,
   },
   bioText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Open Sans',
     color: '#242020',
-    lineHeight: 24,
+    lineHeight: 22,
     marginBottom: 24,
   },
   sectionTitle: {
@@ -92,15 +93,14 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   activityIcon: {
-    width: 40,
-    height: 40,
+    width: 34,
+    height: 34,
     resizeMode: 'contain',
-    backgroundColor: 'rgba(222, 114, 141, 0.1)',
     borderRadius: 20,
-    padding: 8,
+
   },
   activityText: {
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Open Sans',
     color: '#242020',
   },
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 40,
+    paddingHorizontal: 55,
   },
   infoColumn: {
     alignItems: 'center',

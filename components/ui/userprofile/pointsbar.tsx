@@ -58,7 +58,7 @@ const PointsBar: React.FC<PointsBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 12,
   },
   statsContainer: {
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 15,
+    borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(222, 114, 141, 0.25)',
     padding: 16,
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: 20,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: 'contain',
     tintColor: '#DE728D',
+    marginLeft: 5,
   },
 });
 

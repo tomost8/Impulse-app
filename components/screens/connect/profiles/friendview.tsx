@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
+import DailyGoals from '@/components/ui/userprofile/dailygoals';
+import Bio from '@/components/ui/userprofile/bio';
 
 interface FriendViewProps {
   name: string;
@@ -20,14 +22,44 @@ interface FriendViewProps {
 }
 
 const FriendViewScreen = () => {
-  // Update sample data
+  // Sample data
   const friend = {
     name: 'First Name Last Name',
     username: '@username',
     profileImage: require('@/assets/images/andrew.png'),
     points: 400,
     communities: 15,
+    bioText: 'Lorem ipsum dolor sit amet consectetur. Elit nisi amet semper arcu. Magna suspendisse purus sed posuere tincidunt blandit nibh ornare nunc. Venenatis id quam gravida nisi. Morbi tincidunt convallis enim tristique mus. Tempus vitae morbi ut.',
+    primaryActivity: 'Working Out',
+    secondaryActivity: 'Rise & Shine',
+    gender: 'Female',
+    timezone: 'GMT +5'
   };
+
+  // Sample daily goals data
+  const dailyGoals = [
+    {
+      category: 'RISE_AND_SHINE',
+      scheduledDatetime: '2024-02-20T14:00:00Z',
+      duration: 60,
+      status: 'In progress',
+      description: 'Activity Description: text text text text',
+    },
+    {
+      category: 'RISE_AND_SHINE',
+      scheduledDatetime: '2024-02-20T14:00:00Z',
+      duration: 60,
+      status: 'In progress',
+      description: 'Activity Description: text text text text',
+    },
+    {
+      category: 'RISE_AND_SHINE',
+      scheduledDatetime: '2024-02-20T14:00:00Z',
+      duration: 60,
+      status: 'In progress',
+      description: 'Activity Description: text text text text',
+    },
+  ];
 
   const handleBack = () => {
     router.back();
@@ -35,9 +67,17 @@ const FriendViewScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
+      <ScrollView style={styles.scrollView}>
+        {/* Crescent Background */}
+        <View style={styles.crescentContainer}>
+          <Image 
+            source={require("@/assets/icons/crescent.png")}
+            style={styles.crescentImage}
+          />
+        </View>
+
+        {/* Header */}
+        <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}
             onPress={handleBack}
@@ -47,11 +87,9 @@ const FriendViewScreen = () => {
               style={styles.backIcon}
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Partner Insights</Text>
+          <Text style={styles.title}>Friend Insights</Text>
         </View>
-      </View>
 
-      <ScrollView style={styles.content}>
         {/* Profile Section */}
         <View style={styles.profileSection}>
           <Image 
@@ -62,10 +100,27 @@ const FriendViewScreen = () => {
           <Text style={styles.username}>{friend.username}</Text>
         </View>
 
+        {/* Daily Goals Section with custom style override */}
+        <View style={styles.goalsWrapper}>
+          <DailyGoals 
+            goals={dailyGoals} 
+            cardStyle={{ backgroundColor: 'transparent' }}
+          />
+        </View>
+
         {/* Points Bar */}
         <PointsBar 
           points={friend.points}
           communities={friend.communities}
+        />
+
+        {/* Bio Section */}
+        <Bio 
+          bioText={friend.bioText}
+          primaryActivity={friend.primaryActivity}
+          secondaryActivity={friend.secondaryActivity}
+          gender={friend.gender}
+          timezone={friend.timezone}
         />
       </ScrollView>
     </SafeAreaView>
@@ -77,17 +132,28 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  header: {
-    height: 65,
-    backgroundColor: '#E0EDFD',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
+  scrollView: {
+    flex: 1,
   },
-  headerLeft: {
+  crescentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: -30,
+    right: 25,
+    height: 205,
+    zIndex: 0,
+  },
+  crescentImage: {
+    width: '115%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    zIndex: 1,
   },
   backButton: {
     padding: 8,
@@ -105,30 +171,36 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 6,
   },
-  content: {
-    flex: 1,
-  },
   profileSection: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 20,
+    marginTop: 5,
+    zIndex: 1,
   },
   profileImage: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginBottom: 16,
+    marginBottom: 18,
+    marginTop: 15,
   },
   name: {
-    fontSize: 24,
-    fontFamily: 'Poppins',
+    fontSize: 20,
+    fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#000000',
-    marginBottom: 4,
+    marginBottom: 6,
   },
   username: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#979797',
+  },
+  goalsWrapper: {
+    backgroundColor: 'transparent',
+    '& > *': {
+      backgroundColor: 'transparent',
+    },
   },
 });
 

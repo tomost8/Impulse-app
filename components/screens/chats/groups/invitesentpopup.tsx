@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
