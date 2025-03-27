@@ -34,8 +34,8 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
               source={require("@/assets/icons/heart.png")}
               style={styles.icon}
             />
+            <Text style={styles.count}>67 likes</Text>
           </TouchableOpacity>
-          <Text style={styles.count}>{post.likes || 67} likes</Text>
         </View>
 
         <View style={styles.interactionGroup}>
@@ -44,8 +44,8 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
               source={require("@/assets/icons/commenticon.png")}
               style={styles.icon}
             />
+            <Text style={styles.count}>10 comments</Text>
           </TouchableOpacity>
-          <Text style={styles.count}>{post.comments || 10} comments</Text>
         </View>
       </View>
     </View>
@@ -58,31 +58,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   interactionContainer: {
-    width: 350,
-    height: 19.7,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 32.9,
-    alignSelf: 'center',
-    marginTop: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    gap: 32,
   },
   interactionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
   },
   interactionButton: {
-    padding: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   icon: {
-    width: 13.16,
-    height: 13.16,
+    width: 20,
+    height: 20,
     resizeMode: 'contain',
   },
   count: {
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: 'Open Sans',
-    color: '#000000',
+    color: '#242020',
   },
 });
 
