@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 
 interface CameraPopupProps {
   isVisible: boolean;
@@ -16,11 +15,8 @@ interface CameraPopupProps {
 }
 
 const CameraPopup: React.FC<CameraPopupProps> = ({ isVisible, onClose }) => {
-  const navigation = useNavigation();
-
   const handleAddDailyGoals = () => {
     onClose(); // Close the popup
-    navigation.navigate('AddActivities'); // Navigate to Add Activities screen
   };
 
   return (
