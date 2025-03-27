@@ -6,12 +6,14 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  Dimensions
 } from 'react-native';
 import { router } from 'expo-router';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
 import FriendRequestSentPopup from './friendrequestsent';
+import Header from '@/components/ui/userprofile/header';
 
 const NonFriendViewScreen = () => {
   const [isRequestSent, setIsRequestSent] = useState(false);
@@ -49,37 +51,12 @@ const NonFriendViewScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {/* Crescent Background */}
-        <View style={styles.crescentContainer}>
-          <Image 
-            source={require("@/assets/icons/crescent.png")}
-            style={styles.crescentImage}
-          />
-        </View>
-
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={handleBack}
-          >
-            <Image 
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.title}>Partner Insights</Text>
-        </View>
-
-        {/* Profile Section */}
-        <View style={styles.profileSection}>
-          <Image 
-            source={nonFriend.profileImage}
-            style={styles.profileImage}
-          />
-          <Text style={styles.name}>{nonFriend.name}</Text>
-          <Text style={styles.username}>{nonFriend.username}</Text>
-        </View>
+        <Header
+          onBackPress={handleBack}
+          name={nonFriend.name}
+          username={nonFriend.username}
+          profileImage={nonFriend.profileImage}
+        />
 
         {/* Points Bar */}
         <PointsBar 
@@ -97,20 +74,19 @@ const NonFriendViewScreen = () => {
         />
       </ScrollView>
 
-      {/* Send Friend Request Button */}
+      {/* Friend Request Button */}
       <TouchableOpacity 
         style={[
-          styles.sendRequestButton,
+          styles.friendRequestButton,
           isRequestSent && styles.requestSentButton
         ]}
         onPress={handleSendRequest}
       >
-        <Text style={styles.sendRequestText}>
+        <Text style={styles.buttonText}>
           {isRequestSent ? "Request Sent" : "Send Friend Request"}
         </Text>
       </TouchableOpacity>
 
-      {/* Friend Request Sent Popup */}
       <FriendRequestSentPopup 
         isVisible={showRequestSentPopup}
         onClose={handlePopupClose}
@@ -126,69 +102,24 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginBottom: 80, // Space for button
   },
-  crescentContainer: {
+  friendRequestButton: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  crescentImage: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginLeft: 16,
-  },
-  profileSection: {
-    alignItems: 'center',
-    padding: 16,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 16,
-  },
-  name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  username: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  sendRequestButton: {
-    backgroundColor: '#DE728D',
-    borderRadius: 100,
+    bottom: 24, // Gap from bottom of screen
+    left: 20,
+    right: 20,
     height: 48,
+    backgroundColor: '#DE728D',
+    borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 16,
-    marginBottom: 34,
+    marginBottom: 8, 
   },
   requestSentButton: {
     backgroundColor: 'rgba(222, 114, 141, 0.50)',
   },
-  sendRequestText: {
+  buttonText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontFamily: 'Open Sans',

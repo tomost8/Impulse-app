@@ -1,84 +1,134 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
   TouchableOpacity, 
   StyleSheet, 
   Modal,
-  ScrollView
+  SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import AddActivityCard from '@/components/ui/common/AddActivityCard';
+import { goals } from '@/utils/goals'; // Import goals from the same source
 
 interface DailyAddPopupProps {
   isVisible: boolean;
   onClose: () => void;
+  onConfirm: () => void;
+  userName?: string;
+}
+
+interface GoalFormData {
+  startTime: string;
+  duration: { hours: number; minutes: number };
+  description: string;
 }
 
 const DailyAddPopup: React.FC<DailyAddPopupProps> = ({
   isVisible,
   onClose,
+  onConfirm,
+  userName,
 }) => {
-  const activities = [
-    'Workout',
-    'Food',
-    'Studying/Working',
-    'Rise and Shine',
-    'My Passion/Hobby',
-    'Wellness',
-    'Mindfulness'
-  ];
+  const [selectedGoals, setSelectedGoals] = useState<number[]>([]);
+  const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
+  const [goalFormData, setGoalFormData] = useState<Record<number, GoalFormData>>({});
+
+  const handleSelectGoal = (goalId: number) => {
+    if (!selectedGoals.includes(goalId)) {
+      setSelectedGoals((prev) => [...prev, goalId]);
+      if (!goalFormData[goalId]) {
+        setGoalFormData(prev => ({
+          ...prev,
+          [goalId]: {
+            startTime: '',
+            duration: { hours: 0, minutes: 0 },
+            description: ''
+          }
+        }));
+      }
+    }
+    if (expandedGoal === goalId) {
+      setExpandedGoal(null);
+    } else {
+      setExpandedGoal(goalId);
+    }
+  };
+
+  const handleCheckIconPress = (goalId: number) => {
+    if (expandedGoal === goalId) {
+      setExpandedGoal(null);
+    }
+    setSelectedGoals(prev => prev.filter(id => id !== goalId));
+    setGoalFormData(prev => {
+      const newData = { ...prev };
+      delete newData[goalId];
+      return newData;
+    });
+  };
+
+  const handleFormDataChange = (goalId: number, field: keyof GoalFormData, value: string) => {
+    setGoalFormData(prev => ({
+      ...prev,
+      [goalId]: {
+        ...prev[goalId],
+        [field]: value
+      }
+    }));
+  };
 
   return (
     <Modal
       visible={isVisible}
+      animationType="fade"
       transparent={true}
-      animationType="slide"
     >
-      <View style={styles.overlay}>
+      <SafeAreaView style={styles.modalContainer}>
         <View style={styles.popup}>
-          {/* Static Header */}
           <View style={styles.header}>
             <Text style={styles.title}>Select Goals for the Day</Text>
-            <TouchableOpacity 
-              style={styles.dismissButton}
-              onPress={onClose}
-            >
+            <TouchableOpacity onPress={onClose}>
               <Text style={styles.dismissText}>Dismiss</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Scrollable Content */}
-          <ScrollView style={styles.content}>
-            {activities.map((activity, index) => (
-              <AddActivityCard
-                key={index}
-                category={activity}
-                isSelected={false}
-                onSelect={() => {}}
-                isExpanded={false}
-                onCheckIconPress={() => {}}
-                formData={{
-                  startTime: '',
-                  duration: { hours: 0, minutes: 0 },
-                  description: ''
-                }}
-                onFormDataChange={() => {}}
-              />
-            ))}
+          <ScrollView style={styles.scrollContent}>
+            <View style={styles.activitiesContainer}>
+              {goals.map((goal) => (
+                <AddActivityCard
+                  key={goal.id}
+                  category={goal.category}
+                  isSelected={selectedGoals.includes(goal.id)}
+                  onSelect={() => handleSelectGoal(goal.id)}
+                  isExpanded={expandedGoal === goal.id}
+                  onCheckIconPress={() => handleCheckIconPress(goal.id)}
+                  formData={goalFormData[goal.id]}
+                  onFormDataChange={(field, value) => 
+                    handleFormDataChange(goal.id, field as keyof GoalFormData, value as string)
+                  }
+                />
+              ))}
+            </View>
           </ScrollView>
 
-          {/* Static Footer */}
-          <TouchableOpacity style={styles.addButton}>
+          <TouchableOpacity 
+            style={[
+              styles.addButton,
+              selectedGoals.length === 0 && styles.addButtonDisabled
+            ]}
+            onPress={onConfirm}
+            disabled={selectedGoals.length === 0}
+          >
             <Text style={styles.addButtonText}>Add to Schedule</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
+  modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
@@ -86,10 +136,11 @@ const styles = StyleSheet.create({
   },
   popup: {
     width: '90%',
-    height: '80%',
+    maxHeight: '90%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     overflow: 'hidden',
+    marginVertical: 20,
   },
   header: {
     flexDirection: 'row',
@@ -105,17 +156,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#242020',
   },
-  dismissButton: {
-    padding: 8,
-  },
   dismissText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#979797',
   },
-  content: {
-    flex: 1,
-    padding: 16,
+  scrollContent: {
+    flexGrow: 0,
+  },
+  activitiesContainer: {
+    padding: 12,
+    gap: 2,
   },
   addButton: {
     backgroundColor: '#DE728D',
@@ -124,6 +175,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 16,
     borderRadius: 100,
+  },
+  addButtonDisabled: {
+    backgroundColor: 'rgba(222, 114, 141, 0.5)',
   },
   addButtonText: {
     color: '#FFFFFF',

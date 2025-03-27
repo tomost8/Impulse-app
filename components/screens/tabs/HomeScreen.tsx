@@ -28,13 +28,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <TopSection name={name} />
+        <View style={styles.topSectionWrapper}>
+          <TopSection name={name} />
+        </View>
         <TouchableOpacity 
           style={styles.checkButton}
           onPress={() => setShowDailyAddPopup(true)}
         >
           <Image 
-            source={require("@/assets/icons/greencheck.png")}
+            source={require("../../../assets/icons/greencheck.png")}
             style={styles.checkIcon}
           />
         </TouchableOpacity>
@@ -97,16 +99,22 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 16,
+    alignItems: 'flex-start',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  topSectionWrapper: {
+    flex: 1,
   },
   checkButton: {
     padding: 8,
+    marginLeft: 16,
   },
   checkIcon: {
     width: 25,
     height: 25,
     resizeMode: 'contain',
+    tintColor: '#4CAF50',
   },
 });
 

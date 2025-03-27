@@ -197,28 +197,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', // This will push content to top and bottom
   },
   scrollContent: {
-    flexGrow: 1, // Allows content to be scrollable
-    paddingBottom: 20, // Reduced padding since we're moving button lower
+    flexGrow: 1,
+    paddingBottom: 100, // Increased to ensure space for expanded cards
   },
   buttonContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 40, // Increased bottom padding
-    paddingTop: 10, // Added top padding for spacing
+    paddingBottom: 20, // Reduced bottom padding
+    paddingTop: 10,
     alignSelf: "center",
     width: "100%",
-    backgroundColor: '#FFFFFF', // Ensure white background
-    position: 'absolute', // Position absolutely
-    bottom: 0, // Stick to bottom
-    left: 0, // Ensure full width alignment
-    right: 0, // Ensure full width alignment
+    backgroundColor: '#FFFFFF',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   sectionTitle: {
     fontSize: 18,
     fontFamily: "Poppins",
     fontWeight: "600",
     color: "#242020", // Dark color from Figma
-    marginTop: 20, // Adjust spacing as per Figma
+    marginTop: 15, // Adjust spacing as per Figma
     paddingLeft: 25,
+    marginBottom: 15,
   },
   activitiesContainer: {
     marginTop: 0, // Space below the section title
