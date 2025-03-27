@@ -18,8 +18,8 @@ const PointsBar: React.FC<PointsBarProps> = ({
   communities
 }) => {
   const handleCommunitiesPress = () => {
-    // Navigate to communities view
-    router.push('/social/communities');
+    // Update the navigation path to match your app's structure
+    router.push('/(tabs)/connect/profiles/communitylist');
   };
 
   return (
