@@ -20,6 +20,11 @@ const getCategoryById = (id: number | null): string | null => {
   return goal ? goal.category : null;
 };
 
+const getIdByCategory = (category: string): number | null => {
+  const goal = goals.find(goal => goal.category === category);
+  return goal ? goal.id : null;
+};
+
 const getLabelByCategory = (category: string): string  => {
   const goal = goals.find(goal => goal.category === category);
   return goal ? goal.label : 'No Goal Selected';
@@ -35,4 +40,4 @@ const getCategoryIconByCategory = (category: string | null): string | null => {
   return goal ? goal.categoryIcon : null;
 };
 
-export { goals, getCategoryById, getLabelByCategory, getIconByCategory, getCategoryIconByCategory };
+export { goals, getCategoryById, getIdByCategory, getLabelByCategory, getIconByCategory, getCategoryIconByCategory };

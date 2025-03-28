@@ -15,17 +15,23 @@ import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
 
-const EditCommunityScreen = () => {
-  const [communityName, setCommunityName] = useState('Community Name');
-  const [description, setDescription] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [joinCode, setJoinCode] = useState('Run4Fun');
-  const { id } = useLocalSearchParams();
-
-  const handleBack = () => {
-    router.back();
+interface EditCommunityScreenProps {
+  loading: boolean;
+  formData: {
+    name: string;
+    description: string;
+    thumbnail: string | null;
+    // joinCode: string;
   };
+  handleFormDataChange: (field: string, value: string) => void;
+  selectedCategories: string[];
+  handleToggleCategory: (categoryId: string) => void;
+  handleUpdateCommunity: () => void;
+}
+
+const EditCommunityScreen = (props: EditCommunityScreenProps) => {
+  const { id } = useLocalSearchParams();
+  const [joinCode, setJoinCode] = useState('Run4Fun');
 
   const handleImagePick = async () => {
     try {
@@ -37,30 +43,11 @@ const EditCommunityScreen = () => {
       });
 
       if (!result.canceled) {
-        setProfileImage(result.assets[0].uri);
+        props.handleFormDataChange('thumbnail', result.assets[0].uri);
       }
     } catch (error) {
       console.error('Error picking image:', error);
     }
-  };
-
-  const toggleCategory = (categoryId: number) => {
-    setSelectedCategories(prev => 
-      prev.includes(categoryId) 
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    );
-  };
-
-  const handleSaveChanges = () => {
-    // Handle saving changes
-    console.log({
-      communityName,
-      description,
-      profileImage,
-      selectedCategories,
-      joinCode
-    });
   };
 
   return (
@@ -77,7 +64,7 @@ const EditCommunityScreen = () => {
           <View style={styles.topBar}>
             <TouchableOpacity 
               style={styles.backButton}
-              onPress={handleBack}
+              onPress={() => router.back()}
             >
               <Image 
                 source={require("@/assets/icons/backArrow.png")}
@@ -96,7 +83,7 @@ const EditCommunityScreen = () => {
             onPress={handleImagePick}
           >
             <Image
-              source={profileImage ? { uri: profileImage } : require("@/assets/images/communityprofile.png")}
+              source={props.formData.thumbnail ? { uri: props.formData.thumbnail } : require("@/assets/images/communityprofile.png")}
               style={styles.profileImage}
             />
           </TouchableOpacity>
@@ -106,8 +93,8 @@ const EditCommunityScreen = () => {
             <Text style={styles.inputLabel}>Community Name</Text>
             <TextInput
               style={styles.textInput}
-              value={communityName}
-              onChangeText={setCommunityName}
+              value={props.formData.name}
+              onChangeText={(value) => props.handleFormDataChange('name', value)}
               placeholder="Enter community name"
               placeholderTextColor="#979797"
             />
@@ -118,8 +105,8 @@ const EditCommunityScreen = () => {
             <Text style={styles.inputLabel}>Description (optional)</Text>
             <TextInput
               style={[styles.textInput, styles.descriptionInput]}
-              value={description}
-              onChangeText={setDescription}
+              value={props.formData.description}
+              onChangeText={(value) => props.handleFormDataChange('description', value)}
               placeholder="Add a description for your community"
               placeholderTextColor="#979797"
               multiline
@@ -137,20 +124,20 @@ const EditCommunityScreen = () => {
                   key={goal.id}
                   style={[
                     styles.categoryButton,
-                    selectedCategories.includes(goal.id) && styles.selectedCategory
+                    props.selectedCategories.includes(goal.category) && styles.selectedCategory
                   ]}
-                  onPress={() => toggleCategory(goal.id)}
+                  onPress={() => props.handleToggleCategory(goal.category)}
                 >
                   <Image
                     source={goal.categoryIcon || require('@/assets/icons/categoryworkout.png')}
                     style={[
                       styles.categoryIcon,
-                      selectedCategories.includes(goal.id) && styles.selectedCategoryIcon
+                      props.selectedCategories.includes(goal.category) && styles.selectedCategoryIcon
                     ]}
                   />
                   <Text style={[
                     styles.categoryText,
-                    selectedCategories.includes(goal.id) && styles.selectedCategoryText
+                    props.selectedCategories.includes(goal.category) && styles.selectedCategoryText
                   ]}>
                     {goal.label}
                   </Text>
@@ -174,7 +161,7 @@ const EditCommunityScreen = () => {
           {/* Save Changes Button */}
           <TouchableOpacity 
             style={styles.saveButton}
-            onPress={handleSaveChanges}
+            onPress={props.handleUpdateCommunity}
           >
             <Text style={styles.saveButtonText}>Save Changes</Text>
           </TouchableOpacity>

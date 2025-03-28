@@ -20,33 +20,35 @@ interface Member {
 }
 
 interface EditMembersScreenProps {
+  loading: boolean;
   members: Member[];
+  onRemoveMember: (memberId: number) => void;
 }
 
-const EditMembersScreen = ({ members }: EditMembersScreenProps) => {
+const EditMembersScreen = (props: EditMembersScreenProps) => {
+  // Filter based on search query
   const [searchQuery, setSearchQuery] = useState('');
+  const filteredMembers = props.members.filter((member) =>
+    member.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const [isRemovePopupVisible, setIsRemovePopupVisible] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleRemoveMember = (memberId: string) => {
+  const handleRemoveClick = (memberId: string) => {
     setSelectedMemberId(memberId);
     setIsRemovePopupVisible(true);
   };
 
-  const handleRemoveConfirm = () => {
-    if (selectedMemberId) {
-      console.log('Removing member:', selectedMemberId);
-      // Add actual remove logic here
-    }
+  const handleRemoveCancel = () => {
     setIsRemovePopupVisible(false);
     setSelectedMemberId(null);
   };
 
-  const handleRemoveCancel = () => {
+  const handleRemoveConfirm = () => {
+    if (selectedMemberId) {
+      props.onRemoveMember(Number(selectedMemberId));
+    }
     setIsRemovePopupVisible(false);
     setSelectedMemberId(null);
   };
@@ -57,7 +59,7 @@ const EditMembersScreen = ({ members }: EditMembersScreenProps) => {
       <View style={styles.topBar}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={handleBack}
+          onPress={() => router.back()}
         >
           <Image 
             source={require("@/assets/icons/backArrow.png")}
@@ -84,7 +86,7 @@ const EditMembersScreen = ({ members }: EditMembersScreenProps) => {
 
       {/* Members List */}
       <ScrollView style={styles.membersList}>
-        {members.map((member) => (
+        {filteredMembers.map((member) => (
           <View key={member.id} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image 
@@ -98,7 +100,7 @@ const EditMembersScreen = ({ members }: EditMembersScreenProps) => {
             </View>
             <TouchableOpacity 
               style={styles.removeButton}
-              onPress={() => handleRemoveMember(member.id)}
+              onPress={() => handleRemoveClick(member.id)}
             >
               <Text style={styles.removeText}>Remove</Text>
             </TouchableOpacity>

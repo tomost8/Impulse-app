@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-
+import { router } from 'expo-router';
 interface Member {
   id: string;
   name: string;
@@ -35,7 +35,7 @@ const MembersList: React.FC<MemberListProps> = ({
             
             <TouchableOpacity 
               style={styles.viewProfileButton}
-              onPress={() => console.log("View Profile", member.id)}
+              onPress={() => router.push(`/user/${member.id}`)}
             >
               <Text style={styles.viewProfileText}>View Profile</Text>
             </TouchableOpacity>

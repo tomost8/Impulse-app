@@ -65,14 +65,20 @@ export function useCreateCommunityCategory() {
   return { createCommunityCategory };
 }
 
+/*
+Mutations for Edit Community:
+- Update Community
+- Create Community Category
+- Delete Community Category
+*/
+
 // Input: name, description, thumbnail
 const UPDATE_COMMUNITY = gql`
   mutation ($id: Int!, $input: UpdateCommunityInput!) {
     updateCommunity(id: $id, input: $input) {
       success
       community { 
-        id name description thumbnail 
-        influencer { id first_name last_name email } 
+        id name description thumbnail
       }
       errors { field message }
     }
@@ -97,6 +103,10 @@ export function useUpdateCommunity() {
   };  
   return { updateCommunity };
 }
+
+/*
+Mutations for Edit Community Members
+*/
 
 const CREATE_COMMUNITY_MEMBER = gql`
   mutation ($input: CreateCommunityMemberInput!) {
@@ -130,3 +140,35 @@ export function useCreateCommunityMember() {
   };
   return { createCommunityMember };
 }
+
+const DELETE_COMMUNITY_MEMBER = gql`
+  mutation ($userId: Int!, $communityId: Int!) {
+    deleteCommunityMember(user_id: $userId, community_id: $communityId) {
+    success
+    errors {
+      field
+      message
+      }
+    }
+  }
+`;
+
+export function useDeleteCommunityMember() {
+  const [deleteCommunityMemberMutation] = useMutation(DELETE_COMMUNITY_MEMBER);
+  const deleteCommunityMember = async (userId: number, communityId: number) => {
+    try {
+      const response = await deleteCommunityMemberMutation({
+        variables: {
+          userId: userId,
+          communityId: communityId
+        }
+      });
+      return response.data.deleteCommunityMember;
+    } catch (error) {
+      console.error('Delete Community Member failed:', error);
+      throw error;
+    }
+  };
+  return { deleteCommunityMember };
+}
+

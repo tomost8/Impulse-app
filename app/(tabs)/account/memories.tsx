@@ -2,29 +2,18 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 // Components
-import styles from '@/utils/testStyles';
-import { View, Text } from 'react-native';
+import Memories from '@/components/screens/Memories';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
 // Services
 import { useUserInfo } from '@/services/UserContext';
 
 
-
-function MemoriesScreen({ parameters }: { parameters?: any }) {
- return (
-   <View style={styles.container}>
-     <Text style={styles.text}>Memories</Text>
-   </View>
- );
-}
-
-
 const MemoriesPage = () => {
-const { userId, authToken } = useUserInfo();
-return (
-  <MemoriesScreen />
-);
+  const { userId, authToken } = useUserInfo();
+  return (
+    <Memories />
+  );
 };
 
 
