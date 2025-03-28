@@ -1,14 +1,18 @@
 import { gql, useMutation } from '@apollo/client';
 
-// Required Inputs: name, influencer_id
-// Optional Inputs: description, thumbnail
+/*
+Mutations for Create Community:
+- Create Community (Input: name, influencer_id, Optional: description, thumbnail)
+- Create Community Category (Input: community_id, category)
+*/
+
 export const CREATE_COMMUNITY = gql`
   mutation ($input: CreateCommunityInput!) {
     createCommunity(input: $input) {
       success
       community { 
         id name description thumbnail 
-        influencer { id first_name last_name email } 
+        influencer { id first_name last_name username } 
       }
       errors { field message }
     }
@@ -39,7 +43,7 @@ const CREATE_COMMUNITY_CATEGORY = gql`
     createCommunityCategory(input: $input) {
       success
       community_category {
-        community { id name influencer { id first_name last_name } }
+        community_id
         category
       }
       errors { field message }
@@ -67,12 +71,11 @@ export function useCreateCommunityCategory() {
 
 /*
 Mutations for Edit Community:
-- Update Community
-- Create Community Category
-- Delete Community Category
+- Update Community (Input: name, description, thumbnail)
+- Delete Community Category (Input: community_id, category)
+- Create Community Category (Provided Above)
 */
 
-// Input: name, description, thumbnail
 const UPDATE_COMMUNITY = gql`
   mutation ($id: Int!, $input: UpdateCommunityInput!) {
     updateCommunity(id: $id, input: $input) {
@@ -103,6 +106,35 @@ export function useUpdateCommunity() {
   };  
   return { updateCommunity };
 }
+
+const DELETE_COMMUNITY_CATEGORY = gql`
+  mutation ($category: Category!, $communityId: Int!) {
+    deleteCommunityCategory(category: $category, community_id: $communityId) {
+      success
+      errors { field message }
+    }
+  }
+`;
+
+export function useDeleteCommunityCategory() {
+  const [deleteCommunityCategoryMutation] = useMutation(DELETE_COMMUNITY_CATEGORY);
+  const deleteCommunityCategory = async (category: string, communityId: number) => {
+    try {
+      const response = await deleteCommunityCategoryMutation({
+        variables: {
+          category: category,
+          communityId: communityId
+        }
+      });
+      return response.data.deleteCommunityCategory;
+    } catch (error) {
+      console.error('Delete Community Category failed:', error);
+      throw error;
+    }
+  };
+  return { deleteCommunityCategory };
+}
+
 
 /*
 Mutations for Edit Community Members

@@ -4,10 +4,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
 import { useUserInfo } from '@/services/UserContext';
 import { processAndUploadImage } from '@/utils/imageProcessing';
-import { getIdByCategory } from '@/utils/goals';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityCategories } from '@/hooks/graphql/communities/queries';
-import { useUpdateCommunity } from '@/hooks/graphql/communities/mutations';
+import { useUpdateCommunity, useCreateCommunityCategory, useDeleteCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
 import EditCommunityScreen from '@/components/screens/social/communities/editcommunityscreen';
 // Debug
@@ -54,34 +53,59 @@ const EditCommunityPage = () => {
 
  // Mutations
  const {updateCommunity} = useUpdateCommunity();
+ const {createCommunityCategory} = useCreateCommunityCategory();
+ const {deleteCommunityCategory} = useDeleteCommunityCategory();
  const [isUpdatingCommunity, setIsUpdatingCommunity] = useState(false);
  const handleUpdateCommunity = async () => {
   setIsUpdatingCommunity(true);
   try {
-    // Upload new thumbnail if it exists
+    let response_log = "";
+    // Update Community: upload new thumbnail if it exists
     const hasNewThumbnail = formData.thumbnail && formData.thumbnail !== communityRef.current?.thumbnail;
     const thumbnail = hasNewThumbnail
       ? await processAndUploadImage(formData.thumbnail)
       : null;
-    // Input for updateCommunity mutation
     const input = {
       name: formData.name || communityRef.current?.name,
       description: formData.description,
       ...(thumbnail && { thumbnail })
     }
-    console.log("input:", input);
+    response_log += `Input: ${JSON.stringify(input)}\n`;
+    
     const response = await updateCommunity(Number(id), input);
     if (response.success) {
-      console.log("Community updated successfully", response.community);
+      response_log += `Details successfully updated: ${JSON.stringify(response.community)}\n`;
     } else {
-      throw new Error("Response from updateCommunity was not successful: " + response.errors);
+      throw new Error("Response.success from updateCommunity was false: " + response.errors);
     }
-    // Update categories
-    const toDelete = categoriesRef.current?.filter(category => !selectedCategories.includes(category));
-    const toAdd = selectedCategories.filter(category => !categoriesRef.current?.includes(category));
+
+    // Update categories: toAdd
+    const toAdd = selectedCategories.filter(category => !categoriesRef.current?.includes(category));  
+    for (const category of toAdd) {
+      const input_category_add = {
+        community_id: Number(id),
+        category: category
+      }
+      const categoryResponse = await createCommunityCategory(input_category_add);
+      if (categoryResponse.success) {
+        response_log += `Category successfully added: ${category}\n`;
+      } else {
+        throw new Error("Response.success from createCommunityCategory was false:" + categoryResponse.errors);
+      }
+    }
+
+    // Update categories: toDelete
+    const toDelete = categoriesRef.current?.filter(category => !selectedCategories.includes(category)) || [];
+    for (const category of toDelete) {
+      const categoryResponse = await deleteCommunityCategory(category, Number(id));
+      if (categoryResponse.success) {
+        response_log += `Category successfully deleted: ${category}\n`;
+      } else {
+        throw new Error("Response.success from deleteCommunityCategory was false:" + categoryResponse.errors);
+      }
+    }
     
-    console.log("Categories to delete:", toDelete);
-    console.log("Categories to add:", toAdd);
+    console.log("Update Successful:\n", response_log);
     router.back();
   } catch (error) {
     console.error(error);
