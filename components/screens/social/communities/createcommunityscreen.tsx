@@ -15,17 +15,21 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
 
-
-const CreateCommunityScreen = () => {
-  const [communityName, setCommunityName] = useState('');
-  const [description, setDescription] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [joinCode, setJoinCode] = useState('');
-
-  const handleBack = () => {
-    router.back();
+interface CreateCommunityScreenProps {
+  loading: boolean;
+  formData: {
+    name: string;
+    description: string;
+    thumbnail: string | null;
   };
+  handleFormDataChange: (field: string, value: string) => void;
+  selectedCategories: string[];
+  handleToggleCategory: (category: string) => void;
+  handleCreateCommunity: () => void;
+}
+
+const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
+  const [joinCode, setJoinCode] = useState('');
 
   const handleImagePick = async () => {
     try {
@@ -37,30 +41,11 @@ const CreateCommunityScreen = () => {
       });
 
       if (!result.canceled) {
-        setProfileImage(result.assets[0].uri);
+        props.handleFormDataChange('thumbnail', result.assets[0].uri);
       }
     } catch (error) {
       console.error('Error picking image:', error);
     }
-  };
-
-  const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(categoryId) 
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
-    );
-  };
-
-  const handleCreate = () => {
-    console.log({
-      communityName,
-      description,
-      profileImage,
-      selectedCategories,
-      joinCode
-    });
-    // Handle community creation logic
   };
 
   return (
@@ -77,7 +62,7 @@ const CreateCommunityScreen = () => {
           <View style={styles.topBar}>
             <TouchableOpacity 
               style={styles.backButton}
-              onPress={handleBack}
+              onPress={() => router.back()}
             >
               <Image 
                 source={require("@/assets/icons/backArrow.png")}
@@ -92,9 +77,9 @@ const CreateCommunityScreen = () => {
             style={styles.profileImageContainer}
             onPress={handleImagePick}
           >
-            {profileImage ? (
+            {props.formData.thumbnail ? (
               <Image
-                source={{ uri: profileImage }}
+                source={{ uri: props.formData.thumbnail }}
                 style={styles.profileImage}
               />
             ) : (
@@ -112,8 +97,8 @@ const CreateCommunityScreen = () => {
             <Text style={styles.inputLabel}>Community Name</Text>
             <TextInput
               style={styles.textInput}
-              value={communityName}
-              onChangeText={setCommunityName}
+              value={props.formData.name}
+              onChangeText={(value) => props.handleFormDataChange('name', value)}
               placeholder="Enter community name"
               placeholderTextColor="#979797"
             />
@@ -124,8 +109,8 @@ const CreateCommunityScreen = () => {
             <Text style={styles.inputLabel}>Description (optional)</Text>
             <TextInput
               style={[styles.textInput, styles.descriptionInput]}
-              value={description}
-              onChangeText={setDescription}
+              value={props.formData.description}
+              onChangeText={(value) => props.handleFormDataChange('description', value)}
               placeholder="Add a description for your community"
               placeholderTextColor="#979797"
               multiline
@@ -143,20 +128,20 @@ const CreateCommunityScreen = () => {
                   key={goal.id}
                   style={[
                     styles.categoryButton,
-                    selectedCategories.includes(goal.id.toString()) && styles.selectedCategory
+                    props.selectedCategories.includes(goal.category) && styles.selectedCategory
                   ]}
-                  onPress={() => toggleCategory(goal.id.toString())}
+                  onPress={() => props.handleToggleCategory(goal.category)}
                 >
                   <Image
                     source={goal.categoryIcon || require('@/assets/icons/categoryworkout.png')}
                     style={[
                       styles.categoryIcon,
-                      selectedCategories.includes(goal.id.toString()) && styles.selectedCategoryIcon
+                      props.selectedCategories.includes(goal.category) && styles.selectedCategoryIcon
                     ]}
                   />
                   <Text style={[
                     styles.categoryText,
-                    selectedCategories.includes(goal.id.toString()) && styles.selectedCategoryText
+                    props.selectedCategories.includes(goal.category) && styles.selectedCategoryText
                   ]}>
                     {goal.label}
                   </Text>
@@ -180,7 +165,7 @@ const CreateCommunityScreen = () => {
           {/* Create Button */}
           <TouchableOpacity 
             style={styles.createButton}
-            onPress={handleCreate}
+            onPress={props.handleCreateCommunity}
           >
             <Text style={styles.createButtonText}>Create</Text>
           </TouchableOpacity>

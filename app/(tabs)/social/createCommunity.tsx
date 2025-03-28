@@ -1,6 +1,9 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
+import { router } from 'expo-router';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
@@ -9,8 +12,8 @@ import CreateCommunityScreen from '@/components/screens/social/communities/creat
 import { debugRenders } from '@/utils/debug';
 
 
-const CreateCommunityPage = (props: any) => {
-  const { userId, authToken } = props;
+const CreateCommunityPage = () => {
+  const { userId } = useUserInfo();
 
   // Mutations
   const {createCommunity} = useCreateCommunity();
@@ -18,36 +21,45 @@ const CreateCommunityPage = (props: any) => {
   const [isCreatingCommunity, setIsCreatingCommunity] = useState(false);
   const handleCreateCommunity = async () => {
     setIsCreatingCommunity(true);
-    const thumbnail = formData.thumbnail 
-      ? await processAndUploadImage(formData.thumbnail)
-      : null;
+    let response_log = "";
+    let communityId = null;
     try {
+      const thumbnail = formData.thumbnail 
+        ? await processAndUploadImage(formData.thumbnail)
+        : null;
       const input = {
         influencer_id: userId,
         name: formData.name,
         ...(formData.description && { description: formData.description }),
         ...(thumbnail && { thumbnail }),
       }
+      response_log += `Input: ${JSON.stringify(input)}\n`;
+
       const response = await createCommunity(input);
       if (response.success) {
-        const communityId = response.community.id;
-        for (const category of communityCategories) {
+        response_log += `Community successfully created: ${JSON.stringify(response.community)}\n`;
+        communityId = response.community.id;
+        // Create categories
+        for (const category of selectedCategories) {
           const input_category = {
             community_id: communityId,
             category: category
           }
           const categoryResponse = await createCommunityCategory(input_category);
           if (categoryResponse.success) {
+            response_log += `Category successfully added: ${categoryResponse.community_category.category}\n`;
           } else {
-            throw new Error("createCommunityCategory response.success false:" + categoryResponse.errors);
+            throw new Error("Response.success from createCommunityCategory was false:" + categoryResponse.errors);
           }
         }
-        console.log("Community and Categories created successfully");
       } else {
-        throw new Error("createCommunity response.success false:" + response.errors);
+        throw new Error("Response.success from createCommunity was false:" + response.errors);
       }
+      console.log("Community successfully created:\n", response_log);
+      await router.replace('/social');
+      router.push(`/community/${communityId}`);
     } catch (error) {
-      console.error('Create Community failed:', error);
+      console.error('Error creating community:', error);
     } finally {
       setIsCreatingCommunity(false);
     }
@@ -59,9 +71,7 @@ const CreateCommunityPage = (props: any) => {
     description: '',
     thumbnail: '',
   });
-  const [communityCategories, setCommunityCategories] = useState<string[]>([]);
 
-  // Form Data Handlers
   const handleFormDataChange = (field: string, value: string) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -69,24 +79,30 @@ const CreateCommunityPage = (props: any) => {
     }));
   };
 
-  const handleCategoryChange = (category: string) => {
-    setCommunityCategories((prev) => 
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const handleCategoryToggle = (category: string) => {
+    setSelectedCategories((prev) => 
       prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
   };
 
   // Debug
-  if (debugRenders) {
-    console.log("Rendering CreateCommunityPage");
+  const loadingData = isCreatingCommunity;
+  if (debugRenders && !loadingData) {
+    console.log("Rendering CreateCommunityPage",
+      "\nForm Data:", formData,
+      "\nSelected Categories:", selectedCategories
+    );
   }
 
   return <CreateCommunityScreen
-    handleCreateCommunity={handleCreateCommunity}
-    isCreatingCommunity={isCreatingCommunity}
+    loading={loadingData}
     formData={formData}
     handleFormDataChange={handleFormDataChange}
-    communityCategories={communityCategories}
-    handleCategoryChange={handleCategoryChange}
+    selectedCategories={selectedCategories}
+    handleToggleCategory={handleCategoryToggle}
+    handleCreateCommunity={handleCreateCommunity}
   />;
 };
 

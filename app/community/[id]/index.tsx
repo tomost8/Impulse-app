@@ -1,17 +1,18 @@
 import { useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 // Components
 import CommunityMainScreen from '@/components/screens/social/communities/communitymainscreen';
-import CommunityScreenOld from '@/components/old/social/community/CommunityScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
 
-const CommunityPage = (props: any) => {
+const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
-  const { userId, authToken } = props;
+  const { userId } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -56,23 +57,13 @@ const CommunityPage = (props: any) => {
     );
   }
 
-  if (pageDisplay) {
-    return (
-      <CommunityMainScreen 
-        community={communityRef.current}
-        members={membersRef.current || []}
-        isAdmin={true} //isAdmin
-      />
-    );
-  } else {
-    return (
-      <CommunityScreenOld 
-        community={communityRef.current}
-        members={membersRef.current || []}
-        isAdmin={true} //isAdmin
-      />
-    );
-  }
+  return (
+    <CommunityMainScreen 
+      community={communityRef.current}
+      members={membersRef.current || []}
+      isAdmin={isAdmin}
+    />
+  );
 }
 
 export default AuthWrapper(CommunityPage);

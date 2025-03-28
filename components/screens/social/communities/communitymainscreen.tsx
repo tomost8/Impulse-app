@@ -18,8 +18,6 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
   members,
   isAdmin
 }) => {
-  console.log(members);
-
   const handleLeaderboardPress = () => {
     // Handle leaderboard navigation
     router.push(`/community/${community?.id}/leaderboard`);

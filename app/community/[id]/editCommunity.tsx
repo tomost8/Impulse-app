@@ -105,10 +105,10 @@ const EditCommunityPage = () => {
       }
     }
     
-    console.log("Update Successful:\n", response_log);
+    console.log("Community updated successfully:\n", response_log);
     router.back();
   } catch (error) {
-    console.error(error);
+    console.error("Error updating community:", error);
   } finally {
     setIsUpdatingCommunity(false);
   }
