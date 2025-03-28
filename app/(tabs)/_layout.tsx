@@ -6,6 +6,7 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
+import CameraPopup from '@/components/screens/home/camerapopup';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { debugRouting } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
@@ -157,9 +158,9 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
         />
       </Tabs>
 
-      <AlmostReadyModal
-        visible={modalVisible}
-        hideModal={() => {
+      <CameraPopup
+        isVisible={modalVisible}
+        onClose={() => {
           setModalVisible(false);
           router.push('/home/activityAdd');
         }}

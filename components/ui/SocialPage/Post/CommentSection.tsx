@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
+import ReplyToComment from './replytocomment';
 
 interface Comment {
   id: number;
@@ -10,6 +11,7 @@ interface Comment {
   };
   content: string;
   created_at: string;
+  replies?: Comment[];
 }
 
 interface CommentSectionProps {
@@ -21,29 +23,76 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   comments = [],
   onReply 
 }) => {
+  // Hardcoded comment and replies
+  const hardcodedComments = [
+    {
+      id: 1,
+      user: {
+        username: "Andrew",
+        profile_picture: require("@/assets/images/andrew.png")
+      },
+      content: "This is a test comment to show how comments work",
+      created_at: "2024-03-19T10:00:00Z",
+      replies: [
+        {
+          id: 2,
+          user: {
+            username: "Andrew",
+            profile_picture: require("@/assets/images/andrew.png")
+          },
+          content: "This is a test comment to show how comments work",
+          created_at: "2024-03-19T10:30:00Z"
+        },
+        {
+          id: 3,
+          user: {
+            username: "Andrew",
+            profile_picture: require("@/assets/images/andrew.png")
+          },
+          content: "This is a test comment to show how comments work",
+          created_at: "2024-03-19T11:00:00Z"
+        }
+      ]
+    }
+  ];
+
   return (
     <ScrollView style={styles.container}>
-      {comments.map((comment) => (
-        <View key={comment.id} style={styles.commentContainer}>
-          <View style={styles.commentHeader}>
-            <View style={styles.userInfo}>
-              <Image
-                source={comment.user.profile_picture ? { uri: comment.user.profile_picture } : require("@/assets/images/andrew.png")}
-                style={styles.profilePicture}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.username}>{comment.user.username}</Text>
-                <Text style={styles.commentText}>{comment.content}</Text>
+      {hardcodedComments.map((comment) => (
+        <View key={comment.id}>
+          {/* Main comment */}
+          <View style={styles.commentContainer}>
+            <View style={styles.commentHeader}>
+              <View style={styles.userInfo}>
+                <Image
+                  source={comment.user.profile_picture}
+                  style={styles.profilePicture}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.username}>{comment.user.username}</Text>
+                  <Text style={styles.commentText}>{comment.content}</Text>
+                </View>
               </View>
+              <Text style={styles.timestamp}>{getTimeAgo(comment.created_at)}</Text>
             </View>
-            <Text style={styles.timestamp}>{getTimeAgo(comment.created_at)}</Text>
+            <TouchableOpacity 
+              style={styles.replyButton}
+              onPress={() => onReply?.(comment.id.toString())}
+            >
+              <Text style={styles.replyText}>Reply</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity 
-            style={styles.replyButton}
-            onPress={() => onReply?.(comment.id.toString())}
-          >
-            <Text style={styles.replyText}>Reply</Text>
-          </TouchableOpacity>
+
+          {/* Replies */}
+          {comment.replies?.map((reply) => (
+            <ReplyToComment
+              key={reply.id}
+              username={reply.user.username}
+              profileImage={reply.user.profile_picture}
+              content={reply.content}
+              timestamp={getTimeAgo(reply.created_at)}
+            />
+          ))}
         </View>
       ))}
     </ScrollView>

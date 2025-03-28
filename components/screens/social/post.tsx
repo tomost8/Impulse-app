@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import Header from '@/components/ui/SocialPage/Post/header';
-import Content from '@/components/ui/SocialPage/Post/content';
+import FullPostCard from '@/components/ui/SocialPage/Post/fullpostcard';
 import CommentInput from '@/components/ui/SocialPage/Post/CommentInput';
 import CommentSection from '@/components/ui/SocialPage/Post/CommentSection';
 import Reply from '@/components/ui/SocialPage/Post/reply';
@@ -23,7 +22,7 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
       </View>
     );
   }
-  console.log('PostScreen', post, comments);
+
   const params = useLocalSearchParams();
   const [showReply, setShowReply] = useState(false);
   const [selectedComment, setSelectedComment] = useState<any>(null);
@@ -32,18 +31,14 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
     const comment = comments.find(c => c.id.toString() === commentId);
     setSelectedComment(comment);
     setShowReply(true);
-    console.log('Setting selected comment:', selectedComment);
   };
 
   const handleCommentSubmit = (comment: string) => {
-    console.log('New comment:', comment);
     if (showReply) {
-      // Handle reply submission
       console.log('Replying to:', selectedComment?.username);
       setShowReply(false);
       setSelectedComment(null);
     }
-    // Handle comment submission
     createComment(comment, selectedComment?.id);
   };
 
@@ -64,18 +59,16 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
       </View>
 
       <ScrollView style={styles.scrollContainer}>
-        {/* Post Header */}
-        <Header
-          username={post.author.username}
-          timeAgo={getTimeAgo(post.created_at)}
-          profileImage={post.author.profile_picture}
-        />
-
-        {/* Post Content */}
-        <Content
-          caption={post.caption}
-          imageUrl={post.mediaUrl}
-        />
+        {/* Full Post Card */}
+        <FullPostCard post={{
+          username: post.author.username,
+          timeAgo: getTimeAgo(post.created_at),
+          profileImage: post.author.profile_picture,
+          caption: post.caption,
+          image: post.mediaUrl,
+          likes: 67, // Hardcoded for now
+          comments: 10 // Hardcoded for now
+        }} />
 
         {/* Comments Section */}
         <CommentSection
