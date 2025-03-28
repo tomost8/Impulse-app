@@ -7,6 +7,8 @@ import {
   StyleSheet 
 } from 'react-native';
 import { router } from 'expo-router';
+// Services
+import { useUserData } from '@/services/UserPreferencesContext';
 
 interface PointsBarProps {
   points: number;
@@ -17,9 +19,13 @@ const PointsBar: React.FC<PointsBarProps> = ({
   points,
   communities
 }) => {
+  const { fetching, user } = useUserData();
+  if (fetching) {
+    return <Text>Loading...</Text>;
+  }
   const handleCommunitiesPress = () => {
     // Update the navigation path to match your app's structure
-    router.push('/(tabs)/connect/profiles/communitylist');
+    router.push(`/user/${user.id}/communityList`);
   };
 
   return (

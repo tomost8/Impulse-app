@@ -4,27 +4,17 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useUserData } from '@/services/UserPreferencesContext';
 // GraphQL hooks
 // Components
-import styles from '@/utils/testStyles';
-import { View, Text } from 'react-native';
+import CommunityList from '@/components/screens/connect/profiles/communitylist';
 // Debug
 import { debugRenders } from '@/utils/debug';
 
 
-function TestScreen({ parameters }: { parameters?: any }) {
- return (
-   <View style={styles.container}>
-     <Text style={styles.text}>Test</Text>
-   </View>
- );
-}
-
-
-const TestPage = () => {
+const CommunityListPage = () => {
     const { user } = useUserData();
     return (
-        <TestScreen />
+        <CommunityList />
     );
 };
 
 
-export default AuthWrapper(TestPage);
+export default AuthWrapper(CommunityListPage);
