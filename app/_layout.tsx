@@ -35,6 +35,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="community/[id]" options={{ headerShown: false }} />
                 <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
+                <Stack.Screen name="post/[id]" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
               </Stack>
               <InitialDataLoader>

@@ -7,7 +7,7 @@ import { useUserInfo } from '@/services/UserContext';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
-import CreateCommunityScreen from '@/components/screens/social/communities/createcommunityscreen';
+import CreateCommunityScreen from '@/components/screens/social/main/createcommunityscreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 

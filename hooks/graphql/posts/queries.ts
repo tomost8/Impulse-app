@@ -179,30 +179,17 @@ const GET_POST_COMMENTS = gql`
     success
     comments {
       id
-      post_id
-      user {
-        id
-        username
-        profile_picture
-      }
+      user { id username profile_picture }
       content
       created_at
-      updated_at
-      parent_comment_id
       replies {
         id
         content
         created_at
-        user {
-          id
-          username
-        }
+        user { id username profile_picture }
       }
     }
-    errors {
-      field
-      message
-      }
+    errors { field message }
     }
   }
 `;

@@ -4,7 +4,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetCommunities, useGetUserCommunities, useGetAllCategories } from '@/hooks/graphql/communities/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
-import ExploreScreen from '@/components/screens/social/explorescreen';
+import ExploreScreen from '@/components/screens/social/main/explorescreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services

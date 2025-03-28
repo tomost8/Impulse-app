@@ -23,7 +23,7 @@ const PostPage = (props: any) => {
 
   const commentsRef = useRef<any | null>(null);
   const hasFetchedComments = useRef(false);
-  const { comments, fetched: hasNewCommentsData } = useGetPostComments(Number(id), !hasFetchedComments.current);
+  const { comments, fetched: hasNewCommentsData } = useGetPostComments(Number(id), !hasFetchedComments.current); // something wrong with profile_picture
 
   useEffect(() => {
     if (!hasNewPostData && !hasNewCommentsData) {

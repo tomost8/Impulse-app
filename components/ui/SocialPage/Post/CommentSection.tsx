@@ -23,49 +23,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   comments = [],
   onReply 
 }) => {
-  // Hardcoded comment and replies
-  const hardcodedComments = [
-    {
-      id: 1,
-      user: {
-        username: "Andrew",
-        profile_picture: require("@/assets/images/andrew.png")
-      },
-      content: "This is a test comment to show how comments work",
-      created_at: "2024-03-19T10:00:00Z",
-      replies: [
-        {
-          id: 2,
-          user: {
-            username: "Andrew",
-            profile_picture: require("@/assets/images/andrew.png")
-          },
-          content: "This is a test comment to show how comments work",
-          created_at: "2024-03-19T10:30:00Z"
-        },
-        {
-          id: 3,
-          user: {
-            username: "Andrew",
-            profile_picture: require("@/assets/images/andrew.png")
-          },
-          content: "This is a test comment to show how comments work",
-          created_at: "2024-03-19T11:00:00Z"
-        }
-      ]
-    }
-  ];
 
   return (
     <ScrollView style={styles.container}>
-      {hardcodedComments.map((comment) => (
+      {comments.map((comment) => (
         <View key={comment.id}>
           {/* Main comment */}
           <View style={styles.commentContainer}>
             <View style={styles.commentHeader}>
               <View style={styles.userInfo}>
                 <Image
-                  source={comment.user.profile_picture}
+                  source={{ uri: comment.user.profile_picture }}
                   style={styles.profilePicture}
                 />
                 <View style={styles.textContainer}>
