@@ -4,7 +4,12 @@ import { View, TextInput, Button, Text, Platform, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import GoalSelector from '@/components/GoalSelector';
 
-export default function Signup3() {
+import PrimaryGoalScreen from '@/components/screens/SignupLogin/Signup/primaryGoal';
+
+// Signup Page 3
+export default function PrimaryGoal() {
+  return <PrimaryGoalScreen />;
+
   const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
   const params = useLocalSearchParams();
   const { email, password, firstName, lastName, username, age, gender, timezone, bio } = params;
@@ -15,7 +20,7 @@ export default function Signup3() {
 
   const handleNext = async () => {
     router.push({
-      pathname: '/(auth)/signup4',
+      pathname: '/(auth)/secondaryGoal',
       params: {
         email,
         password,

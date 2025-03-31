@@ -25,9 +25,14 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, onClose }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
+  const handleLogin = () => {
+    onClose();
+    router.push('/(auth)/loginTemp'); // temporary login screen for now
+  };
+
   const handleCreateAccount = () => {
     onClose(); // Close the popup
-    router.push('/signup/createAccount');
+    router.push('/(auth)/createAccount');
   };
 
   return (
@@ -91,7 +96,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, onClose }) => {
           </View>
 
           {/* Login Button */}
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
 

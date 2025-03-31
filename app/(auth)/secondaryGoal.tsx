@@ -13,7 +13,12 @@ import { useMutation } from '@apollo/client';
 import { useUserInfo } from '@/services/UserContext';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
-export default function Signup4() {
+import SecondaryGoalScreen from '@/components/screens/SignupLogin/Signup/secondaryGoal';
+
+// Signup Page 4
+export default function SecondaryGoal() {
+  //return <SecondaryGoalScreen primaryGoalId={primaryGoal} />;
+
   const params = useLocalSearchParams();
   const { email, password, primaryGoal, firstName, lastName, username, age, gender, timezone, bio } = params;
   const [selectedGoal, setSelectedGoal] = useState<number | null>(null);

@@ -7,8 +7,11 @@ import { Picker } from '@react-native-picker/picker';
 import { GENDER_OPTIONS } from '@/utils/userOptions';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 
-export default function Signup2() {
+import PersonalProfileScreen from '@/components/screens/SignupLogin/Signup/personalProfile';
 
+// Signup Page 2
+export default function PersonalProfile() {
+  return <PersonalProfileScreen />;
 
   const params = useLocalSearchParams();
   const { email, password, firstName, lastName, username } = params;
@@ -26,7 +29,7 @@ export default function Signup2() {
     }
     
     router.push({
-      pathname: '/(auth)/signup3',
+      pathname: '/(auth)/primaryGoal',
       params: {
         email,
         password,

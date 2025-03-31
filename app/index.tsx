@@ -12,6 +12,6 @@ export default function Index() {
   if (userId && authToken) {
     return <Redirect href="/(tabs)/home" />;
   } else {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/(auth)/getStarted" />;
   }
 }

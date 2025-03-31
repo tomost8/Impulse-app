@@ -11,6 +11,7 @@ import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import LoginPopup from './LoginPopup';
 
+
 const GetStartedScreen = () => {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
@@ -31,7 +32,7 @@ const GetStartedScreen = () => {
       {/* Create Account Button */}
       <TouchableOpacity 
         style={styles.createAccountButton} 
-        onPress={() => router.push('/signup/createAccount')}
+        onPress={() => router.push('/(auth)/createAccount')}
       >
         <Text style={styles.createAccountText}>Create Account</Text>
       </TouchableOpacity>

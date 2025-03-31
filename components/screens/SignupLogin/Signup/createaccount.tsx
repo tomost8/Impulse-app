@@ -58,7 +58,7 @@ const CreateAccountScreen = () => {
     }
 
     // If validation passes, navigate to PersonalProfile
-    router.push('/Signup/personalProfile');
+    router.push('/(auth)/personalProfile');
   };
 
   return (
@@ -137,7 +137,7 @@ const CreateAccountScreen = () => {
       {/* Login Link */}
       <View style={styles.loginContainer}>
         <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/login')}>
+        <TouchableOpacity onPress={() => router.push('/(auth)/getStarted')}>
           <Text style={styles.loginLink}>Login</Text>
         </TouchableOpacity>
       </View>

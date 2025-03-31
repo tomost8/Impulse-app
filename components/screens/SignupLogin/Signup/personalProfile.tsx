@@ -78,7 +78,7 @@ const PersonalProfileScreen = () => {
       return;
     }
     // Navigate to primary goal screen
-    router.push('/Signup/primaryGoal');
+    router.push('/(auth)/primaryGoal');
   };
 
   return (

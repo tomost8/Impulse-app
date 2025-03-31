@@ -41,7 +41,7 @@ const PrimaryGoalScreen = () => {
       return;
     }
     router.push({
-      pathname: '/Signup/secondaryGoal',
+      pathname: '/(auth)/secondaryGoal',
       params: { primaryGoalId: selectedGoal }
     });
   };
@@ -84,6 +84,7 @@ const PrimaryGoalScreen = () => {
             onPress={() => handleGoalSelect(goal.id)}
           >
             <View style={styles.iconContainer}>
+              {/* comment out image for now since import broken
               <Image
                 source={require(`@/assets/icons/${goal.icon}`)}
                 style={[
@@ -91,6 +92,7 @@ const PrimaryGoalScreen = () => {
                   selectedGoal === goal.id && styles.goalIconSelected
                 ]}
               />
+              */}
             </View>
             <Text style={[
               styles.goalText,

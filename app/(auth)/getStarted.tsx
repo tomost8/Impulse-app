@@ -2,6 +2,13 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import styles from '@/utils/testStyles';
 import { router } from 'expo-router';
 
+import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
+
+export default function GetStarted() {
+  return <GetStartedScreen />;
+}
+
+/*
 export default function AuthScreen() {
   
   return (
@@ -21,4 +28,4 @@ export default function AuthScreen() {
     </View>
   );
 }
-
+*/
