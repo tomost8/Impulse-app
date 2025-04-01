@@ -5,7 +5,11 @@ import { router } from 'expo-router';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { auth, db } from '@/config/firebaseConfig';
 
-export default function Signup1() {
+import CreateAccountScreen from '@/components/screens/SignupLogin/Signup/createaccount';
+
+export default function CreateAccount() {
+  return <CreateAccountScreen />;
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -59,7 +63,7 @@ export default function Signup1() {
     const isAvailable = await checkValidFields();
     if (isAvailable) {
       router.push({
-        pathname: '/(auth)/signup2',
+        pathname: '/(auth)/personalProfile',
         params: {
           email,
           username,

@@ -60,7 +60,7 @@ function LogoutButton() {
     <TouchableOpacity style={styles.logoutButton} 
       onPress={async () => {
         await logout();
-        router.push('/login');
+        router.push('/(auth)/getStarted');
       }}
       accessibilityRole="button"
     >
