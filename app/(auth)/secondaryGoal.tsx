@@ -17,10 +17,10 @@ import SecondaryGoalScreen from '@/components/screens/SignupLogin/Signup/seconda
 
 // Signup Page 4
 export default function SecondaryGoal() {
-  //return <SecondaryGoalScreen primaryGoalId={primaryGoal} />;
-
   const params = useLocalSearchParams();
   const { email, password, primaryGoal, firstName, lastName, username, age, gender, timezone, bio } = params;
+  return <SecondaryGoalScreen primaryGoalId={Number(primaryGoal)} />;
+
   const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
 
   const handleBack = async () => {
