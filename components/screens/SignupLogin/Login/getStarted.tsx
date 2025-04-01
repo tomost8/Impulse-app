@@ -11,38 +11,41 @@ import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import LoginPopup from './LoginPopup';
 
-
 const GetStartedScreen = () => {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Logo */}
-      <Image
-        source={require('@/assets/images/bigLogo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <View style={styles.contentContainer}>
+        {/* Logo */}
+        <Image
+          source={require('@/assets/images/bigLogo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
 
-      {/* Headline */}
-      <Text style={styles.titleText}>
-        Let's get{'\n'}started
-      </Text>
+        {/* Headline */}
+        <Text style={styles.titleText}>
+          Let's get{'\n'}started
+        </Text>
+      </View>
 
-      {/* Create Account Button */}
-      <TouchableOpacity 
-        style={styles.createAccountButton} 
-        onPress={() => router.push('/(auth)/createAccount')}
-      >
-        <Text style={styles.createAccountText}>Create Account</Text>
-      </TouchableOpacity>
-
-      {/* Login Link */}
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => setShowLoginPopup(true)}>
-          <Text style={styles.loginLink}>Login</Text>
+      <View style={styles.bottomContainer}>
+        {/* Create Account Button */}
+        <TouchableOpacity 
+          style={styles.createAccountButton} 
+          onPress={() => router.push('/(auth)/createAccount')}
+        >
+          <Text style={styles.createAccountText}>Create Account</Text>
         </TouchableOpacity>
+
+        {/* Login Link */}
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => setShowLoginPopup(true)}>
+            <Text style={styles.loginLink}>Login</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <LoginPopup 
@@ -56,33 +59,41 @@ const GetStartedScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FE',
+    backgroundColor: '#E0EDFD',
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: s(24),
+    paddingTop: s(55), // Adjust this value to move logo up/down
+  },
+  bottomContainer: {
+    paddingHorizontal: s(24),
+    paddingBottom: s(38), // Adjust bottom padding
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: s(20),
   },
   logo: {
-    width: s(200),
-    height: s(200),
-    marginBottom: s(40),
+    width: s(180),
+    height: s(180),
+    marginBottom: s(125),
+    alignSelf: 'center',
   },
   titleText: {
-    fontSize: s(48),
+    fontSize: s(40),
     fontFamily: 'Poppins',
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#DE728D',
-    textAlign: 'center',
-    marginBottom: s(50),
-    lineHeight: s(60),
+    textAlign: 'left',
+    lineHeight: s(50),
+    paddingTop: 75, 
   },
   createAccountButton: {
     backgroundColor: '#DE728D',
     paddingVertical: s(16),
-    paddingHorizontal: s(30),
+    paddingHorizontal: s(32),
     borderRadius: s(100),
-    width: '100%',
+    width: s(318), // Fixed width from Figma
     alignItems: 'center',
-    marginBottom: s(20),
+    marginBottom: s(24),
   },
   createAccountText: {
     fontSize: s(16),

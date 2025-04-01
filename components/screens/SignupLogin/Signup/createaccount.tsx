@@ -62,125 +62,157 @@ const CreateAccountScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Create Account</Text>
+    <SafeAreaView style={styles.safeArea}>
+      {/* Progress Bars */}
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBar}>
+          <View style={styles.progressEmpty} />
+          <View style={styles.progressEmpty} />
+          <View style={styles.progressEmpty} />
+        </View>
+      </View>
 
-      {/* Error Message */}
-      {errorMessage && (
-        <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
-      )}
+      <View style={styles.container}>
+        <Text style={styles.title}>Create Account</Text>
 
-      {/* Form Fields */}
-      <View style={styles.formContainer}>
-        <TextInput
-          style={[styles.input, errorMessage && styles.inputError]}
-          placeholder="First Name"
-          placeholderTextColor="#979797"
-          value={formData.firstName}
-          onChangeText={(value) => handleInputChange('firstName', value)}
-        />
+        {/* Error Message */}
+        {errorMessage && (
+          <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
+        )}
 
-        <TextInput
-          style={[styles.input, errorMessage && styles.inputError]}
-          placeholder="Last Name"
-          placeholderTextColor="#979797"
-          value={formData.lastName}
-          onChangeText={(value) => handleInputChange('lastName', value)}
-        />
-
-        <TextInput
-          style={[styles.input, errorMessage && styles.inputError]}
-          placeholder="Username"
-          placeholderTextColor="#979797"
-          value={formData.username}
-          onChangeText={(value) => handleInputChange('username', value)}
-        />
-
-        <TextInput
-          style={[styles.input, errorMessage && styles.inputError]}
-          placeholder="Email Address"
-          placeholderTextColor="#979797"
-          value={formData.email}
-          onChangeText={(value) => handleInputChange('email', value)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <View style={styles.passwordContainer}>
+        {/* Form Fields */}
+        <View style={styles.formContainer}>
           <TextInput
-            style={[
-              styles.passwordInput, 
-              errorMessage === 'Password does not meet requirements' && styles.inputError
-            ]}
-            placeholder="Enter Password"
+            style={styles.input}
+            placeholder="First Name"
             placeholderTextColor="#979797"
-            value={formData.password}
-            onChangeText={(value) => handleInputChange('password', value)}
-            secureTextEntry={!showPassword}
+            value={formData.firstName}
+            onChangeText={(value) => handleInputChange('firstName', value)}
           />
-          <TouchableOpacity 
-            style={styles.unhideButton}
-            onPress={() => setShowPassword(!showPassword)}
-          >
-            <Image
-              source={require('@/assets/icons/unhide.png')}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            placeholderTextColor="#979797"
+            value={formData.lastName}
+            onChangeText={(value) => handleInputChange('lastName', value)}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#979797"
+            value={formData.username}
+            onChangeText={(value) => handleInputChange('username', value)}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Email Address"
+            placeholderTextColor="#979797"
+            value={formData.email}
+            onChangeText={(value) => handleInputChange('email', value)}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+
+          <View style={styles.passwordContainer}>
+            <TextInput
               style={[
-                styles.unhideIcon,
-                showPassword && styles.unhideIconActive
+                styles.passwordInput,
+                errorMessage && styles.inputError // Only highlight password field for any error
               ]}
+              placeholder="Enter Password"
+              placeholderTextColor="#979797"
+              value={formData.password}
+              onChangeText={(value) => handleInputChange('password', value)}
+              secureTextEntry={!showPassword}
             />
+            <TouchableOpacity 
+              style={styles.unhideButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Image
+                source={require('@/assets/icons/unhide.png')}
+                style={[
+                  styles.unhideIcon,
+                  showPassword && styles.unhideIconActive
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.passwordHint}>Must be at least 8 characters</Text>
+        </View>
+
+        {/* Login Link */}
+        <View style={styles.loginContainer}>
+          <Text style={styles.loginText}>Already have an account? </Text>
+          <TouchableOpacity onPress={() => router.push('/(auth)/getStarted')}>
+            <Text style={styles.loginLink}>Login</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.passwordHint}>Must be at least 8 characters</Text>
-      </View>
 
-      {/* Login Link */}
-      <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => router.push('/(auth)/getStarted')}>
-          <Text style={styles.loginLink}>Login</Text>
+        {/* Next Button */}
+        <TouchableOpacity 
+          style={styles.nextButton}
+          onPress={handleNext}
+        >
+          <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
+
+        {/* Terms and Privacy */}
+        <Text style={styles.termsText}>
+          By signing up you are agreeing to our{' '}
+          <Text style={styles.termsLink}>Terms of Use</Text> and our{' '}
+          <Text style={styles.termsLink}>Privacy Policy</Text>.
+        </Text>
       </View>
-
-      {/* Next Button */}
-      <TouchableOpacity 
-        style={styles.nextButton}
-        onPress={handleNext}
-      >
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity>
-
-      {/* Terms and Privacy */}
-      <Text style={styles.termsText}>
-        By signing up you are agreeing to our{' '}
-        <Text style={styles.termsLink}>Terms of Use</Text> and our{' '}
-        <Text style={styles.termsLink}>Privacy Policy</Text>.
-      </Text>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    padding: s(20),
+  },
+  progressContainer: {
+    paddingTop: s(21),
+    paddingHorizontal: s(20),
+    marginBottom: s(22),
+  },
+  progressBar: {
+    flexDirection: 'row',
+    gap: s(5),
+    height: s(4),
+  },
+  progressEmpty: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: s(2),
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: s(20),
+    paddingBottom: s(18),
   },
   title: {
-    fontSize: s(32),
+    fontSize: s(22),
     fontFamily: 'Poppins',
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#242020',
-    marginBottom: s(32),
+    marginBottom: s(16),
   },
   errorMessage: {
     color: '#DE728D',
     fontSize: s(12),
     fontFamily: 'Open Sans',
-    marginBottom: s(16),
+    marginBottom: s(12),
+    marginTop: -6,
   },
   formContainer: {
     gap: s(16),
+    marginBottom: s(48), // Increased space before "Already have an account"
   },
   input: {
     height: s(48),
@@ -195,23 +227,22 @@ const styles = StyleSheet.create({
     borderColor: '#DE728D',
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
     position: 'relative',
   },
   passwordInput: {
-    flex: 1,
     height: s(48),
     borderWidth: 1,
     borderColor: '#E1E1E1',
     borderRadius: s(100),
     paddingHorizontal: s(20),
+    paddingRight: s(50),
     fontSize: s(14),
     fontFamily: 'Open Sans',
   },
   unhideButton: {
     position: 'absolute',
     right: s(20),
+    top: s(14),
   },
   unhideIcon: {
     width: s(20),
@@ -225,7 +256,7 @@ const styles = StyleSheet.create({
     fontSize: s(12),
     fontFamily: 'Open Sans',
     color: '#979797',
-    marginTop: s(-8),
+    marginTop: s(-4),
     marginLeft: s(20),
   },
   loginContainer: {

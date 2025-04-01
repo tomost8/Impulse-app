@@ -9,15 +9,7 @@ import {
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-
-const GOALS = [
-  { id: 1, name: 'Workout', icon: 'workout.png' },
-  { id: 2, name: 'Studying / Working', icon: 'studyingworking.png' },
-  { id: 3, name: 'Food', icon: 'food.png' },
-  { id: 4, name: 'Wellness', icon: 'wellness.png' },
-  { id: 5, name: 'Rise and Shine', icon: 'riseshine.png' },
-  { id: 6, name: 'Passion / Hobby', icon: 'passionhobby.png' },
-];
+import { goals } from '@/utils/goals';
 
 const PrimaryGoalScreen = () => {
   const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
@@ -36,7 +28,7 @@ const PrimaryGoalScreen = () => {
   };
 
   const handleNext = () => {
-    if (!selectedGoal) {
+    if (selectedGoal === null) {
       setErrorMessage('Please select a primary goal');
       return;
     }
@@ -47,7 +39,7 @@ const PrimaryGoalScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       {/* Progress Bars */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
@@ -57,94 +49,91 @@ const PrimaryGoalScreen = () => {
         </View>
       </View>
 
-      <Text style={styles.title}>Select your primary goal</Text>
-      
-      <Text style={styles.subtitle}>
-        This app works best when you prioritize a single goal, helping you build a strong connection to your progress.
-      </Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>Select your primary goal</Text>
+        
+        <Text style={styles.subtitle}>
+          This app works best when you prioritize a single goal, helping you build a strong connection to your progress.
+        </Text>
 
-      <Text style={styles.description}>
-        Each category is flexible—you can choose what specifically you want to work on within it
-      </Text>
+        <Text style={styles.description}>
+          Each category is flexible—you can choose what specifically you want to work on within it
+        </Text>
 
-      {/* Error Message */}
-      {errorMessage && (
-        <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
-      )}
+        {errorMessage && (
+          <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
+        )}
 
-      {/* Goals Grid */}
-      <View style={styles.goalsGrid}>
-        {GOALS.map((goal) => (
-          <TouchableOpacity
-            key={goal.id}
-            style={[
-              styles.goalCard,
-              selectedGoal === goal.id && styles.goalCardSelected
-            ]}
-            onPress={() => handleGoalSelect(goal.id)}
+        {/* Goals Grid */}
+        <View style={styles.goalsGrid}>
+          {goals.map((goal) => (
+            <TouchableOpacity
+              key={goal.id}
+              style={[
+                styles.goalCard,
+                selectedGoal === goal.id && styles.goalCardSelected
+              ]}
+              onPress={() => handleGoalSelect(goal.id)}
+            >
+              <View style={styles.iconContainer}>
+                <Image
+                  source={goal.icon}
+                  style={[
+                    styles.goalIcon,
+                    selectedGoal === goal.id && styles.goalIconSelected
+                  ]}
+                />
+              </View>
+              <Text style={[
+                styles.goalText,
+                selectedGoal === goal.id && styles.goalTextSelected
+              ]}>
+                {goal.label}
+              </Text>
+              {selectedGoal === goal.id && (
+                <Image
+                  source={require('@/assets/icons/checkGreen.png')}
+                  style={styles.checkIcon}
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Navigation Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.back()}
           >
-            <View style={styles.iconContainer}>
-              {/* comment out image for now since import broken
-              <Image
-                source={require(`@/assets/icons/${goal.icon}`)}
-                style={[
-                  styles.goalIcon,
-                  selectedGoal === goal.id && styles.goalIconSelected
-                ]}
-              />
-              */}
-            </View>
-            <Text style={[
-              styles.goalText,
-              selectedGoal === goal.id && styles.goalTextSelected
-            ]}>
-              {goal.name}
-            </Text>
-            {selectedGoal === goal.id && (
-              <Image
-                source={require('@/assets/icons/checkGreen.png')}
-                style={styles.checkIcon}
-              />
-            )}
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
-        ))}
-      </View>
 
-      {/* Navigation Buttons */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.nextButton,
-            !selectedGoal && styles.nextButtonDisabled
-          ]}
-          onPress={handleNext}
-        >
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.nextButton}
+            onPress={handleNext}
+          >
+            <Text style={styles.nextButtonText}>Next</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    padding: s(20),
   },
   progressContainer: {
-    marginBottom: s(32),
+    paddingTop: s(22),
+    paddingHorizontal: s(20),
+    marginBottom: s(22),
   },
   progressBar: {
     flexDirection: 'row',
-    gap: s(4),
+    gap: s(5),
     height: s(4),
   },
   progressFilled: {
@@ -157,90 +146,90 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: s(2),
   },
+  container: {
+    flex: 1,
+    paddingHorizontal: s(20),
+    paddingBottom: s(20),
+  },
   title: {
-    fontSize: s(32),
+    fontSize: s(22),
     fontFamily: 'Poppins',
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#242020',
-    marginBottom: s(16),
+    marginBottom: s(6),
   },
   subtitle: {
-    fontSize: s(14),
+    fontSize: s(12),
     fontFamily: 'Open Sans',
     color: '#242020',
-    marginBottom: s(16),
-    lineHeight: s(20),
+    marginBottom: s(12),
+    lineHeight: s(16),
   },
   description: {
-    fontSize: s(14),
+    fontSize: s(12),
     fontFamily: 'Open Sans',
     color: '#242020',
-    marginBottom: s(32),
-    lineHeight: s(20),
+    marginBottom: s(24),
+    lineHeight: s(18),
   },
   goalsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: s(16),
-    marginBottom: s(32),
+    gap: s(8),
+    marginBottom: s(16),
   },
   goalCard: {
-    width: '47%',
-    aspectRatio: 1,
+    width: '48%',
     backgroundColor: '#FFFFFF',
     borderRadius: s(16),
+    padding: s(16),
     borderWidth: 1,
     borderColor: '#E1E1E1',
-    padding: s(16),
     alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative', // For positioning the check icon
+    marginBottom: s(10),
   },
   goalCardSelected: {
     borderColor: '#DE728D',
     borderWidth: 2,
-    backgroundColor: '#FEF0F4',
   },
   iconContainer: {
-    width: s(64),
-    height: s(64),
-    borderRadius: s(32),
-    backgroundColor: '#FEF0F4',
-    alignItems: 'center',
+    width: s(55),
+    height: s(55),
     justifyContent: 'center',
-    marginBottom: s(12),
+    alignItems: 'center',
+    marginBottom: s(8),
   },
   goalIcon: {
-    width: s(32),
-    height: s(32),
+    width: s(55),
+    height: s(55),
     tintColor: '#DE728D',
   },
   goalIconSelected: {
     tintColor: '#DE728D',
   },
   goalText: {
-    fontSize: s(14),
+    fontSize: s(12),
     fontFamily: 'Open Sans',
+    fontWeight: '600',
     color: '#242020',
     textAlign: 'center',
   },
   goalTextSelected: {
-    color: '#242020',
-    fontWeight: '600',
   },
   checkIcon: {
+    width: s(30),
+    height: s(30),
     position: 'absolute',
-    top: s(12),
-    right: s(12),
-    width: s(20),
-    height: s(20),
+    top: s(8),
+    right: s(8),
   },
   errorMessage: {
     color: '#DE728D',
     fontSize: s(12),
     fontFamily: 'Open Sans',
     marginBottom: s(16),
+    marginTop: -15, 
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -276,9 +265,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
-  },
-  nextButtonDisabled: {
-    backgroundColor: '#E1E1E1',
   },
 });
 
