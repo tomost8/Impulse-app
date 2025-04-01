@@ -33,15 +33,12 @@ const HomePage = () => {
         point: item.friend.point
       }));
       if (user) {
-        // Test pushing multiple copies for testing purposes (remove this later)
-        for (let i = 0; i < 3; i++) {
-          combinedLeaderboard.push({
-            id: user.id,
-            username: user.username,
-            profile_picture: user.profile_picture,
-            point: user.point
-          });
-        }
+        combinedLeaderboard.push({
+          id: user.id,
+          username: user.username,
+          profile_picture: user.profile_picture,
+          point: user.point
+        });
       }
       // Sort by weekly points in descending order
       combinedLeaderboard.sort((a: any, b: any) => b.point.weekly_points - a.point.weekly_points);

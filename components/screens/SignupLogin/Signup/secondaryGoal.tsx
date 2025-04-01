@@ -29,8 +29,7 @@ const SecondaryGoalScreen = () => {
   };
 
   const handleFinish = () => {
-    // Navigate to next screen regardless of selection
-    router.push('/(auth)/almostReady');
+    console.log('finish: goals selected', primaryGoalId, selectedGoal);
   };
 
   return (

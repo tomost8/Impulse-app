@@ -3,7 +3,8 @@ import {
   View, 
   StyleSheet, 
   SafeAreaView, 
-  ScrollView 
+  ScrollView,
+  Text
 } from 'react-native';
 import { router } from 'expo-router';
 import Header from '@/components/ui/userprofile/header';
@@ -11,7 +12,17 @@ import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
 import DailyGoals from '@/components/ui/userprofile/dailygoals';
 
-const FriendViewScreen = () => {
+interface FriendViewScreenProps {
+  loading: boolean;
+  friend: any;
+  //daily goals + community count
+}
+
+const FriendViewScreen = (props: FriendViewScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+  console.log('FriendViewScreen props:', props.friend);
   // Sample data
   const friend = {
     name: 'First Name Last Name',
@@ -49,19 +60,15 @@ const FriendViewScreen = () => {
     ]
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         {/* Header Section */}
         <Header
-          onBackPress={handleBack}
-          name={friend.name}
-          username={friend.username}
-          profileImage={friend.profileImage}
+          onBackPress={() => router.back()}
+          name={props.friend.first_name + ' ' + props.friend.last_name}
+          username={props.friend.username}
+          profileImage={props.friend.profile_picture}
         />
 
         {/* Daily Goals Section */}
@@ -74,17 +81,17 @@ const FriendViewScreen = () => {
 
         {/* Points Bar */}
         <PointsBar 
-          points={friend.points}
+          points={props.friend.point.points}
           communities={friend.communities}
         />
 
         {/* Bio Section */}
         <Bio 
-          bioText={friend.bioText}
-          primaryActivity={friend.primaryActivity}
-          secondaryActivity={friend.secondaryActivity}
-          gender={friend.gender}
-          timezone={friend.timezone}
+          bioText={props.friend.bio}
+          primaryActivity={props.friend.primary_goal}
+          secondaryActivity={props.friend.secondary_goal}
+          gender={props.friend.gender}
+          timezone={props.friend.timezone}
         />
       </ScrollView>
     </SafeAreaView>

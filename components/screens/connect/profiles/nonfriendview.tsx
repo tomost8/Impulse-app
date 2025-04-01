@@ -15,7 +15,16 @@ import Bio from '@/components/ui/userprofile/bio';
 import FriendRequestSentPopup from './friendrequestsent';
 import Header from '@/components/ui/userprofile/header';
 
-const NonFriendViewScreen = () => {
+interface NonFriendViewScreenProps {
+  loading: boolean;
+  nonFriend: any;
+}
+
+const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+  console.log('NonFriendViewScreen props:', props.nonFriend);
   const [isRequestSent, setIsRequestSent] = useState(false);
   const [showRequestSentPopup, setShowRequestSentPopup] = useState(false);
 
@@ -33,10 +42,6 @@ const NonFriendViewScreen = () => {
     timezone: 'GMT +5'
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   const handleSendRequest = () => {
     if (!isRequestSent) {
       setShowRequestSentPopup(true);
@@ -52,25 +57,25 @@ const NonFriendViewScreen = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Header
-          onBackPress={handleBack}
-          name={nonFriend.name}
-          username={nonFriend.username}
-          profileImage={nonFriend.profileImage}
+          onBackPress={() => router.back()}
+          name={props.nonFriend.first_name + ' ' + props.nonFriend.last_name}
+          username={props.nonFriend.username}
+          profileImage={props.nonFriend.profile_picture}
         />
 
         {/* Points Bar */}
         <PointsBar 
-          points={nonFriend.points}
+          points={props.nonFriend.point.points}
           communities={nonFriend.communities}
         />
 
         {/* Bio Section */}
         <Bio 
-          bioText={nonFriend.bioText}
-          primaryActivity={nonFriend.primaryActivity}
-          secondaryActivity={nonFriend.secondaryActivity}
-          gender={nonFriend.gender}
-          timezone={nonFriend.timezone}
+          bioText={props.nonFriend.bio}
+          primaryActivity={props.nonFriend.primary_goal}
+          secondaryActivity={props.nonFriend.secondary_goal}
+          gender={props.nonFriend.gender}
+          timezone={props.nonFriend.timezone}
         />
       </ScrollView>
 

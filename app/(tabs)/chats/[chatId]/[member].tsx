@@ -1,5 +1,3 @@
-import { View, Text, TouchableOpacity, Image } from 'react-native';
-import styles from '@/utils/testStyles';
 import { useLocalSearchParams } from 'expo-router';
 
 import {useState, useEffect, useRef} from 'react';
@@ -7,57 +5,10 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetUser } from '@/hooks/graphql/users/queries';
 // Components
+import PartnerScreenOld from '@/components/old/chats/chatId/PartnerScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 
-function PartnerScreen({
-  user,
-  isUserLoading,
-}: {
-  user: any;
-  isUserLoading: boolean;
-}) {
-  if (isUserLoading) {
-    return <Text>Loading...</Text>;
-  }
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>
-          Partner Insights
-      </Text>
-      <Image source={{ uri: user.profile_picture }} style={styles.smallImage} />
-      <Text style={styles.text}>
-          First Name: {user.first_name}
-      </Text>
-      <Text style={styles.text}>
-          Username: {user.username}
-      </Text>
-      <Text style={styles.todoText}>
-          Todo: Daily Goals + Joined communities + Nudge
-      </Text>
-      {/*
-      <Text style={styles.text}>
-          Points: {user.point.points}
-      </Text>
-      */}
-      <Text style={styles.text}>
-          Bio: {user.bio}
-      </Text>
-      <Text style={styles.text}>
-          Gender: {user.gender}
-      </Text>
-      <Text style={styles.text}>
-          Timezone: {user.timezone}
-      </Text>
-      <Text style={styles.text}>
-          Primary Goal: {user.primary_goal}
-      </Text>
-      <Text style={styles.text}>
-          Secondary Goal: {user.secondary_goal}
-      </Text>
-    </View>
-  );
-}
 
 const PartnerPage = (props: any) => {
   const { userId, authToken } = props;
@@ -93,7 +44,7 @@ const PartnerPage = (props: any) => {
   }
 
   return (
-    <PartnerScreen
+    <PartnerScreenOld
       user={userRef.current}
       isUserLoading={!hasFetchedUser.current}
     />

@@ -2,27 +2,12 @@ import { Stack } from 'expo-router';
 
 export default function ChatsLayout() {
   return (
-    <Stack>
-      <Stack.Screen 
-        name="index" 
-        options={{ headerShown: false }} 
-      />
-      <Stack.Screen 
-        name="addFriends" 
-        options={{ headerShown: true }}
-      />
-      <Stack.Screen 
-        name="groupCreate" 
-        options={{ headerShown: true }}
-      />    
-      <Stack.Screen 
-        name="groupJoin" 
-        options={{ headerShown: true }}
-      />    
-      <Stack.Screen 
-        name="requests" 
-        options={{ headerShown: true }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="addFriends" />
+      <Stack.Screen name="groupCreate" />
+      <Stack.Screen name="groupJoin" />
+      <Stack.Screen name="requests" />
     </Stack>
   );
 }

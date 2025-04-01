@@ -10,13 +10,19 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 
-const CommunityList = () => {
-  // Hardcoded communities data
-  const communities = [
-    { id: 1, name: 'Supercharged', image: require('@/assets/images/andrew.png') },
-    { id: 2, name: 'Supercharged', image: require('@/assets/images/andrew.png') },
-    { id: 3, name: 'Supercharged', image: require('@/assets/images/andrew.png') },
-  ];
+interface CommunityListProps {
+  loading: boolean;
+  communities: any[];
+}
+
+const CommunityList = (props: CommunityListProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  const handleViewCommunity = (communityId: number) => {
+    router.push(`/community/${communityId}`);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -36,16 +42,16 @@ const CommunityList = () => {
 
       {/* Communities List */}
       <ScrollView style={styles.scrollContainer}>
-        {communities.map((community) => (
+        {props.communities.map((community) => (
           <View key={community.id} style={styles.communityItem}>
             <View style={styles.communityInfo}>
               <Image 
-                source={community.image}
+                source={{ uri: community.thumbnail }}
                 style={styles.communityImage}
               />
               <Text style={styles.communityName}>{community.name}</Text>
             </View>
-            <TouchableOpacity style={styles.viewButton}>
+            <TouchableOpacity style={styles.viewButton} onPress={() => handleViewCommunity(community.id)}>
               <Text style={styles.viewButtonText}>View</Text>
             </TouchableOpacity>
           </View>
