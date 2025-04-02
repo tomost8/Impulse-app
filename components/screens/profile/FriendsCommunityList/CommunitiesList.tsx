@@ -1,224 +1,219 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
-  StyleSheet,
-  Image,
   Text,
+  Image,
+  StyleSheet,
   ScrollView,
   TextInput,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
+import { s } from "react-native-size-matters";
+import { router } from "expo-router";
+import LeaveCommunityPopup from './leaveCommunityPopup';
 
-const CommunityScreen = ({ communities, isLoading }: { communities: any[], isLoading: boolean }) => {
-  const [searchText, setSearchText] = React.useState("");
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
+function Header() {
+  return (
+    <View style={styles.headerContainer}>
+      <View style={styles.headerContent}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <Image
+            source={require("@/assets/icons/backArrow.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Communities</Text>
       </View>
-    );
-  }
+    </View>
+  );
+}
 
-  const filteredCommunities = communities.filter(community => 
-    searchText === "" || 
-    community.community.name.toLowerCase().includes(searchText.toLowerCase())
+const CommunitiesList = () => {
+  const [searchText, setSearchText] = useState("");
+  const [showLeavePopup, setShowLeavePopup] = useState(false);
+  const [selectedCommunityId, setSelectedCommunityId] = useState<number | null>(null);
+
+  const mockCommunities = [
+    {
+      id: 1,
+      name: "Supercharged",
+      thumbnail: require("@/assets/images/andrew.png"),
+    },
+    {
+      id: 2,
+      name: "Supercharged",
+      thumbnail: require("@/assets/images/andrew.png"),
+    },
+    {
+      id: 3,
+      name: "Supercharged",
+      thumbnail: require("@/assets/images/andrew.png"),
+    },
+  ];
+
+  // Filter communities based on search text
+  const filteredCommunities = mockCommunities.filter(community => 
+    community.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleLeaveCommunity = (id: number) => {
+    setSelectedCommunityId(id);
+    setShowLeavePopup(true);
+  };
+
+  const confirmLeaveCommunity = () => {
+    if (selectedCommunityId) {
+      console.log("Leaving community:", selectedCommunityId);
+      // Add actual leave community logic here
+    }
+  };
+
   return (
-    <View style={styles.container} 
-    //accessibilityRole="main"
-    >
-      <View style={styles.header}>
-        <Text style={styles.time} accessibilityRole="text">
-          9:41
-        </Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <Header />
       <View style={styles.content}>
-        <View style={styles.titleContainer}>
+        <View style={styles.searchContainer}>
           <Image
-            accessibilityLabel="Back arrow"
-            resizeMode="contain"
-            source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
-            }}
-            style={styles.backArrow}
+            source={require("@/assets/icons/search.png")}
+            style={styles.searchIcon}
           />
-          <Text style={styles.title} accessibilityRole="header">
-            My Communities
-          </Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search communities"
+            placeholderTextColor="#979797"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
         </View>
-        <ScrollView style={styles.scrollView}>
-          <View style={styles.searchContainer}>
-            <Image
-              accessibilityLabel="Search icon"
-              resizeMode="contain"
-              source={{
-                uri: "URL",
-              }}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search communities"
-              accessibilityLabel="Search communities"
-              value={searchText}
-              onChangeText={setSearchText}
-            />
-          </View>
+        <ScrollView style={styles.communitiesList}>
           {filteredCommunities.map((community) => (
-            <View key={community.community.id} style={styles.communityItem}>
-              <Image
-                accessibilityLabel={`${community.community.name} community icon`}
-                resizeMode="contain"
-                source={{
-                  uri: community.community.thumbnail,
-                }}
-                style={styles.communityIcon}
-              />
+            <View key={community.id} style={styles.communityItem}>
+              <TouchableOpacity onPress={() => console.log("Community pressed:", community.id)}>
+                <Image
+                  source={community.thumbnail}
+                  style={styles.communityAvatar}
+                />
+              </TouchableOpacity>
               <View style={styles.communityInfo}>
-                <Text style={styles.communityName}>{community.community.name}</Text>
+                <Text style={styles.communityName}>{community.name}</Text>
                 <TouchableOpacity
-                  onPress={() => {
-                    console.log("Leaving community:", community.community.id);
-                  }}
                   style={styles.leaveButton}
-                  accessibilityLabel={`Leave ${community.community.name} group`}
-                  accessibilityRole="button"
+                  onPress={() => handleLeaveCommunity(community.id)}
                 >
-                  <Text style={styles.leaveButtonText}>Leave Group</Text>
+                  <Text style={styles.leaveButtonText}>Leave</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ))}
         </ScrollView>
       </View>
-      <View style={styles.footer}>
-        <Image
-          accessibilityLabel="Social icon"
-          resizeMode="contain"
-          source={{
-            uri: "URL",
-          }}
-          style={styles.socialIcon}
-        />
-        <Text style={styles.footerText}>Social</Text>
-      </View>
-    </View>
+      <LeaveCommunityPopup 
+        visible={showLeavePopup}
+        onClose={() => setShowLeavePopup(false)}
+        onLeave={confirmLeaveCommunity}
+      />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
-  header: {
-    paddingTop: 44,
-    paddingBottom: 20,
-    alignItems: "center",
+  headerContainer: {
+    backgroundColor: '#E0EDFD',
+    paddingTop: s(25),
+    paddingBottom: s(16),
   },
-  time: {
-    fontFamily: "Lato, sans-serif",
-    fontSize: 17,
-    color: "#242020",
-    fontWeight: "600",
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: s(16),
+  },
+  backButton: {
+    marginRight: s(8),
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  headerTitle: {
+    color: '#242020',
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  backArrow: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  title: {
-    fontFamily: "Poppins, sans-serif",
-    fontSize: 24,
-    color: "#242020",
-    fontWeight: "600",
-  },
-  scrollView: {
-    flex: 1,
+    paddingHorizontal: s(20),
+    paddingTop: s(20),
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(225, 225, 225, 1)",
-    borderRadius: 30,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    borderRadius: s(100),
+    paddingHorizontal: s(16),
+    height: s(48),
+    marginBottom: s(12),
   },
   searchIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
+    width: s(18),
+    height: s(18),
+    marginRight: s(12),
   },
   searchInput: {
     flex: 1,
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 16,
-    color: "rgba(164, 172, 188, 1)",
+    fontSize: s(14),
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  communitiesList: {
+    flex: 1,
   },
   communityItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: s(12),
   },
-  communityIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+  communityAvatar: {
+    width: s(50),
+    height: s(50),
+    borderRadius: s(25),
+    marginRight: s(12),
   },
   communityInfo: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   communityName: {
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 16,
-    color: "rgba(36, 32, 32, 1)",
-    fontWeight: "600",
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    color: '#242020',
   },
   leaveButton: {
-    backgroundColor: "#007AFF",
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
+    backgroundColor: '#DE728D',
+    paddingHorizontal: s(15),
+    paddingVertical: s(8),
+    borderRadius: s(100),
   },
   leaveButtonText: {
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 14,
-    color: "#FFFFFF",
-    fontWeight: "700",
-  },
-  footer: {
-    flexDirection: "column",
-    alignItems: "center",
-    paddingBottom: 20,
-  },
-  socialIcon: {
-    width: 22,
-    height: 22,
-    marginBottom: 5,
-  },
-  footerText: {
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 14,
-    color: "rgba(222, 114, 141, 1)",
-    fontWeight: "600",
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    fontWeight: '700',
   },
 });
 
-export default CommunityScreen;
+export default CommunitiesList;

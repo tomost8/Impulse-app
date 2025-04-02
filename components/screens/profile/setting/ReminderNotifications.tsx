@@ -7,271 +7,419 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  AccessibilityInfo,
+  SafeAreaView,
+  Modal,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
 } from "react-native";
+import { s } from "react-native-size-matters";
+import { router } from "expo-router";
+import Info2 from '@/components/screens/profile/setting/info2';
+import Info3 from '@/components/screens/profile/setting/info3';
+import Info4 from '@/components/screens/profile/setting/info4';
 
-const ReminderNotifications: React.FC = () => {
+function Header() {
+  return (
+    <View style={styles.headerContainer}>
+      <View style={styles.headerContent}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <Image
+            source={require("@/assets/icons/backArrow.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Reminders and Notifications</Text>
+      </View>
+    </View>
+  );
+}
+
+function ReminderItem({ 
+  title, 
+  isEnabled, 
+  onToggle,
+  options,
+  selectedTime,
+  onTimeSelect,
+  onInfoPress 
+}: { 
+  title: string;
+  isEnabled: boolean;
+  onToggle: () => void;
+  options: string[];
+  selectedTime: string;
+  onTimeSelect: (time: string) => void;
+  onInfoPress: () => void;
+}) {
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  return (
+    <View style={styles.reminderItem}>
+      <View style={styles.reminderHeader}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.reminderTitle}>{title}</Text>
+          <TouchableOpacity 
+            style={styles.infoButton}
+            onPress={onInfoPress}
+          >
+            <Image 
+              source={require("@/assets/icons/info.png")}
+              style={styles.infoIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={onToggle}>
+          <Image
+            source={isEnabled ? 
+              require("@/assets/icons/toggleOn.png") : 
+              require("@/assets/icons/toggleOff.png")
+            }
+            style={styles.toggleIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      {isEnabled && (
+        <TouchableOpacity 
+          style={styles.dropdownButton}
+          onPress={() => setShowDropdown(true)}
+        >
+          <Text style={styles.dropdownText}>{selectedTime}</Text>
+          <Image 
+            source={require("@/assets/icons/arrow-down.png")}
+            style={styles.arrowIcon}
+          />
+        </TouchableOpacity>
+      )}
+      <Modal
+        visible={showDropdown}
+        transparent={true}
+        animationType="slide"
+      >
+        <TouchableOpacity 
+          style={styles.modalOverlay}
+          onPress={() => setShowDropdown(false)}
+        >
+          <View style={styles.modalContent}>
+            <ScrollView>
+              {options.map((time) => (
+                <TouchableOpacity
+                  key={time}
+                  style={styles.timeOption}
+                  onPress={() => {
+                    onTimeSelect(time);
+                    setShowDropdown(false);
+                  }}
+                >
+                  <Text style={styles.timeOptionText}>{time}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </View>
+  );
+}
+
+function ReminderNotifications(): JSX.Element {
+  const [reminders, setReminders] = useState({
+    morning: { enabled: false, time: '9:00 AM' },
+    afternoon: { enabled: false, time: '2:00 PM' },
+    daily: { enabled: false, time: 'Start Time' },
+  });
   const [nudgeMessage, setNudgeMessage] = useState("");
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [showInfo2, setShowInfo2] = useState(false);
+  const [showInfo3, setShowInfo3] = useState(false);
+  const [showInfo4, setShowInfo4] = useState(false);
 
-  const handleNudgeChange = (text: string) => {
-    setNudgeMessage(text.slice(0, 30));
-  };
+  // Generate time options
+  const morningOptions = Array.from({ length: 21 }, (_, i) => {
+    const hour = Math.floor(i / 4) + 6;
+    const minute = (i % 4) * 15;
+    return `${hour}:${minute.toString().padStart(2, '0')} ${hour < 12 ? 'AM' : 'PM'}`;
+  });
+
+  const afternoonOptions = Array.from({ length: 21 }, (_, i) => {
+    const hour = Math.floor(i / 4) + 12;
+    const minute = (i % 4) * 15;
+    return `${hour > 12 ? hour - 12 : hour}:${minute.toString().padStart(2, '0')} PM`;
+  });
+
+  const dailyOptions = [
+    '30 min before',
+    '15 min before',
+    'Start Time',
+    '15 mins after start',
+    '30 mins after start',
+    '45 mins after start',
+  ];
 
   const handleSave = () => {
-    AccessibilityInfo.announceForAccessibility("Settings saved successfully");
+    // Handle save logic
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.header} accessibilityRole="header">
-        <Text style={styles.time} accessibilityLabel="Current time: 9:41">
-          9:41
-        </Text>
-      </View>
-      <View style={styles.content}>
-        <View style={styles.titleContainer}>
-          <Image
-            source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=4e9058eda6d64cec83059909564d7572",
-            }}
-            style={styles.backIcon}
-            accessibilityLabel="Back button"
-          />
-          <Text
-            style={styles.title}
-            accessibilityRole="header"
-            accessibilityLevel={1}
-          >
-            Reminder and Notifications
-          </Text>
-        </View>
-        <View style={styles.reminderSection}>
-          <ReminderItem title="Morning Scheduling Reminder" time="9:00 AM" />
-          <ReminderItem title="Afternoon Motivation" time="9:00 AM" />
-          <ReminderItem title="Activity Reminder" time="9:00 AM" />
-        </View>
-        <View style={styles.nudgeSection}>
-          <Text
-            style={styles.sectionTitle}
-            accessibilityRole="header"
-            accessibilityLevel={2}
-          >
-            Nudge Message
-          </Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter here"
-              value={nudgeMessage}
-              onChangeText={handleNudgeChange}
-              maxLength={30}
-              accessibilityLabel="Nudge message input"
-              accessibilityHint="Enter a custom nudge message, maximum 30 characters"
-            />
-            <Text style={styles.charCount}>{nudgeMessage.length}/30</Text>
-          </View>
-        </View>
-        <View style={styles.previewSection}>
-          <Image
-            source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/f8d7cf409a6a87b8c0225daa5fcf966e36f578029b24fe47234fa6f984133f5f?placeholderIfAbsent=true&apiKey=4e9058eda6d64cec83059909564d7572",
-            }}
-            style={styles.avatar}
-            accessibilityLabel="User avatar"
-          />
-          <View style={styles.previewContent}>
-            <View style={styles.previewHeader}>
-              <Text style={styles.previewName}>Gabe Deng</Text>
-              <Text style={styles.previewTime}>now</Text>
-            </View>
-            <Text style={styles.previewMessage}>
-              Nudge: {nudgeMessage || "custom message.........."}
-            </Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={handleSave}
-          accessibilityRole="button"
-          accessibilityLabel="Save settings"
-          accessibilityHint="Saves all reminder and notification settings"
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView 
+          style={styles.content}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <View style={styles.remindersContainer}>
+            <ReminderItem
+              title="Scheduling Reminder"
+              isEnabled={reminders.morning.enabled}
+              onToggle={() => setReminders({
+                ...reminders,
+                morning: { ...reminders.morning, enabled: !reminders.morning.enabled }
+              })}
+              options={morningOptions}
+              selectedTime={reminders.morning.time}
+              onTimeSelect={(time) => setReminders({
+                ...reminders,
+                morning: { ...reminders.morning, time }
+              })}
+              onInfoPress={() => {}}
+            />
+            <ReminderItem
+              title="Midday Motivation"
+              isEnabled={reminders.afternoon.enabled}
+              onToggle={() => setReminders({
+                ...reminders,
+                afternoon: { ...reminders.afternoon, enabled: !reminders.afternoon.enabled }
+              })}
+              options={afternoonOptions}
+              selectedTime={reminders.afternoon.time}
+              onTimeSelect={(time) => setReminders({
+                ...reminders,
+                afternoon: { ...reminders.afternoon, time }
+              })}
+              onInfoPress={() => setShowInfo2(true)}
+            />
+            <ReminderItem
+              title="Goal Reminder"
+              isEnabled={reminders.daily.enabled}
+              onToggle={() => setReminders({
+                ...reminders,
+                daily: { ...reminders.daily, enabled: !reminders.daily.enabled }
+              })}
+              options={dailyOptions}
+              selectedTime={reminders.daily.time}
+              onTimeSelect={(time) => setReminders({
+                ...reminders,
+                daily: { ...reminders.daily, time }
+              })}
+              onInfoPress={() => setShowInfo3(true)}
+            />
+            <View style={styles.nudgeSection}>
+              <View style={styles.reminderHeader}>
+                <View style={styles.titleContainer}>
+                  <Text style={styles.reminderTitle}>Nudge Message</Text>
+                  <TouchableOpacity 
+                    style={styles.infoButton}
+                    onPress={() => setShowInfo4(true)}
+                  >
+                    <Image 
+                      source={require("@/assets/icons/info.png")}
+                      style={styles.infoIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  value={nudgeMessage}
+                  onChangeText={(text) => setNudgeMessage(text.slice(0, 30))}
+                  placeholder="Enter custom message"
+                  maxLength={30}
+                  returnKeyType="done"
+                  onSubmitEditing={() => Keyboard.dismiss()}
+                  onFocus={() => setKeyboardVisible(true)}
+                  onBlur={() => setKeyboardVisible(false)}
+                />
+                <Text style={styles.charCount}>{nudgeMessage.length}/30</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+        {!keyboardVisible && (
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
+        )}
+      </KeyboardAvoidingView>
+      <Info2 visible={showInfo2} onClose={() => setShowInfo2(false)} />
+      <Info3 visible={showInfo3} onClose={() => setShowInfo3(false)} />
+      <Info4 visible={showInfo4} onClose={() => setShowInfo4(false)} />
+    </SafeAreaView>
   );
-};
-
-const ReminderItem: React.FC<{ title: string; time: string }> = ({
-  title,
-  time,
-}) => (
-  <View style={styles.reminderItem}>
-    <Text style={styles.reminderTitle}>{title}</Text>
-    <View style={styles.reminderTimeContainer}>
-      <Text style={styles.reminderTime}>{time}</Text>
-      <Image
-        source={{
-          uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/1ab7928ee58d5e6eaacc9a47d497d2cb82fe4bd8bac2a9e4f266afd4199bba17?placeholderIfAbsent=true&apiKey=4e9058eda6d64cec83059909564d7572",
-        }}
-        style={styles.reminderIcon}
-        accessibilityLabel="Reminder icon"
-      />
-    </View>
-  </View>
-);
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
-  contentContainer: {
-    borderRadius: 30,
-    overflow: "hidden",
+  headerContainer: {
+    backgroundColor: '#E0EDFD',
+    paddingTop: s(25),
+    paddingBottom: s(16),
   },
-  header: {
-    width: "100%",
-    paddingHorizontal: 37,
-    paddingTop: 11,
-    paddingBottom: 15,
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: s(16),
   },
-  time: {
-    fontFamily: "SF Pro Text",
-    fontSize: 17,
-    color: "#242020",
-    fontWeight: "600",
-    textAlign: "center",
+  backButton: {
+    marginRight: s(8),
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  headerTitle: {
+    color: '#242020',
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: s(20),
+    paddingTop: s(20),
   },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  backIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  title: {
-    fontFamily: "Poppins",
-    fontSize: 18,
-    color: "#242020",
-    fontWeight: "600",
-  },
-  reminderSection: {
-    marginBottom: 25,
+  remindersContainer: {
+    gap: s(25),
   },
   reminderItem: {
-    borderWidth: 1,
-    borderColor: "rgba(225, 225, 225, 1)",
-    borderRadius: 30,
-    padding: 15,
-    marginBottom: 15,
+    gap: s(12),
+  },
+  reminderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   reminderTitle: {
-    fontFamily: "Poppins",
     fontSize: 16,
-    color: "#242020",
-    fontWeight: "600",
-    marginBottom: 10,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
   },
-  reminderTimeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  infoIcon: {
+    width: s(19),
+    height: s(19),
   },
-  reminderTime: {
-    fontFamily: "Open Sans",
-    fontSize: 14,
-    color: "rgba(164, 172, 188, 1)",
+  reminderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  reminderIcon: {
-    width: 16,
-    height: 16,
+  dropdownButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: s(100),
+    paddingVertical: s(12),
+    paddingHorizontal: s(16),
+    flex: 1,
+    marginRight: s(12),
+  },
+  dropdownText: {
+    fontSize: s(12),
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  arrowIcon: {
+    width: s(14),
+    height: s(14),
+    tintColor: '#5E6676',
+  },
+  toggleIcon: {
+    width: s(51),
+    height: s(31),
   },
   nudgeSection: {
-    marginBottom: 25,
-  },
-  sectionTitle: {
-    fontFamily: "Poppins",
-    fontSize: 16,
-    color: "#242020",
-    fontWeight: "600",
-    marginBottom: 10,
+    gap: s(12),
   },
   inputContainer: {
     borderWidth: 1,
-    borderColor: "rgba(225, 225, 225, 1)",
+    borderColor: '#E1E1E1',
     borderRadius: 30,
-    padding: 15,
+    paddingVertical: s(12),
+    paddingHorizontal: s(16),
   },
   input: {
-    fontFamily: "Open Sans",
-    fontSize: 14,
-    color: "#242020",
+    fontSize: s(12),
+    fontFamily: 'Open Sans',
+    color: '#242020',
   },
   charCount: {
-    fontFamily: "Open Sans",
-    fontSize: 12,
-    color: "#A4ACBC",
-    textAlign: "right",
-    marginTop: 5,
-  },
-  previewSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 25,
-  },
-  avatar: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    marginRight: 10,
-  },
-  previewContent: {
-    flex: 1,
-  },
-  previewHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  previewName: {
-    fontFamily: "Open Sans",
-    fontSize: 15,
-    color: "#242020",
-    fontWeight: "700",
-  },
-  previewTime: {
-    fontFamily: "Lato",
-    fontSize: 12,
-    color: "rgba(94, 102, 118, 1)",
-  },
-  previewMessage: {
-    fontFamily: "Open Sans",
-    fontSize: 13,
-    color: "#242020",
+    fontSize: s(12),
+    fontFamily: 'Open Sans',
+    color: '#A4ACBC',
+    textAlign: 'right',
+    marginTop: s(12),
   },
   saveButton: {
-    backgroundColor: "#007AFF",
-    borderRadius: 30,
-    padding: 15,
-    alignItems: "center",
+    backgroundColor: '#DE728D',
+    marginHorizontal: s(20),
+    marginVertical: s(20),
+    padding: s(13),
+    borderRadius: s(100),
+    alignItems: 'center',
   },
   saveButtonText: {
-    fontFamily: "Poppins",
-    fontSize: 18,
-    color: "#FFFFFF",
-    fontWeight: "600",
+    color: '#FFFFFF',
+    fontSize: s(16),
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  infoButton: {
+    marginLeft: s(12),
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: s(20),
+    borderTopRightRadius: s(20),
+    maxHeight: '50%',
+    padding: s(20),
+  },
+  timeOption: {
+    paddingVertical: s(12),
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E1E1',
+  },
+  timeOptionText: {
+    fontSize: s(16),
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  keyboardView: {
+    flex: 1,
   },
 });
 

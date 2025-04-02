@@ -7,152 +7,241 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Modal,
 } from "react-native";
+import RedeemedModal from "./RedeemedModal";
 
-const RedeemRewardScreen: React.FC = () => {
+interface RedeemRewardPopupProps {
+  isVisible: boolean;
+  onClose: () => void;
+  reward: {
+    title: string;
+    points: string;
+  };
+}
+
+const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
+  isVisible,
+  onClose,
+  reward,
+}) => {
   const [email, setEmail] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [showRedeemedModal, setShowRedeemedModal] = useState(false);
+  const [errors, setErrors] = useState({ email: "", paymentOption: "" });
 
-  const handleSubmit = () => {
-    // Handle form submission
+  const paymentOptions = ["PayPal", "Gift Card"];
+
+  const validateForm = () => {
+    const newErrors = {
+      email: "",
+      paymentOption: "",
+    };
+
+    if (!email) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email";
+    }
+
+    if (!paymentOption) {
+      newErrors.paymentOption = "Payment option is required";
+    }
+
+    setErrors(newErrors);
+    return !newErrors.email && !newErrors.paymentOption;
   };
 
-  const handleCancel = () => {
-    // Handle cancellation
+  const handleSubmit = () => {
+    if (validateForm()) {
+      setShowRedeemedModal(true);
+    }
+  };
+
+  const handleRedeemedModalClose = () => {
+    setShowRedeemedModal(false);
+    onClose();
+  };
+
+  const handlePaymentOptionSelect = (option: string) => {
+    setPaymentOption(option);
+    setShowPaymentOptions(false);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text
-            style={styles.title}
-            accessibilityRole="header"
-            accessibilityLevel={1}
-          >
-            Redeem Reward
-          </Text>
-          <Text style={styles.subtitle}>
-            Fill out all the information below and we will be in contact via
-            email!
-          </Text>
-        </View>
-        <View style={styles.formContainer}>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter here"
-              placeholderTextColor="rgba(164, 172, 188, 1)"
-              value={email}
-              onChangeText={setEmail}
-              accessibilityLabel="Email input"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Payment Option</Text>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter here"
-                placeholderTextColor="rgba(164, 172, 188, 1)"
-                value={paymentOption}
-                onChangeText={setPaymentOption}
-                accessibilityLabel="Payment Option input"
-              />
-              <Image
-                source={{
-                  uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/67cee5b0d7a23e68cc7270e631b72485f8b806b1c381fdc9ab88932f479b45f9?placeholderIfAbsent=true&apiKey=4e9058eda6d64cec83059909564d7572",
-                }}
-                style={styles.dropdownIcon}
-                accessibilityLabel="Dropdown icon"
-              />
+    <Modal visible={isVisible} transparent animationType="fade">
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.container}>
+            <Text style={styles.title}>Redeem Reward</Text>
+            <Text style={styles.subtitle}>
+              Fill out all the information below and we will be in contact via email!
+            </Text>
+
+            <View style={styles.formContainer}>
+              {/* Email Input */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Enter here"
+                  placeholderTextColor="#A4ACBC"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+              </View>
+
+              {/* Payment Option Dropdown */}
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Payment Option</Text>
+                <TouchableOpacity
+                  style={styles.dropdownButton}
+                  onPress={() => setShowPaymentOptions(!showPaymentOptions)}
+                >
+                  <Text style={[styles.dropdownButtonText, !paymentOption && styles.placeholder]}>
+                    {paymentOption || "Select payment option"}
+                  </Text>
+                  <Image
+                    source={require("@/assets/icons/arrow-down.png")}
+                    style={styles.dropdownIcon}
+                  />
+                </TouchableOpacity>
+                {showPaymentOptions && (
+                  <View style={styles.optionsContainer}>
+                    {paymentOptions.map((option) => (
+                      <TouchableOpacity
+                        key={option}
+                        style={styles.optionItem}
+                        onPress={() => handlePaymentOptionSelect(option)}
+                      >
+                        <Text style={styles.optionText}>{option}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+                {errors.paymentOption && (
+                  <Text style={styles.errorText}>{errors.paymentOption}</Text>
+                )}
+              </View>
+            </View>
+
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <Text style={styles.submitButtonText}>Submit</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleCancel}
-            accessibilityRole="button"
-            accessibilityLabel="Cancel"
-          >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.submitButton}
-            onPress={handleSubmit}
-            accessibilityRole="button"
-            accessibilityLabel="Submit"
-          >
-            <Text style={styles.submitButtonText}>Submit</Text>
-          </TouchableOpacity>
-        </View>
       </View>
-    </ScrollView>
+
+      {showRedeemedModal && <RedeemedModal onClose={handleRedeemedModalClose} />}
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 30,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
   },
   container: {
-    borderRadius: 30,
-    maxWidth: 328,
-    padding: 32,
-    fontFamily: "Open Sans, sans-serif",
-    alignSelf: "center",
-  },
-  header: {
-    alignItems: "center",
-    width: "100%",
+    width: '100%',
   },
   title: {
-    color: "#242020",
+    color: '#242020',
     fontSize: 22,
-    fontWeight: "700",
-    textAlign: "center",
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 12,
   },
   subtitle: {
-    color: "rgba(94, 102, 118, 1)",
+    color: '#5E6676',
     fontSize: 16,
-    fontWeight: "400",
+    fontWeight: '400',
     lineHeight: 26,
-    marginTop: 12,
-    textAlign: "center",
+    textAlign: 'center',
+    marginBottom: 32,
   },
   formContainer: {
-    marginTop: 30,
-    width: "100%",
+    width: '100%',
   },
   inputContainer: {
-    marginBottom: 20,
-    width: "100%",
+    marginBottom: 24,
+    width: '100%',
   },
   label: {
-    color: "rgba(36, 32, 32, 1)",
-    fontWeight: "600",
+    color: '#242020',
+    fontWeight: '600',
     fontSize: 16,
     marginBottom: 8,
   },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 30,
-    borderColor: "rgba(225, 225, 225, 1)",
+  textInput: {
+    width: '100%',
     borderWidth: 1,
-    minHeight: 50,
-    paddingHorizontal: 15,
-  },
-  input: {
-    flex: 1,
-    color: "rgba(164, 172, 188, 1)",
-    fontWeight: "400",
+    borderColor: '#E1E1E1',
+    borderRadius: 30,
+    height: 50,
+    paddingHorizontal: 20,
     fontSize: 16,
+    color: '#242020',
+  },
+  dropdownButton: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 30,
+    height: 50,
+    paddingHorizontal: 20,
+  },
+  dropdownButtonText: {
+    fontSize: 16,
+    color: '#242020',
+  },
+  placeholder: {
+    color: '#A4ACBC',
+  },
+  optionsContainer: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    marginTop: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    zIndex: 1000,
+  },
+  optionItem: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E1E1',
+  },
+  optionText: {
+    fontSize: 16,
+    color: '#242020',
   },
   dropdownIcon: {
     width: 16,
@@ -160,25 +249,26 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 30,
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 22,
+    width: '100%',
   },
   cancelButton: {
+    width: '48%',
+    height: 50,
     borderRadius: 30,
-    minHeight: 40,
-    width: 137,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAEAEE',
   },
   submitButton: {
+    width: '48%',
+    height: 50,
     borderRadius: 30,
-    minHeight: 40,
-    width: 137,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(222, 114, 141, 1)",
+    backgroundColor: '#DE728D',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cancelButtonText: {
     color: "rgba(222, 114, 141, 1)",
@@ -192,6 +282,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
   },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 16,
+  },
 });
 
-export default RedeemRewardScreen;
+export default RedeemRewardPopup;

@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
+import { s } from "react-native-size-matters";
 import Header from "./Header";
 import PointsDisplay from "./PointsDisplay";
 import RewardItem from "./RewardItem";
+import RedeemRewardPopup from "../popups/RedeemRewardPopup";
 
 const rewardsData = [
   {
+    id: 1,
     title: "$10 Payment via PayPal or Gift Card",
     points: "7.5k Points",
     isRedeemable: true,
   },
   {
+    id: 2,
     title: "$25 Payment via PayPal or Gift Card",
     points: "15k Points",
+    isRedeemable: false,
+  },
+  {
+    id: 3,
+    title: "$50 Payment via PayPal or Gift Card",
+    points: "25k Points",
     isRedeemable: false,
   },
 ];
@@ -26,31 +36,43 @@ interface RewardsScreenProps {
   isCreatingRedeem: boolean;
 }
 
-const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewards, isRewardsLoading, handleCreateRedeem, isCreatingRedeem }) => {
-  console.log("User: ", user, "\nRewards: ", rewards);
+const RewardsScreen: React.FC<RewardsScreenProps> = ({ 
+  user, 
+  isUserLoading 
+}) => {
+  const [showRedeemPopup, setShowRedeemPopup] = useState(false);
+  const [selectedReward, setSelectedReward] = useState<typeof rewardsData[0] | null>(null);
+
+  const handleRedeemPress = (reward: typeof rewardsData[0]) => {
+    setSelectedReward(reward);
+    setShowRedeemPopup(true);
+  };
+
   return (
-    <ScrollView
-      style={styles.scrollView}
-      contentContainerStyle={styles.scrollViewContent}
-    >
-      <View style={styles.container} 
-      //accessibilityRole="main"
-      >
-        <Header />
-        <View style={styles.content}>
-          <PointsDisplay points={9205} maxPoints={15000} />
-          <View style={styles.rewardsList}>
-            {rewardsData.map((reward, index) => (
-              <RewardItem
-                key={index}
-                title={reward.title}
-                points={reward.points}
-                isRedeemable={reward.isRedeemable}
-              />
-            ))}
-          </View>
+    <ScrollView style={styles.scrollView}>
+      <Header />
+      <View style={styles.content}>
+        <PointsDisplay points={9205} maxPoints={15000} />
+        <View style={styles.rewardsList}>
+          {rewardsData.map((reward) => (
+            <RewardItem
+              key={reward.id}
+              title={reward.title}
+              points={reward.points}
+              isRedeemable={reward.isRedeemable}
+              onRedeem={() => handleRedeemPress(reward)}
+            />
+          ))}
         </View>
       </View>
+
+      {showRedeemPopup && selectedReward && (
+        <RedeemRewardPopup
+          isVisible={showRedeemPopup}
+          onClose={() => setShowRedeemPopup(false)}
+          reward={selectedReward}
+        />
+      )}
     </ScrollView>
   );
 }
@@ -58,28 +80,15 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({ user, isUserLoading, rewa
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-  },
-  container: {
-    flex: 1,
-    borderRadius: 30,
-    maxWidth: 480,
-    width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    overflow: "hidden",
+    backgroundColor: '#FFFFFF',
   },
   content: {
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 350,
-    marginTop: -29,
-    zIndex: 10,
+    flex: 1,
+    paddingTop: s(20),
   },
   rewardsList: {
-    marginTop: 36,
+    paddingHorizontal: s(20),
+    marginTop: s(20),
   },
 });
 
