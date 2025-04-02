@@ -15,34 +15,42 @@ import PasswordPopup from './passwordpopup';
 
 interface Group {
   id: string;
-  name: string;
-  profileImage: any;
+  title: string;
+  profile_pic: any;
+  password?: string;
 }
 
-const JoinGroupScreen = () => {
+interface JoinGroupScreenProps {
+  loading: boolean;
+  groups: Group[];
+}
+
+const JoinGroupScreen = (props: JoinGroupScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+  console.log("Joinable Groups:", props.groups);
+
+  // Search Bar
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
-  const [isPasswordPopupVisible, setIsPasswordPopupVisible] = useState(false);
-
-  // Sample group data
-  const groups: Group[] = [
-    { id: '1', name: 'Supercharged', profileImage: require('@/assets/images/andrew.png') },
-    { id: '2', name: 'Supercharged', profileImage: require('@/assets/images/andrew.png') },
-    { id: '3', name: 'Supercharged', profileImage: require('@/assets/images/andrew.png') },
-    { id: '4', name: 'Supercharged', profileImage: require('@/assets/images/andrew.png') },
-  ];
-
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleJoin = () => {
-    setIsPasswordPopupVisible(true);
-  };
-
   const handleSearch = () => {
-    console.log('Search query:', searchQuery);
-    // Handle search logic
+    const filteredGroups = props.groups.filter(group => 
+      group.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    return filteredGroups;
+  };
+
+  // Password Popup
+  const [isPasswordPopupVisible, setIsPasswordPopupVisible] = useState(false);
+  const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
+
+  const handleJoin = (id: string, hasPassword: boolean) => {
+    if (hasPassword) {
+      setIsPasswordPopupVisible(true);
+    } else {
+      // Handle join with password logic
+      console.log("Joining group (no password):", id);
+    }
   };
 
   const handleCloseSuccessPopup = () => {
@@ -61,7 +69,7 @@ const JoinGroupScreen = () => {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={handleBack}
+          onPress={() => router.back()}
         >
           <Image 
             source={require("@/assets/icons/backArrow.png")}
@@ -90,18 +98,18 @@ const JoinGroupScreen = () => {
 
       {/* Groups List */}
       <ScrollView style={styles.groupsList}>
-        {groups.map((group) => (
+        {handleSearch().map((group) => (
           <View key={group.id} style={styles.groupCard}>
             <View style={styles.groupInfo}>
               <Image 
-                source={group.profileImage}
+                source={group.profile_pic}
                 style={styles.profileImage}
               />
-              <Text style={styles.groupName}>{group.name}</Text>
+              <Text style={styles.groupName}>{group.title}</Text>
             </View>
             <TouchableOpacity 
               style={styles.joinButton}
-              onPress={() => handleJoin()}
+              onPress={() => handleJoin(group.id, group.password ? true : false)}
             >
               <Text style={styles.joinButtonText}>Join</Text>
             </TouchableOpacity>

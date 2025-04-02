@@ -13,16 +13,26 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 
-const StartGroupScreen = () => {
-  const [groupName, setGroupName] = useState('');
-  const [isPasswordEnabled, setIsPasswordEnabled] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [groupImage, setGroupImage] = useState<string | null>(null);
-
-  const handleBack = () => {
-    router.back();
+interface StartGroupScreenProps {
+  loading: boolean;
+  formData: {
+    name: string;
+    profile_pic: string | null;
+    isPasswordEnabled: boolean;
+    password: string;
+    confirm_password: string;
   };
+  handleFormDataChange: (field: string, value: string) => void;
+  handlePasswordToggle: (field: string, value: boolean) => void;
+  handleCreateGroup: () => void;
+}
+
+const StartGroupScreen = (props: StartGroupScreenProps) => {
+  if (props.loading) {
+    return (
+      <Text>Loading...</Text>
+    );
+  }
 
   const handleImagePick = async () => {
     try {
@@ -34,22 +44,20 @@ const StartGroupScreen = () => {
       });
 
       if (!result.canceled) {
-        setGroupImage(result.assets[0].uri);
+        props.handleFormDataChange('profile_pic', result.assets[0].uri);
       }
     } catch (error) {
       console.error('Error picking image:', error);
     }
   };
 
-  const handleCreate = () => {
-    console.log({
-      groupName,
-      isPasswordEnabled,
-      password,
-      confirmPassword,
-      groupImage
-    });
-    // Handle group creation logic
+  const checkPassword = () => {
+    if (props.formData.isPasswordEnabled && props.formData.password !== props.formData.confirm_password) {
+      console.log("Passwords do not match");
+    } else {
+      console.log("Passwords match");
+      props.handleCreateGroup();
+    }
   };
 
   return (
@@ -62,7 +70,7 @@ const StartGroupScreen = () => {
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={handleBack}
+            onPress={() => router.back()}
           >
             <Image 
               source={require("@/assets/icons/backArrow.png")}
@@ -79,9 +87,9 @@ const StartGroupScreen = () => {
             style={styles.imageUploadContainer}
             onPress={handleImagePick}
           >
-            {groupImage ? (
+            {props.formData.profile_pic ? (
               <Image
-                source={{ uri: groupImage }}
+                source={{ uri: props.formData.profile_pic }}
                 style={styles.groupImage}
               />
             ) : (
@@ -99,8 +107,8 @@ const StartGroupScreen = () => {
           {/* Group Name Input */}
           <TextInput
             style={styles.input}
-            value={groupName}
-            onChangeText={setGroupName}
+            value={props.formData.name}
+            onChangeText={(text) => props.handleFormDataChange('name', text)}
             placeholder="Group Name"
             placeholderTextColor="#979797"
           />
@@ -109,10 +117,10 @@ const StartGroupScreen = () => {
           <View style={styles.passwordToggleContainer}>
             <Text style={styles.passwordLabel}>Password</Text>
             <TouchableOpacity 
-              onPress={() => setIsPasswordEnabled(!isPasswordEnabled)}
+              onPress={() => props.handlePasswordToggle('isPasswordEnabled', !props.formData.isPasswordEnabled)}
             >
               <Image 
-                source={isPasswordEnabled ? 
+                source={props.formData.isPasswordEnabled ? 
                   require("@/assets/icons/toggleOn.png") : 
                   require("@/assets/icons/toggleOff.png")
                 }
@@ -122,20 +130,20 @@ const StartGroupScreen = () => {
           </View>
 
           {/* Password Inputs (Conditional) */}
-          {isPasswordEnabled && (
+          {props.formData.isPasswordEnabled && (
             <>
               <TextInput
                 style={styles.input}
-                value={password}
-                onChangeText={setPassword}
+                value={props.formData.password}
+                onChangeText={(text) => props.handleFormDataChange('password', text)}
                 placeholder="Enter password"
                 placeholderTextColor="#979797"
                 secureTextEntry
               />
               <TextInput
                 style={styles.input}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
+                value={props.formData.confirm_password}
+                onChangeText={(text) => props.handleFormDataChange('confirm_password', text)}
                 placeholder="Confirm password"
                 placeholderTextColor="#979797"
                 secureTextEntry
@@ -146,7 +154,7 @@ const StartGroupScreen = () => {
           {/* Create Button */}
           <TouchableOpacity 
             style={styles.createButton}
-            onPress={handleCreate}
+            onPress={checkPassword}
           >
             <Text style={styles.createButtonText}>Create</Text>
           </TouchableOpacity>

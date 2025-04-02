@@ -1,8 +1,4 @@
-import styles from '@/utils/testStyles';
-import { View, Text, TextInput, TouchableOpacity,  Image } from 'react-native';
-import { Switch } from 'react-native-paper';
 import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
-
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
@@ -10,89 +6,8 @@ import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
 import StartGroupScreen from '@/components/screens/connect/startgroup';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
 
-function CreateGroupScreenOld({
-  formData,
-  handleFormDataChange,
-  handleCreateGroup, 
-  isCreatingGroup,
-  isPasswordOptional,
-  setIsPasswordOptional,
-}: {
-  formData: any, 
-  handleFormDataChange: any,
-  handleCreateGroup: any, 
-  isCreatingGroup: boolean,
-  isPasswordOptional: boolean,
-  setIsPasswordOptional: any,
-}) {
-  const pickImage = async () => {
-    const uri = await pickImageFromProcessing(handleFormDataChange);
-    if (uri) {
-      console.log('Picked image URI:', uri);
-      handleFormDataChange('profile_picture', uri);
-    }
-  };
-
-  if (isCreatingGroup) {
-    return <Text>Loading...</Text>;
-  }
-  return (
-    <View style={styles.container}>
-      <View style={styles.profileImageContainer}>
-          <TouchableOpacity onPress={pickImage}>
-          {formData.profile_picture ? (
-            <Image
-              source={{ uri: formData.profile_picture }}
-              style={styles.profileImage}
-            />
-          ) : (
-            <View style={styles.profileImagePlaceholder}>
-              <Text style={styles.profileImagePlaceholderText}>Upload Photo</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
-      <TextInput
-          style={styles.input}
-          placeholder="Group Name"
-          value={formData.group_name}
-          onChangeText={(text) => handleFormDataChange('group_name', text)}
-      />
-      <View >
-        <Text style={styles.text}>Password</Text>
-        <Switch
-          value={!isPasswordOptional}
-          onValueChange={() => setIsPasswordOptional(!isPasswordOptional)}
-        />
-      </View>
-
-      {!isPasswordOptional && (
-        <>
-          <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry
-              value={formData.password}
-              onChangeText={(text) => handleFormDataChange('password', text)}
-          />
-          <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              secureTextEntry
-              value={formData.confirm_password}
-              onChangeText={(text) => handleFormDataChange('confirm_password', text)}
-          />
-        </>
-      )}
-
-      <TouchableOpacity style={styles.button} onPress={handleCreateGroup}>
-        <Text style={styles.text}>Create Group</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 const CreateGroupPage = (props: any) => {
   const {userId, authToken} = props;
@@ -102,36 +17,25 @@ const CreateGroupPage = (props: any) => {
   const {createGroup} = useCreateGroup();
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const handleCreateGroup = async () => {
-    const { password, confirm_password } = formData;
-    if (password !== confirm_password) {
-      alert("Passwords do not match.");
-      return;
-    }
-    if (!formData.group_name) {
-      alert("Group name is required.");
-      return;
-    }
-    if (!formData.profile_picture) {
-      alert("Profile picture is required.");
-      return;
-    }
-    // Create Group
     setIsCreatingGroup(true);
     try {
-      const profile_pic = await processAndUploadImage(formData.profile_picture);
+      //const profile_pic = await processAndUploadImage(formData.profile_pic);
       const input = {
         type: "group",
-        profile_pic: profile_pic,
-        title: formData.group_name,
-        password: isPasswordOptional ? null : formData.password,
+        profile_pic: formData.profile_pic,
+        title: formData.name,
+        //password: isPasswordOptional ? null : formData.password,
         creator_id: userId as number,
       };
+      console.log("Form Data:", formData, "\n", "Input:", input);
+      /*
       const response = await createGroup(input);
       if (response.success) {
         console.log('Group created successfully:', response);
       } else {
         console.log('Error creating group:', response.errors);
       }
+      */
     } catch (error) {
       console.error('Error creating group:', error);
     } finally {
@@ -140,11 +44,10 @@ const CreateGroupPage = (props: any) => {
   };
 
   // Form Data
-  const [isPasswordOptional, setIsPasswordOptional] = useState(false);
-
   const [formData, setFormData] = useState({
-    profile_picture: '',
-    group_name: '',
+    name: '',
+    profile_pic: '',
+    isPasswordEnabled: false,
     password: '',
     confirm_password: '',
   });
@@ -156,27 +59,27 @@ const CreateGroupPage = (props: any) => {
     }));
   };
 
+  const handlePasswordToggle = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      isPasswordEnabled: !prevData.isPasswordEnabled,
+    }));
+  };
+
   // Debug
   if (debugRenders) {
     console.log("Rendering CreateGroupPage");
   }
 
-  if (pageDisplay) {
-    return (
-      <StartGroupScreen />
-    );
-  } else {
-    return (
-      <CreateGroupScreenOld
-        formData={formData}
-        handleFormDataChange={handleFormDataChange}
-        handleCreateGroup={handleCreateGroup}
-        isCreatingGroup={isCreatingGroup}
-        isPasswordOptional={isPasswordOptional}
-        setIsPasswordOptional={setIsPasswordOptional}
-      />
-    );
-  }
+  return (
+    <StartGroupScreen 
+      loading={isCreatingGroup}
+      formData={formData}
+      handleFormDataChange={handleFormDataChange}
+      handlePasswordToggle={handlePasswordToggle}
+      handleCreateGroup={handleCreateGroup}
+    />
+  );
 }
 
 export default AuthWrapper(CreateGroupPage);

@@ -9,7 +9,7 @@ import PartnerScreenOld from '@/components/old/chats/chatId/PartnerScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 
-
+// Currently deprecated since we route to user/[id] now
 const PartnerPage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);

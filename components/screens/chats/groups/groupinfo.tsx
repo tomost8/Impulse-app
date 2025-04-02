@@ -19,7 +19,11 @@ interface Member {
   profileImage: any;
 }
 
-const GroupInfoScreen = () => {
+interface GroupInfoScreenProps {
+  loading: boolean;
+}
+
+const GroupInfoScreen = (props: GroupInfoScreenProps) => {
   const [activeTab, setActiveTab] = useState<'Members (25)' | 'Leaderboard'>('Members (25)');
   const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
 

@@ -90,7 +90,7 @@ const JoinGroupPage = (props: any) => {
   const hasFetchedChats = useRef(false);
   const { chats, fetched: hasNewChatsData } = useGetAllChats(!hasFetchedChats.current);
 
-  const chatMembersRef = useRef<any[] | null>(null);
+  const userChatsRef = useRef<any[] | null>(null);
   const hasFetchedChatMembers = useRef(false);
   const { chatMembers, fetched: hasNewChatMembersData } = useGetUserChats(userId as number, !hasFetchedChatMembers.current);
 
@@ -99,11 +99,13 @@ const JoinGroupPage = (props: any) => {
       return;
     }
     if (hasNewChatsData) {
-      chatsRef.current = chats;
+      const groups = chats.filter((chat: any) => chat.type === 'group');
+      chatsRef.current = groups;
       hasFetchedChats.current = true;
     }
     if (hasNewChatMembersData) {
-      chatMembersRef.current = chatMembers;
+      const filteredChats = chatMembers.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.chat);
+      userChatsRef.current = filteredChats;
       hasFetchedChatMembers.current = true;
     }
     if (hasFetchedChats.current && hasFetchedChatMembers.current) {
@@ -138,10 +140,14 @@ const JoinGroupPage = (props: any) => {
 
   // Debug
   const loading = !hasFetchedChats.current || !hasFetchedChatMembers.current || isJoiningGroup;
+  const joinableGroups = chatsRef.current?.filter((chat: any) => 
+    !userChatsRef.current?.some((userChat: any) => userChat.id === chat.id)
+  );
   if (debugRenders && !loading) {
     console.log("Rendering JoinGroupPage\n",
-      "Chats:", chatsRef.current, "\n",
-      "Chat Members:", chatMembersRef.current, "\n",
+      "All Groups:", chatsRef.current, "\n",
+      "User Chats:", userChatsRef.current, "\n",
+      "Joinable Groups:", joinableGroups, "\n",
       "Render Counter:", renderCounter, "\n",
     );
   }
@@ -149,27 +155,8 @@ const JoinGroupPage = (props: any) => {
   if (pageDisplay) {
     return (
       <JoinGroupScreen 
-        chats={chatsRef.current}
-        isChatsLoading={!hasFetchedChats.current}
-        chatMembers={chatMembersRef.current}
-        isChatMembersLoading={!hasFetchedChatMembers.current}
-        handleJoinGroup={handleJoinGroup}
-        isJoiningGroup={isJoiningGroup}
-        //Extra
-        userId={userId as number}
-      />
-    );
-  } else {
-    return (
-      <JoinGroupScreenOld 
-        chats={chatsRef.current}
-        isChatsLoading={!hasFetchedChats.current}
-        chatMembers={chatMembersRef.current}
-        isChatMembersLoading={!hasFetchedChatMembers.current}
-        handleJoinGroup={handleJoinGroup}
-        isJoiningGroup={isJoiningGroup}
-        //Extra
-        userId={userId as number}
+        loading={loading}
+        groups={joinableGroups || []}
       />
     );
   }
