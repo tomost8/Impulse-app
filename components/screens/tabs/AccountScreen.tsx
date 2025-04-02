@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  Image,
+  TouchableOpacity,
   StyleSheet,
   ScrollView,
-  TouchableOpacity,
   SafeAreaView,
+  Image,
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
+import Bio from '@/components/ui/userprofile/bio';
 import PointEarningGuide from "../profile/popups/PointEarningGuide";
 
 interface AccountProfileProps {
@@ -19,12 +20,12 @@ interface AccountProfileProps {
   numFriends: number;
 }
 
-export const AccountProfile: React.FC<AccountProfileProps> = ({ 
+function AccountProfile({ 
   user, 
   isLoading,
   numCommunities,
   numFriends
-}) => {
+}: AccountProfileProps): JSX.Element {
   if (isLoading) {
     return <Text>Loading...</Text>;
   }
@@ -32,314 +33,272 @@ export const AccountProfile: React.FC<AccountProfileProps> = ({
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <View style={styles.header}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        {/* Custom Header Section */}
+        <View style={styles.headerContainer}>
+          {/* Crescent Background */}
+          <View style={styles.crescentContainer}>
+            <View style={styles.crescent} />
+          </View>
+
+          {/* Header Title and Settings */}
+          <View style={styles.headerRow}>
             <Text style={styles.headerTitle}>My Account</Text>
-            <TouchableOpacity onPress={() => router.push('/account/settings')}>
+            <TouchableOpacity 
+              style={styles.settingsButton}
+              onPress={() => router.push('/account/settings')}
+            >
               <Image
-                source={require('@/assets/images/Account/bigInfo.png')}
+                source={require('@/assets/icons/setting.png')}
                 style={styles.settingsIcon}
-                accessibilityLabel="Settings"
               />
             </TouchableOpacity>
+          </View>
+
+          {/* Profile Section */}
+          <View style={styles.profileSection}>
+            <Image
+              source={{ uri: user.profile_picture }}
+              style={styles.profileImage}
+            />
+            <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
+            <Text style={styles.username}>@{user.username}</Text>
+          </View>
         </View>
 
-        <View style={styles.mainContent}>
-          <Image
-            source={{
-              uri: user.profile_picture,
-            }}
-            style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
-            accessibilityLabel="Profile picture"
-          />
-          <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
-          <Text style={styles.username}>@{user.username}</Text>
-
-          {/* Points Section */}
-          <View style={styles.pointsContainer}>
-            <View style={styles.pointsHeader}>
-              <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
-                <Text style={styles.pointsGuide}>Points Earning Guide</Text>
-              </TouchableOpacity>
-              <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
-            </View>
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar} />
-            </View>
-            <TouchableOpacity onPress={() => router.push('/account/redeems')}>
-              <Text style={styles.redeem}>Redeem</Text>
+        {/* Points Section */}
+        <View style={styles.pointsContainer}>
+          <View style={styles.pointsHeader}>
+            <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
+              <Text style={styles.pointsGuide}>Points Earning Guide</Text>
             </TouchableOpacity>
+            <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
           </View>
-
-          {/* Stats Section */}
-          <View style={styles.statsContainer}>
-            <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
-              <Text style={styles.statNumber}>{numCommunities}</Text>
-              <Text style={styles.statLabel}>Communities</Text>
-            </TouchableOpacity>
-            <View style={styles.divider} />
-            <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
-              <Text style={styles.statNumber}>{numFriends}</Text>
-              <Text style={styles.statLabel}>Friends</Text>
-            </TouchableOpacity>
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar} />
           </View>
-
-          <Text style={styles.bioText}>
-            {user.bio}
-          </Text>
-
-          {/* Working Section */}
-          <View style={styles.workingSection}>
-            <Text style={styles.sectionTitle}>What I'm Working On</Text>
-            <View style={styles.workItem}>
-              <Text style={styles.workText}>{getLabelByCategory(user.primary_goal)}</Text>
-              <Text style={styles.workType}>(Primary)</Text>
-            </View>
-            <View style={styles.workItem}>
-              <Text style={styles.workText}>{getLabelByCategory(user.secondary_goal)}</Text>
-              <Text style={styles.workType}>(Secondary)</Text>
-            </View>
-          </View>
-
-          {/* Info Section */}
-          <View style={styles.infoSection}>
-            <View style={styles.infoColumn}>
-              <Text style={styles.infoLabel}>Gender</Text>
-              <Text style={styles.infoValue}>{user.gender}</Text>
-            </View>
-            <View style={styles.infoColumn}>
-              <Text style={styles.infoLabel}>Timezone</Text>
-              <Text style={styles.infoValue}>{user.timezone}</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity
-            onPress={() => router.push('/account/memories')}
-            style={styles.memoriesButton}
-            accessibilityRole="button"
-          >
-            <Text style={styles.memoriesButtonText}>View All Memories</Text>
+          <TouchableOpacity onPress={() => router.push('/account/redeems')}>
+            <Text style={styles.redeem}>Redeem</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Stats Section */}
+        <View style={styles.statsContainer}>
+          <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
+            <Text style={styles.statNumber}>{numCommunities}</Text>
+            <Text style={styles.statLabel}>Communities</Text>
+          </TouchableOpacity>
+          <View style={styles.divider} />
+          <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
+            <Text style={styles.statNumber}>{numFriends}</Text>
+            <Text style={styles.statLabel}>Friends</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Bio Section */}
+        <Bio 
+          bioText={user.bio}
+          primaryActivity={getLabelByCategory(user.primary_goal)}
+          secondaryActivity={getLabelByCategory(user.secondary_goal)}
+          gender={user.gender}
+          timezone={user.timezone}
+        />
+
+        {/* Memories Button */}
+        <TouchableOpacity
+          onPress={() => router.push('/account/memories')}
+          style={styles.memoriesButton}
+        >
+          <Text style={styles.memoriesButtonText}>View All Memories</Text>
+        </TouchableOpacity>
       </ScrollView>
+
+      {/* Points Guide Modal */}
       <PointEarningGuide
         visible={pointsModalVisible}
         onClose={() => setPointsModalVisible(false)}
       />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: '#FFFFFF',
   },
   scrollView: {
-    padding: 0,
-    paddingBottom: 80,
-    // backgroundColor: "red", // Testing padding - visual check
-  },
-  timeContainer: {
-    paddingLeft: 37,
-  },
-  timeText: {
-    color: "#000",
-    fontFamily: "System",
-    fontSize: 17,
-    fontWeight: "600",
-    letterSpacing: -0.41,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    paddingTop: 48,
-  },
-  headerTitle: {
-    fontFamily: "Poppins",
-    fontSize: 17,
-    fontWeight: "600",
-    color: "#000",
-  },
-  settingsIcon: {
-    width: 23,
-    height: 23,
-  },
-  mainContent: {
-    paddingHorizontal: 20,
-    alignItems: "center",
-    paddingTop: 10,
-  },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 50,
-    //borderWidth: 1,
-    //borderColor: '#ccc',
-  },
-  profileName: {
-    fontFamily: "Poppins",
-    fontSize: 20,
-    fontWeight: "600",
-    textAlign: "center",
-    marginTop: 10,
-    color: "#000",
-  },
-  username: {
-    fontFamily: "OpenSans",
-    fontSize: 14,
-    color: "#000",
-    textAlign: "center",
-    marginTop: 5,
+    flex: 1,
   },
   pointsContainer: {
-    width: "100%",
+    paddingHorizontal: 20,
     marginTop: 35,
   },
   pointsHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 5,
   },
   pointsGuide: {
-    fontFamily: "OpenSans",
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#010001",
-    textDecorationLine: "underline",
+    fontFamily: 'Open Sans',
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#DE728D',
+    textDecorationLine: 'underline',
+    paddingBottom: 3,
   },
   pointsValue: {
-    fontFamily: "OpenSans",
+    fontFamily: 'Open Sans',
     fontSize: 10,
-    color: "#000",
+    color: '#000',
   },
   progressContainer: {
-    backgroundColor: "#faeaee",
+    backgroundColor: '#faeaee',
     borderRadius: 10,
     height: 11,
-    width: "100%",
+    width: '100%',
   },
   progressBar: {
-    backgroundColor: "#de728d",
+    backgroundColor: '#de728d',
     borderRadius: 10,
     height: 11,
-    width: "68%",
+    width: '68%',
   },
   redeem: {
-    color: "#010001",
-    fontSize: 10,
-    fontFamily: "OpenSans",
-    fontWeight: "700",
-    textDecorationLine: "underline",
-    textAlign: "right",
-    marginTop: 5,
+    color: '#DE728D',
+    fontSize: 11,
+    fontFamily: 'Open Sans',
+    fontWeight: '700',
+    textDecorationLine: 'underline',
+    textAlign: 'right',
+    marginTop: 7,
   },
   statsContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 2,
-    borderColor: "#fff0f1",
+    borderColor: '#fff0f1',
     borderRadius: 20,
-    marginTop: 35,
+    marginTop: 28,
+    marginHorizontal: 20,
     padding: 15,
   },
   statItem: {
-    alignItems: "center",
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   statNumber: {
-    fontFamily: "Poppins",
+    fontFamily: 'Poppins',
     fontSize: 20,
-    fontWeight: "600",
-    color: "#000",
+    fontWeight: '600',
+    color: '#000',
   },
   statLabel: {
-    fontFamily: "OpenSans",
+    fontFamily: 'Open Sans',
     fontSize: 14,
-    color: "#000",
+    color: '#000',
     marginTop: 5,
   },
   divider: {
     width: 1,
     height: 47,
-    backgroundColor: "#d9d9d9",
+    backgroundColor: '#d9d9d9',
     marginHorizontal: 33,
   },
-  bioText: {
-    fontFamily: "OpenSans",
-    fontSize: 16,
-    lineHeight: 22,
-    color: "#000",
-    marginTop: 35,
-    textAlign: "left",
-  },
-  workingSection: {
-    marginTop: 35,
-    width: "100%",
-  },
-  sectionTitle: {
-    fontFamily: "Poppins",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-  workItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 12,
-  },
-  workText: {
-    fontFamily: "OpenSans",
-    fontSize: 16,
-    color: "#000",
-  },
-  workType: {
-    fontFamily: "OpenSans",
-    fontSize: 14,
-    color: "#000",
-    marginLeft: 12,
-  },
-  infoSection: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 35,
-    gap: 32,
-  },
-  infoColumn: {
-    alignItems: "center",
-  },
-  infoLabel: {
-    fontFamily: "Poppins",
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-  },
-  infoValue: {
-    fontFamily: "OpenSans",
-    fontSize: 14,
-    color: "#000",
-    marginTop: 6,
-  },
   memoriesButton: {
+    alignSelf: 'center',
     borderWidth: 1,
-    borderColor: "#de728d",
+    borderColor: '#de728d',
     borderRadius: 5,
     paddingVertical: 6,
     paddingHorizontal: 20,
-    marginTop: 35,
-    width: 145,
+    marginTop: 15,
+    marginBottom: 80,
   },
   memoriesButtonText: {
-    fontFamily: "Poppins",
+    fontFamily: 'Poppins',
     fontSize: 12,
-    fontWeight: "600",
-    color: "#010001",
-    textAlign: "center",
+    fontWeight: '600',
+    color: '#010001',
+  },
+  // New header styles
+  headerContainer: {
+    position: 'relative',
+    paddingBottom: 16,
+  },
+  crescentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 350,
+    overflow: 'hidden',
+  },
+  crescent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 500,
+    borderBottomLeftRadius: 800,
+    borderBottomRightRadius: 800,
+    backgroundColor: '#E0EDFD',
+    transform: [
+      { scaleX: 1.3 },
+      { translateY: -350 },
+    ],
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    marginBottom: 24,
+    zIndex: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  settingsButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingsIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginTop: 12,
+    zIndex: 1,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  profileName: {
+    fontSize: 24,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginTop: 16,
+  },
+  username: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+    marginTop: 4,
   },
 });
 

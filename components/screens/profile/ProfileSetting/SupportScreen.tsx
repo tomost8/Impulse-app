@@ -7,135 +7,115 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
+  SafeAreaView,
 } from "react-native";
-import { AccessibilityInfo } from "react-native";
+import { s } from "react-native-size-matters";
+import { router } from "expo-router";
+
+function Header() {
+  return (
+    <View style={styles.headerContainer}>
+      <View style={styles.headerContent}>
+        <TouchableOpacity 
+          style={styles.backButton} 
+          onPress={() => router.back()}
+        >
+          <Image
+            source={require("@/assets/icons/backArrow.png")}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Support and Account Deletion</Text>
+      </View>
+    </View>
+  );
+}
 
 const SupportScreen = () => {
-  const handleBackPress = () => {
-    AccessibilityInfo.announceForAccessibility("Navigating back");
-  };
-
   const handleDeleteAccountPress = () => {
     Linking.openURL('https://share.hsforms.com/1w35t-H25T2CMEpiTciIoyAscwc9');
-    AccessibilityInfo.announceForAccessibility("Opening account deletion form");
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header} accessibilityRole="header">
-        <Text style={styles.time} accessibilityLabel="Current time">
-          9:41
-        </Text>
-      </View>
-      <View style={styles.content}>
-        <TouchableOpacity
-          onPress={handleBackPress}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-          accessibilityHint="Navigates to the previous screen"
-        >
-          <Image
-            accessibilityLabel="Back arrow"
-            resizeMode="contain"
-            source={{
-              uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/1cf6bb94afb5d6115325e0467b1703e045f5e803b4808c857c76e41ac22db75f?placeholderIfAbsent=true&apiKey=4e9058eda6d64cec83059909564d7572",
-            }}
-            style={styles.backArrow}
-          />
-        </TouchableOpacity>
-        <Text
-          style={styles.title}
-          accessibilityRole="header"
-          //accessibilityLevel={1}
-        >
-          Support
-        </Text>
-      </View>
-      <View
-        style={styles.emailSection}
-        //accessibilityRole="region"
-        accessibilityLabel="Email Support"
-      >
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <View style={styles.emailSection}>
         <View style={styles.emailContainer}>
-          <Text style={styles.label}>Email Us At</Text>
-          <Text style={styles.email} accessibilityRole="link">
-            support@findyourimpulse.com
-          </Text>
+          <Image 
+            source={require("@/assets/icons/email.png")}
+            style={styles.emailIcon}
+          />
+          <View>
+            <Text style={styles.label}>Email Us At</Text>
+            <Text style={styles.email}>support@findyourimpulse.com</Text>
+          </View>
         </View>
       </View>
       <TouchableOpacity
         style={styles.deleteAccountButton}
         onPress={handleDeleteAccountPress}
-        accessibilityRole="button"
-        accessibilityLabel="Account Deletion Form"
-        accessibilityHint="Opens the form to delete your account"
       >
         <Text style={styles.buttonText}>Account Deletion Form</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    borderRadius: 30,
-    maxWidth: 480,
-    width: "100%",
-    alignItems: "stretch",
-    backgroundColor: "#FFFFFF",
-  },
-  header: {
-    paddingTop: 11,
-  },
-  time: {
-    color: "#242020",
-    textAlign: "center",
-    fontFamily: "Lato, sans-serif",
-    fontSize: 17,
-    fontWeight: "600",
-    lineHeight: 20,
-    letterSpacing: -0.41,
-    marginLeft: 38,
-  },
-  content: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 35,
-    paddingHorizontal: 16,
-    gap: 21,
-  },
-  backArrow: {
-    width: 7,
-    aspectRatio: 0.5,
-    tintColor: "#242020",
-  },
-  title: {
     flex: 1,
-    fontFamily: "Poppins, sans-serif",
+    backgroundColor: '#FFFFFF',
+  },
+  headerContainer: {
+    backgroundColor: '#E0EDFD',
+    paddingTop: s(25),
+    paddingBottom: s(16),
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: s(16),
+  },
+  backButton: {
+    marginRight: s(8),
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  headerTitle: {
+    color: '#242020',
     fontSize: 16,
-    color: "#242020",
-    fontWeight: "600",
+    fontFamily: 'Poppins',
+    fontWeight: '600',
   },
   emailSection: {
-    borderRadius: 30,
-    marginTop: 10,
-    paddingHorizontal: 20,
-    paddingVertical: 23,
+    paddingHorizontal: s(20),
+    paddingVertical: s(20),
   },
   emailContainer: {
-    alignItems: "flex-start",
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  emailIcon: {
+    width: s(50),
+    height: s(50),
+    marginRight: s(12),
   },
   label: {
-    color: "rgba(164, 172, 188, 1)",
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 16,
+    color: "#A4ACBC",
+    fontFamily: "Open Sans",
+    fontSize: s(12),
     fontWeight: "400",
+    marginBottom: 4,
   },
   email: {
     color: "#242020",
-    fontFamily: "Open Sans, sans-serif",
-    fontSize: 16,
+    fontFamily: "Open Sans",
+    fontSize: s(15),
     fontWeight: "400",
   },
   deleteAccountButton: {
@@ -148,7 +128,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: "Poppins",
     fontSize: 18,
     color: "#FFFFFF",
     fontWeight: "600",

@@ -1,7 +1,15 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { s } from "react-native-size-matters";
 
-function RewardItem({ title, points, isRedeemable }) {
+interface RewardItemProps {
+  title: string;
+  points: string;
+  isRedeemable: boolean;
+  onRedeem: () => void;
+}
+
+function RewardItem({ title, points, isRedeemable, onRedeem }: RewardItemProps) {
   return (
     <View style={styles.container} accessibilityRole="article">
       <View style={styles.content}>
@@ -28,6 +36,7 @@ function RewardItem({ title, points, isRedeemable }) {
             ? "Tap to redeem this reward"
             : "This reward is not currently redeemable"
         }
+        onPress={onRedeem}
       >
         <Text style={styles.redeemButtonText}>Redeem</Text>
       </TouchableOpacity>
@@ -37,47 +46,52 @@ function RewardItem({ title, points, isRedeemable }) {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#FFFFFF',
     borderRadius: 15,
-    minHeight: 140,
-    justifyContent: "center",
-    marginBottom: 20,
-    backgroundColor: "#F5F5F5",
-    padding: 15,
+    padding: s(12),
+    marginBottom: s(20),
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+    elevation: 2,
   },
   content: {
-    minHeight: 54,
+    minHeight: s(54),
   },
   title: {
-    color: "rgba(36, 32, 32, 1)",
+    color: '#242020',
     fontSize: 16,
-    fontWeight: "600",
-    fontFamily: "Open Sans, sans-serif",
+    fontWeight: '600',
+    fontFamily: 'Open Sans',
   },
   points: {
-    color: "rgba(0, 0, 0, 1)",
+    color: '#000000',
     fontSize: 14,
-    fontWeight: "400",
-    fontFamily: "Open Sans, sans-serif",
-    marginTop: 10,
+    fontFamily: 'Open Sans',
+    marginTop: s(8),
   },
   redeemButton: {
-    alignSelf: "center",
+    alignSelf: 'center',
     borderRadius: 30,
-    marginTop: 15,
-    minHeight: 44,
-    width: "100%",
-    backgroundColor: "rgba(222, 114, 141, 1)",
-    justifyContent: "center",
-    alignItems: "center",
+    marginTop: 5,
+    height: s(35),
+    width: '100%',
+    backgroundColor: '#DE728D',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   redeemButtonDisabled: {
-    backgroundColor: "rgba(222, 114, 141, 0.5)",
+    backgroundColor: 'rgba(222, 114, 141, 0.5)',
   },
   redeemButtonText: {
-    fontFamily: "Poppins, sans-serif",
+    fontFamily: 'Poppins',
     fontSize: 15,
-    color: "rgba(255, 255, 255, 1)",
-    fontWeight: "600",
+    color: '#FFFFFF',
+    fontWeight: '600',
   },
 });
 
