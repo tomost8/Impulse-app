@@ -8,9 +8,8 @@ import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
 import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup';
-import GroupInviteScreenOld from '@/components/old/chats/chatId/InviteFriend';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
 
 const GroupInvitePage = (props: any) => {
   console.log("GroupInvitePage");
@@ -75,21 +74,9 @@ const GroupInvitePage = (props: any) => {
     );
   }
 
-  if (pageDisplay) {
-    return <InviteToGroupScreen />
-  } else {
-    return (
-      <GroupInviteScreenOld
-        chatId={Number(chatId)}
-        friends={friendsRef.current}
-        isFriendsLoading={!hasFetchedFriends.current}
-        chatMembers={chatMembersRef.current}
-        isChatMembersLoading={!hasFetchedChatMembers.current}
-        handleInviteUserToChat={handleInviteUserToChat}
-        isInvitingUserToChat={isInvitingUserToChat}
-      />
-    );
-  }
+  return <InviteToGroupScreen 
+    loading={loading} 
+  />
 }
 
 export default AuthWrapper(GroupInvitePage);

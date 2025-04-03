@@ -21,7 +21,16 @@ interface Friend {
   isInvited: boolean;
 }
 
-const InviteToGroupScreen = () => {
+interface InviteToGroupProps {
+  loading: boolean;
+}
+
+const InviteToGroupScreen = (props: InviteToGroupProps) => {
+  if (props.loading) {
+    return (
+      <Text>Loading...</Text>
+    );
+  }
   const [searchQuery, setSearchQuery] = useState('');
   const [friends, setFriends] = useState<Friend[]>([
     { 

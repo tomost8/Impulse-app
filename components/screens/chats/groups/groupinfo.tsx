@@ -14,40 +14,22 @@ import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponent
 
 interface Member {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   username: string;
-  profileImage: any;
+  profile_picture: any;
 }
 
 interface GroupInfoScreenProps {
   loading: boolean;
+  members: Member[];
+  leaderboard: any[];
 }
 
 const GroupInfoScreen = (props: GroupInfoScreenProps) => {
-  const [activeTab, setActiveTab] = useState<'Members (25)' | 'Leaderboard'>('Members (25)');
+  const [activeTab, setActiveTab] = useState<'Members' | 'Leaderboard'>('Members');
   const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
 
-  // Sample member data
-  const members: Member[] = [
-    { 
-      id: '1', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
-    },
-    { 
-      id: '2', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
-    },
-    { 
-      id: '31', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
-    },
-  ];
 
   // Sample leaderboard data
   const leaderboardUsers = [
@@ -96,23 +78,23 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
       //router.push('/chats/groups/groupleaderboard');
       setActiveTab('Leaderboard');
     } else {
-      setActiveTab(tab);
+      setActiveTab('Members');
     }
   };
 
   const renderContent = () => {
-    if (activeTab === 'Members (25)') {
+    if (activeTab === 'Members') {
       return (
         <View style={styles.membersList}>
-          {members.map((member) => (
+          {props.members.map((member) => (
             <View key={member.id} style={styles.memberCard}>
               <View style={styles.memberInfo}>
                 <Image 
-                  source={member.profileImage}
+                  source={member.profile_picture}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={styles.name}>{member.name}</Text>
+                  <Text style={styles.name}>{member.first_name} {member.last_name}</Text>
                   <Text style={styles.username}>{member.username}</Text>
                 </View>
               </View>
@@ -162,11 +144,11 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
       {/* Tab Selector */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tab, activeTab === 'Members (25)' && styles.activeTab]}
-          onPress={() => setActiveTab('Members (25)')}
+          style={[styles.tab, activeTab === 'Members' && styles.activeTab]}
+          onPress={() => setActiveTab('Members')}
         >
-          <Text style={[styles.tabText, activeTab === 'Members (25)' && styles.activeTabText]}>
-            Members (25)
+          <Text style={[styles.tabText, activeTab === 'Members' && styles.activeTabText]}>
+            Members ({props.members.length})
           </Text>
         </TouchableOpacity>
 

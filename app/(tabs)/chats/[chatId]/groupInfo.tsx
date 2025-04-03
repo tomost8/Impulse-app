@@ -37,7 +37,8 @@ const GroupInfoPage = (props: any) => {
       return;
     }
     if (hasNewChatMembersData) {
-      chatMembersRef.current = chatMembers;
+      const acceptedMembers = chatMembers.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.user);
+      chatMembersRef.current = acceptedMembers;
       hasFetchedChatMembers.current = true;
     }
     if (hasNewChatLeaderboardData) {
@@ -60,7 +61,9 @@ const GroupInfoPage = (props: any) => {
   }
 
   return <GroupInfoScreen 
-    loading={loading} 
+    loading={loading}
+    members={chatMembersRef.current || []}
+    leaderboard={chatLeaderboardRef.current || []}
   />
 }
 
