@@ -13,30 +13,23 @@ import ConnectPopup from '@/components/screens/connect/connectpopup';
 
 interface ChatMessage {
   id: string;
-  name: string;
+  title: string;
+  profile_pic: any;
+  // to fetch
   message: string;
   time: string;
-  profileImage: any;
 }
 
-const ChatScreen = () => {
-  // Sample chat data
-  const messages: ChatMessage[] = [
-    { 
-      id: '1', 
-      name: 'Alicia Torreaux (Direct)', 
-      message: 'message', 
-      time: '13:02',
-      profileImage: require('@/assets/images/andrew.png')
-    },
-    { 
-      id: '2', 
-      name: 'Alicia Torreaux (Group)', 
-      message: 'message', 
-      time: '13:02',
-      profileImage: require('@/assets/images/andrew.png')
-    },
-  ];
+interface ChatScreenProps {
+  loading: boolean;
+  chats: ChatMessage[];
+}
+
+const ChatScreen = (props: ChatScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+  console.log("props.chats", props.chats);
 
   const handleBack = () => {
     router.back();
@@ -85,21 +78,21 @@ const ChatScreen = () => {
 
       {/* Messages List */}
       <ScrollView style={styles.messagesList}>
-        {messages.map((message) => (
+        {props.chats.map((chat) => (
           
-            <TouchableOpacity key={message.id} style={styles.messageCard} onPress={() => router.push(`/chats/${message.id}`)}>
+            <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
             <View style={styles.messageInfo}>
               <Image 
-                source={message.profileImage}
+                source={chat.profile_pic}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.name}>{message.name}</Text>
-                <Text style={styles.message}>{message.message}</Text>
+                <Text style={styles.name}>{chat.title}</Text>
+                <Text style={styles.message}>{chat.message}</Text>
               </View>
             </View>
             <View style={styles.timeContainer}>
-              <Text style={styles.time}>{message.time}</Text>
+              <Text style={styles.time}>{chat.time}</Text>
               <View style={styles.unreadBadge}>
                 <Text style={styles.unreadCount}>02</Text>
               </View>

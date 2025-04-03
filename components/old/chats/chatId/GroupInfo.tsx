@@ -1,7 +1,7 @@
 import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router, Link, useLocalSearchParams } from 'expo-router';
-import MyComponent from '@/components/TwoTab';
+import MyComponent from '@/components/old/misc/TwoTab';
 
 export default function GroupInfoScreenOld({
     userId,

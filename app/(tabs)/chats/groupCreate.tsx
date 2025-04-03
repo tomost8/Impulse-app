@@ -1,41 +1,44 @@
-import { processAndUploadImage, pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 import {useState, useEffect, useRef} from 'react';
+import { router } from 'expo-router';
 import AuthWrapper from '@/components/auth/AuthWrapper';
+import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
 import StartGroupScreen from '@/components/screens/connect/startgroup';
 // Debug
 import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
 
 
-const CreateGroupPage = (props: any) => {
-  const {userId, authToken} = props;
-  const [renderCounter, setRenderCounter] = useState(0);
+const CreateGroupPage = () => {
+  const {userId, authToken} = useUserInfo();
 
   // Mutations
   const {createGroup} = useCreateGroup();
   const [isCreatingGroup, setIsCreatingGroup] = useState(false);
   const handleCreateGroup = async () => {
     setIsCreatingGroup(true);
+    let response_log = "";
     try {
-      //const profile_pic = await processAndUploadImage(formData.profile_pic);
+      const profile_pic = await processAndUploadImage(formData.profile_pic);
       const input = {
         type: "group",
-        profile_pic: formData.profile_pic,
-        title: formData.name,
-        //password: isPasswordOptional ? null : formData.password,
         creator_id: userId as number,
+        profile_pic: profile_pic,
+        title: formData.name,
+        password: formData.isPasswordEnabled ? formData.password : null,
       };
-      console.log("Form Data:", formData, "\n", "Input:", input);
-      /*
+      response_log += "Form Data:\n" + JSON.stringify(formData) + "\n";
       const response = await createGroup(input);
       if (response.success) {
-        console.log('Group created successfully:', response);
+        response_log = "Group created successfully with ID " + response.chat.id + ":\n" + response_log;
       } else {
-        console.log('Error creating group:', response.errors);
+        throw new Error("Response.success from createGroup was false:" + response.errors);
       }
-      */
+      console.log(response_log);
+      router.replace('/chats');
     } catch (error) {
       console.error('Error creating group:', error);
     } finally {

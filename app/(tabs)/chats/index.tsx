@@ -5,7 +5,7 @@ import { useGetUserChats } from '../../../hooks/graphql/chats/queries';
 import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
 // Components
-import ChatScreen from '@/components/screens/chats/chatscreen';
+import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 import ChatScreenOld from '@/components/old/chats/ChatScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
@@ -33,7 +33,8 @@ const ChatPage = (props: any) => {
       return;
     }
     if (hasNewChatsData) {
-      chatsRef.current = chatMembers;
+      const acceptedChats = chatMembers.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.chat);
+      chatsRef.current = acceptedChats;
       hasFetchedChats.current = true;
     }
     if (hasNewFriendRequestsData) {
@@ -83,7 +84,10 @@ const ChatPage = (props: any) => {
   }
 
   if (pageDisplay) {
-    return <ChatScreen />
+    return <ChatScreen 
+      loading={loading}
+      chats={chatsRef.current || []}
+    />
   } else {
     return <ChatScreenOld 
       chats={chatsRef.current}

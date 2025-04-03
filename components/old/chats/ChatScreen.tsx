@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
-import MyComponent from '@/components/TwoTab';
+import MyComponent from '@/components/old/misc/TwoTab';
 import styles from '@/utils/testStyles';
 import SocialModal from '@/components/old/chats/ChatModal';
 import ConnectPopup from '@/components/screens/connect/connectpopup';

@@ -23,6 +23,7 @@ interface Group {
 interface JoinGroupScreenProps {
   loading: boolean;
   groups: Group[];
+  handleJoinGroup: (id: string) => void;
 }
 
 const JoinGroupScreen = (props: JoinGroupScreenProps) => {
@@ -41,26 +42,34 @@ const JoinGroupScreen = (props: JoinGroupScreenProps) => {
   };
 
   // Password Popup
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [isPasswordPopupVisible, setIsPasswordPopupVisible] = useState(false);
   const [isSuccessPopupVisible, setIsSuccessPopupVisible] = useState(false);
 
-  const handleJoin = (id: string, hasPassword: boolean) => {
-    if (hasPassword) {
+  const handleJoin = (id: string) => {
+    setSelectedGroupId(Number(id));
+    const group = props.groups.find(group => group.id === id);
+    if (group?.password) {
       setIsPasswordPopupVisible(true);
     } else {
-      // Handle join with password logic
-      console.log("Joining group (no password):", id);
+      props.handleJoinGroup(id);
+      setIsSuccessPopupVisible(true);
+    }
+  };
+
+  const handlePasswordSubmit = (password: string) => {
+    const groupPassword = props.groups.find(group => Number(group.id) === selectedGroupId)?.password;
+    if (password === groupPassword) {
+      props.handleJoinGroup(String(selectedGroupId));
+      setIsPasswordPopupVisible(false);
+      setIsSuccessPopupVisible(true);
+    } else {
+      console.log("Incorrect password submitted");
     }
   };
 
   const handleCloseSuccessPopup = () => {
     setIsSuccessPopupVisible(false);
-  };
-
-  const handlePasswordSubmit = (password: string) => {
-    console.log('Password submitted:', password);
-    setIsPasswordPopupVisible(false);
-    // Handle join with password logic
   };
 
   return (
@@ -109,7 +118,7 @@ const JoinGroupScreen = (props: JoinGroupScreenProps) => {
             </View>
             <TouchableOpacity 
               style={styles.joinButton}
-              onPress={() => handleJoin(group.id, group.password ? true : false)}
+              onPress={() => handleJoin(group.id)}
             >
               <Text style={styles.joinButtonText}>Join</Text>
             </TouchableOpacity>

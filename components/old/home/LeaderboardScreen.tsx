@@ -1,6 +1,6 @@
 import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import MyComponent from '@/components/TwoTab';
+import MyComponent from '@/components/old/misc/TwoTab';
 
 export default function LeaderboardScreenOld({
   users,

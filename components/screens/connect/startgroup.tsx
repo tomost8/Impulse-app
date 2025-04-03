@@ -51,7 +51,8 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
     }
   };
 
-  const checkPassword = () => {
+  // add checks for empty fields
+  const checkCreate = () => {
     if (props.formData.isPasswordEnabled && props.formData.password !== props.formData.confirm_password) {
       console.log("Passwords do not match");
     } else {
@@ -154,7 +155,7 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
           {/* Create Button */}
           <TouchableOpacity 
             style={styles.createButton}
-            onPress={checkPassword}
+            onPress={checkCreate}
           >
             <Text style={styles.createButtonText}>Create</Text>
           </TouchableOpacity>
