@@ -76,7 +76,12 @@ function AccountProfile({
             <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
           </View>
           <View style={styles.progressContainer}>
-            <View style={styles.progressBar} />
+            <View 
+              style={[
+                styles.progressBar,
+                { width: `${Math.min((user.point?.points || 0) / 7500 * 100, 100)}%` }
+              ]} 
+            />
           </View>
           <TouchableOpacity onPress={() => router.push('/account/redeems')}>
             <Text style={styles.redeem}>Redeem</Text>

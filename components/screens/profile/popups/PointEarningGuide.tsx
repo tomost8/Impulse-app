@@ -40,29 +40,21 @@ const PointEarningGuide = ({ visible, onClose }: { visible: boolean, onClose: ()
                 </Text>
               </View>
               <View style={styles.guideContent} accessibilityRole="list">
-                <Text style={styles.content} accessibilityRole="text">
+                <Text style={styles.content}>
                   Earn points for posting accountability pictures and completing
                   challenges and redeem them for rewards! Set your primary and
                   secondary goals in profile.
                 </Text>
                 {guideItems.map((item, index) => (
-                  <View key={index} 
-                  //accessibilityRole="listitem"
-                  >
-                    <Text style={styles.content}>
-                      {item.title}: {item.points} Points
-                      {item.suffix ? ` ${item.suffix}` : ""}
-                    </Text>
-                  </View>
+                  <Text key={index} style={[styles.content, styles.pointsText]}>
+                    <Text style={styles.boldText}>{item.title}: {item.points} Points{item.suffix ? ` ${item.suffix}` : ""}</Text>
+                  </Text>
                 ))}
-                <Text style={styles.content} accessibilityRole="text">
+                <Text style={styles.content}>
                   Any activity you complete that is not a primary or secondary goal
                   is worth 45 points. You do not need to indicate this anywhere.
                 </Text>
-                <Text
-                  style={[styles.content, styles.note]}
-                  accessibilityRole="text"
-                >
+                <Text style={[styles.content, styles.note]}>
                   Note: You can only earn points for the first picture in each goal
                   category, per day. For example, if workout is your primary goal
                   and you post 2 workout pictures in the same day, you only earn 100
@@ -151,6 +143,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontWeight: "700",
     textAlign: "center",
+  },
+  pointsText: {
+    marginBottom: 8,
+  },
+  boldText: {
+    fontWeight: "700",
+    fontSize: 16,
+    color: "#242020",
   },
 });
 
