@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
+import { s } from "react-native-size-matters";
 
 interface ProfileScreenProps {  
   user: any;
@@ -39,30 +40,23 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
   ];
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <View style={styles.header}>
-        <Text style={styles.time} accessibilityLabel="Current time">
-          9:41
-        </Text>
-        <View style={styles.titleContainer}>
-          <TouchableOpacity
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton} 
             onPress={() => router.back()}
           >
             <Image
-              accessibilityLabel="Back arrow"
-              resizeMode="contain"
-              source={{
-                uri: "https://cdn.builder.io/api/v1/image/assets/TEMP/31eebec48547bd70e44e8a8ccfa9bfe0fd316b1230a3ef5f0a72f4aa55749a9e?placeholderIfAbsent=true&apiKey=ea4b1df1a7464c4cadfa7bc5641e7e40",
-              }}
-            style={styles.backArrow}
-          />
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
           </TouchableOpacity>
-          <Text style={styles.title}>Profile</Text>
+          <Text style={styles.headerTitle}>Profile</Text>
         </View>
       </View>
+
       <View style={styles.profileContainer}>
         <View style={styles.avatarContainer}>
           <Image
@@ -113,39 +107,35 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
   },
+  headerContainer: {
+    backgroundColor: '#E0EDFD',
+    paddingTop: s(25),
+    paddingBottom: s(18),
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: s(16),
+  },
+  backButton: {
+    marginRight: s(8),
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  headerTitle: {
+    color: '#242020',
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+  },
   contentContainer: {
     borderRadius: 30,
     alignItems: "stretch",
-  },
-  header: {
-    width: "100%",
-    paddingHorizontal: 37,
-    paddingTop: 11,
-    paddingBottom: 32,
-  },
-  time: {
-    fontFamily: "SF Pro Text, sans-serif",
-    fontSize: 17,
-    color: "#242020",
-    fontWeight: "600",
-    textAlign: "center",
-    letterSpacing: -0.41,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  backArrow: {
-    width: 7,
-    height: 14,
-    marginRight: 13,
-  },
-  title: {
-    fontFamily: "Poppins, sans-serif",
-    fontSize: 16,
-    color: "#242020",
-    fontWeight: "600",
   },
   profileContainer: {
     borderRadius: 30,
@@ -157,7 +147,7 @@ const styles = StyleSheet.create({
     minHeight: 130,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 40,
+    marginBottom: 35,
   },
   avatar: {
     width: 130,
@@ -191,7 +181,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   goalSettingContainer: {
-    marginBottom: 40,
+    marginBottom: 20,
   },
   goalItem: {
     marginBottom: 20,
@@ -226,6 +216,7 @@ const styles = StyleSheet.create({
     minHeight: 50,
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 20,
   },
   editProfileButtonText: {
     color: "#FFFFFF",
