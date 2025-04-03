@@ -1,4 +1,3 @@
-
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
@@ -6,42 +5,36 @@ import { useGetAllUsers } from '@/hooks/graphql/users/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useSendFriendRequest, useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
-import FindFriendScreen from '@/components/screens/connect/findfriend';
-import AddFriendsScreenOld from '@/components/old/chats/AddFriendsScreen';
+import FindFriendScreen from '@/components/screens/chats/findfriend';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
-
-const AddFriendsPage = (props: any) => {
-  const { userId, authToken } = props;
+const AddFriendsPage = () => {
+  const { userId, authToken } = useUserInfo();
+  const { fetching, friends } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Queries for Loading State
+  // Queries
   const usersRef = useRef<any[] | null>(null);
   const hasFetchedUsers = useRef(false);
   const { users, fetched: hasNewUsersData } = useGetAllUsers(!hasFetchedUsers.current);
 
-  const friendsRef = useRef<any[] | null>(null);
-  const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
-
   useEffect(() => {
-    if (!hasNewUsersData && !hasNewFriendsData) {
+    if (!hasNewUsersData) {
       return;
     }
     if (hasNewUsersData) {
       usersRef.current = users;
       hasFetchedUsers.current = true;
-    }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
-    }
-    if (hasFetchedUsers.current && hasFetchedFriends.current) {
+    } 
+    if (hasFetchedUsers.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewUsersData, hasNewFriendsData]);
+  }, [hasNewUsersData]);
 
   // Mutations
   const { sendFriendRequest } = useSendFriendRequest();
@@ -53,7 +46,7 @@ const AddFriendsPage = (props: any) => {
         sender_id: userId,
         receiver_id: friendId,
       }
-      const response = await sendFriendRequest(input, authToken);
+      const response = await sendFriendRequest(input, authToken as string);
       if (response.success) {
         console.log("Friend request sent successfully", response);
       } else {
@@ -71,7 +64,7 @@ const AddFriendsPage = (props: any) => {
   const handleDeleteFriendRequest = async (friendId: number) => {
     setIsDeletingFriendRequest(true);
     try {
-      const response = await deleteFriendship(userId, friendId, authToken);
+      const response = await deleteFriendship(userId as number, friendId, authToken as string);
       if (response.success) {
         console.log("Friend request deleted successfully", response);
       } else {
@@ -85,29 +78,29 @@ const AddFriendsPage = (props: any) => {
   }
 
   // Debug
-  const loading = !hasFetchedUsers.current || !hasFetchedFriends.current || isSendingFriendRequest || isDeletingFriendRequest;
+  const sentRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'sender').map((friend: any) => friend.friend);
+  const nonFriends = usersRef.current?.filter((user: any) => user.id !== userId && !friends.some((friend: any) => friend.friend.id === user.id));
+  
+  const loading = fetching || !hasFetchedUsers.current || isSendingFriendRequest || isDeletingFriendRequest;
   if (debugRenders && !loading) {
     console.log("Rendering AddFriendsScreen\n",
       "Users:", usersRef.current, "\n",
-      "Friends:", friendsRef.current, "\n",
+      "Friends:", friends, "\n",
+      "Sent Requests:", sentRequests, "\n",
+      "Non Friends:", nonFriends, "\n",
       "Render Counter:", renderCounter, "\n",
     );
   }
 
-  if (pageDisplay) {
-    return <FindFriendScreen />
-  } else {
-    return <AddFriendsScreenOld
-      users={usersRef.current}
-      isUsersLoading={!hasFetchedUsers.current}
-      friends={friendsRef.current}
-      isFriendsLoading={!hasFetchedFriends.current}
+  return (
+    <FindFriendScreen 
+      loading={loading}
+      users={nonFriends || []}
       handleSendFriendRequest={handleSendFriendRequest}
-      isSendingFriendRequest={isSendingFriendRequest}
-      handleDeleteFriendRequest={handleDeleteFriendRequest}
-      isDeletingFriendRequest={isDeletingFriendRequest}
+      sentRequests={sentRequests}
+      handleCancelSentRequest={handleDeleteFriendRequest}
     />
-  }
+  );
 }
 
 export default AuthWrapper(AddFriendsPage);

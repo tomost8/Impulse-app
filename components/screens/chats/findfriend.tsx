@@ -13,44 +13,44 @@ import { router } from 'expo-router';
 
 interface Friend {
   id: string;
-  name: string;
+  first_name: string;
   username: string;
-  profileImage: any;
-  isPending?: boolean;
+  profile_picture: any;
 }
 
-const FindFriendScreen = () => {
+interface FindFriendScreenProps {
+  loading: boolean;
+  users: Friend[];
+  sentRequests: Friend[];
+  handleSendFriendRequest: (friendId: number) => void;
+  handleCancelSentRequest: (friendId: number) => void;
+}
+
+const FindFriendScreen = (props: FindFriendScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  } 
+  
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Combined friend data
-  const friends: Friend[] = [
-    // Pending requests
-    { id: '1', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
-    { id: '2', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
-    { id: '3', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: true },
-    // Add friend profiles
-    { id: '4', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
-    { id: '5', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
-    { id: '6', name: 'Courtney', username: 'username', profileImage: require('@/assets/images/andrew.png'), isPending: false },
-  ];
+  // need to maybe change filters to show based on if empty or not
+  const filteredUsers = props.users.filter(user => 
+    user.username?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const pendingFriends = friends.filter(friend => friend.isPending);
-  const addFriends = friends.filter(friend => !friend.isPending);
-
-  const handleBack = () => {
-    router.back();
-  };
-
+  // idk if we need this function, only gets called on search bar submit i think
   const handleSearch = () => {
     console.log('Search query:', searchQuery);
   };
 
   const handleCancel = (friendId: string) => {
     console.log('Cancel friend request:', friendId);
+    props.handleCancelSentRequest(Number(friendId));
   };
 
   const handleAddFriend = (friendId: string) => {
     console.log('Add friend:', friendId);
+    props.handleSendFriendRequest(Number(friendId));
   };
 
   return (
@@ -59,7 +59,7 @@ const FindFriendScreen = () => {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={handleBack}
+          onPress={() => router.back()}
         >
           <Image 
             source={require("@/assets/icons/backArrow.png")}
@@ -88,18 +88,18 @@ const FindFriendScreen = () => {
 
       <ScrollView style={styles.content}>
         {/* Pending Requests Section */}
-        {pendingFriends.length > 0 && (
+        {props.sentRequests && props.sentRequests.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
-            {pendingFriends.map((friend) => (
+            {props.sentRequests.map((friend) => (
               <View key={friend.id} style={styles.friendCard}>
                 <View style={styles.friendInfo}>
                   <Image 
-                    source={friend.profileImage}
+                    source={friend.profile_picture}
                     style={styles.profileImage}
                   />
                   <View style={styles.textContainer}>
-                    <Text style={styles.name}>{friend.name}</Text>
+                    <Text style={styles.name}>{friend.first_name}</Text>
                     <Text style={styles.username}>{friend.username}</Text>
                   </View>
                 </View>
@@ -118,15 +118,15 @@ const FindFriendScreen = () => {
 
         {/* Add Friends Section */}
         <View style={styles.section}>
-          {addFriends.map((friend) => (
+          {filteredUsers.map((friend) => (
             <View key={friend.id} style={styles.friendCard}>
               <View style={styles.friendInfo}>
                 <Image 
-                  source={friend.profileImage}
+                  source={friend.profile_picture}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={styles.name}>{friend.name}</Text>
+                  <Text style={styles.name}>{friend.first_name}</Text>
                   <Text style={styles.username}>{friend.username}</Text>
                 </View>
               </View>

@@ -5,6 +5,7 @@ type UserDataContextType = {
   user: any; setUser: (user: any) => void;
   activities: any[]; setActivities: (activities: any[]) => void;
   communities: any[]; setCommunities: (communities: any[]) => void;
+  chats: any[]; setChats: (chats: any[]) => void;
   friends: any[]; setFriends: (friends: any[]) => void;
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
@@ -19,6 +20,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [user, setUser] = useState<any>(null);
   const [activities, setActivities] = useState<any[]>([]);
   const [communities, setCommunities] = useState<any[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
   const [friends, setFriends] = useState<any[]>([]);
   // Specific Data
   const [timezone, setTimezone] = useState<string>('');
@@ -41,6 +43,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     user, setUser,
     activities, setActivities,
     communities, setCommunities,
+    chats, setChats,
     friends, setFriends,
     timezone, setTimezone,
     cameraClickable, setCameraClickable,

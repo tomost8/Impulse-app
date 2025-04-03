@@ -6,7 +6,7 @@ export const GET_ALL_USERS = gql`
   query {
     users {
       success
-      users { id email firebase_uid first_name last_name username gender role status searchable last_login_at created_at updated_at }
+      users { id first_name last_name username profile_picture }
       errors { field message }
     }
   }

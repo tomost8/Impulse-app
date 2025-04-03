@@ -29,18 +29,8 @@ const ChatScreen = (props: ChatScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
-  console.log("props.chats", props.chats);
-
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleAddFriend = () => {
-    router.push('/chats/addFriends');
-  };
-
+  
   const [visible, setVisible] = useState(false);
-
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
@@ -51,7 +41,7 @@ const ChatScreen = (props: ChatScreenProps) => {
         <View style={styles.headerLeft}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={handleBack}
+            onPress={() => router.back()}
           >
             <Image 
               source={require("@/assets/icons/backArrow.png")}

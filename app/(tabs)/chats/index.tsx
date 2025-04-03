@@ -1,84 +1,48 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUserChats } from '../../../hooks/graphql/chats/queries';
+import { useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
 import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
 // Components
 import ChatScreen from '@/components/screens/tabs/ChatsScreen';
-import ChatScreenOld from '@/components/old/chats/ChatScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
-const ChatPage = (props: any) => {
-  const { userId, authToken } = props;
+const ChatPage = () => {
+  const { userId, authToken } = useUserInfo();
+  const { fetching, chats, friends } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Queries for Loading State
-  const chatsRef = useRef<any[] | null>(null);
-  const hasFetchedChats = useRef(false);
-  const { chatMembers, fetched: hasNewChatsData } = useGetUserChats(userId as number, !hasFetchedChats.current);
+  // Queries (maybe for messages)
 
-  const friendRequestsRef = useRef<any[] | null>(null);
-  const hasFetchedFriendRequests = useRef(false);
-  const { friendRequests: receivedRequests, fetched: hasNewFriendRequestsData } = useGetFriendRequests(userId as number, 'receiver', !hasFetchedFriendRequests.current);
-  
-  const sentRequestsRef = useRef<any[] | null>(null);
-  const hasFetchedSentRequests = useRef(false);
-  const { friendRequests: sentRequests, fetched: hasNewSentRequestsData } = useGetFriendRequests(userId as number, 'sender', !hasFetchedSentRequests.current);
-
-  useEffect(() => {
-    if (!hasNewChatsData && !hasNewFriendRequestsData && !hasNewSentRequestsData) {
-      return;
+  const chatInfo = chats.map((chat: any) => {
+    if (chat.chat.type === 'group') {
+      return chat.chat;
+    } else if (chat.chat.type === 'direct') {
+      const matchingFriend = friends.find(friend => friend.chat_id === chat.chat.id);
+      const directChatInfo = {
+        id: chat.chat.id,
+        type: 'direct',
+        title: matchingFriend ? matchingFriend.friend.username : chat.chat.title,
+        profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null
+      };
+      return directChatInfo;
     }
-    if (hasNewChatsData) {
-      const acceptedChats = chatMembers.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.chat);
-      chatsRef.current = acceptedChats;
-      hasFetchedChats.current = true;
-    }
-    if (hasNewFriendRequestsData) {
-      friendRequestsRef.current = receivedRequests;
-      hasFetchedFriendRequests.current = true;
-    }
-    if (hasNewSentRequestsData) {
-      sentRequestsRef.current = sentRequests;
-      hasFetchedSentRequests.current = true;
-    }
-    if (hasFetchedChats.current && hasFetchedFriendRequests.current && hasFetchedSentRequests.current) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [hasNewChatsData, hasNewFriendRequestsData, hasNewSentRequestsData]);
-
-  // Mutations
-  const { acceptFriendRequest } = useAcceptFriendRequest();
-  const [isAcceptingFriendRequest, setIsAcceptingFriendRequest] = useState(false);
-  const handleAcceptFriendRequest = async (friendId: number) => {
-    setIsAcceptingFriendRequest(true);
-    try {
-      const input = {
-        status: 'ACCEPTED',
-      }
-      const response = await acceptFriendRequest(userId as number, friendId, input, authToken);
-      if (response.success) {
-        console.log("Friend request accepted:", response);
-      } else {
-        console.log("Error accepting friend request:", response.errors);
-      }
-    } catch (error) {
-      console.error('Error accepting friend request:', error);
-    } finally {
-      setIsAcceptingFriendRequest(false);
-    }
-  };
+    return chat.chat; // fallback case
+  });
 
   // Debug
-  const loading = !hasFetchedChats.current || !hasFetchedFriendRequests.current || !hasFetchedSentRequests.current;
+  const loading = fetching;
   if (debugRenders && !loading) {
     console.log("Rendering ChatScreen\n",
-      "Chats:", chatsRef.current, "\n",
-      "Friend Requests:", friendRequestsRef.current, "\n",
-      "Sent Requests:", sentRequestsRef.current, "\n",
+      "Chats:", chats, "\n",
+      "Friends:", friends, "\n",
+      "Chat Info:", chatInfo, "\n",
       "Render Counter:", renderCounter, "\n",
     );
   }
@@ -86,19 +50,8 @@ const ChatPage = (props: any) => {
   if (pageDisplay) {
     return <ChatScreen 
       loading={loading}
-      chats={chatsRef.current || []}
+      chats={chatInfo}
     />
-  } else {
-    return <ChatScreenOld 
-      chats={chatsRef.current}
-      isChatsLoading={!hasFetchedChats.current}
-      friendRequests={friendRequestsRef.current}
-      isFriendRequestsLoading={!hasFetchedFriendRequests.current}
-      sentRequests={sentRequestsRef.current}
-      isSentRequestsLoading={!hasFetchedSentRequests.current}
-      handleAcceptFriendRequest={handleAcceptFriendRequest}
-      isAcceptingFriendRequest={isAcceptingFriendRequest}
-    />;
   }
 }
 

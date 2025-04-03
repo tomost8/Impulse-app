@@ -12,34 +12,29 @@ import { router } from 'expo-router';
 
 interface Request {
   id: string;
-  name: string;
+  first_name: string;
   username: string;
-  profileImage: any;
+  profile_picture: any;
 }
 
-const RequestsScreen = () => {
+interface RequestsScreenProps {
+  loading: boolean;
+  friendRequests: any[];
+  groupInvites: any[];
+}
+
+const RequestsScreen = (props: RequestsScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
   // Sample data
-  const friendRequests: Request[] = [
-    { 
-      id: '1', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
-    },
-    { 
-      id: '2', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
-    },
-  ];
 
   const groupInvites: Request[] = [
     { 
       id: '1', 
-      name: 'Courtney', 
+      first_name: 'Courtney', 
       username: 'username', 
-      profileImage: require('@/assets/images/andrew.png')
+      profile_picture: require('@/assets/images/andrew.png')
     },
   ];
 
@@ -70,7 +65,7 @@ const RequestsScreen = () => {
         <View style={styles.headerLeft}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={handleBack}
+            onPress={() => router.back()}
           >
             <Image 
               source={require("@/assets/icons/backArrow.png")}
@@ -94,15 +89,15 @@ const RequestsScreen = () => {
         {/* Friend Requests Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Friend Requests (2)</Text>
-          {friendRequests.map((request) => (
+          {props.friendRequests.map((request) => (
             <View key={request.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
                 <Image 
-                  source={request.profileImage}
+                  source={request.profile_picture}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={styles.name}>{request.name}</Text>
+                  <Text style={styles.name}>{request.first_name}</Text>
                   <Text style={styles.username}>{request.username}</Text>
                 </View>
               </View>
@@ -129,7 +124,7 @@ const RequestsScreen = () => {
         {/* Group Invitations Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Group Invitations (1)</Text>
-          {groupInvites.map((invite) => (
+          {props.groupInvites.map((invite) => (
             <View key={invite.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
                 <Image 
