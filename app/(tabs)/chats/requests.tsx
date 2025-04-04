@@ -14,7 +14,7 @@ const RequestsPage = () => {
  // Add Mutations for accept/cancel
 
  const friendRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'receiver').map((friend: any) => friend.friend);
- const groupInvites = chats.filter((chat: any) => chat.status === 'PENDING');
+ const groupInvites = chats.filter((chat: any) => chat.status === 'PENDING').map((chat: any) => chat.chat);
 
  const loading = fetching;
  if (debugRenders && !loading) {

@@ -17,30 +17,26 @@ interface Request {
   profile_picture: any;
 }
 
+interface GroupInvite {
+  id: string;
+  title: string;
+  profile_pic: any;
+}
+
 interface RequestsScreenProps {
   loading: boolean;
-  friendRequests: any[];
-  groupInvites: any[];
+  friendRequests: Request[];
+  groupInvites: GroupInvite[];
 }
 
 const RequestsScreen = (props: RequestsScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
-  // Sample data
 
-  const groupInvites: Request[] = [
-    { 
-      id: '1', 
-      first_name: 'Courtney', 
-      username: 'username', 
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-  ];
-
-  const handleBack = () => {
-    router.back();
-  };
+  console.log("props friendRequests:", props.friendRequests, "\n",
+            "props groupInvites:", props.groupInvites, "\n",
+  );
 
   const handleAddFriend = () => {
     router.push('/chats/addFriends');
@@ -88,7 +84,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
       <ScrollView style={styles.content}>
         {/* Friend Requests Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Friend Requests (2)</Text>
+          <Text style={styles.sectionTitle}>Friend Requests ({props.friendRequests.length})</Text>
           {props.friendRequests.map((request) => (
             <View key={request.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
@@ -123,17 +119,19 @@ const RequestsScreen = (props: RequestsScreenProps) => {
 
         {/* Group Invitations Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Group Invitations (1)</Text>
+          <Text style={styles.sectionTitle}>Group Invitations ({props.groupInvites.length})</Text>
           {props.groupInvites.map((invite) => (
             <View key={invite.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
                 <Image 
-                  source={invite.profileImage}
+                  source={invite.profile_pic}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
-                  <Text style={styles.name}>{invite.name}</Text>
+                  <Text style={styles.name}>{invite.title}</Text>
+                  {/* we don't have username for groups (we also don't track person who sent invite)
                   <Text style={styles.username}>{invite.username}</Text>
+                  */}
                 </View>
               </View>
               <View style={styles.actionButtons}>

@@ -1,9 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUserChats } from '@/hooks/graphql/chats/queries';
-import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
-import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
+
 // Components
 import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 // Debug
@@ -14,9 +12,7 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const ChatPage = () => {
-  const { userId, authToken } = useUserInfo();
   const { fetching, chats, friends } = useUserData();
-  const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries (maybe for messages)
 
@@ -36,6 +32,10 @@ const ChatPage = () => {
     return chat.chat; // fallback case
   });
 
+  // Request Count
+  const friendRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'receiver').map((friend: any) => friend.friend);
+  const groupInvites = chats.filter((chat: any) => chat.status === 'PENDING');
+
   // Debug
   const loading = fetching;
   if (debugRenders && !loading) {
@@ -43,7 +43,6 @@ const ChatPage = () => {
       "Chats:", chats, "\n",
       "Friends:", friends, "\n",
       "Chat Info:", chatInfo, "\n",
-      "Render Counter:", renderCounter, "\n",
     );
   }
 
