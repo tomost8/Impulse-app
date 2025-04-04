@@ -2,40 +2,39 @@ import React, { useState } from 'react';
 import { 
   View, 
   Text, 
+  TextInput, 
   TouchableOpacity, 
-  TextInput,
-  Image,
   StyleSheet, 
   Modal 
 } from 'react-native';
 
 interface PasswordPopupProps {
-  isVisible: boolean;
+  visible: boolean;
   onClose: () => void;
   onSubmit: (password: string) => void;
 }
 
-const PasswordPopup: React.FC<PasswordPopupProps> = ({
-  isVisible,
-  onClose,
-  onSubmit,
-}) => {
+const PasswordPopup = ({ visible, onClose, onSubmit }: PasswordPopupProps) => {
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = () => {
+    // Reset error message
+    setErrorMessage('');
+    
+    // This is where backend validation would happen
+    // For now, just pass the password to parent component
     onSubmit(password);
-    setPassword('');
   };
 
-  const handleBack = () => {
-    setPassword('');
-    onClose();
+  // Function to show error (will be called from parent when password is incorrect)
+  const showError = () => {
+    setErrorMessage('Error: Password is incorrect');
   };
 
   return (
     <Modal
-      visible={isVisible}
+      visible={visible}
       transparent={true}
       animationType="fade"
     >
@@ -43,33 +42,23 @@ const PasswordPopup: React.FC<PasswordPopupProps> = ({
         <View style={styles.popup}>
           <Text style={styles.title}>Enter Password</Text>
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Enter Password"
-              placeholderTextColor="#979797"
-              secureTextEntry={!showPassword}
-            />
-            <TouchableOpacity 
-              onPress={() => setShowPassword(!showPassword)}
-              style={styles.eyeButton}
-            >
-              <Image 
-                source={require("@/assets/icons/hide.png")}
-                style={[
-                  styles.eyeIcon,
-                  showPassword && { opacity: 0.5 }
-                ]}
-              />
-            </TouchableOpacity>
-          </View>
+          {/* Error Message */}
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          ) : null}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={false}
+          />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity 
-              style={[styles.button, styles.backButton]}
-              onPress={handleBack}
+              style={[styles.button, styles.backButton]} 
+              onPress={onClose}
             >
               <Text style={[styles.buttonText, styles.backButtonText]}>Back</Text>
             </TouchableOpacity>
@@ -77,7 +66,7 @@ const PasswordPopup: React.FC<PasswordPopupProps> = ({
               style={[styles.button, styles.leaveButton]}
               onPress={handleSubmit}
             >
-              <Text style={[styles.buttonText, styles.leaveButtonText]}>Submit</Text>
+              <Text style={[styles.buttonText, styles.leaveButtonText]}>Leave</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -94,42 +83,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   popup: {
-    width: '90%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     padding: 24,
+    width: '90%',
+    maxWidth: 340,
   },
   title: {
     fontSize: 24,
     fontFamily: 'Poppins',
     fontWeight: '600',
-    color: '#000000',
-    marginBottom: 24,
+    color: '#242020',
+    marginBottom: 16,
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 32,
-    borderWidth: 1,
-    borderColor: '#E1E1E1',
-    borderRadius: 100,
-    paddingHorizontal: 16,
+  errorText: {
+    color: '#DE728D',
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    fontStyle: 'italic',
+    marginBottom: 16,
   },
   input: {
-    flex: 1,
+    width: '100%',
     height: 48,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 24,
+    paddingHorizontal: 16,
     fontSize: 14,
     fontFamily: 'Open Sans',
-    color: '#000000',
-  },
-  eyeButton: {
-    padding: 8,
-  },
-  eyeIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    tintColor: '#979797',
+    color: '#242020',
+    marginBottom: 24,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -139,25 +123,25 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     height: 48,
-    borderRadius: 100,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    fontWeight: '600',
   },
   backButton: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: '#DE728D',
   },
-  backButtonText: {
-    color: '#DE728D',
-  },
   leaveButton: {
     backgroundColor: '#DE728D',
+  },
+  buttonText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+  },
+  backButtonText: {
+    color: '#DE728D',
   },
   leaveButtonText: {
     color: '#FFFFFF',
