@@ -8,6 +8,7 @@ import { useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
 import GroupInfoScreen from '@/components/screens/chats/groups/groupinfo';
 // Debug
 import { debugRenders } from '@/utils/debug';
+import { useDeleteChatMember } from '@/hooks/graphql/chats/mutations';
 
 
 
@@ -32,6 +33,21 @@ const GroupInfoPage = (props: any) => {
   const hasFetchedChatLeaderboard = useRef(false);
   const { chatMembers: chatLeaderboard, fetched: hasNewChatLeaderboardData } = useGetGroupLeaderboard(Number(chatId), activeView === 'weekly' ? 'POINTS_WEEKLY' : activeView === 'monthly' ? 'POINTS_MONTHLY' : 'POINTS_ALL', !hasFetchedChatLeaderboard.current);
 
+  // Mutations
+  const { deleteChatMember } = useDeleteChatMember();
+  const [isDeletingChatMember, setIsDeletingChatMember] = useState(false);
+  const handleDeleteChatMember = async (userId: number, chatId: number) => {
+    try {
+      setIsDeletingChatMember(true);
+      const response = await deleteChatMember(userId, chatId);
+      console.log("Delete Chat Member response:", response);
+    } catch (error) {
+      console.error('Delete Chat Member failed:', error);
+    } finally {
+      setIsDeletingChatMember(false);
+    }
+  }
+
   useEffect(() => {
     if (!hasNewChatMembersData && !hasNewChatLeaderboardData) {
       return;
@@ -42,7 +58,8 @@ const GroupInfoPage = (props: any) => {
       hasFetchedChatMembers.current = true;
     }
     if (hasNewChatLeaderboardData) {
-      chatLeaderboardRef.current = chatLeaderboard;
+      const acceptedMembersLeaderboard = chatLeaderboard.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.user);
+      chatLeaderboardRef.current = acceptedMembersLeaderboard;
       hasFetchedChatLeaderboard.current = true;
     }
     if (hasFetchedChatMembers.current && hasFetchedChatLeaderboard.current) {
@@ -64,6 +81,7 @@ const GroupInfoPage = (props: any) => {
     loading={loading}
     members={chatMembersRef.current || []}
     leaderboard={chatLeaderboardRef.current || []}
+    handleLeave={() => handleDeleteChatMember(userId, Number(chatId))}
   />
 }
 

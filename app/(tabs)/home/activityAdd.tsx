@@ -4,7 +4,6 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
 import AddDailyGoalsScreen from '@/components/screens/home/AddActivities';
-import AddActivityScreenOld from '@/components/old/home/AddActivityScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 import { router } from 'expo-router';
@@ -64,20 +63,11 @@ const AddActivityPage = (props: any) => {
     console.log("Rendering AddActivityPage");
   }
 
-  if (pageDisplay) {
-    return <AddDailyGoalsScreen
-      authToken={authToken}
-      onSuccess={handleSuccess}
-      onError={handleError}
-    />;
-  } else {
-    return <AddActivityScreenOld 
-      selectedActivities={selectedActivities}
-      handleSelectActivity={handleSelectActivity}
-      handleCreateActivity={handleCreateActivity}
-      isSubmitting={isCreatingActivity}
-    />;
-  }
+  return <AddDailyGoalsScreen
+    authToken={authToken}
+    onSuccess={handleSuccess}
+    onError={handleError}
+  />;
 }
 
 export default AuthWrapper(AddActivityPage);

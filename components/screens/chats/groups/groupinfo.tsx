@@ -11,6 +11,7 @@ import {
 import { router } from 'expo-router';
 import LeavePopup from './leavepopup';
 import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardCard';
+import LeaderboardCard2 from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardFull';
 
 interface Member {
   id: string;
@@ -24,36 +25,16 @@ interface GroupInfoScreenProps {
   loading: boolean;
   members: Member[];
   leaderboard: any[];
+  handleLeave: () => void;
 }
 
 const GroupInfoScreen = (props: GroupInfoScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+  
   const [activeTab, setActiveTab] = useState<'Members' | 'Leaderboard'>('Members');
   const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
-
-
-  // Sample leaderboard data
-  const leaderboardUsers = [
-    {
-      username: 'williamwang',
-      point: { weekly_points: 100 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 80 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 60 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 40 },
-      profile_picture: require('@/assets/images/andrew.png')
-    }
-  ];
 
   const handleBack = () => {
     router.back();
@@ -70,12 +51,12 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
 
   const handleLeaveConfirm = () => {
     setIsLeavePopupVisible(false);
-    router.back();
+    props.handleLeave();
+    router.replace('/chats');
   };
 
-  const handleTabChange = (tab: 'Members (25)' | 'Leaderboard') => {
+  const handleTabChange = (tab: 'Members' | 'Leaderboard') => {
     if (tab === 'Leaderboard') {
-      //router.push('/chats/groups/groupleaderboard');
       setActiveTab('Leaderboard');
     } else {
       setActiveTab('Members');
@@ -111,7 +92,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
     } else {
       return (
         <View style={styles.leaderboardContainer}>
-          <LeaderboardCard users={leaderboardUsers} />
+          <LeaderboardCard users={props.leaderboard} />
         </View>
       );
     }
