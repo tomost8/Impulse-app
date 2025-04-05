@@ -16,15 +16,17 @@ const ChatPage = () => {
 
   // Queries (maybe for messages)
 
-  const chatInfo = chats.map((chat: any) => {
-    if (chat.chat.type === 'group') {
-      return chat.chat;
-    } else if (chat.chat.type === 'direct') {
-      const matchingFriend = friends.find(friend => friend.chat_id === chat.chat.id);
+  // Display Chat Info
+  const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat.chat);
+  const chatInfo = acceptedChats.map((chat: any) => {
+    if (chat.type === 'group') {
+      return chat;
+    } else if (chat.type === 'direct') {
+      const matchingFriend = friends.find(friend => friend.chat_id === chat.id);
       const directChatInfo = {
-        id: chat.chat.id,
+        id: chat.id,
         type: 'direct',
-        title: matchingFriend ? matchingFriend.friend.username : chat.chat.title,
+        title: matchingFriend ? matchingFriend.friend.username : chat.title,
         profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null
       };
       return directChatInfo;
@@ -32,9 +34,10 @@ const ChatPage = () => {
     return chat.chat; // fallback case
   });
 
-  // Request Count
+  // Display Request Count
   const friendRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'receiver').map((friend: any) => friend.friend);
   const groupInvites = chats.filter((chat: any) => chat.status === 'PENDING');
+  const requestCount = friendRequests.length + groupInvites.length;
 
   // Debug
   const loading = fetching;
@@ -50,6 +53,7 @@ const ChatPage = () => {
     return <ChatScreen 
       loading={loading}
       chats={chatInfo}
+      requestCount={requestCount}
     />
   }
 }

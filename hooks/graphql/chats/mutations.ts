@@ -65,6 +65,45 @@ export function useCreateChatMember() {
   return { createChatMember };
 }
 
+export const UPDATE_CHAT_MEMBER = gql`
+  mutation ($input: UpdateChatMemberInput!, $userId: Int!, $chatId: Int!) {
+    updateChatMember(input: $input, user_id: $userId, chat_id: $chatId) {
+      success
+      chat_member {
+      chat_id
+      user_id
+      role
+      status
+    }
+    errors {
+      field
+      message
+    }
+    }
+  }
+`;
+
+export function useUpdateChatMember() {
+  const [updateChatMemberMutation] = useMutation(UPDATE_CHAT_MEMBER);
+  const updateChatMember = async (input: any, userId: number, chatId: number) => {
+    try {
+      const response = await updateChatMemberMutation({
+        variables: {
+          input: input,
+          userId: userId,
+          chatId: chatId
+        }
+      });
+      return response.data.updateChatMember;
+    } catch (error) {
+      console.error('Update Chat Member failed:', error);
+      throw error;
+    }
+  };
+  return { updateChatMember };
+}
+
+
 // Mutation - Delete Chat Member
 // input: user_id/chat_id
 export const DELETE_CHAT_MEMBER = gql`
@@ -74,7 +113,7 @@ export const DELETE_CHAT_MEMBER = gql`
       errors {
         field
         message
-      }
+        }
     }
   }
 `;

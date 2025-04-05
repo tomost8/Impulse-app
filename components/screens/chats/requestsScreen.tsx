@@ -26,7 +26,10 @@ interface GroupInvite {
 interface RequestsScreenProps {
   loading: boolean;
   friendRequests: Request[];
+  handleRemoveFriendRequest: (friendId: number) => void;
   groupInvites: GroupInvite[];
+  handleAcceptGroupInvite: (chatId: number) => void;
+  handleRemoveGroupInvite: (chatId: number) => void;
 }
 
 const RequestsScreen = (props: RequestsScreenProps) => {
@@ -34,24 +37,24 @@ const RequestsScreen = (props: RequestsScreenProps) => {
     return <Text>Loading...</Text>;
   }
 
-  console.log("props friendRequests:", props.friendRequests, "\n",
-            "props groupInvites:", props.groupInvites, "\n",
-  );
-
+  // Friend Requests
   const handleAddFriend = () => {
     router.push('/chats/addFriends');
   };
-
+  const handleCancelFriendRequest = (friendId: string) => {
+    console.log('Cancel request:', friendId);
+    props.handleRemoveFriendRequest(Number(friendId));
+  };
   const handleViewProfile = (id: string) => {
     console.log('View profile:', id);
   };
 
-  const handleCancel = (id: string) => {
-    console.log('Cancel request:', id);
+  // Group Invitations
+  const handleAccept = (chatId: string) => {
+    props.handleAcceptGroupInvite(Number(chatId));
   };
-
-  const handleAccept = (id: string) => {
-    console.log('Accept invitation:', id);
+  const handleCancelGroupInvite = (chatId: string) => {
+    props.handleRemoveGroupInvite(Number(chatId));
   };
 
   return (
@@ -105,7 +108,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
                   <Text style={styles.viewProfileText}>View Profile</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={() => handleCancel(request.id)}
+                  onPress={() => handleCancelFriendRequest(request.id)}
                 >
                   <Image 
                     source={require("@/assets/icons/cancel.png")}
@@ -142,7 +145,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
                   <Text style={styles.acceptText}>Accept</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={() => handleCancel(invite.id)}
+                  onPress={() => handleCancelGroupInvite(invite.id)}
                 >
                   <Image 
                     source={require("@/assets/icons/cancel.png")}

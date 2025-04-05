@@ -23,6 +23,7 @@ interface Member {
 
 interface GroupInfoScreenProps {
   loading: boolean;
+  title: string;
   members: Member[];
   leaderboard: any[];
   handleLeave: () => void;
@@ -32,19 +33,19 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
-  
+
+  // Tab Selector
   const [activeTab, setActiveTab] = useState<'Members' | 'Leaderboard'>('Members');
+  const handleTabChange = (tab: 'Members' | 'Leaderboard') => {
+    if (tab === 'Leaderboard') {
+      setActiveTab('Leaderboard');
+    } else {
+      setActiveTab('Members');
+    }
+  };
+
+  // Leave Popup
   const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
-
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleViewProfile = (memberId: string) => {
-    console.log('View profile:', memberId);
-    router.push(`/user/${memberId}`);
-  };
-
   const handleLeaveClick = () => {
     setIsLeavePopupVisible(true);
   };
@@ -53,14 +54,6 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
     setIsLeavePopupVisible(false);
     props.handleLeave();
     router.replace('/chats');
-  };
-
-  const handleTabChange = (tab: 'Members' | 'Leaderboard') => {
-    if (tab === 'Leaderboard') {
-      setActiveTab('Leaderboard');
-    } else {
-      setActiveTab('Members');
-    }
   };
 
   const renderContent = () => {
@@ -81,7 +74,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
               </View>
               <TouchableOpacity 
                 style={styles.viewProfileButton}
-                onPress={() => handleViewProfile(member.id)}
+                onPress={() => router.push(`/chats/${member.id}`)}
               >
                 <Text style={styles.viewProfileText}>View Profile</Text>
               </TouchableOpacity>
@@ -105,14 +98,14 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
         <View style={styles.headerLeft}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={handleBack}
+            onPress={() => router.back()}
           >
             <Image 
               source={require("@/assets/icons/backArrow.png")}
               style={styles.backIcon}
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Teaching Assistants</Text>
+          <Text style={styles.title}>{props.title}</Text>
         </View>
         <TouchableOpacity 
           style={styles.leaveButton}

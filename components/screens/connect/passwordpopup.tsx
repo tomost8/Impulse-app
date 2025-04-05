@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 
 interface PasswordPopupProps {
-  visible: boolean;
+  isVisible: boolean;
   onClose: () => void;
   onSubmit: (password: string) => void;
 }
 
-const PasswordPopup = ({ visible, onClose, onSubmit }: PasswordPopupProps) => {
+const PasswordPopup = ({ isVisible, onClose, onSubmit }: PasswordPopupProps) => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -34,7 +34,7 @@ const PasswordPopup = ({ visible, onClose, onSubmit }: PasswordPopupProps) => {
 
   return (
     <Modal
-      visible={visible}
+      visible={isVisible}
       transparent={true}
       animationType="fade"
     >

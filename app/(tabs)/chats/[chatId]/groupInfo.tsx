@@ -2,13 +2,12 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
-import { useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
+import { useGetChat, useGetChatMembers, useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
+import { useDeleteChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
 import GroupInfoScreen from '@/components/screens/chats/groups/groupinfo';
 // Debug
 import { debugRenders } from '@/utils/debug';
-import { useDeleteChatMember } from '@/hooks/graphql/chats/mutations';
 
 
 
@@ -17,14 +16,14 @@ const GroupInfoPage = (props: any) => {
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
 
-
   // Tab Status: Have to figure out how to separate these to components
-  const [tabView, setTabView] = useState<'members' | 'leaderboard'>('members');
-  const onMembersPress = () => { setTabView('members');};
-  const onLeaderboardPress = () => { setTabView('leaderboard')};  
   const [activeView, setActiveView] = useState<'weekly' | 'monthly' | 'all'>('weekly');
 
-  // Queries for Loading State
+  // Queries
+  const chatRef = useRef<any | null>(null);
+  const hasFetchedChat = useRef(false);
+  const { chat, fetched: hasNewChatData } = useGetChat(Number(chatId), !hasFetchedChat.current);
+  
   const chatMembersRef = useRef<any[] | null>(null);
   const hasFetchedChatMembers = useRef(false);
   const { chatMembers, fetched: hasNewChatMembersData } = useGetChatMembers(Number(chatId), !hasFetchedChatMembers.current);
@@ -35,22 +34,30 @@ const GroupInfoPage = (props: any) => {
 
   // Mutations
   const { deleteChatMember } = useDeleteChatMember();
-  const [isDeletingChatMember, setIsDeletingChatMember] = useState(false);
-  const handleDeleteChatMember = async (userId: number, chatId: number) => {
+  const [isLeavingGroup, setIsLeavingGroup] = useState(false);
+  const handleLeaveGroup = async (userId: number, chatId: number) => {
     try {
-      setIsDeletingChatMember(true);
+      setIsLeavingGroup(true);
       const response = await deleteChatMember(userId, chatId);
-      console.log("Delete Chat Member response:", response);
+      if (response.success) {
+        console.log("Successfully left group.");
+      } else {
+        throw new Error("Response.success from deleteChatMember was false:" + response.errors);
+      }
     } catch (error) {
-      console.error('Delete Chat Member failed:', error);
+      console.error('Error leaving group:', error);
     } finally {
-      setIsDeletingChatMember(false);
+      setIsLeavingGroup(false);
     }
   }
 
   useEffect(() => {
-    if (!hasNewChatMembersData && !hasNewChatLeaderboardData) {
+    if (!hasNewChatData && !hasNewChatMembersData && !hasNewChatLeaderboardData) {
       return;
+    }
+    if (hasNewChatData) {
+      chatRef.current = chat;
+      hasFetchedChat.current = true;
     }
     if (hasNewChatMembersData) {
       const acceptedMembers = chatMembers.filter((member: any) => member.status === 'ACCEPTED').map((member: any) => member.user);
@@ -62,15 +69,16 @@ const GroupInfoPage = (props: any) => {
       chatLeaderboardRef.current = acceptedMembersLeaderboard;
       hasFetchedChatLeaderboard.current = true;
     }
-    if (hasFetchedChatMembers.current && hasFetchedChatLeaderboard.current) {
+    if (hasFetchedChat.current && hasFetchedChatMembers.current && hasFetchedChatLeaderboard.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewChatMembersData, hasNewChatLeaderboardData]);
+  }, [hasNewChatData, hasNewChatMembersData, hasNewChatLeaderboardData]);
 
   // Debug
-  const loading = !hasFetchedChatMembers.current || !hasFetchedChatLeaderboard.current;
+  const loading = !hasFetchedChat.current || !hasFetchedChatMembers.current || !hasFetchedChatLeaderboard.current || isLeavingGroup;
   if (debugRenders && !loading) {
     console.log("GroupInfoPage\n",
+      "Chat:", chatRef.current, "\n",
       "Chat Members:", chatMembersRef.current, "\n",
       "Chat Leaderboard:", chatLeaderboardRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
@@ -79,9 +87,10 @@ const GroupInfoPage = (props: any) => {
 
   return <GroupInfoScreen 
     loading={loading}
+    title={chatRef.current?.title || ''}
     members={chatMembersRef.current || []}
     leaderboard={chatLeaderboardRef.current || []}
-    handleLeave={() => handleDeleteChatMember(userId, Number(chatId))}
+    handleLeave={() => handleLeaveGroup(userId, Number(chatId))}
   />
 }
 
