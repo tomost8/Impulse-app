@@ -1,9 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetUserChats } from '@/hooks/graphql/chats/queries';
-import { useGetFriendRequests } from '../../../hooks/graphql/friends/queries';
-import { useAcceptFriendRequest } from '../../../hooks/graphql/friends/mutations';
+
 // Components
 import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 // Debug
@@ -14,27 +12,32 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const ChatPage = () => {
-  const { userId, authToken } = useUserInfo();
   const { fetching, chats, friends } = useUserData();
-  const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries (maybe for messages)
 
-  const chatInfo = chats.map((chat: any) => {
-    if (chat.chat.type === 'group') {
-      return chat.chat;
-    } else if (chat.chat.type === 'direct') {
-      const matchingFriend = friends.find(friend => friend.chat_id === chat.chat.id);
+  // Display Chat Info
+  const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat.chat);
+  const chatInfo = acceptedChats.map((chat: any) => {
+    if (chat.type === 'group') {
+      return chat;
+    } else if (chat.type === 'direct') {
+      const matchingFriend = friends.find(friend => friend.chat_id === chat.id);
       const directChatInfo = {
-        id: chat.chat.id,
+        id: chat.id,
         type: 'direct',
-        title: matchingFriend ? matchingFriend.friend.username : chat.chat.title,
+        title: matchingFriend ? matchingFriend.friend.username : chat.title,
         profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null
       };
       return directChatInfo;
     }
     return chat.chat; // fallback case
   });
+
+  // Display Request Count
+  const friendRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'receiver').map((friend: any) => friend.friend);
+  const groupInvites = chats.filter((chat: any) => chat.status === 'PENDING');
+  const requestCount = friendRequests.length + groupInvites.length;
 
   // Debug
   const loading = fetching;
@@ -43,7 +46,6 @@ const ChatPage = () => {
       "Chats:", chats, "\n",
       "Friends:", friends, "\n",
       "Chat Info:", chatInfo, "\n",
-      "Render Counter:", renderCounter, "\n",
     );
   }
 
@@ -51,6 +53,7 @@ const ChatPage = () => {
     return <ChatScreen 
       loading={loading}
       chats={chatInfo}
+      requestCount={requestCount}
     />
   }
 }

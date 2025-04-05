@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import GoalSelector from '@/components/GoalSelector';
 import { goals, getCategoryById } from '@/utils/goals';
 
 import { auth } from '@/config/firebaseConfig';
@@ -106,11 +105,6 @@ export default function SecondaryGoal() {
       <Text style={styles.text}>Your goal selections aren't permanent, 
         you can update this anytime in Settings. 
       </Text>
-      <GoalSelector 
-        selectedGoal={selectedGoal} 
-        setSelectedGoal={setSelectedGoal} 
-        primaryGoal={Number(primaryGoal)}
-      />
       <Button 
         title="Back" 
         onPress={handleBack}

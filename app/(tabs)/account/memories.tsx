@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 // Components
-import Memories from '@/components/screens/Memories';
+import Memories from '@/components/screens/profile/Memories';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services

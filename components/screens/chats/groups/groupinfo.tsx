@@ -11,6 +11,7 @@ import {
 import { router } from 'expo-router';
 import LeavePopup from './leavepopup';
 import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardCard';
+import LeaderboardCard2 from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardFull';
 
 interface Member {
   id: string;
@@ -22,64 +23,37 @@ interface Member {
 
 interface GroupInfoScreenProps {
   loading: boolean;
+  title: string;
   members: Member[];
   leaderboard: any[];
+  handleLeave: () => void;
 }
 
 const GroupInfoScreen = (props: GroupInfoScreenProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  // Tab Selector
   const [activeTab, setActiveTab] = useState<'Members' | 'Leaderboard'>('Members');
-  const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
-
-
-  // Sample leaderboard data
-  const leaderboardUsers = [
-    {
-      username: 'williamwang',
-      point: { weekly_points: 100 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 80 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 60 },
-      profile_picture: require('@/assets/images/andrew.png')
-    },
-    {
-      username: 'TestUser',
-      point: { weekly_points: 40 },
-      profile_picture: require('@/assets/images/andrew.png')
+  const handleTabChange = (tab: 'Members' | 'Leaderboard') => {
+    if (tab === 'Leaderboard') {
+      setActiveTab('Leaderboard');
+    } else {
+      setActiveTab('Members');
     }
-  ];
-
-  const handleBack = () => {
-    router.back();
   };
 
-  const handleViewProfile = (memberId: string) => {
-    console.log('View profile:', memberId);
-    router.push(`/user/${memberId}`);
-  };
-
+  // Leave Popup
+  const [isLeavePopupVisible, setIsLeavePopupVisible] = useState(false);
   const handleLeaveClick = () => {
     setIsLeavePopupVisible(true);
   };
 
   const handleLeaveConfirm = () => {
     setIsLeavePopupVisible(false);
-    router.back();
-  };
-
-  const handleTabChange = (tab: 'Members (25)' | 'Leaderboard') => {
-    if (tab === 'Leaderboard') {
-      //router.push('/chats/groups/groupleaderboard');
-      setActiveTab('Leaderboard');
-    } else {
-      setActiveTab('Members');
-    }
+    props.handleLeave();
+    router.replace('/chats');
   };
 
   const renderContent = () => {
@@ -100,7 +74,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
               </View>
               <TouchableOpacity 
                 style={styles.viewProfileButton}
-                onPress={() => handleViewProfile(member.id)}
+                onPress={() => router.push(`/chats/${member.id}`)}
               >
                 <Text style={styles.viewProfileText}>View Profile</Text>
               </TouchableOpacity>
@@ -111,7 +85,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
     } else {
       return (
         <View style={styles.leaderboardContainer}>
-          <LeaderboardCard users={leaderboardUsers} />
+          <LeaderboardCard users={props.leaderboard} />
         </View>
       );
     }
@@ -124,14 +98,14 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
         <View style={styles.headerLeft}>
           <TouchableOpacity 
             style={styles.backButton}
-            onPress={handleBack}
+            onPress={() => router.back()}
           >
             <Image 
               source={require("@/assets/icons/backArrow.png")}
               style={styles.backIcon}
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Teaching Assistants</Text>
+          <Text style={styles.title}>{props.title}</Text>
         </View>
         <TouchableOpacity 
           style={styles.leaveButton}

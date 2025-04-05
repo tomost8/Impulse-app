@@ -17,12 +17,15 @@ interface Friend {
   id: string;
   name: string;
   username: string;
-  profileImage: any;
+  profile_picture: any;
   isInvited: boolean;
 }
 
 interface InviteToGroupProps {
   loading: boolean;
+  friends: Friend[];
+  members: any[];
+  handleInvite: (friendId: number) => void;
 }
 
 const InviteToGroupScreen = (props: InviteToGroupProps) => {
@@ -31,63 +34,49 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
       <Text>Loading...</Text>
     );
   }
+  
+  // Friends can be invited, not invited, or member (which we don't display)
+  const invitedFriends = props.friends.filter(friend => 
+    props.members.some(member => 
+      member.user.id === friend.id && member.status === 'PENDING'
+    )
+  );
+
+  const nonInvitedFriends = props.friends.filter(friend => 
+    !props.members.some(member => 
+      member.user.id === friend.id
+    )
+  );
+
+  const friends = [
+    ...invitedFriends.map(friend => ({ ...friend, isInvited: true })),
+    ...nonInvitedFriends.map(friend => ({ ...friend, isInvited: false }))
+  ]
+
+  console.log("Friends:", friends);
+
+  // Search Filtering
   const [searchQuery, setSearchQuery] = useState('');
-  const [friends, setFriends] = useState<Friend[]>([
-    { 
-      id: '1', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png'),
-      isInvited: true 
-    },
-    { 
-      id: '2', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png'),
-      isInvited: false 
-    },
-    { 
-      id: '3', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png'),
-      isInvited: false 
-    },
-    { 
-      id: '4', 
-      name: 'Courtney', 
-      username: 'username', 
-      profileImage: require('@/assets/images/andrew.png'),
-      isInvited: false 
-    },
-  ]);
-  const [isInviteSentVisible, setIsInviteSentVisible] = useState(false);
-  const [pendingInviteId, setPendingInviteId] = useState<string | null>(null);
-
-  const handleBack = () => {
-    router.back();
-  };
-
   const handleSearch = () => {
     Keyboard.dismiss();
-    console.log('Search query:', searchQuery);
   };
+  const filteredFriends = friends.filter(friend =>
+    friend.username.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const handleInvite = (friendId: string) => {
+  // Invite Handling
+  const [isInviteModalVisible, setIsInviteModalVisible] = useState(false);
+  const [pendingInviteId, setPendingInviteId] = useState<string | null>(null);
+
+  const handleInviteClick = (friendId: string) => {
     setPendingInviteId(friendId);
-    setIsInviteSentVisible(true);
+    console.log("Clicking invite for friend ID:", friendId);
+    props.handleInvite(Number(friendId));
+    setIsInviteModalVisible(true);
   };
 
   const handleInviteSentClose = () => {
-    if (pendingInviteId) {
-      setFriends(friends.map(friend => 
-        friend.id === pendingInviteId 
-          ? { ...friend, isInvited: true }
-          : friend
-      ));
-    }
-    setIsInviteSentVisible(false);
+    setIsInviteModalVisible(false);
     setPendingInviteId(null);
   };
 
@@ -97,7 +86,7 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
-          onPress={handleBack}
+          onPress={() => router.back()}
         >
           <Image 
             source={require("@/assets/icons/backArrow.png")}
@@ -126,11 +115,11 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
 
       {/* Friends List */}
       <ScrollView style={styles.friendsList}>
-        {friends.map((friend) => (
+        {filteredFriends.map((friend) => (
           <View key={friend.id} style={styles.friendCard}>
             <View style={styles.friendInfo}>
               <Image 
-                source={friend.profileImage}
+                source={friend.profile_picture}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
@@ -143,7 +132,7 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
                 styles.inviteButton,
                 friend.isInvited && styles.invitedButton
               ]}
-              onPress={() => handleInvite(friend.id)}
+              onPress={() => handleInviteClick(friend.id)}
               disabled={friend.isInvited}
             >
               <Text style={[
@@ -158,7 +147,7 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
       </ScrollView>
 
       <InviteSentPopup
-        isVisible={isInviteSentVisible}
+        isVisible={isInviteModalVisible}
         onClose={handleInviteSentClose}
       />
     </SafeAreaView>

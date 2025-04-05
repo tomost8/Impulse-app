@@ -11,9 +11,6 @@ import IndividualChat from '@/components/screens/chats/individualChat';
 // Debug
 import { debugRenders } from '@/utils/debug';
 
-
-
-
 const ChatPage = (props: any) => {
   const { chatId } = useLocalSearchParams();
   const { userId, authToken } = props;

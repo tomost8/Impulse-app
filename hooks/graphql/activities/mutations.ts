@@ -74,7 +74,7 @@ export const UPDATE_ACTIVITY = gql`
 
 export function useUpdateActivity() {
   const [updateActivityMutation] = useMutation(UPDATE_ACTIVITY);
-  const updateActivity = async (id: number, input: any, authToken: string) => {
+  const updateActivity = async (input: any, id: number, authToken: string) => {
     try {
       const response = await updateActivityMutation({ 
         variables: { 

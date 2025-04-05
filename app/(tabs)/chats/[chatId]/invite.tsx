@@ -1,4 +1,3 @@
-
 import { router, useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
@@ -10,65 +9,69 @@ import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup';
 // Debug
 import { debugRenders } from '@/utils/debug';
+// Services
+import { useUserData } from '@/services/UserPreferencesContext';
 
 const GroupInvitePage = (props: any) => {
   console.log("GroupInvitePage");
   const { chatId } = useLocalSearchParams();
-  const { userId, authToken } = props;
+  const { fetching, friends} = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Queries for Loading State
-  const friendsRef = useRef<any[] | null>(null);
-  const hasFetchedFriends = useRef<boolean>(false);
-  const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current);
+  // Queries 
 
   const chatMembersRef = useRef<any[] | null>(null);
   const hasFetchedChatMembers = useRef<boolean>(false);
   const { chatMembers, fetched: hasNewChatMembersData } = useGetChatMembers(Number(chatId), !hasFetchedChatMembers.current);
 
   useEffect(() => {
-    if (!hasNewFriendsData && !hasNewChatMembersData) {
+    if (!hasNewChatMembersData) {
       return;
-    }
-    if (hasNewFriendsData) {
-      friendsRef.current = friends;
-      hasFetchedFriends.current = true;
     }
     if (hasNewChatMembersData) {
       chatMembersRef.current = chatMembers;
       hasFetchedChatMembers.current = true;
     }
-    if (hasNewFriendsData && hasNewChatMembersData) {
+    if (hasNewChatMembersData) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData, hasNewChatMembersData]);
+  }, [hasNewChatMembersData]);
 
   // Mutations
   const { createChatMember } = useCreateChatMember();
   const [isInvitingUserToChat, setIsInvitingUserToChat] = useState(false);
-  const handleInviteUserToChat = async (chatId: number) => {
+  const handleInviteUserToChat = async (userId: number) => {
     setIsInvitingUserToChat(true);
     try {
       const input = { 
         user_id: userId, 
-        chat_id: chatId,
+        chat_id: Number(chatId),
       };
       const response = await createChatMember(input);
-      console.log(response.data.createChatMember);
-      return response.data.createChatMember;
+      if (response.success) {
+        console.log("response is successful:", response);
+      } else {
+        throw new Error("Response.success from createChatMember was false:" + response.errors);
+      }
     } catch (error) {
       console.error("Error inviting friend:", error);
-      throw error;
     } finally {
       setIsInvitingUserToChat(false);
     }
   }
 
   // Debug
-  const loading = !hasFetchedFriends.current || !hasFetchedChatMembers.current || isInvitingUserToChat;
+  const acceptedFriends = friends.filter((friend: any) => friend.status === 'ACCEPTED').map((friend: any) => friend.friend);
+  const friendsToInvite = acceptedFriends.filter((friend: any) => 
+    !chatMembersRef.current?.some(member => 
+      member.user.id === friend.id && member.status === 'ACCEPTED'
+    )
+  );
+  const loading = fetching || !hasFetchedChatMembers.current || isInvitingUserToChat;
   if (debugRenders && !loading) {
     console.log('Rendering GroupInvitePage\n',
-      'Friends:', friendsRef.current, '\n',
+      'Accepted Friends:', acceptedFriends, '\n',
+      'Friends to Invite:', friendsToInvite, '\n',
       'Chat Members:', chatMembersRef.current, '\n',
       'Render Counter:', renderCounter, '\n',
     );
@@ -76,6 +79,9 @@ const GroupInvitePage = (props: any) => {
 
   return <InviteToGroupScreen 
     loading={loading} 
+    friends={acceptedFriends}
+    members={chatMembersRef.current || []}
+    handleInvite={handleInviteUserToChat}
   />
 }
 

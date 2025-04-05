@@ -18,7 +18,7 @@ const DailyGoals = ({
       {/* Header Section */}
       <View style={styles.header}>
         <Text style={styles.title}>Daily Goals</Text>
-        <TouchableOpacity onPress={() => {router.push('/home/activityView')}}>
+        <TouchableOpacity onPress={() => {router.push('/home/viewActivity')}}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>

@@ -23,6 +23,7 @@ interface ChatMessage {
 interface ChatScreenProps {
   loading: boolean;
   chats: ChatMessage[];
+  requestCount: number;
 }
 
 const ChatScreen = (props: ChatScreenProps) => {
@@ -63,7 +64,7 @@ const ChatScreen = (props: ChatScreenProps) => {
 
       {/* Requests Count */}
       <TouchableOpacity onPress={() => router.push('/chats/requests')}>
-        <Text style={styles.requestsText}>Requests (2)</Text>
+        <Text style={styles.requestsText}>Requests ({props.requestCount})</Text>
       </TouchableOpacity>
 
       {/* Messages List */}

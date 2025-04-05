@@ -12,8 +12,6 @@ import {
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
 import { router } from "expo-router";
-import { useUpdateActivity } from "@/hooks/graphql/activities/mutations";
-import { useUserData } from "@/services/UserPreferencesContext";
 import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
 import EditActivityCard from "@/components/ui/common/EditActivityCard";
 
@@ -23,98 +21,69 @@ interface GoalFormData {
   description: string;
 }
 
-interface DailyGoalsScreenProps {
-  authToken: string;
+interface ViewGoalsScreenProps {
+  loading: boolean;
   activities: any[];
-  isActivitiesLoading: boolean;
+  timezone: string;
+  authToken: string;
+  selectedActivity: number | null;
+  setSelectedActivity: (activityId: number | null) => void;
+  formData: any;
+  handleFormDataChange: (field: string, value: any) => void;
+  setFormData: (formData: any) => void;
+  handleUpdateActivity: (input: any) => Promise<void>;
 }
   
-const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActivitiesLoading, authToken }) => {
-  const { updateActivity } = useUpdateActivity();
-  const { timezone, loading: timezoneLoading } = useUserData();
-  const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
-  const [goalFormData, setGoalFormData] = useState<GoalFormData>({
-    startTime: '',
-    duration: { hours: 0, minutes: 0 },
-    description: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  const resetFormData = () => {
+    props.setFormData({
+      startTime: '',
+      duration: { hours: 0, minutes: 0 },
+      description: ''
+    });
+  }
 
   const handleSelectGoal = (goalId: number) => {
-    if (expandedGoal === goalId) {
-      setExpandedGoal(null);
-      // Reset form data
-      setGoalFormData({
-        startTime: '',
-        duration: { hours: 0, minutes: 0 },
-        description: ''
-      });
+    if (props.selectedActivity === goalId) {
+      // Collapse expanded goal and reset form data
+      props.setSelectedActivity(null);
+      resetFormData();
     } else {
-      setExpandedGoal(goalId);
-      const selectedActivity = activities.find(activity => activity.id === goalId);
-      if (timezoneLoading) {
-        throw new Error('Timezone is still loading');
-      }
+      // Expand goal and set form data to corresponding activity data
+      props.setSelectedActivity(goalId);
+      const selectedActivity = props.activities.find((activity: any) => activity.id === goalId);
       const activityData = {
-        startTime: convertUtcToLocal(selectedActivity?.scheduledDatetime, timezone),
+        startTime: convertUtcToLocal(selectedActivity?.scheduledDatetime, props.timezone),
         duration: {
           hours: Math.floor(selectedActivity?.duration / 60),
           minutes: selectedActivity?.duration % 60
         },
         description: selectedActivity?.description || ''
       }
-      console.log(selectedActivity, "activityData", activityData);
       if (selectedActivity) {
-        setGoalFormData(activityData);
+        console.log("Activity Selected:", selectedActivity, "\nForm Data:", activityData);
+        props.setFormData(activityData);
       }
     }
-  };
-
-  const handleFormDataChange = (field: keyof GoalFormData, value: any) => {
-    console.log("field", field, "value", value);
-    setGoalFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   const handleSaveChanges = async () => {
-    setIsSubmitting(true);
-    try {
-      if (timezoneLoading) {
-        throw new Error('Timezone is still loading');
-      }
-      if (goalFormData) {
-        // Get Mutation Input
-        const utcTime = goalFormData.startTime 
-        ? convertLocalToUtc(goalFormData.startTime, timezone)
-        : new Date(Date.now());
-        const totalMinutes = (goalFormData.duration.hours * 60) + goalFormData.duration.minutes;
-        const input = {
-          scheduledDatetime: utcTime,
-          ...(totalMinutes > 0 && { duration: totalMinutes }),
-          ...(goalFormData.description && { description: goalFormData.description }),
-        };
-        // Update Activity
-        console.log("input", input);
-        const response = await updateActivity(expandedGoal || 0, input, authToken);
-        if (!response.success) {
-          throw new Error(`Failed to update activity: ${expandedGoal}`);
-        }
-        console.log("response", response);
-      }
-      setExpandedGoal(null);
-      // Reset form data
-      setGoalFormData({
-        startTime: '',
-        duration: { hours: 0, minutes: 0 },
-        description: ''
-      });
-    } catch (error) {
-      console.error('Error updating goal:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    const utcTime = props.formData.startTime 
+      ? convertLocalToUtc(props.formData.startTime, props.timezone)
+      : new Date(Date.now());
+    const totalMinutes = (props.formData.duration.hours * 60) + props.formData.duration.minutes;
+    const input = {
+      scheduledDatetime: utcTime,
+      ...(totalMinutes > 0 && { duration: totalMinutes }),
+      ...(props.formData.description && { description: props.formData.description }),
+    };
+    props.handleUpdateActivity(input);
+    props.setSelectedActivity(null);
+    resetFormData();
   };
 
   // Keyboard stuff idek
@@ -161,14 +130,14 @@ const DailyGoalsScreen: React.FC<DailyGoalsScreenProps> = ({ activities, isActiv
 
           {/* Goals List */}
           <View style={styles.activitiesContainer}>
-            {activities.map((activity) => (
+            {props.activities.map((activity: any) => (
               <EditActivityCard
                 key={activity.id}
                 category={activity.category}
-                isSelected={expandedGoal === activity.id}
+                isSelected={props.selectedActivity === activity.id}
                 onSelect={() => handleSelectGoal(activity.id)}
-                formData={goalFormData}
-                onFormDataChange={(field, value) => handleFormDataChange(field as keyof GoalFormData, value)}
+                formData={props.formData}
+                onFormDataChange={(field, value) => props.handleFormDataChange(field as keyof GoalFormData, value)}
                 onSave={handleSaveChanges}
                 scrollViewRef={scrollViewRef}
               />
@@ -226,5 +195,5 @@ const styles = StyleSheet.create({
   },
 });
   
-export default DailyGoalsScreen;
+export default ViewGoalsScreen;
   

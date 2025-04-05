@@ -5,14 +5,40 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import CommunityScreen from '@/components/screens/profile/FriendsCommunityList/CommunitiesList';
 // Services
 import { useUserData } from '@/services/UserPreferencesContext';
+import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations';
 
 const CommunitiesPage = () => {
-  const { fetching, communities } = useUserData();
+  const { fetching, user, communities } = useUserData();
+
+  // Mutations
+  const { deleteCommunityMember } = useDeleteCommunityMember();
+  const [isLeavingCommunity, setIsLeavingCommunity] = useState(false);
+  const handleLeaveCommunity = async (communityId: number) => {
+    try {
+      setIsLeavingCommunity(true);
+      const response = await deleteCommunityMember(user.id, communityId);
+      if (response.success) {
+        console.log("Successfully left community.");
+      } else {
+        throw new Error("Response.success from deleteCommunityMember was false:" + response.errors);
+      }
+      setIsLeavingCommunity(false);
+    } catch (error) {
+      console.error('Error leaving community:', error);
+    } finally {
+      setIsLeavingCommunity(false);
+    }
+  }
+
+  const acceptedCommunities = communities.filter((community: any) => community.status === 'ACCEPTED').map((community: any) => community.community);
+  
+  const loading = fetching || isLeavingCommunity;
 
   return (
     <CommunityScreen
-      communities={communities}
-      isLoading={fetching}
+      loading={loading}
+      communities={acceptedCommunities}
+      handleLeaveCommunity={handleLeaveCommunity}
     />
   );
 }
