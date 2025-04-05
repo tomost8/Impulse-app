@@ -12,9 +12,10 @@ import {
   ScrollView,
 } from 'react-native';
 import { s } from "react-native-size-matters";
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
 const GroupChat = () => {
+  const { chatId } = useLocalSearchParams();
   const [message, setMessage] = useState('');
 
   return (
@@ -40,7 +41,7 @@ const GroupChat = () => {
           {/* Profile Section - Clickable */}
           <TouchableOpacity 
             style={styles.profileSection}
-            onPress={() => router.push('/chats/groups/groupinfo')}
+            onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
           >
             <Image
               source={require("@/assets/images/andrew.png")}
@@ -82,10 +83,12 @@ const GroupChat = () => {
               setMessage('');
             }}
           >
+            {/*
             <Image
               source={require("@/assets/icons/sent.png")}
               style={styles.sendIcon}
             />
+            */}
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
