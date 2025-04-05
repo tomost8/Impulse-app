@@ -66,7 +66,7 @@ const PasswordPopup = ({ visible, onClose, onSubmit }: PasswordPopupProps) => {
               style={[styles.button, styles.leaveButton]}
               onPress={handleSubmit}
             >
-              <Text style={[styles.buttonText, styles.leaveButtonText]}>Leave</Text>
+              <Text style={[styles.buttonText, styles.leaveButtonText]}>Enter</Text>
             </TouchableOpacity>
           </View>
         </View>
