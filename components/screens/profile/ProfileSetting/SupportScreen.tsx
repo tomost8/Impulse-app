@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,9 +8,11 @@ import {
   ScrollView,
   Linking,
   SafeAreaView,
+  TextInput,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import AccountChangedConfirmation from '../popups/AccountChangedConfirmation';
 
 function Header() {
   return (
@@ -32,6 +34,14 @@ function Header() {
 }
 
 const SupportScreen = () => {
+  const [code, setCode] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const handleApply = () => {
+    // Backend validation would go here
+    setShowConfirmation(true);
+  };
+
   const handleDeleteAccountPress = () => {
     Linking.openURL('https://share.hsforms.com/1w35t-H25T2CMEpiTciIoyAscwc9');
   };
@@ -51,12 +61,34 @@ const SupportScreen = () => {
           </View>
         </View>
       </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Community Leader Account Change</Text>
+        <View style={styles.codeSection}>
+          <TextInput
+            style={styles.codeInput}
+            placeholder="Enter given code"
+            value={code}
+            onChangeText={setCode}
+          />
+          <TouchableOpacity 
+            style={styles.applyButton}
+            onPress={handleApply}
+          >
+            <Text style={styles.applyButtonText}>Apply</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.errorText}>Error: Code is incorrect</Text>
+      </View>
       <TouchableOpacity
         style={styles.deleteAccountButton}
         onPress={handleDeleteAccountPress}
       >
         <Text style={styles.buttonText}>Account Deletion Form</Text>
       </TouchableOpacity>
+      <AccountChangedConfirmation 
+        visible={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -117,6 +149,52 @@ const styles = StyleSheet.create({
     fontFamily: "Open Sans",
     fontSize: s(15),
     fontWeight: "400",
+  },
+  section: {
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginBottom: 16,
+  },
+  codeSection: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  codeInput: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  applyButton: {
+    height: 48,
+    paddingHorizontal: 24,
+    backgroundColor: '#DE728D',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  applyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+  },
+  errorText: {
+    color: '#DE728D',
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    marginTop: 8,
+    marginLeft: 16,
   },
   deleteAccountButton: {
     borderRadius: 30,
