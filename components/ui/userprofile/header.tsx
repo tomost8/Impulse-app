@@ -8,17 +8,25 @@ import {
 } from 'react-native';
 
 interface HeaderProps {
-  onBackPress: () => void;
+  onBackPress?: () => void;
   name: string;
   username: string;
   profileImage: any;
+  title?: string;
+  showBackButton?: boolean;
+  rightIcon?: any;
+  onRightIconPress?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
   onBackPress,
   name,
   username,
-  profileImage
+  profileImage,
+  title,
+  showBackButton = true,
+  rightIcon,
+  onRightIconPress,
 }) => {
   return (
     <View style={styles.headerContainer}>
@@ -29,16 +37,32 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={onBackPress}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Partner Insights</Text>
+        {showBackButton && (
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={onBackPress}
+          >
+            <Image 
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+        )}
+        <Text style={[
+          styles.headerTitle,
+          !showBackButton && styles.headerTitleLeft
+        ]}>{title || "Partner Insights"}</Text>
+        {rightIcon && (
+          <TouchableOpacity 
+            style={styles.rightButton}
+            onPress={onRightIconPress}
+          >
+            <Image 
+              source={rightIcon}
+              style={styles.rightIcon}
+            />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Profile Section */}
@@ -107,6 +131,9 @@ const styles = StyleSheet.create({
     color: '#242020',
     marginLeft: 8,
   },
+  headerTitleLeft: {
+    marginLeft: 20,
+  },
   profileSection: {
     alignItems: 'center',
     marginTop: 12,
@@ -129,6 +156,19 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     color: '#979797',
     marginTop: 4,
+  },
+  rightButton: {
+    position: 'absolute',
+    right: 16,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rightIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
   },
 });
 

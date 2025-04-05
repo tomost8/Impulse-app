@@ -12,12 +12,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Switch,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
 import Info2 from '@/components/screens/profile/setting/info2';
 import Info3 from '@/components/screens/profile/setting/info3';
 import Info4 from '@/components/screens/profile/setting/info4';
+import Info1 from '@/components/screens/profile/setting/info1';
 
 function Header() {
   return (
@@ -136,6 +138,7 @@ function ReminderNotifications(): JSX.Element {
   const [showInfo2, setShowInfo2] = useState(false);
   const [showInfo3, setShowInfo3] = useState(false);
   const [showInfo4, setShowInfo4] = useState(false);
+  const [showInfo1, setShowInfo1] = useState(false);
 
   // Generate time options
   const morningOptions = Array.from({ length: 21 }, (_, i) => {
@@ -188,7 +191,7 @@ function ReminderNotifications(): JSX.Element {
                 ...reminders,
                 morning: { ...reminders.morning, time }
               })}
-              onInfoPress={() => {}}
+              onInfoPress={() => setShowInfo1(true)}
             />
             <ReminderItem
               title="Midday Motivation"
@@ -261,6 +264,10 @@ function ReminderNotifications(): JSX.Element {
       <Info2 visible={showInfo2} onClose={() => setShowInfo2(false)} />
       <Info3 visible={showInfo3} onClose={() => setShowInfo3(false)} />
       <Info4 visible={showInfo4} onClose={() => setShowInfo4(false)} />
+      <Info1 
+        visible={showInfo1}
+        onClose={() => setShowInfo1(false)}
+      />
     </SafeAreaView>
   );
 }

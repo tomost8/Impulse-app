@@ -6,8 +6,12 @@ import { useGetChat, useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
 import ChatIdScreenOld from '@/components/old/chats/chatId/ChatIdScreen';
+import GroupChat from '@/components/screens/chats/groupChat';
+import IndividualChat from '@/components/screens/chats/individualChat'; 
 // Debug
 import { debugRenders } from '@/utils/debug';
+
+
 
 
 const ChatPage = (props: any) => {
@@ -71,18 +75,15 @@ const ChatPage = (props: any) => {
     );
   }
 
-  return (
-    <ChatIdScreenOld 
-      userId={userId}
-      chatId={Number(chatId)}
-      chat={chatRef.current}
-      isChatLoading={!hasFetchedChat.current}
-      chatMembers={chatMembersRef.current}
-      isChatMembersLoading={!hasFetchedChatMembers.current}
-      handleDeleteFriendship={handleDeleteFriendship}
-      isDeletingFriendship={isDeletingFriendship}
-    />
-  );
+  if (loading) {
+    return;
+  }
+
+  if (chatRef.current.type === "direct") {
+    return <IndividualChat />;
+  } else if (chatRef.current.type === "group") {
+    return <GroupChat />;
+  }
 }
 
 export default AuthWrapper(ChatPage);
