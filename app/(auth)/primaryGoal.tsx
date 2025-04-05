@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import GoalSelector from '@/components/GoalSelector';
 
 import PrimaryGoalScreen from '@/components/screens/SignupLogin/Signup/primaryGoal';
 
@@ -44,11 +43,6 @@ export default function PrimaryGoal() {
       </Text>
       <Text style={styles.text}>Each category is flexible - you can choose what specifically you want to work on within it.
       </Text>
-      <GoalSelector
-        selectedGoal={selectedGoal} 
-        setSelectedGoal={setSelectedGoal} 
-        primaryGoal={null}
-      />
       <Button 
         title="Back" 
         onPress={handleBack}

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
-import RemoveFriendPopup from './removeFriendPopup';
+import RemoveFriendPopup from './FriendRemoveModal';
 
 function Header() {
   return (
@@ -32,34 +32,23 @@ function Header() {
   );
 }
 
-const FriendsList = () => {
+interface FriendProps {
+  loading: boolean;
+  friends: any[];
+  handleRemoveFriend: (id: number) => void;
+}
+
+const FriendsList = (props: FriendProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+
   const [searchText, setSearchText] = useState("");
   const [showRemovePopup, setShowRemovePopup] = useState(false);
   const [selectedFriendId, setSelectedFriendId] = useState<number | null>(null);
 
-  const mockFriends = [
-    {
-      id: 1,
-      first_name: "Andrew",
-      last_name: "Smith",
-      username: "andrewsmith",
-    },
-    {
-      id: 2,
-      first_name: "Andrew",
-      last_name: "Smith",
-      username: "andrewsmith",
-    },
-    {
-      id: 3,
-      first_name: "Andrew",
-      last_name: "Smith",
-      username: "andrewsmith",
-    },
-  ];
-
   // Filter friends based on search text
-  const filteredFriends = mockFriends.filter(friend => 
+  const filteredFriends = props.friends.filter(friend => 
     friend.first_name.toLowerCase().includes(searchText.toLowerCase()) ||
     friend.last_name.toLowerCase().includes(searchText.toLowerCase()) ||
     friend.username.toLowerCase().includes(searchText.toLowerCase())
@@ -72,8 +61,7 @@ const FriendsList = () => {
 
   const confirmRemoveFriend = () => {
     if (selectedFriendId) {
-      console.log("Removing friend:", selectedFriendId);
-      // Add actual remove friend logic here
+      props.handleRemoveFriend(selectedFriendId);
     }
   };
 
@@ -99,7 +87,7 @@ const FriendsList = () => {
             <View key={friend.id} style={styles.friendItem}>
               <TouchableOpacity onPress={() => console.log("Profile pressed:", friend.id)}>
                 <Image
-                  source={require("@/assets/images/andrew.png")}
+                  source={{ uri: friend.profile_picture }}
                   style={styles.friendAvatar}
                 />
               </TouchableOpacity>

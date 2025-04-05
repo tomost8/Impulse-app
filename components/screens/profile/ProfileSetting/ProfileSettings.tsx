@@ -112,7 +112,7 @@ function ProfileSettings() {
           <SettingsItem
             title="Profile"
             icon={require("@/assets/icons/settingsProfile.png")}
-            onPress={() => router.push('/account/settings/profile')}
+            onPress={() => router.push('/account/settings/viewProfile')}
           />
           <SettingsItem
             title="Reminders and Notifications"

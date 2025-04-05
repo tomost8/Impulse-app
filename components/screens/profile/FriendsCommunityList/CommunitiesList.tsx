@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
-import LeaveCommunityPopup from './leaveCommunityPopup';
+import LeaveCommunityPopup from './CommunityLeaveModal';
 
 function Header() {
   return (
@@ -32,31 +32,23 @@ function Header() {
   );
 }
 
-const CommunitiesList = () => {
+interface CommunityProps {
+  loading: boolean;
+  communities: any[];
+  handleLeaveCommunity: (id: number) => void;
+}
+
+const CommunitiesList = (props: CommunityProps) => {
+  if (props.loading) {
+    return <Text>Loading...</Text>;
+  }
+
   const [searchText, setSearchText] = useState("");
   const [showLeavePopup, setShowLeavePopup] = useState(false);
   const [selectedCommunityId, setSelectedCommunityId] = useState<number | null>(null);
 
-  const mockCommunities = [
-    {
-      id: 1,
-      name: "Supercharged",
-      thumbnail: require("@/assets/images/andrew.png"),
-    },
-    {
-      id: 2,
-      name: "Supercharged",
-      thumbnail: require("@/assets/images/andrew.png"),
-    },
-    {
-      id: 3,
-      name: "Supercharged",
-      thumbnail: require("@/assets/images/andrew.png"),
-    },
-  ];
-
   // Filter communities based on search text
-  const filteredCommunities = mockCommunities.filter(community => 
+  const filteredCommunities = props.communities.filter(community => 
     community.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
@@ -67,8 +59,7 @@ const CommunitiesList = () => {
 
   const confirmLeaveCommunity = () => {
     if (selectedCommunityId) {
-      console.log("Leaving community:", selectedCommunityId);
-      // Add actual leave community logic here
+      props.handleLeaveCommunity(selectedCommunityId);
     }
   };
 
