@@ -28,25 +28,27 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.pickerContainer}>
+      <View style={[styles.pickerContainer, { width: '48%' }]}>
         <TouchableOpacity 
           style={styles.button} 
           onPress={() => setHoursVisible(true)}
         >
           <Text style={styles.buttonText}>
-            {hours === -1 ? 'Select hours' : `${hours} hr${hours !== 1 ? 's' : ''}`}
+            {`${hours} hrs`}
           </Text>
+          <Text style={styles.dropdownIcon}>▼</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.pickerContainer}>
+      <View style={[styles.pickerContainer, { width: '48%' }]}>
         <TouchableOpacity 
           style={styles.button} 
           onPress={() => setMinutesVisible(true)}
         >
           <Text style={styles.buttonText}>
-            {minutes === -1 ? 'Select minutes' : `${minutes} min${minutes !== 1 ? 's' : ''}`}
+            {`${minutes} mins`}
           </Text>
+          <Text style={styles.dropdownIcon}>▼</Text>
         </TouchableOpacity>
       </View>
 
@@ -56,7 +58,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
         options={hourOptions}
         onValueSelected={(value) => setDuration(Number(value), minutes)}
         selectedValue={String(hours)}
-        placeholder="Select hours"
+        placeholder="Select Time"
       />
 
       <PickerModal
@@ -65,7 +67,7 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
         options={minuteOptions}
         onValueSelected={(value) => setDuration(hours, Number(value))}
         selectedValue={String(minutes)}
-        placeholder="Select minutes"
+        placeholder="Select Time"
       />
     </View>
   );
@@ -75,22 +77,30 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   pickerContainer: {
-    flex: 1,
-    marginHorizontal: 5,
     height: 40,
   },
   button: {
     borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 4,
-    padding: 10,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 8,
     backgroundColor: 'white',
+    height: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   buttonText: {
-    fontSize: 14,
-    color: 'black',
+    fontSize: 16,
+    color: '#374151',
+  },
+  dropdownIcon: {
+    fontSize: 12,
+    color: '#374151',
   },
 });
 

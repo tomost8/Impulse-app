@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, Platform, StyleSheet, Modal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 interface TimePickerProps {
-  initialTime?: string; // either "HH:MM" or empty string
-  setTime: (time: string) => void;
+  initialTime?: string; // either "HH:MM AM" or "HH:MM PM" or empty string
   placeholder?: string;
+  setTime: (time: string) => void; // For setting the backend time in 24-hour format
 }
 
 const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placeholder = 'Choose' }) => {
@@ -19,9 +20,19 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
     const now = new Date();
     if (!initialTime) return now;
     
-    const [hours, minutes] = initialTime.split(':').map(Number);
+    const [timeStr, period] = initialTime.split(' ');
+    const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
+    
+    // Convert 12-hour to 24-hour format for internal use
+    let adjustedHours = hours;
+    if (period === 'PM' && hours !== 12) {
+      adjustedHours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      adjustedHours = 0;
+    }
+    
+    date.setHours(adjustedHours, minutes, 0, 0);
     return date;
   });
 
@@ -32,13 +43,21 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
   };
 
   const handleConfirm = () => {
-    // Format the time for display (24-hour format)
-    const hours = String(pickerTime.getHours()).padStart(2, '0');
+    // Get hours and minutes from pickerTime
+    const hours24 = pickerTime.getHours();
     const minutes = String(pickerTime.getMinutes()).padStart(2, '0');
-    const timeString = `${hours}:${minutes}`;
     
-    setDisplayTime(timeString);
-    setTime(timeString);
+    // Create 24-hour format string for setTime
+    const time24 = `${String(hours24).padStart(2, '0')}:${minutes}`;
+    
+    // Format 12-hour time for display
+    let hours12 = hours24 % 12;
+    hours12 = hours12 === 0 ? 12 : hours12;
+    const period = hours24 >= 12 ? 'PM' : 'AM';
+    const displayTimeString = `${String(hours12)}:${minutes} ${period}`;
+    
+    setDisplayTime(displayTimeString);
+    setTime(time24);
     setVisible(false);
   };
 
@@ -50,6 +69,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
         <Text style={styles.buttonText}>
           {displayTime || placeholder}
         </Text>
+        <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
       </TouchableOpacity>
 
       <Modal
@@ -102,14 +122,18 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
 const styles = StyleSheet.create({
   button: {
     padding: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
     borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    minHeight: 45,
   },
   buttonText: {
     fontSize: 16,
-    color: '#242020',
-    fontWeight: '600',
+    color: '#333',
   },
   modalOverlay: {
     flex: 1,

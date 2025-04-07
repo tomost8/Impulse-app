@@ -4,6 +4,8 @@ import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import ActivityDetailsSection from './ActivityDetailsSection';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
+import TimePicker from "./pickers/TimePicker";
+import DurationPicker from "./pickers/DurationPicker";
 
 // Importing assets
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
@@ -15,21 +17,17 @@ const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
 const defaultIcon = require("@/assets/icons/riseshine.png");
 
-type AddActivityCardProps = {
-  category: string;
-  isSelected: boolean;
-  onSelect: () => void;
-  isExpanded: boolean;
-  onCheckIconPress: () => void;
-  formData: {
-    startTime: string;
-    duration: { hours: number; minutes: number };
-    description: string;
-  };
-  onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
+// Add type for PickerModal props
+type PickerModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  onSelect: (value: string) => void;
+  items: React.ReactNode;
+  selectedValue: string;
+  title: string;
 };
 
-const PickerModal = ({ visible, onClose, onSelect, items, selectedValue, title }) => (
+const PickerModal: React.FC<PickerModalProps> = ({ visible, onClose, onSelect, items, selectedValue, title }) => (
   <Modal
     visible={visible}
     transparent={true}
@@ -56,7 +54,17 @@ const PickerModal = ({ visible, onClose, onSelect, items, selectedValue, title }
   </Modal>
 );
 
-const TimeInput = ({ 
+// Add type for TimeInput props
+type TimeInputProps = {
+  value: string;
+  placeholder: string;
+  onPress?: () => void;
+  type?: 'description' | 'time';
+  onChangeText?: (text: string) => void;
+  width?: string | number;
+};
+
+const TimeInput: React.FC<TimeInputProps> = ({ 
   value, 
   placeholder, 
   onPress, 
@@ -98,6 +106,21 @@ const TimeInput = ({
   );
 };
 
+// Update AddActivityCardProps
+type AddActivityCardProps = {
+  category: string;
+  isSelected: boolean;
+  onSelect: () => void;
+  isExpanded: boolean;
+  onCheckIconPress: () => void;
+  formData: {
+    startTime: string;
+    duration: { hours: number; minutes: number };
+    description: string;
+  };
+  onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
+};
+
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
   category,
   isSelected,
@@ -107,21 +130,10 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const [showTimePicker, setShowTimePicker] = useState(false);
   const [showHoursPicker, setShowHoursPicker] = useState(false);
   const [showMinsPicker, setShowMinsPicker] = useState(false);
 
-  const handleTimeChange = (event, selectedDate) => {
-    setShowTimePicker(false);
-    if (selectedDate) {
-      onFormDataChange('startTime', selectedDate.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit'
-      }));
-    }
-  };
-
-  const handleHoursChange = (hours) => {
+  const handleHoursChange = (hours: string) => {
     setShowHoursPicker(false);
     onFormDataChange('duration', { 
       ...formData.duration, 
@@ -129,7 +141,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
     });
   };
 
-  const handleMinutesChange = (minutes) => {
+  const handleMinutesChange = (minutes: string) => {
     setShowMinsPicker(false);
     onFormDataChange('duration', { 
       ...formData.duration, 
@@ -180,62 +192,24 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
           {/* Start Time */}
           <View style={styles.inputSection}>
             <Text style={styles.label}>Start Time (optional)</Text>
-            <TimeInput
-              value={formData?.startTime}
-              placeholder="Choose"
-              onPress={() => setShowTimePicker(true)}
+            <TimePicker
+              initialTime={formData?.startTime}
+              setTime={(time) => onFormDataChange('startTime', time)}
             />
-            {showTimePicker && (
-              <DateTimePicker
-                value={new Date()}
-                mode="time"
-                is24Hour={false}
-                display="default"
-                onChange={handleTimeChange}
-              />
-            )}
           </View>
 
           {/* Duration */}
           <View style={styles.inputSection}>
             <Text style={styles.label}>Activity Duration (optional)</Text>
-            <View style={styles.durationContainer}>
-              <TimeInput
-                value={formData?.duration?.hours ? `${formData.duration.hours} hrs` : "0 hrs"}
-                placeholder="0 hrs"
-                onPress={() => setShowHoursPicker(true)}
-                width="48%"
-              />
-              <TimeInput
-                value={formData?.duration?.minutes ? `${formData.duration.minutes} mins` : "0 mins"}
-                placeholder="0 mins"
-                onPress={() => setShowMinsPicker(true)}
-                width="48%"
-              />
-            </View>
-            
-            {/* Hours Picker Modal */}
-            <PickerModal
-              visible={showHoursPicker}
-              onClose={() => setShowHoursPicker(false)}
-              onSelect={handleHoursChange}
-              selectedValue={formData?.duration?.hours?.toString()}
-              title="Select Hours"
-              items={Array.from({ length: 11 }, (_, i) => (
-                <Picker.Item key={i} label={`${i} hrs`} value={i.toString()} />
-              ))}
-            />
-
-            {/* Minutes Picker Modal */}
-            <PickerModal
-              visible={showMinsPicker}
-              onClose={() => setShowMinsPicker(false)}
-              onSelect={handleMinutesChange}
-              selectedValue={formData?.duration?.minutes?.toString()}
-              title="Select Minutes"
-              items={Array.from({ length: 60 }, (_, i) => (
-                <Picker.Item key={i} label={`${i} mins`} value={i.toString()} />
-              ))}
+            <DurationPicker
+              hours={formData?.duration?.hours || 0}
+              minutes={formData?.duration?.minutes || 0}
+              setDuration={(hours, minutes) => {
+                setFormData(prev => ({
+                  ...prev,
+                  duration: { hours, minutes }
+                }));
+              }}
             />
           </View>
 

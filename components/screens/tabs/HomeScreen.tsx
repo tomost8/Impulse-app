@@ -8,23 +8,25 @@ import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/Leade
 import DailyAddPopup from "../home/dailyaddpopup";
 
 interface HomeScreenProps {
-  isLoading: boolean;
+  loading: boolean;
   name: string;
   activities: any[]; 
+  timezone: string;
   friendsLeaderboard: any[]; 
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ 
-  isLoading,
+  loading,
   name,
   activities,
+  timezone,
   friendsLeaderboard,
 }) => {
-  const [showDailyAddPopup, setShowDailyAddPopup] = useState(false);
-
-  if (isLoading) {
+  if (loading) {
     return <Text>Loading...</Text>;
   }
+  const [showDailyAddPopup, setShowDailyAddPopup] = useState(false);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
@@ -50,7 +52,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         <View style={styles.section}>
           <DailyGoals 
             activities={activities} 
-            isActivitiesLoading={isLoading} 
+            timezone={timezone}
           />
         </View>
 
@@ -58,7 +60,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         <View style={styles.leaderboardWrapper}>
           <LeaderboardFull 
             users={friendsLeaderboard}
-            isUsersLoading={isLoading}
+            isUsersLoading={loading}
           />
         </View>
       </ScrollView>

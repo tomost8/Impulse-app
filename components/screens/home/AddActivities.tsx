@@ -1,12 +1,8 @@
-import React, { useState } from "react";
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
 import AddActivityCard from "@/components/ui/common/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
-import { goals, getCategoryById } from "@/utils/goals";
-import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
-import { useUserData } from "@/services/UserPreferencesContext";
-import { convertLocalToUtc } from "@/utils/timezoneProcessing";
+import { goals } from "@/utils/goals";
 
 interface GoalFormData {
   startTime: string;
@@ -26,6 +22,7 @@ interface AddDailyGoalsScreenProps {
 }
 
 const AddDailyGoalsScreen = ({
+  loading,
   selectedGoals,
   expandedGoal,
   goalFormData,

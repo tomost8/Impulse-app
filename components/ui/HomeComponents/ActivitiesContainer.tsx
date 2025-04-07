@@ -6,13 +6,10 @@ import { router } from "expo-router";
 
 interface DailyGoalsProps {
   activities: any[];
-  isActivitiesLoading: boolean;
+  timezone: string;
 }
 
-const DailyGoals = ({ 
-  activities, 
-  isActivitiesLoading 
-}: DailyGoalsProps) => {
+const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -33,6 +30,7 @@ const DailyGoals = ({
             duration={activity.duration}
             status={activity.status}
             description={activity.description}
+            timezone={timezone}
           />
         ))
       ) : (

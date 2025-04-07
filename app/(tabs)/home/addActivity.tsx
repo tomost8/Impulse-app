@@ -34,7 +34,7 @@ const AddActivityPage = () => {
         if (formData) {
           const utcTime = formData.startTime 
             ? convertLocalToUtc(formData.startTime, timezone)
-            : new Date(Date.now());
+            : new Date(Date.now()).toISOString();
           const totalMinutes = (formData.duration.hours * 60) + formData.duration.minutes;
           const input = {
             category: getCategoryById(goalId),
@@ -42,15 +42,18 @@ const AddActivityPage = () => {
             ...(totalMinutes > 0 && { duration: totalMinutes }),
             ...(formData.description && { description: formData.description }),
           };
+          console.log("Input scheduledDatetime:", input.scheduledDatetime as string);
+          /*
           const response = await createActivity(input, authToken as string);
           if (response.success) {
             setActivities([...activities, response.activity]);
           } else {
             throw new Error(`Response.success from createActivity was false for goalId: ${goalId}`);
           }
+          */
         }
       }
-      router.replace("/home");
+      //router.replace("/home");
     } catch (error) {
       console.error('Error adding activities:', error);
     } finally {

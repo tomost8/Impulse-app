@@ -12,6 +12,7 @@ type DailyGoalCardProps = {
   duration: number;
   status: string;
   description: string;
+  timezone: string;
 };
 
 const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
@@ -20,9 +21,10 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
   duration,
   status,
   description,
+  timezone,
 }) => {
+  console.log("Category:", category, "UTC Time:", scheduledDatetime, "Local Time:", convertUtcToLocal(scheduledDatetime, timezone));
   const defaultIcon = require("@/assets/icons/riseshine.png");
-  const { timezone, loading } = useUserData();
   return (
     <View style={styles.container}>
       {/* Icon */}
@@ -33,7 +35,7 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
       {/* Text Content */}
       <View style={styles.textContainer}>
         <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-        {duration && !loading && (
+        {duration && (
           <Text style={styles.time}>
             {`${convertUtcToLocal(scheduledDatetime, timezone)} to ${convertUtcToLocal(scheduledDatetime, timezone, duration)}`}
           </Text>
