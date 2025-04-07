@@ -16,7 +16,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   const { userId, authToken } = useUserInfo();
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
-    setTimezone, setCameraClickable 
+    setTimezone, setCameraClickable, setLoginStreak
   } = useUserData();
 
   const [hasValidAuth, setHasValidAuth] = useState(false);
@@ -88,6 +88,13 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       userRef.current = user;
       hasFetchedUser.current = true;
       setUser(user);
+      
+      // 设置登录streak数据
+      if (user.login_streak) {
+        setLoginStreak(user.login_streak);
+        console.log("Login streak data received:", user.login_streak);
+      }
+      
       if (user.timezone) {
         setTimezone(user.timezone);
         currentDate.current = getLocalDay(new Date().toISOString(), user.timezone);
@@ -146,6 +153,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       setFetching(false);
       console.log("Initial User Data Fetched:", 
         "\nUser:", hasFetchedUser.current, userRef.current,
+        "\nLogin Streak:", userRef.current?.login_streak,
         "\nActivities:", hasFetchedActivities.current, activitiesRef.current,
         "\nCommunities:", hasFetchedCommunities.current, communitiesRef.current,
         "\nChats:", hasFetchedChats.current, chatsRef.current,

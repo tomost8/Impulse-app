@@ -9,6 +9,7 @@ type UserDataContextType = {
   friends: any[]; setFriends: (friends: any[]) => void;
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
+  loginStreak: any; setLoginStreak: (streak: any) => void;
   debugLog: () => void;
 };
 
@@ -25,6 +26,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Specific Data
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
+  const [loginStreak, setLoginStreak] = useState<any>(null);
 
   const debugLog = () => {
     console.log("=== User Data Debug Log ===",
@@ -34,7 +36,8 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       "\nCommunities:", communities,
       "\nFriends:", friends,
       "\nTimezone:", timezone,
-      "\nCamera Clickable:", cameraClickable
+      "\nCamera Clickable:", cameraClickable,
+      "\nLogin Streak:", loginStreak
     );
   };
 
@@ -47,6 +50,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     friends, setFriends,
     timezone, setTimezone,
     cameraClickable, setCameraClickable,
+    loginStreak, setLoginStreak,
     debugLog
   };
 

@@ -59,6 +59,11 @@ export const GET_USER = gql`
           weekly_points
           monthly_points
         }
+          login_streak {
+          streak_count
+          weekly_logins
+          last_login_date
+        }
       }
       errors { field message }
     }
