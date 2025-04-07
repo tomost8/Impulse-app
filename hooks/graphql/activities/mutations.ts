@@ -8,17 +8,11 @@ export const CREATE_ACTIVITY = gql`
       activity {
         id
         category
-        scheduledDatetime
+        description
         duration
+        scheduledDatetime
         status
-        post {
-          id
-          author {
-            id
-            first_name
-            last_name
-          }
-        }
+        createdAt
       }
       errors {
         field
@@ -59,10 +53,11 @@ export const UPDATE_ACTIVITY = gql`
       activity {
         id
         category
-        scheduledDatetime
-        duration
         description
+        duration
+        scheduledDatetime
         status
+        createdAt
       }
       errors {
         field

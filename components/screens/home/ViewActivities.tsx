@@ -148,7 +148,7 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
         {/* Only show button when keyboard is not visible */}
         {!isKeyboardVisible && (
           <View style={styles.buttonContainer}>
-            <AddGoalButton onPress={() => router.push("/home/activityAdd")} />
+            <AddGoalButton onPress={() => router.push("/home/addActivity")} />
           </View>
         )}
       </KeyboardAvoidingView>
