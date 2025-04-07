@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, M
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import TimePicker from "./pickers/TimePicker";
 import DurationPicker from "./pickers/DurationPicker";
+import ActivityDetailsSection from "./AddActivityDetails";
 
 // Importing assets
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
@@ -75,47 +76,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
         )}
       </TouchableOpacity>
 
-      {isSelected && (
-        <View style={styles.formContainer}>
-          {/* Start Time */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Start Time (optional)</Text>
-            <TimePicker
-              initialTime={formData?.startTime}
-              setTime={(time) => onFormDataChange('startTime', time)}
-            />
-          </View>
-
-          {/* Duration */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Activity Duration (optional)</Text>
-            <DurationPicker
-              hours={formData?.duration?.hours || 0}
-              minutes={formData?.duration?.minutes || 0}
-              setDuration={(hours, minutes) => {
-                onFormDataChange('duration', { hours, minutes });
-              }}
-            />
-          </View>
-
-          {/* Description */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Description (optional)</Text>
-            <TextInput
-              style={[styles.inputContainer, { width: '100%', height: 100, textAlignVertical: 'top' }]}
-              placeholder="Enter description"
-              placeholderTextColor="#979797"
-              value={formData?.description}
-              onChangeText={(text) => onFormDataChange('description', text)}
-              multiline
-              returnKeyType="done"
-              onSubmitEditing={() => {
-                Keyboard.dismiss();
-              }}
-            />
-          </View>
-        </View>
-      )}
+      {isSelected && <ActivityDetailsSection formData={formData} onFormDataChange={onFormDataChange} />}
     </View>
   );
 

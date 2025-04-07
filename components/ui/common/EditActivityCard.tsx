@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, Keyboard, ScrollView, Modal, TextInput, Platform } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-import ActivityDetailsSection from './ActivityDetailsSection';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import EditActivityDetails from './EditActivityDetails';
 
 // Importing assets
 const editIcon = require("@/assets/icons/editDailyGoal.png");
@@ -22,94 +22,6 @@ interface EditActivityCardProps {
   scrollViewRef: React.RefObject<ScrollView>;
 }
 
-// Reuse PickerModal component
-const PickerModal = ({ visible, onClose, onSelect, items, selectedValue, title }) => {
-  const [tempSelected, setTempSelected] = useState(selectedValue);
-
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="slide"
-    >
-      <TouchableOpacity 
-        style={styles.modalOverlay} 
-        activeOpacity={1} 
-        onPress={onClose}
-      >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{title}</Text>
-          <ScrollView>
-            {items.map((item) => (
-              <TouchableOpacity
-                key={item}
-                style={[
-                  styles.modalItem,
-                  tempSelected === item && styles.selectedItem
-                ]}
-                onPress={() => {
-                  setTempSelected(item);
-                  onSelect(item);
-                }}
-              >
-                <Text style={[
-                  styles.modalItemText,
-                  tempSelected === item && styles.selectedItemText
-                ]}>
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-          <TouchableOpacity 
-            style={styles.confirmButton}
-            onPress={onClose}
-          >
-            <Text style={styles.confirmButtonText}>Confirm</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
-    </Modal>
-  );
-};
-
-// Reuse TimeInput component
-const TimeInput = ({ 
-  value, 
-  placeholder, 
-  onPress, 
-  type, 
-  onChangeText, 
-  width = '100%' 
-}) => {
-  if (type === 'description') {
-    return (
-      <TextInput
-        style={[styles.inputContainer, { width, height: 100, textAlignVertical: 'top' }]}
-        placeholder={placeholder}
-        placeholderTextColor="#979797"
-        value={value}
-        onChangeText={onChangeText}
-        multiline
-        returnKeyType="done"
-        onSubmitEditing={() => Keyboard.dismiss()}
-        blurOnSubmit={true}
-      />
-    );
-  }
-
-  return (
-    <TouchableOpacity 
-      style={[styles.inputContainer, { width }]}
-      onPress={onPress}
-    >
-      <Text style={value ? styles.inputText : styles.placeholderText}>
-        {value || placeholder}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-
 const EditActivityCard: React.FC<EditActivityCardProps> = ({
   category,
   isSelected,
@@ -119,53 +31,7 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
   onSave,
   scrollViewRef,
 }) => {
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showHoursPicker, setShowHoursPicker] = useState(false);
-  const [showMinsPicker, setShowMinsPicker] = useState(false);
-
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
-  const handleSubmitEditing = () => {
-    Keyboard.dismiss();
-  };
-
-  const handleDescriptionFocus = () => {
-    setTimeout(() => {
-      scrollViewRef?.current?.scrollTo({
-        y: 300,
-        animated: true,
-      });
-    }, 50);
-  };
-
-  const handleTimeChange = (event, selectedDate) => {
-    if (Platform.OS === 'android') {
-      setShowTimePicker(false);
-    }
-    if (selectedDate) {
-      onFormDataChange('startTime', selectedDate.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: true 
-      }));
-    }
-  };
-
-  const handleHoursChange = (hours) => {
-    setShowHoursPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      hours 
-    });
-  };
-
-  const handleMinutesChange = (minutes) => {
-    setShowMinsPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      minutes 
-    });
-  };
 
   React.useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -183,125 +49,27 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
         <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-      {/* Edit Button */}
       <TouchableOpacity onPress={onSelect} style={styles.editButton}>
         <Image source={editIcon} style={styles.editIcon} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
 
-  const renderTimePicker = () => {
-    if (Platform.OS === 'ios') {
-      return (
-        <Modal
-          visible={showTimePicker}
-          transparent={true}
-          animationType="slide"
-        >
-          <TouchableOpacity 
-            style={styles.modalOverlay} 
-            activeOpacity={1}
-            onPress={() => setShowTimePicker(false)}
-          >
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Select Time</Text>
-              <DateTimePicker
-                value={new Date()}
-                mode="time"
-                is24Hour={false}
-                display="spinner"
-                onChange={handleTimeChange}
-                style={{ width: '100%' }}
-                textColor="#242020"
-              />
-              <TouchableOpacity 
-                style={styles.confirmButton}
-                onPress={() => setShowTimePicker(false)}
-              >
-                <Text style={styles.confirmButtonText}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </Modal>
-      );
-    }
-    
-    return showTimePicker && (
-      <DateTimePicker
-        value={new Date()}
-        mode="time"
-        is24Hour={false}
-        display="spinner"
-        onChange={handleTimeChange}
-      />
-    );
-  };
-
   const renderExpandedCard = () => (
     <>
       {renderCollapsedCard()}
-      <View style={styles.detailsContainer}>
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Start Time (optional)</Text>
-          <TimeInput
-            value={formData?.startTime}
-            placeholder="Choose"
-            onPress={() => setShowTimePicker(true)}
-          />
-        </View>
-
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Activity Duration (optional)</Text>
-          <View style={styles.durationContainer}>
-            <TimeInput
-              value={formData?.duration?.hours ? `${formData.duration.hours} hrs` : "0 hrs"}
-              placeholder="0 hrs"
-              onPress={() => setShowHoursPicker(true)}
-              width="48%"
-            />
-            <TimeInput
-              value={formData?.duration?.minutes ? `${formData.duration.minutes} mins` : "0 mins"}
-              placeholder="0 mins"
-              onPress={() => setShowMinsPicker(true)}
-              width="48%"
-            />
-          </View>
-        </View>
-
-        <View style={styles.inputSection}>
-          <Text style={styles.label}>Description (optional)</Text>
-          <TimeInput
-            type="description"
-            value={formData?.description}
-            placeholder="Enter description"
-            onChangeText={(text) => onFormDataChange('description', text)}
-          />
-        </View>
-
-        <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-      </View>
-
-      {renderTimePicker()}
-
-      <PickerModal
-        visible={showHoursPicker}
-        onClose={() => setShowHoursPicker(false)}
-        onSelect={handleHoursChange}
-        items={Array.from({ length: 10 }, (_, i) => i + 1)}
-        selectedValue={formData?.duration?.hours}
-        title="Select Hours"
+      <EditActivityDetails
+        category={category}
+        isSelected={isSelected}
+        onSelect={onSelect}
+        isExpanded={true}
+        onCheckIconPress={onSave}
+        formData={formData}
+        onFormDataChange={onFormDataChange}
       />
-
-      <PickerModal
-        visible={showMinsPicker}
-        onClose={() => setShowMinsPicker(false)}
-        onSelect={handleMinutesChange}
-        items={Array.from({ length: 60 }, (_, i) => i)}
-        selectedValue={formData?.duration?.minutes}
-        title="Select Minutes"
-      />
+      <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+        <Text style={styles.saveButtonText}>Save Changes</Text>
+      </TouchableOpacity>
     </>
   );
 

@@ -42,18 +42,15 @@ const AddActivityPage = () => {
             ...(totalMinutes > 0 && { duration: totalMinutes }),
             ...(formData.description && { description: formData.description }),
           };
-          console.log("Input", input);
-          /*
           const response = await createActivity(input, authToken as string);
           if (response.success) {
             setActivities([...activities, response.activity]);
           } else {
             throw new Error(`Response.success from createActivity was false for goalId: ${goalId}`);
           }
-          */
         }
       }
-      //router.replace("/home");
+      router.replace("/home");
     } catch (error) {
       console.error('Error adding activities:', error);
     } finally {
