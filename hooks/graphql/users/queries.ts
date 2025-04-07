@@ -59,9 +59,13 @@ export const GET_USER = gql`
           weekly_points
           monthly_points
         }
-          login_streak {
+        login_streak {
           streak_count
           weekly_logins
+          formatted_weekly_logins {
+            label
+            completed
+          }
           last_login_date
         }
       }

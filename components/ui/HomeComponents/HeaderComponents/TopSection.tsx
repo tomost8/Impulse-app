@@ -3,9 +3,14 @@ import { View, StyleSheet } from "react-native";
 import Greeting from "./Greeting"; // ✅ Updated import
 import StreakTracker from "./StreakTracker"; // ✅ Import StreakTracker component
 import StreakBadge from "./StreakBadge"; // ✅ Importing StreakBadge
+import { useUserData } from "@/services/UserPreferencesContext";
 
 
 const TopSectionContainer: React.FC<{ name: string }> = ({ name }) => {
+    const { loginStreak } = useUserData();
+    // 使用API返回的streak_count，如果没有则默认为0
+    const streakCount = loginStreak?.streak_count || 0;
+    
     return (
       <View style={styles.container}>
         {/* Greeting */}
@@ -13,7 +18,7 @@ const TopSectionContainer: React.FC<{ name: string }> = ({ name }) => {
   
         {/* Streak Section */}
         <View style={styles.streakWrapper}>
-          <StreakBadge streakCount={72} />
+          <StreakBadge streakCount={streakCount} />
           <StreakTracker />
         </View>
       </View>

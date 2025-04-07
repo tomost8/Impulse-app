@@ -1,15 +1,22 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
+import { useUserData } from "@/services/UserPreferencesContext";
 
 // Importing icons
 import StreakFire from "@/assets/icons/streakFireNew.png";
 import StreakFiller from "@/assets/icons/streakFiller.png";
 
-// Define the days of the week and streak completion status
-const days = [
-  { label: "S", completed: true },
-  { label: "M", completed: true },
-  { label: "T", completed: true },
+// 定义日期项的类型
+interface DayItem {
+  label: string;
+  completed: boolean;
+}
+
+// 默认的days数组（仅在没有登录数据时使用）
+const defaultDays: DayItem[] = [
+  { label: "S", completed: false },
+  { label: "M", completed: false },
+  { label: "T", completed: false },
   { label: "W", completed: false },
   { label: "TH", completed: false },
   { label: "F", completed: false },
@@ -17,11 +24,16 @@ const days = [
 ];
 
 const StreakTracker: React.FC = () => {
+  const { loginStreak } = useUserData();
+  
+  // 使用API返回的formatted_weekly_logins或默认值
+  const days: DayItem[] = loginStreak?.formatted_weekly_logins || defaultDays;
+
   return (
     <View style={styles.container}>
       {/* Day Labels */}
       <View style={styles.dayRow}>
-        {days.map((day, index) => (
+        {days.map((day: DayItem, index: number) => (
           <Text key={index} style={styles.dayLabel}>
             {day.label}
           </Text>
@@ -30,7 +42,7 @@ const StreakTracker: React.FC = () => {
 
       {/* Streak Icons */}
       <View style={styles.iconRow}>
-        {days.map((day, index) => (
+        {days.map((day: DayItem, index: number) => (
           <Image
             key={index}
             source={day.completed ? StreakFire : StreakFiller}
