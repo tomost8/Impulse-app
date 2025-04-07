@@ -45,12 +45,12 @@ const AddActivityPage = () => {
           const response = await createActivity(input, authToken as string);
           if (response.success) {
             setActivities([...activities, response.activity]);
+            router.replace("/home");
           } else {
             throw new Error(`Response.success from createActivity was false for goalId: ${goalId}`);
           }
         }
       }
-      router.replace("/home");
     } catch (error) {
       console.error('Error adding activities:', error);
     } finally {

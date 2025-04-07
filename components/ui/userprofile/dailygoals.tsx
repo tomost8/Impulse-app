@@ -4,7 +4,7 @@ import {
   Text, 
   StyleSheet 
 } from 'react-native';
-import DailyGoalCard from '@/components/ui/common/ActivityCard';
+import DailyGoalCard from '@/components/ui/common/activityCards/ActivityCard';
 
 interface DailyGoal {
   category: string;

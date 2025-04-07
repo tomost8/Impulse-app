@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
-import EditActivityCard from "@/components/ui/common/EditActivityCard";
+import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
 import React, { useState } from "react";
 import { router } from "expo-router";
 

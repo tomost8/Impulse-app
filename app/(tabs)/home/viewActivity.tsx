@@ -30,8 +30,6 @@ const ViewActivityPage = () => {
         ...(totalMinutes > 0 && { duration: totalMinutes }),
         ...(formData.description && { description: formData.description }),
       };
-      console.log("Input:", input);
-      /*
       const response = await updateActivity(input, selectedActivity as number, authToken as string);
       if (response.success) {
         setActivities(activities.map(activity => 
@@ -42,7 +40,6 @@ const ViewActivityPage = () => {
       } else {
         throw new Error("Response.success from createChatMember was false:" + response.errors);
       }
-      */
     } catch (error) { 
       console.error("Error updating activity:", error);
     } finally {

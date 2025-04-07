@@ -68,6 +68,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       <DailyAddPopup 
         isVisible={showDailyAddPopup}
         onClose={() => setShowDailyAddPopup(false)}
+        onConfirm={() => setShowDailyAddPopup(false)}
       />
     </SafeAreaView>
   );

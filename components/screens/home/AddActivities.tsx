@@ -1,6 +1,6 @@
 import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
 import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
-import AddActivityCard from "@/components/ui/common/AddActivityCard";
+import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
 import { goals } from "@/utils/goals";
 

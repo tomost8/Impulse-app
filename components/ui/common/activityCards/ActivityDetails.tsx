@@ -1,37 +1,42 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput, Keyboard } from 'react-native';
-import DurationPicker from './pickers/DurationPicker';
-import TimePicker from './pickers/TimePicker';
+import DurationPicker from '../pickers/DurationPicker';
+import TimePicker from '../pickers/TimePicker';
 
-type ActivityDetailsProps = {
+interface ActivityDetailsProps {
   formData: {
     startTime: string;
     duration: { hours: number; minutes: number };
     description: string;
   };
   onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
-  onDescriptionFocus?: () => void;
-};
+  extraStyles?: any;
+}
 
-const ActivityDetailsSection: React.FC<ActivityDetailsProps> = ({
+const ActivityDetails: React.FC<ActivityDetailsProps> = ({
   formData,
   onFormDataChange,
-  onDescriptionFocus,
+  extraStyles,
 }) => {
+  const combinedStyles = {
+    ...styles,
+    inputSection: [styles.inputSection, extraStyles?.inputSection],
+    label: [styles.label, extraStyles?.label],
+    inputContainer: [styles.inputContainer, extraStyles?.inputContainer],
+  };
+
   return (
-    <View style={styles.formContainer}>
-      {/* Start Time */}
-      <View style={styles.inputSection}>
-        <Text style={styles.label}>Start Time (optional)</Text>
+    <View>
+      <View style={combinedStyles.inputSection}>
+        <Text style={combinedStyles.label}>Start Time (optional)</Text>
         <TimePicker
           initialTime={formData?.startTime}
           setTime={(time) => onFormDataChange('startTime', time)}
         />
       </View>
 
-      {/* Duration */}
-      <View style={styles.inputSection}>
-        <Text style={styles.label}>Activity Duration (optional)</Text>
+      <View style={combinedStyles.inputSection}>
+        <Text style={combinedStyles.label}>Activity Duration (optional)</Text>
         <DurationPicker
           hours={formData?.duration?.hours || 0}
           minutes={formData?.duration?.minutes || 0}
@@ -41,21 +46,17 @@ const ActivityDetailsSection: React.FC<ActivityDetailsProps> = ({
         />
       </View>
 
-      {/* Description */}
-      <View style={styles.inputSection}>
-        <Text style={styles.label}>Description (optional)</Text>
+      <View style={combinedStyles.inputSection}>
+        <Text style={combinedStyles.label}>Description (optional)</Text>
         <TextInput
-          style={[styles.inputContainer, { width: '100%', height: 100, textAlignVertical: 'top' }]}
+          style={[combinedStyles.inputContainer, { height: 100, textAlignVertical: 'top' }]}
           placeholder="Enter description"
           placeholderTextColor="#979797"
           value={formData?.description}
           onChangeText={(text) => onFormDataChange('description', text)}
           multiline
           returnKeyType="done"
-          onFocus={onDescriptionFocus}
-          onSubmitEditing={() => {
-            Keyboard.dismiss();
-          }}
+          onSubmitEditing={Keyboard.dismiss}
         />
       </View>
     </View>
@@ -88,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ActivityDetailsSection; 
+export default ActivityDetails; 

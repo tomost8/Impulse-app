@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, Keyboard, ScrollView, Modal, TextInput, Platform } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import EditActivityDetails from './EditActivityDetails';
+import ActivityDetails from './ActivityDetails';
 
 // Importing assets
 const editIcon = require("@/assets/icons/editDailyGoal.png");
@@ -49,6 +48,7 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
         <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+      {/* Edit Button */}
       <TouchableOpacity onPress={onSelect} style={styles.editButton}>
         <Image source={editIcon} style={styles.editIcon} />
       </TouchableOpacity>
@@ -58,18 +58,17 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
   const renderExpandedCard = () => (
     <>
       {renderCollapsedCard()}
-      <EditActivityDetails
-        category={category}
-        isSelected={isSelected}
-        onSelect={onSelect}
-        isExpanded={true}
-        onCheckIconPress={onSave}
-        formData={formData}
-        onFormDataChange={onFormDataChange}
-      />
-      <TouchableOpacity style={styles.saveButton} onPress={onSave}>
-        <Text style={styles.saveButtonText}>Save Changes</Text>
-      </TouchableOpacity>
+      <View style={styles.detailsContainer}>
+        <ActivityDetails
+          formData={formData}
+          onFormDataChange={onFormDataChange}
+          extraStyles={styles}
+        />
+        
+        <TouchableOpacity style={styles.saveButton} onPress={onSave}>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </TouchableOpacity>
+      </View>
     </>
   );
 

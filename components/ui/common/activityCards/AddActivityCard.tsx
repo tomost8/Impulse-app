@@ -1,9 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-import TimePicker from "./pickers/TimePicker";
-import DurationPicker from "./pickers/DurationPicker";
-import ActivityDetailsSection from "./AddActivityDetails";
+import ActivityDetails from "./ActivityDetails";  
 
 // Importing assets
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
@@ -76,7 +74,12 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
         )}
       </TouchableOpacity>
 
-      {isSelected && <ActivityDetailsSection formData={formData} onFormDataChange={onFormDataChange} />}
+      {isSelected && 
+        <ActivityDetails 
+          formData={formData} 
+          onFormDataChange={onFormDataChange} 
+        />
+      }
     </View>
   );
 
