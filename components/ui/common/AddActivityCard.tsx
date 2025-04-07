@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-import ActivityDetailsSection from './ActivityDetailsSection';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
 import TimePicker from "./pickers/TimePicker";
 import DurationPicker from "./pickers/DurationPicker";
 
@@ -17,96 +14,6 @@ const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
 const defaultIcon = require("@/assets/icons/riseshine.png");
 
-// Add type for PickerModal props
-type PickerModalProps = {
-  visible: boolean;
-  onClose: () => void;
-  onSelect: (value: string) => void;
-  items: React.ReactNode;
-  selectedValue: string;
-  title: string;
-};
-
-const PickerModal: React.FC<PickerModalProps> = ({ visible, onClose, onSelect, items, selectedValue, title }) => (
-  <Modal
-    visible={visible}
-    transparent={true}
-    animationType="slide"
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalContent}>
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>{title}</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.modalDoneButton}>Done</Text>
-          </TouchableOpacity>
-        </View>
-        <Picker
-          selectedValue={selectedValue}
-          onValueChange={onSelect}
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-        >
-          {items}
-        </Picker>
-      </View>
-    </View>
-  </Modal>
-);
-
-// Add type for TimeInput props
-type TimeInputProps = {
-  value: string;
-  placeholder: string;
-  onPress?: () => void;
-  type?: 'description' | 'time';
-  onChangeText?: (text: string) => void;
-  width?: string | number;
-};
-
-const TimeInput: React.FC<TimeInputProps> = ({ 
-  value, 
-  placeholder, 
-  onPress, 
-  type, 
-  onChangeText, 
-  width = '100%' 
-}) => {
-  if (type === 'description') {
-    return (
-      <TextInput
-        style={[styles.inputContainer, { width, height: 100, textAlignVertical: 'top' }]}
-        placeholder={placeholder}
-        placeholderTextColor="#979797"
-        value={value}
-        onChangeText={onChangeText}
-        multiline
-        returnKeyType="done"
-        blurOnSubmit={true}
-        onSubmitEditing={() => {
-          Keyboard.dismiss();
-        }}
-      />
-    );
-  }
-
-  return (
-    <TouchableOpacity 
-      style={[styles.inputContainer, { width }]}
-      onPress={onPress}
-    >
-      <Text style={value ? styles.inputText : styles.placeholderText}>
-        {value || placeholder}
-      </Text>
-      <Image 
-        source={require('@/assets/icons/arrow-down-grey.png')}
-        style={styles.arrowIcon}
-      />
-    </TouchableOpacity>
-  );
-};
-
-// Update AddActivityCardProps
 type AddActivityCardProps = {
   category: string;
   isSelected: boolean;
@@ -130,25 +37,6 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const [showHoursPicker, setShowHoursPicker] = useState(false);
-  const [showMinsPicker, setShowMinsPicker] = useState(false);
-
-  const handleHoursChange = (hours: string) => {
-    setShowHoursPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      hours: parseInt(hours) 
-    });
-  };
-
-  const handleMinutesChange = (minutes: string) => {
-    setShowMinsPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      minutes: parseInt(minutes) 
-    });
-  };
-
   const renderCollapsedCard = () => (
     <TouchableOpacity onPress={onSelect}
       style={[styles.container, isSelected && styles.selectedContainer]}
@@ -205,10 +93,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
               hours={formData?.duration?.hours || 0}
               minutes={formData?.duration?.minutes || 0}
               setDuration={(hours, minutes) => {
-                setFormData(prev => ({
-                  ...prev,
-                  duration: { hours, minutes }
-                }));
+                onFormDataChange('duration', { hours, minutes });
               }}
             />
           </View>
@@ -216,11 +101,17 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
           {/* Description */}
           <View style={styles.inputSection}>
             <Text style={styles.label}>Description (optional)</Text>
-            <TimeInput
-              type="description"
-              value={formData?.description}
+            <TextInput
+              style={[styles.inputContainer, { width: '100%', height: 100, textAlignVertical: 'top' }]}
               placeholder="Enter description"
+              placeholderTextColor="#979797"
+              value={formData?.description}
               onChangeText={(text) => onFormDataChange('description', text)}
+              multiline
+              returnKeyType="done"
+              onSubmitEditing={() => {
+                Keyboard.dismiss();
+              }}
             />
           </View>
         </View>

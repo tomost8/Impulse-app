@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, Platform, StyleSheet, Modal } from 'react-native';
+import { View, TouchableOpacity, Text, Platform, StyleSheet, Modal, Image } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -63,13 +63,17 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
 
   return (
     <View>
-      <TouchableOpacity onPress={() => {
-        setVisible(true);
-      }} style={styles.button}>
-        <Text style={styles.buttonText}>
+      <TouchableOpacity 
+        onPress={() => setVisible(true)} 
+        style={styles.inputContainer}
+      >
+        <Text style={displayTime ? styles.inputText : styles.placeholderText}>
           {displayTime || placeholder}
         </Text>
-        <MaterialIcons name="arrow-drop-down" size={24} color="#666" />
+        <Image 
+          source={require('@/assets/icons/arrow-down-grey.png')}
+          style={styles.arrowIcon}
+        />
       </TouchableOpacity>
 
       <Modal
@@ -120,20 +124,29 @@ const TimePicker: React.FC<TimePickerProps> = ({ initialTime, setTime, placehold
 };
 
 const styles = StyleSheet.create({
-  button: {
-    padding: 10,
-    backgroundColor: '#ffffff',
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
     borderRadius: 8,
+    padding: 8,
+    backgroundColor: 'white',
+    height: 40,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    minHeight: 45,
   },
-  buttonText: {
+  inputText: {
     fontSize: 16,
-    color: '#333',
+    color: '#374151',
+  },
+  placeholderText: {
+    fontSize: 16,
+    color: '#9CA3AF',
+  },
+  arrowIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
   modalOverlay: {
     flex: 1,

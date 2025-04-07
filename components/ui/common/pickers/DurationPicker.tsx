@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import PickerModal from './PickerModal';
 
 interface DurationPickerProps {
@@ -30,25 +30,31 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
     <View style={styles.container}>
       <View style={[styles.pickerContainer, { width: '48%' }]}>
         <TouchableOpacity 
-          style={styles.button} 
+          style={styles.inputContainer} 
           onPress={() => setHoursVisible(true)}
         >
-          <Text style={styles.buttonText}>
-            {`${hours} hrs`}
+          <Text style={styles.inputText}>
+            {`${hours} hr${hours !== 1 ? 's' : ''}`}
           </Text>
-          <Text style={styles.dropdownIcon}>▼</Text>
+          <Image 
+            source={require('@/assets/icons/arrow-down-grey.png')}
+            style={styles.arrowIcon}
+          />
         </TouchableOpacity>
       </View>
 
       <View style={[styles.pickerContainer, { width: '48%' }]}>
         <TouchableOpacity 
-          style={styles.button} 
+          style={styles.inputContainer} 
           onPress={() => setMinutesVisible(true)}
         >
-          <Text style={styles.buttonText}>
-            {`${minutes} mins`}
+          <Text style={styles.inputText}>
+            {`${minutes} min${minutes !== 1 ? 's' : ''}`}
           </Text>
-          <Text style={styles.dropdownIcon}>▼</Text>
+          <Image 
+            source={require('@/assets/icons/arrow-down-grey.png')}
+            style={styles.arrowIcon}
+          />
         </TouchableOpacity>
       </View>
 
@@ -58,7 +64,8 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
         options={hourOptions}
         onValueSelected={(value) => setDuration(Number(value), minutes)}
         selectedValue={String(hours)}
-        placeholder="Select Time"
+        title="Select Hours"
+        placeholder="Select Hours"
       />
 
       <PickerModal
@@ -67,7 +74,8 @@ const DurationPicker: React.FC<DurationPickerProps> = ({
         options={minuteOptions}
         onValueSelected={(value) => setDuration(hours, Number(value))}
         selectedValue={String(minutes)}
-        placeholder="Select Time"
+        title="Select Minutes"
+        placeholder="Select Minutes"
       />
     </View>
   );
@@ -83,7 +91,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     height: 40,
   },
-  button: {
+  inputContainer: {
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 8,
@@ -94,13 +102,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  buttonText: {
+  inputText: {
     fontSize: 16,
     color: '#374151',
   },
-  dropdownIcon: {
-    fontSize: 12,
-    color: '#374151',
+  arrowIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
   },
 });
 

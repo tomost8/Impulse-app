@@ -42,7 +42,7 @@ const AddActivityPage = () => {
             ...(totalMinutes > 0 && { duration: totalMinutes }),
             ...(formData.description && { description: formData.description }),
           };
-          console.log("Input scheduledDatetime:", input.scheduledDatetime as string);
+          console.log("Input", input);
           /*
           const response = await createActivity(input, authToken as string);
           if (response.success) {
