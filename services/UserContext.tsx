@@ -77,16 +77,29 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
-      // Get the Firebase auth instance
       const auth = getAuth();
       const currentUser = auth.currentUser;
       
       if (currentUser) {
-        // This will use the refresh token internally to get a new ID token
-        const newToken = await currentUser.getIdToken(true);
-        await AsyncStorage.setItem('authToken', newToken);
-        setAuthToken(newToken);
-        return newToken;
+        // Get the current token without forcing refresh
+        const currentToken = await currentUser.getIdToken(false);
+        
+        // Decode the JWT token to get the expiration time
+        const tokenPayload = JSON.parse(atob(currentToken.split('.')[1]));
+        const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
+        const currentTime = Date.now();
+        
+        // Only refresh if token will expire in the next 5 minutes
+        if (expirationTime - currentTime <= 5 * 60 * 1000) {
+          const newToken = await currentUser.getIdToken(true);
+          console.log('Refreshing for newToken', newToken);
+          await AsyncStorage.setItem('authToken', newToken);
+          setAuthToken(newToken);
+          return newToken;
+        }
+        
+        // If token is still valid, return the current token
+        return currentToken;
       }
       
       // If no current user, force logout

@@ -10,7 +10,7 @@ const addGoalIcon = require("@/assets/icons/add-goal.png");
 
 const AddDailyGoalsBox: React.FC = () => {
   return (
-    <TouchableOpacity style={styles.container} onPress={() => router.push("/home/activityAdd")}>
+    <TouchableOpacity style={styles.container} onPress={() => router.push("/home/addActivity")}>
       <Image source={addGoalIcon} style={styles.icon} />
       <Text style={styles.text}>Add Daily Goal</Text>
     </TouchableOpacity>

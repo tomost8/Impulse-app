@@ -162,7 +162,7 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
         isVisible={modalVisible}
         onClose={() => {
           setModalVisible(false);
-          router.push('/home/activityAdd');
+          router.push('/home/addActivity');
         }}
       />
     </>

@@ -8,7 +8,6 @@ import AddDailyGoalsScreen from '@/components/screens/home/AddActivities';
 import { debugRenders } from '@/utils/debug';
 import { router } from 'expo-router';
 // Services
-import { useUserInfo } from '@/services/UserContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { getCategoryById } from "@/utils/goals";
 import { convertLocalToUtc } from "@/utils/timezoneProcessing";
@@ -20,7 +19,6 @@ interface GoalFormData {
 }
 
 const AddActivityPage = () => {
-  const { userId, authToken } = useUserInfo();
   const { fetching, timezone, activities, setActivities } = useUserData();
 
   // Mutations
@@ -42,7 +40,7 @@ const AddActivityPage = () => {
             ...(totalMinutes > 0 && { duration: totalMinutes }),
             ...(formData.description && { description: formData.description }),
           };
-          const response = await createActivity(input, authToken as string);
+          const response = await createActivity(input);
           if (response.success) {
             setActivities([...activities, response.activity]);
             router.replace("/home");
@@ -106,7 +104,6 @@ const AddActivityPage = () => {
     }));
   };
 
-  // Debug
   const loading = fetching || isCreatingActivity;
 
   return <AddDailyGoalsScreen
