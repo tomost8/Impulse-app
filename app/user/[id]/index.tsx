@@ -40,7 +40,7 @@ const UserPage = () => {
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
   const currentDate = useRef('');
-  const shouldFetchActivities = !hasFetchedActivities.current && currentDate.current !== '';
+  const shouldFetchActivities = !hasFetchedActivities.current; // && currentDate.current !== '';
   const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(Number(id), currentDate.current, authToken as string, shouldFetchActivities);
 
   useEffect(() => {
@@ -50,23 +50,20 @@ const UserPage = () => {
     if (hasNewUserData) {
       userRef.current = profileUser;
       hasFetchedUser.current = true;
-      currentDate.current = getLocalDay(new Date().toISOString(), profileUser.timezone);
-      console.log("user data fetched", profileUser);
+      const userLocalDate = getLocalDay(new Date().toISOString(), profileUser.timezone);
+      currentDate.current = userLocalDate;
     }
     if (hasNewFriendsData) {
       friendRef.current = friends;
       hasFetchedFriends.current = true;
-      console.log("friends data fetched", friends);
     }
     if (hasNewCommunitiesData) {
       communitiesRef.current = communityMembers;
       hasFetchedCommunities.current = true; 
-      console.log("communities data fetched", communityMembers);
     }
     if (hasNewActivitiesData) {
       activitiesRef.current = activities;
       hasFetchedActivities.current = true;
-      console.log("activities data fetched", activities);
     }
     if (hasFetchedUser.current && hasFetchedFriends.current && hasFetchedCommunities.current && hasFetchedActivities.current) {
       setRenderCounter(prev => prev + 1);

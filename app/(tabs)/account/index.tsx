@@ -9,11 +9,13 @@ import { useUserData } from '@/services/UserPreferencesContext';
 const AccountPage = () => {
   const { user, communities, friends, fetching } = useUserData();
 
+  const acceptedFriends = friends.filter((friend: any) => friend.status === 'ACCEPTED');
+
   if (debugRenders && !fetching) {
     console.log("Rendering AccountPage.",
       "\nUser:", user, 
       "\nCommunities:", communities, 
-      "\nFriends:", friends,
+      "\nFriends:", acceptedFriends,
     );
   }
 
@@ -21,7 +23,7 @@ const AccountPage = () => {
     user={user} 
     isLoading={fetching} 
     numCommunities={communities.length}
-    numFriends={friends.length}
+    numFriends={acceptedFriends.length}
   />;
 }
 

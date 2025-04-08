@@ -213,7 +213,7 @@ const ProfileNumberButton = ({ label, value, style, onPress }:
 const ProfileDropdown = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: () => void }) => {
   return (
     <View style={[styles.fieldContainer, style]}>
-      {label && <Text style={styles.fieldLabel}>{label}</Text>}
+      {label ? <Text style={styles.fieldLabel}>{label}</Text> : null}
       <TouchableOpacity
         style={styles.dropdown}
         accessibilityRole="button"
