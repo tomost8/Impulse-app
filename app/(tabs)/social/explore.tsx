@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetCommunities, useGetUserCommunities, useGetAllCategories } from '@/hooks/graphql/communities/queries';
+import { useGetCommunities, useGetUserCommunities, useGetAllCategories, useGetAllCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
 import ExploreScreen from '@/components/screens/social/main/explorescreen';
@@ -9,6 +9,7 @@ import ExploreScreen from '@/components/screens/social/main/explorescreen';
 import { debugRenders } from '@/utils/debug';
 // Services
 import { useUserData } from '@/services/UserPreferencesContext';
+import { getLabelByCategory } from '@/utils/goals';
 
 
 const ExplorePage = () => {
@@ -28,8 +29,12 @@ const ExplorePage = () => {
   const hasFetchedCategories = useRef(false);
   const { categories, fetched: hasNewCategoriesData } = useGetAllCategories(!hasFetchedCategories.current);
 
+  const membersRef = useRef<any[] | null>(null);
+  const hasFetchedMembers = useRef(false);
+  const { communityMembers: allCommunityMembers, fetched: hasNewMembersData } = useGetAllCommunityMembers(!hasFetchedMembers.current);
+
   useEffect(() => {
-    if (!hasNewCommunitiesData && !hasNewUserCommunitiesData && !hasNewCategoriesData) {
+    if (!hasNewCommunitiesData && !hasNewUserCommunitiesData && !hasNewCategoriesData && !hasNewMembersData) {
       return;
     }
     if (hasNewCommunitiesData) {
@@ -44,10 +49,14 @@ const ExplorePage = () => {
       categoriesRef.current = categories;
       hasFetchedCategories.current = true;
     }
-    if (hasFetchedCommunities.current && hasFetchedUserCommunities.current && hasFetchedCategories.current) {
+    if (hasNewMembersData) {
+      membersRef.current = allCommunityMembers;
+      hasFetchedMembers.current = true;
+    }
+    if (hasFetchedCommunities.current && hasFetchedUserCommunities.current && hasFetchedCategories.current && hasFetchedMembers.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunitiesData, hasNewUserCommunitiesData, hasNewCategoriesData]);
+  }, [hasNewCommunitiesData, hasNewUserCommunitiesData, hasNewCategoriesData, hasNewMembersData]);
 
   // Mutations
   const { createCommunityMember } = useCreateCommunityMember();
@@ -71,25 +80,25 @@ const ExplorePage = () => {
       setIsCreatingCommunityMember(false);
     }
   }
-
-  // Search + Filtering
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-
-  // Get communities not in userCommunities and filter by selectedGoal
-  const filteredCommunities = communitiesRef.current?.filter((community: any) => 
-    !userCommunitiesRef.current?.some((userCommunity: any) => userCommunity.community.id === community.id) &&
-    (selectedGoal === null || categoriesRef.current?.some((category: any) => 
-      category.community_id === community.id && category.category === selectedGoal
-    ))
-  );
+  // Get communities not in userCommunities and add memberCount
+  const joinableCommunities = communitiesRef.current?.filter((community: any) => 
+    !userCommunitiesRef.current?.some((userCommunity: any) => userCommunity.community.id === community.id)
+  ).map((community: any) => ({
+    ...community,
+    memberCount: membersRef.current?.filter((member: any) => 
+      member.community_id === community.id && 
+      member.status === 'ACCEPTED'
+    ).length || 0
+  }));
 
   // Debug
-  const loading = !hasFetchedCommunities.current || !hasFetchedUserCommunities.current || !hasFetchedCategories.current;
+  const loading = !hasFetchedCommunities.current || !hasFetchedUserCommunities.current || !hasFetchedCategories.current || !hasFetchedMembers.current || isCreatingCommunityMember;
   if (debugRenders && !loading) {
     console.log("Rendering ExplorePage\n",
       "Communities:", communitiesRef.current, "\n",
-      "Selected Goal:", selectedGoal, "\n",
-      "Filtered Communities:", filteredCommunities, "\n",
+      "Categories:", categoriesRef.current, "\n",
+      "Members:", membersRef.current, "\n",
+      "Joinable Communities:", joinableCommunities, "\n",
       "User:", user, "\n",
       "Render Counter:", renderCounter, "\n",
     );
@@ -98,9 +107,9 @@ const ExplorePage = () => {
   return (
     <ExploreScreen 
       loading={loading}
-      communities={filteredCommunities || []}
-      selectedCategory={selectedGoal || ''}
-      handleCategorySelect={setSelectedGoal}
+      communities={joinableCommunities || []}
+      categoryList={categoriesRef.current || []}
+      memberList={membersRef.current || []}
       handleJoinCommunity={handleCreateCommunityMember}
     />
   );

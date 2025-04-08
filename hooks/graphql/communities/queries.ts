@@ -191,6 +191,42 @@ export function useGetCommunityCategories(communityId: number, shouldFetch: bool
   };
 }
 
+// Query - Get All Community Members
+export const GET_ALL_COMMUNITY_MEMBERS = gql`
+  query {
+    getAllCommunityMembers {
+      success
+      errors {
+      field
+      message
+    }
+    community_members {
+      community_id
+      user_id
+      status
+    }
+    }
+  }
+`;
+
+export function useGetAllCommunityMembers(shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_ALL_COMMUNITY_MEMBERS, {
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetAllCommunityMembers data", data, error ? 'error:' + error : '');
+  }
+  return {
+    communityMembers: data?.getAllCommunityMembers.community_members || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
 // Query - Get Community Leaderboard (by Community ID)
 export const GET_COMMUNITY_LEADERBOARD = gql` 
   query ($communityId: Int!, $sort_by: UserSortType!) {
