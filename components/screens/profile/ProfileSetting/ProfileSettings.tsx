@@ -137,7 +137,7 @@ function ProfileSettings() {
           <SettingsItem
             title="Feature Help Guide"
             icon={require("@/assets/icons/settingsGuide.png")}
-            onPress={() => {}}
+            onPress={() => router.push('/(tabs)/account/settings/featureGuide')}
           />
           <DualLensToggle />
         </View>
