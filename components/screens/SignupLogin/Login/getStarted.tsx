@@ -11,7 +11,12 @@ import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import LoginPopup from './LoginPopup';
 
-const GetStartedScreen = () => {
+interface GetStartedScreenProps {
+  error: string | null;
+  tryLogin: (email: string, password: string, onSuccess?: () => void) => void;
+}
+
+const GetStartedScreen = ({ tryLogin, error }: GetStartedScreenProps) => {
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   return (
@@ -50,7 +55,9 @@ const GetStartedScreen = () => {
 
       <LoginPopup 
         isVisible={showLoginPopup}
+        error={error}
         onClose={() => setShowLoginPopup(false)}
+        tryLogin={tryLogin}
       />
     </SafeAreaView>
   );
