@@ -10,6 +10,7 @@ export default function SettingsLayout() {
       <Stack.Screen name="feedback" />
       <Stack.Screen name="viewProfile" />
       <Stack.Screen name="editProfile" />
+      <Stack.Screen name="featureGuide" />
     </Stack>
   );
 }
