@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,30 +9,44 @@ import {
 } from 'react-native';
 import { s } from "react-native-size-matters";
 import { router } from 'expo-router';
+import AddActivities from './AddActivities';
+import CompleteActivities from './CompleteActivities';
+import CustomNotifications from './CustomNotifications';
+import JoinCommunity from './JoinCommunity';
 
 const FeatureGuide = () => {
+  const [showAddActivities, setShowAddActivities] = useState(false);
+  const [showCompleteActivities, setShowCompleteActivities] = useState(false);
+  const [showCustomNotifications, setShowCustomNotifications] = useState(false);
+  const [showJoinCommunity, setShowJoinCommunity] = useState(false);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.push('/account/settings')}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Feature Guide</Text>
-        </View>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={() => router.push('/(tabs)/account/settings')}
+            >
+              <Image
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Feature Guide</Text>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Activity Cards Container */}
       <View style={styles.cardsContainer}>
         {/* Add Activity Card */}
-        <View style={styles.card}>
+        <TouchableOpacity 
+          style={styles.card} 
+          onPress={() => setShowAddActivities(true)}
+        >
           <View style={styles.iconContainer}>
             <Image
               source={require("@/assets/icons/addActivity.png")}
@@ -40,10 +54,13 @@ const FeatureGuide = () => {
             />
           </View>
           <Text style={styles.cardTitle}>Add an Activity</Text>
-        </View>
+        </TouchableOpacity>
 
         {/* Complete Activity Card */}
-        <View style={styles.card}>
+        <TouchableOpacity 
+          style={styles.card} 
+          onPress={() => setShowCompleteActivities(true)}
+        >
           <View style={styles.iconContainer}>
             <Image
               source={require("@/assets/icons/completeActivity.png")}
@@ -51,10 +68,13 @@ const FeatureGuide = () => {
             />
           </View>
           <Text style={styles.cardTitle}>Complete an Activity</Text>
-        </View>
+        </TouchableOpacity>
 
         {/* Join Community Card */}
-        <View style={styles.card}>
+        <TouchableOpacity 
+          style={styles.card} 
+          onPress={() => setShowJoinCommunity(true)}
+        >
           <View style={styles.iconContainer}>
             <Image
               source={require("@/assets/icons/joinCommunity.png")}
@@ -62,10 +82,13 @@ const FeatureGuide = () => {
             />
           </View>
           <Text style={styles.cardTitle}>Join a Community</Text>
-        </View>
+        </TouchableOpacity>
 
         {/* Custom Notifications Card */}
-        <View style={styles.card}>
+        <TouchableOpacity 
+          style={styles.card} 
+          onPress={() => setShowCustomNotifications(true)}
+        >
           <View style={styles.iconContainer}>
             <Image
               source={require("@/assets/icons/customNotifications.png")}
@@ -73,9 +96,29 @@ const FeatureGuide = () => {
             />
           </View>
           <Text style={styles.cardTitle}>Custom Notifications</Text>
-        </View>
+        </TouchableOpacity>
       </View>
-    </SafeAreaView>
+
+      <AddActivities 
+        visible={showAddActivities}
+        onClose={() => setShowAddActivities(false)}
+      />
+
+      <CompleteActivities 
+        visible={showCompleteActivities}
+        onClose={() => setShowCompleteActivities(false)}
+      />
+
+      <CustomNotifications 
+        visible={showCustomNotifications}
+        onClose={() => setShowCustomNotifications(false)}
+      />
+
+      <JoinCommunity 
+        visible={showJoinCommunity}
+        onClose={() => setShowJoinCommunity(false)}
+      />
+    </View>
   );
 };
 
@@ -86,16 +129,17 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: s(16),
+    paddingTop: s(10),
+    paddingBottom: s(16),
   },
   backButton: {
-    marginRight: s(8),
+    marginRight: s(12),
+    marginLeft: 4,
   },
   backIcon: {
     width: 10,
@@ -126,13 +170,13 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#F9E3E8',
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 7,
   },
   icon: {
-    width: 24,
-    height: 24,
+    width: 55,
+    height: 55,
     tintColor: '#DE728D',
   },
   cardTitle: {
