@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import DailyGoalCard from "../common/activityCards/ActivityCard";
+import ActivityCard from "../common/activityCards/ActivityCard";
 import AddDailyGoalsBox from "./AddDailyGoalsBox";
 import { router } from "expo-router";
 
@@ -23,7 +23,7 @@ const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
       {/* Daily Goals Cards */}
       {activities.length > 0 ? (
         activities.map((activity) => (
-          <DailyGoalCard
+          <ActivityCard
             key={activity.id}
             category={activity.category}
             scheduledDatetime={activity.scheduledDatetime}

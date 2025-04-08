@@ -13,33 +13,20 @@ import { router } from 'expo-router';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
 import FriendRequestSentPopup from './friendrequestsent';
+import { getLabelByCategory } from '@/utils/goals';
 
 interface NonFriendViewScreenProps {
   loading: boolean;
   nonFriend: any;
+  communityCount: number;
 }
 
 const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
-  console.log('NonFriendViewScreen props:', props.nonFriend);
   const [isRequestSent, setIsRequestSent] = useState(false);
   const [showRequestSentPopup, setShowRequestSentPopup] = useState(false);
-
-  // Sample data
-  const nonFriend = {
-    name: 'First Name Last Name',
-    username: '@username',
-    profileImage: require('@/assets/images/andrew.png'),
-    points: 400,
-    communities: 15,
-    bioText: 'Lorem ipsum dolor sit amet consectetur. Elit nisi amet semper arcu. Magna suspendisse purus sed posuere tincidunt blandit nibh ornare nunc. Venenatis id quam gravida nisi. Morbi tincidunt convallis enim tristique mus. Tempus vitae morbi ut.',
-    primaryActivity: 'Working Out',
-    secondaryActivity: 'Rise & Shine',
-    gender: 'Female',
-    timezone: 'GMT +5'
-  };
 
   const handleSendRequest = () => {
     if (!isRequestSent) {
@@ -89,14 +76,14 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
         {/* Points Bar */}
         <PointsBar 
           points={props.nonFriend.point.points}
-          communities={nonFriend.communities}
+          communities={props.communityCount}
         />
 
         {/* Bio Section */}
         <Bio 
           bioText={props.nonFriend.bio}
-          primaryActivity={props.nonFriend.primary_goal}
-          secondaryActivity={props.nonFriend.secondary_goal}
+          primaryActivity={getLabelByCategory(props.nonFriend.primary_goal)}
+          secondaryActivity={getLabelByCategory(props.nonFriend.secondary_goal)}
           gender={props.nonFriend.gender}
           timezone={props.nonFriend.timezone}
         />

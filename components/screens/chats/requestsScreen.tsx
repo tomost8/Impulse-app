@@ -42,11 +42,10 @@ const RequestsScreen = (props: RequestsScreenProps) => {
     router.push('/chats/addFriends');
   };
   const handleCancelFriendRequest = (friendId: string) => {
-    console.log('Cancel request:', friendId);
     props.handleRemoveFriendRequest(Number(friendId));
   };
   const handleViewProfile = (id: string) => {
-    console.log('View profile:', id);
+    router.push(`/user/${id}`);
   };
 
   // Group Invitations

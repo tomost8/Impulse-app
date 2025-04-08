@@ -15,8 +15,12 @@ import { s } from "react-native-size-matters";
 import { router } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
 
-const IndividualChat = () => {
-  const { chatId } = useLocalSearchParams();
+interface IndividualChatProps {
+  partner: any;
+}
+
+const IndividualChat = (props: IndividualChatProps) => {
+  const { partner } = props;
   const [message, setMessage] = useState('');
 
   return (
@@ -42,13 +46,13 @@ const IndividualChat = () => {
           {/* Profile Section - Clickable */}
           <TouchableOpacity 
             style={styles.profileSection}
-            onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
+            onPress={() => router.push(`/user/${partner.id}`)}
           >
             <Image
-              source={require("@/assets/images/andrew.png")}
+              source={partner.profile_picture}
               style={styles.profileImage}
             />
-            <Text style={styles.headerTitle}>Danny</Text>
+            <Text style={styles.headerTitle}>{partner.first_name} {partner.last_name}</Text>
             <Image
               source={require("@/assets/icons/arrow-Right.png")}
               style={styles.arrowIcon}

@@ -11,11 +11,13 @@ import Header from '@/components/ui/userprofile/header';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
 import DailyGoals from '@/components/ui/userprofile/dailygoals';
+import { getLabelByCategory } from '@/utils/goals';
 
 interface FriendViewScreenProps {
   loading: boolean;
   friend: any;
-  //daily goals + community count
+  communityCount: number;
+  activities: any[];
 }
 
 const FriendViewScreen = (props: FriendViewScreenProps) => {
@@ -74,22 +76,23 @@ const FriendViewScreen = (props: FriendViewScreenProps) => {
         {/* Daily Goals Section */}
         <View style={styles.goalsSection}>
           <DailyGoals 
-            goals={friend.dailyGoals}
-            cardStyle={{ backgroundColor: 'transparent' }}
+            goals={props.activities}
+            timezone={props.friend.timezone}
+            //cardStyle={{ backgroundColor: 'transparent' }}
           />
         </View>
 
         {/* Points Bar */}
         <PointsBar 
           points={props.friend.point.points}
-          communities={friend.communities}
+          communities={props.communityCount}
         />
 
         {/* Bio Section */}
         <Bio 
           bioText={props.friend.bio}
-          primaryActivity={props.friend.primary_goal}
-          secondaryActivity={props.friend.secondary_goal}
+          primaryActivity={getLabelByCategory(props.friend.primary_goal)}
+          secondaryActivity={getLabelByCategory(props.friend.secondary_goal)}
           gender={props.friend.gender}
           timezone={props.friend.timezone}
         />

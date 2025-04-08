@@ -1,12 +1,9 @@
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
-
-import { useUserData } from "@/services/UserPreferencesContext";
+import { View, Text, StyleSheet, Image, ImageSourcePropType } from "react-native";
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-// Props for reusability
-type DailyGoalCardProps = {
-  icon?: any; // Updated to accept an image source
+
+type ActivityCardProps = {
   category: string;
   scheduledDatetime: string;
   duration: number;
@@ -15,7 +12,7 @@ type DailyGoalCardProps = {
   timezone: string;
 };
 
-const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
+const ActivityCard: React.FC<ActivityCardProps> = ({
   category,
   scheduledDatetime,
   duration,
@@ -23,13 +20,11 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
   description,
   timezone,
 }) => {
-  console.log("Category:", category, "UTC Time:", scheduledDatetime, "Local Time:", convertUtcToLocal(scheduledDatetime, timezone));
-  const defaultIcon = require("@/assets/icons/riseshine.png");
   return (
     <View style={styles.container}>
       {/* Icon */}
       <View style={styles.iconContainer}>
-        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} /> {/* ✅ Replaced SVG with Image */}
+        <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles.icon} />
       </View>
 
       {/* Text Content */}
@@ -54,12 +49,12 @@ const DailyGoalCard: React.FC<DailyGoalCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center", // ✅ Ensures icon is higher
+    alignItems: "center",
     backgroundColor: "#F4F9FF",
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 12,
-    marginTop: 12, // ✅ Adds spacing from "Daily Goals"
+    marginTop: 12, 
     shadowColor: "#000",
     shadowOpacity: 0.05,
     shadowOffset: { width: 0, height: 2 },
@@ -68,18 +63,18 @@ const styles = StyleSheet.create({
     width: "102%",
   },
   iconContainer: {
-    alignSelf: "flex-start", // ✅ Moves icon to the **top-left** position
-    width: 48,  // ✅ Matches the background circle
-    height: 48, // ✅ Matches the background circle
+    alignSelf: "flex-start",
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 24, // ✅ Ensures a perfect circle
-    overflow: "hidden", // ✅ Prevents any overflow issues
+    borderRadius: 24,
+    overflow: "hidden",
   },
   icon: {
-    width: 48,  // ✅ Adjusted width to fit properly
-    height: 48, // ✅ Adjusted height to fit properly
-    resizeMode: "contain", // ✅ Ensures no background is visible
+    width: 48,
+    height: 48,
+    resizeMode: "contain",
   },
   iconBackground: {
     backgroundColor: "rgba(222, 114, 189, 0.2)",
@@ -91,61 +86,58 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    flexDirection: "column", // ✅ Stacks title & time correctly
+    flexDirection: "column",
     justifyContent: "center",
-    minWidth: 160, // ✅ Ensures enough space for "Rise and Shine"
-    maxWidth: "75%", // ⬆️ Allows slightly more width for longer titles
-    flexShrink: 1, // ⬆️ Prevents unnecessary line breaks
-    flexWrap: "wrap", // ✅ Ensures text adjusts properly when needed
+    minWidth: 160,
+    maxWidth: "75%",
+    flexShrink: 1,
+    flexWrap: "wrap",
     alignItems: "flex-start",
-
   },
   title: {
-    fontSize: 14, // ✅ Matches Figma
-    fontWeight: "600", // ✅ Semi-bold
-    color: "#242020", // ✅ Matches Figma
-    fontFamily: "Open Sans", // ✅ Use correct font
-    lineHeight: 19, // ✅ Matches Figma
-    maxWidth: "100%", // ✅ Ensures space for the full text
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#242020",
+    fontFamily: "Open Sans",
+    lineHeight: 19,
+    maxWidth: "100%",
     textAlign: "left",
-    paddingLeft: 12, 
+    paddingLeft: 12,
   },
   time: {
-    fontSize: 12, // ✅ Matches Figma
-    fontWeight: "400", // ✅ Regular font weight
-    color: "#242020", // ✅ Matches Figma
-    fontFamily: "Open Sans", // ✅ Use correct font
-    lineHeight: 16, // ✅ Matches Figma
-    marginTop: 3, // Adds slight spacing below title
-    flexShrink: 1, // ✅ Prevents text from breaking into two lines
+    fontSize: 12,
+    fontWeight: "400",
+    color: "#242020",
+    fontFamily: "Open Sans",
+    lineHeight: 16,
+    marginTop: 3,
+    flexShrink: 1,
     textAlign: "left",
-    paddingLeft: 12, 
+    paddingLeft: 12,
   },
   description: {
-    fontSize: 14, // ✅ Matches Figma
-    fontWeight: "400", // ✅ Regular font weight
-    color: "#A4ACBC", // ✅ Matches Figma
-    fontFamily: "Open Sans", // ✅ Use correct font
-    lineHeight: 19, // ✅ Matches Figma
-    marginTop: 3, // ⬆️ Ensures correct spacing from time text
-    flexGrow: 1, // ✅ Ensures the text stretches without shrinking
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#A4ACBC",
+    fontFamily: "Open Sans",
+    lineHeight: 19,
+    marginTop: 3,
+    flexGrow: 1,
     textAlign: "left",
     width: "110%",
-    paddingLeft: 12, 
-
+    paddingLeft: 12,
   },
   status: {
-    fontSize: 14, // ✅ Matches Figma
-    fontWeight: "500", // ✅ Medium weight (not bold)
-    color: "#DE728D", // ✅ Correct pink shade
-    fontFamily: "Poppins", // ✅ Matches Figma
-    textAlign: "right", // ✅ Aligns to the right
-    lineHeight: 21, // ✅ Ensures correct spacing
-    position: "absolute", // ⬆️ Ensures it does not affect other layout elements
-    top: 14, // ⬆️ Moves it up to align with the title text
-    right: 14, // ⬆️ Aligns it to the right with proper padding
-
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#DE728D",
+    fontFamily: "Poppins",
+    textAlign: "right",
+    lineHeight: 21,
+    position: "absolute",
+    top: 14,
+    right: 14,
   },
 });
 
-export default DailyGoalCard;
+export default ActivityCard;

@@ -4,7 +4,7 @@ import {
   Text, 
   StyleSheet 
 } from 'react-native';
-import DailyGoalCard from '@/components/ui/common/activityCards/ActivityCard';
+import ActivityCard from '@/components/ui/common/activityCards/ActivityCard';
 
 interface DailyGoal {
   category: string;
@@ -16,23 +16,23 @@ interface DailyGoal {
 
 interface DailyGoalsProps {
   goals: DailyGoal[];
-  cardStyle?: any;
+  timezone: string; // User's timezone
 }
 
-const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, cardStyle }) => {
+const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, timezone }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Daily Goals</Text>
       <View style={styles.goalsContainer}>
         {goals.map((goal, index) => (
-          <DailyGoalCard
+          <ActivityCard
             key={index}
             category={goal.category}
             scheduledDatetime={goal.scheduledDatetime}
             duration={goal.duration}
             status={goal.status}
             description={goal.description}
-            style={cardStyle}
+            timezone={timezone}
           />
         ))}
       </View>

@@ -77,9 +77,10 @@ const ChatPage = (props: any) => {
   }
 
   if (chatRef.current.type === "direct") {
-    return <IndividualChat />;
+    const partner = chatMembersRef.current?.find((member: any) => member.user.id !== userId)?.user;
+    return <IndividualChat partner={partner} />;
   } else if (chatRef.current.type === "group") {
-    return <GroupChat />;
+    return <GroupChat chat={chatRef.current} />;
   }
 }
 

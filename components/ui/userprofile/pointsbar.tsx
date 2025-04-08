@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet 
 } from 'react-native';
-import { router } from 'expo-router';
-// Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { router, useLocalSearchParams } from 'expo-router';
 
 interface PointsBarProps {
   points: number;
@@ -19,13 +17,10 @@ const PointsBar: React.FC<PointsBarProps> = ({
   points,
   communities
 }) => {
-  const { fetching, user } = useUserData();
-  if (fetching) {
-    return <Text>Loading...</Text>;
-  }
+  const { id } = useLocalSearchParams();
   const handleCommunitiesPress = () => {
     // Update the navigation path to match your app's structure
-    router.push(`/user/${user.id}/communityList`);
+    router.push(`/user/${id}/communityList`);
   };
 
   return (

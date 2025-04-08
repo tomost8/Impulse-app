@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal, ImageSourcePropType } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import ActivityDetails from "./ActivityDetails";  
 
@@ -11,7 +11,6 @@ const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none
 </svg>`;
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
-const defaultIcon = require("@/assets/icons/riseshine.png");
 
 type AddActivityCardProps = {
   category: string;
@@ -41,7 +40,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
       style={[styles.container, isSelected && styles.selectedContainer]}
     >
       <View style={styles.iconContainer}>
-        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+        <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
       {isSelected ? (
@@ -60,7 +59,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
     <View style={[styles2.container, isSelected ? styles.selectedContainer : null]}>
       <TouchableOpacity onPress={onSelect} style={styles.header}>
         <View style={styles2.iconContainer}>
-          <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
+          <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles2.icon} />
         </View>
         <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
         <Image

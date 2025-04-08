@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, Keyboard, ScrollView, Modal, TextInput, Platform } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Animated, Keyboard, ScrollView, ImageSourcePropType } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import ActivityDetails from './ActivityDetails';
 
 // Importing assets
 const editIcon = require("@/assets/icons/editDailyGoal.png");
-const defaultIcon = require("@/assets/icons/riseshine.png");
 
 interface EditActivityCardProps {
   category: string;
@@ -45,7 +44,7 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
       style={styles.header}
     >
       <View style={styles.iconContainer}>
-        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+        <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
       {/* Edit Button */}

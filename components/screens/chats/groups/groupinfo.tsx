@@ -74,7 +74,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
               </View>
               <TouchableOpacity 
                 style={styles.viewProfileButton}
-                onPress={() => router.push(`/chats/${member.id}`)}
+                onPress={() => router.push(`/user/${member.id}`)}
               >
                 <Text style={styles.viewProfileText}>View Profile</Text>
               </TouchableOpacity>
