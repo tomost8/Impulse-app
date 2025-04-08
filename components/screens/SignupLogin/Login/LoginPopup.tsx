@@ -17,7 +17,12 @@ interface LoginPopupProps {
   isVisible: boolean;
   error: string | null;
   onClose: () => void;
-  tryLogin: (email: string, password: string, onSuccess?: () => void) => void;
+  tryLogin: (
+    email: string, 
+    password: string, 
+    rememberMe: boolean, 
+    onSuccess?: () => void
+  ) => void;
 }
 
 
@@ -29,7 +34,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, error, onClose, tryL
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleLogin = async () => {
-    tryLogin(email, password, onClose);
+    tryLogin(email, password, rememberMe, onClose);
   }
 
   const handleCreateAccount = () => {

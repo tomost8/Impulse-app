@@ -8,7 +8,6 @@ export default function AuthLayout() {
       }}
     >
       <Stack.Screen name="getStarted" />
-      <Stack.Screen name="loginTemp" />
       <Stack.Screen name="createAccount" />
       <Stack.Screen name="personalProfile" />
       <Stack.Screen name="primaryGoal" />

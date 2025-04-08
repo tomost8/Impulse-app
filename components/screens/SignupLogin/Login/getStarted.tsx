@@ -13,7 +13,12 @@ import LoginPopup from './LoginPopup';
 
 interface GetStartedScreenProps {
   error: string | null;
-  tryLogin: (email: string, password: string, onSuccess?: () => void) => void;
+  tryLogin: (
+    email: string, 
+    password: string, 
+    rememberMe: boolean, 
+    onSuccess?: () => void
+  ) => void;
 }
 
 const GetStartedScreen = ({ tryLogin, error }: GetStartedScreenProps) => {

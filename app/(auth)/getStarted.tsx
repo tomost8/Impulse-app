@@ -15,13 +15,14 @@ export default function GetStarted() {
 
   const { login } = useUserInfo();
   const { firebaseAuth } = useFirebaseAuth();
-  const tryLogin = async (email: string, password: string, onSuccess?: () => void) => {
+  const tryLogin = async (email: string, password: string, rememberMe: boolean, onSuccess?: () => void) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       let authToken = await userCredential.user.getIdToken();
       const response = await firebaseAuth(authToken);
+      
       if (response.success) {
-        await login(authToken, response.user.id);
+        await login(authToken, response.user.id, rememberMe, email);
         router.replace('/(tabs)/home');
         onSuccess?.();
       } 

@@ -3,9 +3,9 @@ import { useUserInfo } from '@/services/UserContext';
 import { Text } from 'react-native';
 
 export default function Index() {
-  const { userId, authToken, isLoading } = useUserInfo();
+  const { loading, userId, authToken } = useUserInfo();
 
-  if (isLoading) {
+  if (loading) {
     return <Text>Loading...</Text>;
   }
 
