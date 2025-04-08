@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Image } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import styles from '@/utils/testStyles';
-import RemoveFriendModal from '@/components/modals/RemoveFriendModal';
+import RemoveFriendModal from '@/components/old/chats/RemoveFriendModal';
 import { useState } from 'react';
 
 export default function ChatIdScreenOld({

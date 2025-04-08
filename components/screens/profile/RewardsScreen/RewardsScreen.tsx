@@ -1,65 +1,48 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Text } from "react-native";
 import { s } from "react-native-size-matters";
 import Header from "./Header";
 import PointsDisplay from "./PointsDisplay";
 import RewardItem from "./RewardItem";
 import RedeemRewardPopup from "../popups/RedeemRewardPopup";
 
-const rewardsData = [
-  {
-    id: 1,
-    title: "$10 Payment via PayPal or Gift Card",
-    points: "7.5k Points",
-    isRedeemable: true,
-  },
-  {
-    id: 2,
-    title: "$25 Payment via PayPal or Gift Card",
-    points: "15k Points",
-    isRedeemable: false,
-  },
-  {
-    id: 3,
-    title: "$50 Payment via PayPal or Gift Card",
-    points: "25k Points",
-    isRedeemable: false,
-  },
-];
-
 interface RewardsScreenProps {
-  user: any;
-  isUserLoading: boolean;
+  loading: boolean;
+  userPoints: number;
   rewards: any;
-  isRewardsLoading: boolean;
   handleCreateRedeem: (rewardId: number) => void;
-  isCreatingRedeem: boolean;
 }
 
 const RewardsScreen: React.FC<RewardsScreenProps> = ({ 
-  user, 
-  isUserLoading 
+  loading,
+  userPoints, 
+  rewards,
+  handleCreateRedeem,
 }) => {
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+  const [selectedReward, setSelectedReward] = useState<number | null>(null);
   const [showRedeemPopup, setShowRedeemPopup] = useState(false);
-  const [selectedReward, setSelectedReward] = useState<typeof rewardsData[0] | null>(null);
 
-  const handleRedeemPress = (reward: typeof rewardsData[0]) => {
+  const handleRedeemPress = (reward: any) => {
     setSelectedReward(reward);
     setShowRedeemPopup(true);
+    console.log("selected reward", selectedReward, "reward", reward);
   };
 
   return (
     <ScrollView style={styles.scrollView}>
       <Header />
       <View style={styles.content}>
-        <PointsDisplay points={9205} maxPoints={15000} />
+        <PointsDisplay points={userPoints} />
         <View style={styles.rewardsList}>
-          {rewardsData.map((reward) => (
+          {rewards.map((reward: any) => (
             <RewardItem
               key={reward.id}
               title={reward.title}
-              points={reward.points}
-              isRedeemable={reward.isRedeemable}
+              points={reward.required_points}
+              isRedeemable={userPoints >= reward.required_points}
               onRedeem={() => handleRedeemPress(reward)}
             />
           ))}
@@ -71,6 +54,7 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({
           isVisible={showRedeemPopup}
           onClose={() => setShowRedeemPopup(false)}
           reward={selectedReward}
+          handleCreateRedeem={handleCreateRedeem}
         />
       )}
     </ScrollView>

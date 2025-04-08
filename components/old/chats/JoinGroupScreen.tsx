@@ -1,7 +1,7 @@
 import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Searchbar } from 'react-native-paper';
-import JoinGroupModal from '@/components/modals/JoinGroupModal';
+import JoinGroupModal from '@/components/old/chats/JoinGroupModal';
 import { useState } from 'react';
 export default function JoinGroupScreenOld({
     chats,

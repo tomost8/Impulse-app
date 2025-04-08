@@ -1,7 +1,7 @@
 import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import ActivitiesModal from '@/components/modals/ActivitiesModal';
+import ActivitiesModal from '@/components/old/home/ActivitiesModal';
 import { useState } from 'react';
 
 export default function ViewActivityScreenOld({
@@ -38,12 +38,12 @@ export default function ViewActivityScreenOld({
           .map((activity: any) => (
             <View key={activity.id} style={styles.checkbox}>
               <Text style={styles.text}>{activity.category}</Text>
-              <TouchableOpacity style={styles.button} onPress={() => router.push(`/home/activityView/${activity.id}`)}>
+              <TouchableOpacity style={styles.button} onPress={() => router.push(`/home/viewActivity`)}>
                 <Text style={styles.text}>Edit</Text>
               </TouchableOpacity>
             </View>
           ))}
-        <TouchableOpacity style={styles.button} onPress={() => router.push('/home/activityAdd')}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/home/addActivity')}>
           <Text style={styles.text}>
             Add new daily goal
           </Text>

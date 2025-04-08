@@ -5,41 +5,33 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
-import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScreen2';
+import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 const RedeemsPage = () => {
-  const { userId, authToken } = useUserInfo();
+  const { fetching, user } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Queries for Loading State
-  const userRef = useRef<any | null>(null);
-  const hasFetchedUser = useRef(false);
-  const { user, fetched: hasNewUserData, refetch: refetchUser } = useGetUser(userId as number, !hasFetchedUser.current);
-
+  // Queries
   const rewardsRef = useRef<any[] | null>(null);
   const hasFetchedRewards = useRef(false);
   const { rewards, fetched: hasNewRewardsData } = useGetRewards(!hasFetchedRewards.current);
 
   useEffect(() => {
-    if (!hasNewUserData && !hasNewRewardsData) {
+    if (!hasNewRewardsData) {
       return;
-    }
-    if (hasNewUserData) {
-      userRef.current = user;
-      hasFetchedUser.current = true;
     }
     if (hasNewRewardsData) {
       rewardsRef.current = rewards;
       hasFetchedRewards.current = true;
     }
-    if (hasFetchedUser.current && hasFetchedRewards.current) {
+    if (hasFetchedRewards.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewUserData, hasNewRewardsData]); 
+  }, [hasNewRewardsData]); 
 
   // Mutations
   const { createRedeem } = useCreateRedeem();
@@ -48,15 +40,12 @@ const RedeemsPage = () => {
     setIsCreatingRedeem(true);
     try {
       const input = {
-        user_id: userRef.current?.id,
+        user_id: user.id,
         reward_id: rewardId
       }
       const response = await createRedeem(input);
       if (response.success) {
-        //console.log("response success", response.redeem);
-        const newUserData = await refetchUser(); 
-        userRef.current = newUserData.data.user.user;
-        setRenderCounter(prev => prev + 1);
+        console.log("Redeem created successfully", response);
       } else {
         console.log("Error redeeming reward:", response.errors);
       }
@@ -68,10 +57,10 @@ const RedeemsPage = () => {
   }
 
   // Debug
-  const loading = !hasFetchedUser.current || !hasFetchedRewards.current || isCreatingRedeem;
+  const loading = fetching || !hasFetchedRewards.current || isCreatingRedeem;
   if (debugRenders && !loading) {
     console.log("Rendering RedeemsPage\n",
-      "User:", userRef.current, "\n",
+      "User Points:", user.point.spending_points, "\n",
       "Rewards:", rewardsRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
     );
@@ -80,12 +69,10 @@ const RedeemsPage = () => {
   
   return (
     <RewardsScreen 
-      user={userRef.current} 
-      isUserLoading={!hasFetchedUser.current}
+      loading={loading}
+      userPoints={user.point.spending_points}
       rewards={rewardsRef.current}
-      isRewardsLoading={!hasFetchedRewards.current}
       handleCreateRedeem={handleCreateRedeem}
-      isCreatingRedeem={isCreatingRedeem}
     />
   );
 }

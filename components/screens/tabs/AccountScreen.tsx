@@ -73,13 +73,13 @@ function AccountProfile({
             <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
               <Text style={styles.pointsGuide}>Points Earning Guide</Text>
             </TouchableOpacity>
-            <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
+            <Text style={styles.pointsValue}>{user.point?.spending_points} / 7.5k pts</Text>
           </View>
           <View style={styles.progressContainer}>
             <View 
               style={[
                 styles.progressBar,
-                { width: `${Math.min((user.point?.points || 0) / 7500 * 100, 100)}%` }
+                { width: `${Math.min((user.point?.spending_points || 0) / 7500 * 100, 100)}%` }
               ]} 
             />
           </View>

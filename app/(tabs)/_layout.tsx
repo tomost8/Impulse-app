@@ -5,7 +5,6 @@ import { Platform, Image, View, Text, Button } from 'react-native';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
-import AlmostReadyModal from '@/components/modals/AlmostReadyModal';
 import CameraPopup from '@/components/screens/home/camerapopup';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { debugRouting } from '@/utils/debug';
