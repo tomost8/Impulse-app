@@ -14,12 +14,7 @@ import {
 import { s } from "react-native-size-matters";
 import { router, useLocalSearchParams } from 'expo-router';
 
-interface GroupChatProps {
-  chat: any;
-}
-
-const GroupChat = (props: GroupChatProps) => {
-  const { chat } = props;
+const GroupChat = () => {
   const { chatId } = useLocalSearchParams();
   const [message, setMessage] = useState('');
 
@@ -43,14 +38,10 @@ const GroupChat = (props: GroupChatProps) => {
             onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
           >
             <Image
-              source={chat?.profile_pic}
+              source={require("@/assets/images/andrew.png")}
               style={styles.profileImage}
             />
-            <Text style={styles.headerTitle}>{chat?.title}</Text>
-            <Image
-              source={require("@/assets/icons/arrow-Right.png")}
-              style={styles.arrowIcon}
-            />
+            <Text style={styles.headerTitle}>Gabe's Running Club</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -133,10 +124,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#242020',
-  },
-  arrowIcon: {
-    width: 5,
-    height: 11,
   },
   chatContainer: {
     flex: 1,

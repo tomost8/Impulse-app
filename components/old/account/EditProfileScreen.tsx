@@ -1,10 +1,11 @@
 import { Picker } from '@react-native-picker/picker';
 import { GENDER_OPTIONS, GOAL_OPTIONS } from '@/utils/userOptions';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
-import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import styles from '@/utils/testStyles';
 import { pickImage as pickImageFromProcessing } from '@/utils/imageProcessing';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
+import { useRouter } from 'expo-router';
 
 export default function EditProfileScreenOld({
   user,
@@ -21,6 +22,8 @@ export default function EditProfileScreenOld({
   handleFormSubmit: any,
   isSubmitting: boolean,
 }) {
+  const router = useRouter();
+
   const pickImage = async () => {
     const uri = await pickImageFromProcessing(handleFormDataChange);
     if (uri) {
@@ -34,7 +37,24 @@ export default function EditProfileScreenOld({
   }
 
   return (
-    <SafeAreaView>
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Profile</Text>
+          </View>
+        </SafeAreaView>
+      </View>
+
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.profileImageContainer}>
@@ -151,6 +171,38 @@ export default function EditProfileScreenOld({
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+  },
+  backButton: {
+    marginRight: 12,
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  // ... rest of existing styles
+});
