@@ -59,27 +59,37 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
   const renderContent = () => {
     if (activeTab === 'Members') {
       return (
-        <View style={styles.membersList}>
-          {props.members.map((member) => (
-            <View key={member.id} style={styles.memberCard}>
-              <View style={styles.memberInfo}>
-                <Image 
-                  source={member.profile_picture}
-                  style={styles.profileImage}
-                />
-                <View style={styles.textContainer}>
-                  <Text style={styles.name}>{member.first_name} {member.last_name}</Text>
-                  <Text style={styles.username}>{member.username}</Text>
+        <View style={styles.membersContainer}>
+          <View style={styles.membersList}>
+            {props.members.map((member) => (
+              <View key={member.id} style={styles.memberCard}>
+                <View style={styles.memberInfo}>
+                  <Image 
+                    source={member.profile_picture}
+                    style={styles.profileImage}
+                  />
+                  <View style={styles.textContainer}>
+                    <Text style={styles.name}>{member.first_name} {member.last_name}</Text>
+                    <Text style={styles.username}>{member.username}</Text>
+                  </View>
                 </View>
+                <TouchableOpacity 
+                  style={styles.viewProfileButton}
+                  onPress={() => router.push(`/user/${member.id}`)}
+                >
+                  <Text style={styles.viewProfileText}>View Profile</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity 
-                style={styles.viewProfileButton}
-                onPress={() => router.push(`/user/${member.id}`)}
-              >
-                <Text style={styles.viewProfileText}>View Profile</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+            ))}
+          </View>
+          
+          {/* Invite Button */}
+          <TouchableOpacity 
+            style={styles.inviteButton}
+            onPress={() => router.push('/chats/groups/invite')}
+          >
+            <Text style={styles.inviteButtonText}>Invite a friend to this group</Text>
+          </TouchableOpacity>
         </View>
       );
     } else {
@@ -92,61 +102,68 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
+    <View style={styles.container}>
+      {/* Header with extended background */}
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.title}>{props.title}</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.leaveButton}
+              onPress={handleLeaveClick}
+            >
+              <Text style={styles.leaveButtonText}>Leave</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </View>
+
+      {/* Rest of the content */}
+      <View style={styles.content}>
+        {/* Tab Selector */}
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Members' && styles.activeTab]}
+            onPress={() => setActiveTab('Members')}
           >
-            <Image 
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
+            <Text style={[styles.tabText, activeTab === 'Members' && styles.activeTabText]}>
+              Members ({props.members.length})
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.title}>{props.title}</Text>
+
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Leaderboard' && styles.activeTab]}
+            onPress={() => handleTabChange('Leaderboard')}
+          >
+            <Text style={[styles.tabText, activeTab === 'Leaderboard' && styles.activeTabText]}>
+              Leaderboard
+            </Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity 
-          style={styles.leaveButton}
-          onPress={handleLeaveClick}
-        >
-          <Text style={styles.leaveButtonText}>Leave</Text>
-        </TouchableOpacity>
+
+        {/* Content */}
+        <ScrollView>
+          {renderContent()}
+        </ScrollView>
       </View>
-
-      {/* Tab Selector */}
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Members' && styles.activeTab]}
-          onPress={() => setActiveTab('Members')}
-        >
-          <Text style={[styles.tabText, activeTab === 'Members' && styles.activeTabText]}>
-            Members ({props.members.length})
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Leaderboard' && styles.activeTab]}
-          onPress={() => handleTabChange('Leaderboard')}
-        >
-          <Text style={[styles.tabText, activeTab === 'Leaderboard' && styles.activeTabText]}>
-            Leaderboard
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Content */}
-      <ScrollView>
-        {renderContent()}
-      </ScrollView>
 
       <LeavePopup
         isVisible={isLeavePopupVisible}
         onClose={() => setIsLeavePopupVisible(false)}
         onLeave={handleLeaveConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -155,13 +172,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  header: {
-    height: 65,
+  headerBackground: {
     backgroundColor: '#E0EDFD',
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   headerLeft: {
     flexDirection: 'row',
@@ -228,16 +247,20 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     opacity: 1,
   },
+  membersContainer: {
+    flex: 1,
+  },
   membersList: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingBottom: 490,
   },
   memberCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
+    paddingRight: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F5F5F5',
   },
@@ -277,9 +300,29 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
+  inviteButton: {
+    position: 'absolute',
+    bottom: 24,
+    left: 20,
+    right: 20,
+    height: 48,
+    backgroundColor: '#DE728D',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inviteButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+  },
   leaderboardContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+  },
+  content: {
+    flex: 1,
   },
 });
 

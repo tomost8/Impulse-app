@@ -1,8 +1,8 @@
-import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
-import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
+import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image } from "react-native";
 import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
 import { goals } from "@/utils/goals";
+import { useRouter } from "expo-router";
 
 interface GoalFormData {
   startTime: string;
@@ -31,9 +31,26 @@ const AddDailyGoalsScreen = ({
   onFormDataChange,
   onAddGoals
 }: AddDailyGoalsScreenProps) => {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Header/>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Add Daily Goals</Text>
+          </View>
+        </SafeAreaView>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {goals.map((goal) => (
           <AddActivityCard
@@ -65,6 +82,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 20,
     paddingBottom: 30,
+    paddingTop: 10,
   },
   goalContainer: {
       backgroundColor: "#FFF",
@@ -75,6 +93,30 @@ const styles = StyleSheet.create({
       marginBottom: 20, // Adds more spacing between each goal
       marginTop: 20, // Adds extra space above the first goal
     },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+  },
+  backButton: {
+    marginRight: 12,
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
 });
   
 export default AddDailyGoalsScreen;

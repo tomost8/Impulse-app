@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image } from "react-native";
 import { s } from "react-native-size-matters";
-import Header from "./Header";
+import { useRouter } from "expo-router";
 import PointsDisplay from "./PointsDisplay";
 import RewardItem from "./RewardItem";
 import RedeemRewardPopup from "../popups/RedeemRewardPopup";
@@ -24,6 +24,7 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({
   }
   const [selectedReward, setSelectedReward] = useState<number | null>(null);
   const [showRedeemPopup, setShowRedeemPopup] = useState(false);
+  const router = useRouter();
 
   const handleRedeemPress = (reward: any) => {
     setSelectedReward(reward);
@@ -32,8 +33,24 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({
   };
 
   return (
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Redeem</Text>
+          </View>
+        </SafeAreaView>
+      </View>
     <ScrollView style={styles.scrollView}>
-      <Header />
       <View style={styles.content}>
         <PointsDisplay points={userPoints} />
         <View style={styles.rewardsList}>
@@ -58,10 +75,39 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({
         />
       )}
     </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
+  },
+  backButton: {
+    marginRight: 12,
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
   scrollView: {
     flex: 1,
     backgroundColor: '#FFFFFF',

@@ -15,19 +15,21 @@ import RemoveFriendPopup from './FriendRemoveModal';
 
 function Header() {
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Friends</Text>
-      </View>
+    <View style={styles.headerBackground}>
+      <SafeAreaView>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => router.back()}
+          >
+            <Image
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Friends</Text>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -66,7 +68,7 @@ const FriendsList = (props: FriendProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Header />
       <View style={styles.content}>
         <View style={styles.searchContainer}>
@@ -112,7 +114,7 @@ const FriendsList = (props: FriendProps) => {
         onClose={() => setShowRemovePopup(false)}
         onRemove={confirmRemoveFriend}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -121,15 +123,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),

@@ -14,19 +14,21 @@ import { router } from "expo-router";
 
 function Header() {
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Give Feedback</Text>
-      </View>
+    <View style={styles.headerBackground}>
+      <SafeAreaView>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => router.back()}
+          >
+            <Image
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Give Feedback</Text>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -37,7 +39,7 @@ const FeedbackScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Header />
       <ScrollView style={styles.content}>
         <Text style={styles.heading}>We want to hear from you!</Text>
@@ -52,7 +54,7 @@ const FeedbackScreen = () => {
       >
         <Text style={styles.buttonText}>Feedback Form</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -61,15 +63,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   feedbackButton: {
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
-    marginBottom: s(18),
+    marginBottom: s(40),
     padding: s(13),
     borderRadius: s(100),
     alignItems: 'center',

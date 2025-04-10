@@ -47,8 +47,23 @@ const SupportScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={() => router.back()}
+            >
+              <Image
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Support and Account Deletion</Text>
+          </View>
+        </SafeAreaView>
+      </View>
       <View style={styles.emailSection}>
         <View style={styles.emailContainer}>
           <Image 
@@ -89,7 +104,7 @@ const SupportScreen = () => {
         visible={showConfirmation}
         onClose={() => setShowConfirmation(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -98,15 +113,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),

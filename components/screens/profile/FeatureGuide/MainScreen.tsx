@@ -13,12 +13,14 @@ import AddActivities from './AddActivities';
 import CompleteActivities from './CompleteActivities';
 import CustomNotifications from './CustomNotifications';
 import JoinCommunity from './JoinCommunity';
+import WalkthroughPopup from './WalkthroughPopup';
 
 const FeatureGuide = () => {
   const [showAddActivities, setShowAddActivities] = useState(false);
   const [showCompleteActivities, setShowCompleteActivities] = useState(false);
   const [showCustomNotifications, setShowCustomNotifications] = useState(false);
   const [showJoinCommunity, setShowJoinCommunity] = useState(false);
+  const [showWalkthrough, setShowWalkthrough] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -28,7 +30,7 @@ const FeatureGuide = () => {
           <View style={styles.headerContent}>
             <TouchableOpacity 
               style={styles.backButton} 
-              onPress={() => router.push('/(tabs)/account/settings')}
+              onPress={() => router.back()}
             >
               <Image
                 source={require("@/assets/icons/backArrow.png")}
@@ -97,6 +99,17 @@ const FeatureGuide = () => {
           </View>
           <Text style={styles.cardTitle}>Custom Notifications</Text>
         </TouchableOpacity>
+
+        {/* New box for testing popup */}
+        <TouchableOpacity 
+          style={styles.card}
+          onPress={() => setShowWalkthrough(true)}
+        >
+          <View style={styles.iconContainer}>
+            <View style={styles.emptyIcon} />
+          </View>
+          <Text style={styles.cardTitle}>Testing Popup</Text>
+        </TouchableOpacity>
       </View>
 
       <AddActivities 
@@ -117,6 +130,11 @@ const FeatureGuide = () => {
       <JoinCommunity 
         visible={showJoinCommunity}
         onClose={() => setShowJoinCommunity(false)}
+      />
+
+      <WalkthroughPopup 
+        visible={showWalkthrough}
+        onClose={() => setShowWalkthrough(false)}
       />
     </View>
   );
@@ -184,6 +202,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#242020',
+  },
+  emptyIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: '#FBD9E0',
+    borderRadius: 12,
   },
 });
 
