@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   goalsSection: {
-    marginTop: -16, // Adjust spacing between header and goals
     marginBottom: 16, // Add space before points bar
   },
 });
