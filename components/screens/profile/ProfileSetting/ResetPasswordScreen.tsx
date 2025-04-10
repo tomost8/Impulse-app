@@ -69,13 +69,18 @@ function PasswordInput({
   );
 }
 
-const ResetPasswordScreen = () => {
+interface ResetPasswordScreenProps {
+  loading: boolean;
+}
+
+const ResetPasswordScreen = ({ loading }: ResetPasswordScreenProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleResetPassword = () => {
     // Handle password reset logic here
+    console.log('Reset Password');
   };
 
   return (

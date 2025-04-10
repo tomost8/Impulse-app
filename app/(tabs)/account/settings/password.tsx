@@ -43,21 +43,11 @@ const PasswordPage = (props: any) => {
     });
   };
 
-  if (pageDisplay) {
-    return <PasswordScreen
-      formData={formData}
-      handleFormDataChange={handleFormDataChange}
-      handleFormSubmit={handleFormSubmit}
-      isSubmitting={isSubmitting}
-    />
-  } else {
-    return <PasswordScreenOld
-      formData={formData}
-      handleFormDataChange={handleFormDataChange}
-      handleFormSubmit={handleFormSubmit}
-      isSubmitting={isSubmitting}
-    />
-  }
+  const loading = isSubmitting;
+
+  return <PasswordScreen
+    loading={loading}
+  />
 }
 
 export default AuthWrapper(PasswordPage);

@@ -94,7 +94,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
           </View>
           <TouchableOpacity
             style={styles.editProfileButton}
-            onPress={() => router.push('/account/settings/profile/editProfile')}
+            onPress={() => router.push('/account/settings/editProfile')}
             accessibilityLabel="Edit Profile"
             accessibilityRole="button"
           >

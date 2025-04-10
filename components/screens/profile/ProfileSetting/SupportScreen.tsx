@@ -9,37 +9,33 @@ import {
   Linking,
   SafeAreaView,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
 import AccountChangedConfirmation from '../popups/AccountChangedConfirmation';
 
-function Header() {
-  return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Support and Account Deletion</Text>
-      </View>
-    </View>
-  );
+interface SupportScreenProps {
+  loading: boolean;
+  handleUpdateUser: () => void;
 }
 
-const SupportScreen = () => {
+const SupportScreen = ({ handleUpdateUser, loading }: SupportScreenProps) => {
+  if (loading) {
+    return <ActivityIndicator />;
+  }
   const [code, setCode] = useState('');
+  const [error, setError] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleApply = () => {
-    // Backend validation would go here
-    setShowConfirmation(true);
+    if (code === 'INSPIRE') {
+      handleUpdateUser();
+      setError('');
+      setShowConfirmation(true);
+    } else {
+      setError('Error: Code is incorrect');
+    }
   };
 
   const handleDeleteAccountPress = () => {
@@ -92,7 +88,7 @@ const SupportScreen = () => {
             <Text style={styles.applyButtonText}>Apply</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.errorText}>Error: Code is incorrect</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
       <TouchableOpacity
         style={styles.deleteAccountButton}
