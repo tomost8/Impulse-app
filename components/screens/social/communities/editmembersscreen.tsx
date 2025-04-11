@@ -54,19 +54,23 @@ const EditMembersScreen = (props: EditMembersScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-          <Text style={styles.pageTitle}>Members</Text>
-        </TouchableOpacity>
+        <SafeAreaView>
+          <View style={styles.topBarContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+              <Text style={styles.pageTitle}>Members</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Search Bar */}
@@ -114,7 +118,7 @@ const EditMembersScreen = (props: EditMembersScreenProps) => {
         onClose={handleRemoveCancel}
         onRemove={handleRemoveConfirm}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -124,11 +128,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   topBar: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  topBarContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     flexDirection: 'row',

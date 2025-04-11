@@ -49,7 +49,7 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
@@ -60,16 +60,20 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
         >
           {/* Top Bar */}
           <View style={styles.topBar}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.pageTitle}>Create Community</Text>
+            <SafeAreaView>
+              <View style={styles.topBarContent}>
+                <TouchableOpacity 
+                  style={styles.backButton}
+                  onPress={() => router.back()}
+                >
+                  <Image 
+                    source={require("@/assets/icons/backArrow.png")}
+                    style={styles.backIcon}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.pageTitle}>Create Community</Text>
+              </View>
+            </SafeAreaView>
           </View>
 
           {/* Profile Image Section */}
@@ -171,7 +175,7 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -181,11 +185,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   topBar: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  topBarContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     padding: 8,

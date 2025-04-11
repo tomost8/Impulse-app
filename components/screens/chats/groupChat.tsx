@@ -19,31 +19,32 @@ const GroupChat = () => {
   const [message, setMessage] = useState('');
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.profileButton}
-            onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
-          >
-            <Image
-              source={require("@/assets/images/andrew.png")}
-              style={styles.profileImage}
-            />
-            <Text style={styles.headerTitle}>Gabe's Running Club</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.groupButton}
+              onPress={() => router.push(`/chats/groups/${chatId}/info`)}
+            >
+              <Image
+                source={require("@/assets/images/andrew.png")}
+                style={styles.groupImage}
+              />
+              <Text style={styles.name}>Running Club</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Chat Messages Area */}
@@ -80,7 +81,7 @@ const GroupChat = () => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -89,15 +90,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(15),
-    paddingBottom: s(12),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: s(16),
+    paddingTop: s(8),
+    paddingBottom: s(12),
     gap: 12,
   },
   backButton: {
@@ -107,18 +108,18 @@ const styles = StyleSheet.create({
     width: 11,
     height: 15,
   },
-  profileButton: {
+  groupButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  profileImage: {
+  groupImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
   },
-  headerTitle: {
+  name: {
     flex: 1,
     fontSize: 16,
     fontFamily: 'Poppins',
@@ -129,12 +130,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 6,
   },
   inputContainer: {
-    borderTopWidth: 1,
-    borderTopColor: '#E1E1E1',
-    padding: 16,
+    padding: 10,
+    marginBottom: 26, 
   },
   messageInputWrapper: {
     flexDirection: 'row',

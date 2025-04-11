@@ -93,9 +93,9 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: '#E0EDFD',
-    paddingTop: 46, // Add padding for status bar
+    paddingTop: 45, // Add padding for status bar
     paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingBottom: 12,
   },
   headerContent: {
     flexDirection: 'row',

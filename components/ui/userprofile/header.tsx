@@ -114,10 +114,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backButton: {
-    width: 40,
-    height: 40,
+    width: 11,
+    height: 15,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 12, 
+    marginLeft: 5, 
   },
   backIcon: {
     width: 18,
