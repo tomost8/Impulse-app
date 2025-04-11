@@ -35,7 +35,7 @@ const GroupChat = () => {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.groupButton}
-              onPress={() => router.push(`/chats/groups/${chatId}/info`)}
+              onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
             >
               <Image
                 source={require("@/assets/images/andrew.png")}
