@@ -62,36 +62,40 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        {/* Header Section */}
-        <View style={headerStyles.headerContainer}>
-          {/* Crescent Background */}
-          <View style={headerStyles.crescentContainer}>
-            <View style={headerStyles.crescent} />
-          </View>
+        <View style={styles.headerExtension}>
+          <SafeAreaView>
+            <View style={styles.headerRow}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Partner Insights</Text>
+            </View>
+          </SafeAreaView>
+        </View>
 
-          {/* Header Content */}
-          <View style={headerStyles.headerContent}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Image
-                source={require("@/assets/icons/backArrow.png")}
-                style={headerStyles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={headerStyles.headerTitle}>User Profile</Text>
+        {/* Custom Header Section */}
+        <View style={styles.headerContainer}>
+          {/* Crescent Background */}
+          <View style={styles.crescentContainer}>
+            <View style={styles.crescent} />
           </View>
 
           {/* Profile Section */}
-          <View style={headerStyles.profileSection}>
+          <View style={styles.profileSection}>
             <Image
               source={{ uri: props.nonFriend.profile_picture }}
-              style={headerStyles.profileImage}
+              style={styles.profileImage}
             />
-            <Text style={headerStyles.name}>
-              {props.nonFriend.first_name} {props.nonFriend.last_name}
-            </Text>
-            <Text style={headerStyles.username}>@{props.nonFriend.username}</Text>
+            <Text style={styles.profileName}>{props.nonFriend.first_name} {props.nonFriend.last_name}</Text>
+            <Text style={styles.username}>@{props.nonFriend.username}</Text>
           </View>
         </View>
 
@@ -144,7 +148,7 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
         isVisible={showRequestSentPopup}
         onClose={handlePopupClose}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -153,9 +157,86 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 12,
+  },
+  backButton: {
+    width: 11,
+    height: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    marginLeft: 5,
+  },
+  backIcon: {
+    width: 11,
+    height: 15,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  headerContainer: {
+    position: 'relative',
+    paddingBottom: 16,
+  },
+  crescentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    overflow: 'hidden',
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginTop: 60,
+    zIndex: 1,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  profileName: {
+    fontSize: 24,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginTop: 16,
+  },
+  username: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+    marginTop: 4,
+  },
+  crescent: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 500,
+    borderBottomLeftRadius: 800,
+    borderBottomRightRadius: 800,
+    backgroundColor: '#E0EDFD',
+    transform: [
+      { scaleX: 1.3 },
+      { translateY: -380 },
+    ],
+  },
   scrollView: {
     flex: 1,
-    marginBottom: 120, // Space for buttons
   },
   buttonContainer: {
     position: 'absolute',
@@ -186,77 +267,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: '600',
-  },
-});
-
-const headerStyles = StyleSheet.create({
-  headerContainer: {
-    position: 'relative',
-    paddingBottom: 16,
-  },
-  crescentContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 350,
-    overflow: 'hidden',
-  },
-  crescent: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 500,
-    borderBottomLeftRadius: 800,
-    borderBottomRightRadius: 800,
-    backgroundColor: '#E0EDFD',
-    transform: [
-      { scaleX: 1.3 },
-      { translateY: -350 },
-    ],
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    zIndex: 1,
-  },
-  backIcon: {
-    width: 11,
-    height: 15,
-    marginRight: 14,
-    marginLeft: 8,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-  },
-  profileSection: {
-    alignItems: 'center',
-    marginTop: 50,
-    zIndex: 1,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  name: {
-    fontSize: 24,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginTop: 16,
-  },
-  username: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#979797',
-    marginTop: 4,
   },
 });
 

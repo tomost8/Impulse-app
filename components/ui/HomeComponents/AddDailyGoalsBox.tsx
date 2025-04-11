@@ -19,7 +19,7 @@ const AddDailyGoalsBox: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%', // Take full width of parent
+    width: '92%', // Take full width of parent
     height: 75,
     borderRadius: 16,
     borderWidth: 1,

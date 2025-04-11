@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
     marginTop: 'auto',
-    marginBottom: s(20),
+    marginBottom: 40,
     padding: s(13),
     borderRadius: s(100),
     alignItems: 'center',

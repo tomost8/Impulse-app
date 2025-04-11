@@ -20,6 +20,7 @@ import Info2 from '@/components/screens/profile/setting/info2';
 import Info3 from '@/components/screens/profile/setting/info3';
 import Info4 from '@/components/screens/profile/setting/info4';
 import Info1 from '@/components/screens/profile/setting/info1';
+import PreferencesUpdatedPopup from './PreferencesUpdatedPopup';
 
 function ReminderItem({ 
   title, 
@@ -120,6 +121,7 @@ function ReminderNotifications(): JSX.Element {
   const [showInfo3, setShowInfo3] = useState(false);
   const [showInfo4, setShowInfo4] = useState(false);
   const [showInfo1, setShowInfo1] = useState(false);
+  const [showUpdatedPopup, setShowUpdatedPopup] = useState(false);
 
   // Generate time options
   const morningOptions = Array.from({ length: 21 }, (_, i) => {
@@ -144,7 +146,8 @@ function ReminderNotifications(): JSX.Element {
   ];
 
   const handleSave = () => {
-    // Handle save logic
+    // Save logic here
+    setShowUpdatedPopup(true);
   };
 
   return (
@@ -264,6 +267,10 @@ function ReminderNotifications(): JSX.Element {
         visible={showInfo1}
         onClose={() => setShowInfo1(false)}
       />
+      <PreferencesUpdatedPopup
+        isVisible={showUpdatedPopup}
+        onClose={() => setShowUpdatedPopup(false)}
+      />
     </View>
   );
 }
@@ -380,6 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
     marginVertical: s(20),
+    marginBottom: 35, 
     padding: s(13),
     borderRadius: s(100),
     alignItems: 'center',

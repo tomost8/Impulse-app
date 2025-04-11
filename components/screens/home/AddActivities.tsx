@@ -104,8 +104,8 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   backButton: {
-    marginRight: 12,
-    marginLeft: 4,
+    marginRight: 13,
+    marginLeft: 5,
   },
   backIcon: {
     width: 10,
