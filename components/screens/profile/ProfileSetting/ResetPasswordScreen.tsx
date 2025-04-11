@@ -71,21 +71,36 @@ function PasswordInput({
 
 interface ResetPasswordScreenProps {
   loading: boolean;
+  errorMessage: string;
+  handleResetPassword: (currentPassword: string, newPassword: string) => void;
 }
 
-const ResetPasswordScreen = ({ loading }: ResetPasswordScreenProps) => {
+const ResetPasswordScreen = ({ loading, errorMessage, handleResetPassword }: ResetPasswordScreenProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleResetPassword = () => {
-    // Handle password reset logic here
-    console.log('Reset Password');
+  const handleResetClick = () => {
+    if (currentPassword === "" || newPassword === "" || confirmPassword === "") {
+      setError("Please fill in all fields");
+    } else if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+    } else {
+      console.log('Reset Password');
+      handleResetPassword(currentPassword, newPassword);
+      if (errorMessage === "Firebase: Error (auth/invalid-credential).") {
+        setError("Invalid current password");
+      } else if (errorMessage === '') {
+        setError("Password updated successfully");
+      }
+    }
   };
 
   return (
     <View style={styles.container}>
       <Header />
+      <Text>{error}</Text>
       <View style={styles.content}>
         <PasswordInput
           placeholder="Current Password"
@@ -105,7 +120,7 @@ const ResetPasswordScreen = ({ loading }: ResetPasswordScreenProps) => {
       </View>
       <TouchableOpacity
         style={styles.resetButton}
-        onPress={handleResetPassword}
+        onPress={handleResetClick}
       >
         <Text style={styles.resetButtonText}>Reset</Text>
       </TouchableOpacity>

@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
+// Firebase
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '@/config/firebaseConfig';
 
 interface ForgotPasswordProps {
   isVisible: boolean;
@@ -18,11 +21,27 @@ interface ForgotPasswordProps {
 
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isVisible, onClose }) => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSendInstructions = () => {
-    // Handle sending reset instructions here
-    onClose();
-    router.push('/'); // Navigate back to GetStarted
+  const handleSendInstructions = async () => {
+    if (!email) {
+      setError('Please enter your email address');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Reset email sent successfully');
+      onClose();
+    } catch (error: any) {
+      setError(error.message || 'Failed to send reset email');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,16 +68,24 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isVisible, onClose }) =
             placeholder="Email Address"
             placeholderTextColor="#979797"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => {
+              setEmail(text);
+              setError(''); // Clear error when user types
+            }}
             keyboardType="email-address"
             autoCapitalize="none"
           />
 
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
           <TouchableOpacity 
-            style={styles.sendButton}
+            style={[styles.sendButton, loading && styles.disabledButton]}
             onPress={handleSendInstructions}
+            disabled={loading}
           >
-            <Text style={styles.sendButtonText}>Send Instructions</Text>
+            <Text style={styles.sendButtonText}>
+              {loading ? 'Sending...' : 'Send Instructions'}
+            </Text>
           </TouchableOpacity>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -111,6 +138,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  errorText: {
+    color: '#FF0000',
+    fontSize: s(12),
+    fontFamily: 'Open Sans',
+    marginBottom: s(12),
+    textAlign: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc',
   },
 });
 

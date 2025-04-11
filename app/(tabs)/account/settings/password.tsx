@@ -2,51 +2,47 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import PasswordScreen from '@/components/screens/profile/ProfileSetting/ResetPasswordScreen';
-import PasswordScreenOld from '@/components/old/account/PasswordScreen';
+// Firebase
+import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
 
-const PasswordPage = (props: any) => {
-  const { userId, authToken } = props;
-
-  // TODO: Implement Firebase Password Reset
+const PasswordPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleFormSubmit = () => {
-    const { newPassword, confirmPassword } = formData;
+  const [error, setError] = useState<string | null>(null);
 
-    if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match.");
-      return;
-    }
-
-    console.log('Password change submitted:', formData);
+  const handleFormSubmit = async (oldPassword: string, newPassword: string) => {
+    setIsSubmitting(true);
+    setError(null);
     
-    // Clear form data after submitting
-    setFormData({
-      oldPassword: '',
-      newPassword: '',
-      confirmPassword: '',
-    });
-  };
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      
+      if (!user || !user.email) {
+        throw new Error('User not found or email not verified');
+      }
 
-  // Form data
-  const [formData, setFormData] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-
-  const handleFormDataChange = (field: string, value: string) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
+      // First, re-authenticate the user with their old password
+      const credential = EmailAuthProvider.credential(user.email, oldPassword);
+      await reauthenticateWithCredential(user, credential);
+      
+      // If re-authentication successful, update to new password
+      await updatePassword(user, newPassword);
+      //console.log('Password updated successfully');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update password');
+      console.error('Password update error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const loading = isSubmitting;
 
   return <PasswordScreen
     loading={loading}
+    errorMessage={error || ''}
+    handleResetPassword={handleFormSubmit}
   />
 }
 
