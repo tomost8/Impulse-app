@@ -33,21 +33,25 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           {/* Header */}
           <View style={styles.header}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={handleBack}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>{communityName}</Text>
+            <SafeAreaView>
+              <View style={styles.headerContent}>
+                <TouchableOpacity 
+                  style={styles.backButton}
+                  onPress={handleBack}
+                >
+                  <Image 
+                    source={require("@/assets/icons/backArrow.png")}
+                    style={styles.backIcon}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.title}>{communityName}</Text>
+              </View>
+            </SafeAreaView>
           </View>
 
           {/* Messages Container */}
@@ -81,7 +85,7 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
           </KeyboardAvoidingView>
         </View>
       </TouchableWithoutFeedback>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -94,11 +98,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     padding: 8,
@@ -130,6 +137,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F5F5F5',
     backgroundColor: '#FFFFFF',
+    marginBottom: 15, 
   },
   input: {
     flex: 1,

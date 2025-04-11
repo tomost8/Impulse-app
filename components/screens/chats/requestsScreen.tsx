@@ -57,30 +57,34 @@ const RequestsScreen = (props: RequestsScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Image 
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.title}>Requests</Text>
-        </View>
-        <TouchableOpacity 
-          style={styles.addButton}
-          onPress={handleAddFriend}
-        >
-          <Image 
-            source={require("@/assets/icons/addFriend.png")}
-            style={styles.addIcon}
-          />
-        </TouchableOpacity>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <View style={styles.headerLeft}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.title}>Requests</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.addButton}
+              onPress={handleAddFriend}
+            >
+              <Image 
+                source={require("@/assets/icons/addFriend.png")}
+                style={styles.addIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
 
       <ScrollView style={styles.content}>
@@ -156,7 +160,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -166,12 +170,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 10,
   },
   headerLeft: {
     flexDirection: 'row',

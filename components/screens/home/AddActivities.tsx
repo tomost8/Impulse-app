@@ -101,10 +101,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 10,
-    paddingBottom: 16,
+    paddingBottom: 15,
   },
   backButton: {
-    marginRight: 12,
+    marginRight: 13,
+    marginLeft: 5,
   },
   backIcon: {
     width: 10,

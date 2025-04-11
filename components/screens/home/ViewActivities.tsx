@@ -62,18 +62,22 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <GoalsHeader onBackPress={() => router.back()} />
-
         <ScrollView 
           ref={scrollViewRef}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={styles.headerBackground}>
+            <SafeAreaView>
+              <GoalsHeader onBackPress={() => router.back()} />
+            </SafeAreaView>
+          </View>
+
           {/* Section Title - "Goals for the Day" */}
           <Text style={styles.sectionTitle}>Goals for the Day</Text>
 
@@ -101,14 +105,17 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
           </View>
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
   
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: "#FFFFFF", // Match Figma background
+    backgroundColor: "#FFFFFF",
+  },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
   },
   keyboardView: {
     flex: 1,
@@ -129,6 +136,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    marginBottom: 10, 
   },
   sectionTitle: {
     fontSize: 18,

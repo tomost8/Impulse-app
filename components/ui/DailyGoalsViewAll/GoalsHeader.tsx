@@ -25,12 +25,12 @@ const GoalsHeader: React.FC<GoalsHeaderProps> = ({ onBackPress }) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 75, // Matches Figma specs
+    height: 52, // Matches Figma specs
     backgroundColor: "#E0EDFD", // Background color from Figma
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20, // Matches Figma padding
-    paddingTop: 20, // Adjusted for status bar spacing
+    paddingTop: 0, // Adjusted for status bar spacing
   },
   backButton: {
     padding: 10, // Enlarges touch area for usability

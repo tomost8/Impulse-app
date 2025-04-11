@@ -28,23 +28,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const [showDailyAddPopup, setShowDailyAddPopup] = useState(false);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.header}>
-        <View style={styles.topSectionWrapper}>
-          <TopSection name={name} />
+    <View style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.headerExtension}>
+          <SafeAreaView>
+            <TopSection name={name} />
+          </SafeAreaView>
         </View>
-        <TouchableOpacity 
-          style={styles.checkButton}
-          onPress={() => setShowDailyAddPopup(true)}
-        >
-          <Image 
-            source={require("../../../assets/icons/greencheck.png")}
-            style={styles.checkIcon}
-          />
-        </TouchableOpacity>
-      </View>
-      
-      <ScrollView contentContainerStyle={styles.scrollView}>
+
         <View style={styles.quoteSection}>
           <QuoteofDay />
         </View>
@@ -70,34 +65,38 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         onClose={() => setShowDailyAddPopup(false)}
         onConfirm={() => setShowDailyAddPopup(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: '#FFFFFF',
+  },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
   },
   scrollView: {
-    flexGrow: 1, // ✅ Fix: Ensures the content expands and prevents cutoff
-    padding: 16,
-    paddingBottom: 80, // ✅ Increased padding to avoid bottom cutoff
-    paddingTop: 0,
-    //backgroundColor: "red", // Testing padding - visual check
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 65, // Add padding at bottom to ensure visibility
   },
   quoteSection: {
-    marginTop: 35, // ✅ Adds spacing between TopSection & Quote Card
-    marginBottom: 20, // ✅ Prevents Quote from being too close to Daily Goals
+    marginTop: 24,
+    marginBottom: 20,
     alignItems: "center",
   },
   section: {
     marginBottom: 24, // Ensures spacing between sections
   },
   leaderboardWrapper: {
-    flex: 1, // ✅ Fix: Allows LeaderboardFull to expand dynamically
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 45, // Add margin to ensure space at bottom
   },
   header: {
     flexDirection: 'row',

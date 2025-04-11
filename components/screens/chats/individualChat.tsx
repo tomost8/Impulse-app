@@ -24,31 +24,32 @@ const IndividualChat = (props: IndividualChatProps) => {
   const [message, setMessage] = useState('');
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header Section */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            onPress={() => router.back()}
-            style={styles.backButton}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.profileButton}
-            onPress={() => router.push(`/user/${partner.id}`)}
-          >
-            <Image
-              source={partner.profile_picture}
-              style={styles.profileImage}
-            />
-            <Text style={styles.headerTitle}>{partner.first_name} {partner.last_name}</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.profileButton}
+              onPress={() => router.push(`/user/${partner.id}`)}
+            >
+              <Image
+                source={partner.profile_picture}
+                style={styles.profileImage}
+              />
+              <Text style={styles.headerTitle}>{partner.first_name} {partner.last_name}</Text>
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Chat Messages Area */}
@@ -85,7 +86,7 @@ const IndividualChat = (props: IndividualChatProps) => {
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -94,15 +95,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(15),
-    paddingBottom: s(12),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: s(16),
+    paddingTop: s(8),
+    paddingBottom: s(12),
     gap: 12,
   },
   backButton: {
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     backgroundColor: '#FFFFFF',
+    marginBottom: 16,
   },
   messageInputWrapper: {
     flexDirection: 'row',

@@ -77,14 +77,11 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.keyboardAvoidingView}
-        >
-          {/* Header */}
-          <View style={styles.header}>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
             <TouchableOpacity 
               style={styles.backButton}
               onPress={() => router.back()}
@@ -94,9 +91,16 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
                 style={styles.backIcon}
               />
             </TouchableOpacity>
-            <Text style={styles.title}>Starting My Own Group</Text>
+            <Text style={styles.title}>Start Group</Text>
           </View>
+        </SafeAreaView>
+      </View>
 
+      <ScrollView style={styles.scrollView}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoidingView}
+        >
           {/* Content */}
           <View style={styles.content}>
             {/* Image Upload */}
@@ -182,7 +186,7 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
       >
         <Text style={styles.createButtonText}>Create</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -195,11 +199,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 10,
   },
   backButton: {
     padding: 8,

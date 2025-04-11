@@ -81,19 +81,23 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Invite a friend to the group</Text>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.title}>Invite Friends</Text>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Search Bar */}
@@ -150,7 +154,7 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
         isVisible={isInviteModalVisible}
         onClose={handleInviteSentClose}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -160,11 +164,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 10,
   },
   backButton: {
     padding: 8,

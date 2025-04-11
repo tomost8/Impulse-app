@@ -57,15 +57,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
+    marginLeft: 8,
   },
   viewAll: {
     fontSize: 14,
     color: "#DE728D",
     fontWeight: "bold",
     textDecorationLine: "underline",
+    marginRight: 6, 
   },
   addGoalContainer: {
-    marginTop: 10, // Add some space between the cards and the add box
+    marginTop: 12, // Add some space between the cards and the add box
     alignSelf: "stretch", // Ensures it spans full width
     alignItems: "center", // Centers content properly
     marginLeft: -3,
