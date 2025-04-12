@@ -65,20 +65,22 @@ export function useCreateChatMember() {
   return { createChatMember };
 }
 
+// Mutation - Update Chat Member
+// input: chat_id/user_id/role/status
 export const UPDATE_CHAT_MEMBER = gql`
   mutation ($input: UpdateChatMemberInput!, $userId: Int!, $chatId: Int!) {
     updateChatMember(input: $input, user_id: $userId, chat_id: $chatId) {
       success
       chat_member {
-      chat_id
-      user_id
-      role
-      status
-    }
-    errors {
-      field
-      message
-    }
+        chat_id
+        user_id
+        role
+        status
+      }
+      errors {
+        field
+        message
+      }
     }
   }
 `;
@@ -103,7 +105,6 @@ export function useUpdateChatMember() {
   return { updateChatMember };
 }
 
-
 // Mutation - Delete Chat Member
 // input: user_id/chat_id
 export const DELETE_CHAT_MEMBER = gql`
@@ -113,7 +114,7 @@ export const DELETE_CHAT_MEMBER = gql`
       errors {
         field
         message
-        }
+      }
     }
   }
 `;
@@ -137,3 +138,41 @@ export function useDeleteChatMember() {
   return { deleteChatMember };
 }
 
+// Mutation - Send Message
+export const SEND_MESSAGE = gql`
+  mutation ($input: CreateMessageInput!) {
+    createMessage(input: $input) {
+      success
+      message {
+        id
+        chat_id
+        sender_id
+        content
+        post_id
+        created_at
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useSendMessage() {
+  const [sendMessageMutation] = useMutation(SEND_MESSAGE);
+  const sendMessage = async (input: any) => {
+    try {
+      const response = await sendMessageMutation({ 
+        variables: { 
+          input: input
+        }
+      });
+      return response.data.createMessage;
+    } catch (error) {
+      console.error('Send Message failed:', error);
+      throw error;
+    }
+  };
+  return { sendMessage };
+}

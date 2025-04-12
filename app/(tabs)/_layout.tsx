@@ -1,4 +1,4 @@
-import { router, Tabs, usePathname } from 'expo-router';
+import { router, Tabs, usePathname, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, Image, View, Text, Button } from 'react-native';
 
@@ -14,6 +14,7 @@ import { useUserData } from '@/services/UserPreferencesContext';
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
   const pathname = usePathname();
+  const { hideTabBar } = useLocalSearchParams();
 
   const {cameraClickable} = useUserData();
 
@@ -53,6 +54,8 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
   ];
 
   const shouldShowTabBar = showForRoutes.includes(pathname);
+  const shouldHideTabBar = hideTabBar === 'true';
+  const isCameraRoute = pathname.startsWith('/camera');
 
   return (
     <>
@@ -61,8 +64,8 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           headerShown: false,
           tabBarBackground: TabBarBackground,
           tabBarStyle: {
-            display: shouldShowTabBar ? 'flex' : 'none',
-            height: shouldShowTabBar ? undefined : 0,
+            display: isCameraRoute ? 'none' : (shouldShowTabBar ? 'flex' : 'none'),
+            height: isCameraRoute ? 0 : (shouldShowTabBar ? undefined : 0),
             ...Platform.select({
               ios: {
                 position: 'absolute',

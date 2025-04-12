@@ -188,3 +188,51 @@ export function useGetGroupLeaderboard(chatId: number, sortBy: string, shouldFet
     error: error?.message || null
   };
 }
+
+// Query - Get Messages (by Chat ID)
+export const GET_MESSAGES = gql`
+  query ($chatId: Int!) {
+    getMessages(id: $chatId) {
+      success
+      messages {
+        id
+        sender {
+          id
+          first_name
+          last_name
+          profile_picture
+        }
+        content
+        post {
+          id
+          caption
+          mediaUrl
+        }
+        created_at
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetMessages(chatId: number, shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_MESSAGES, {
+    variables: { chatId },
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log("useGetMessages data", data, error ? 'error:' + error : '');
+  }
+  return {
+    messages: data?.getMessages.messages || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}

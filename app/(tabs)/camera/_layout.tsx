@@ -1,9 +1,8 @@
-import styles from '@/utils/testStyles';
-import { TouchableOpacity, Text, View } from 'react-native';
+import { Stack } from 'expo-router';
+import React, { createContext, useState, useEffect, useRef, useContext } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams, Stack } from 'expo-router';
-
-import React, {  useState, useEffect, useRef, createContext } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
 // GraphQL Hooks
 import { useGetFriends } from "@/hooks/graphql/friends/queries";
 import { useGetUserChats } from "@/hooks/graphql/chats/queries";
@@ -46,7 +45,7 @@ function CameraHeader() {
   if (!header) return null;
 
   return (
-    <View style={styles.header}>
+    <View style={headerStyles.header}>
       {/* Back Button */}
       <TouchableOpacity onPress={() => {
         router.back();
@@ -60,7 +59,7 @@ function CameraHeader() {
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
       {/* Display Category Text for Selected Activity*/}
-      <Text style={styles.text}>{header.category}</Text>
+      <Text style={headerStyles.text}>{header.category}</Text>
       {/* Retake Button or Flash Button*/}
       {header.pictureTaken ? (
         <TouchableOpacity onPress={() => {
@@ -69,7 +68,7 @@ function CameraHeader() {
           header.setCategory('');
           header.setPictureTaken(false);
         }}>
-          <Text style={styles.text}>Retake</Text>
+          <Text style={headerStyles.text}>Retake</Text>
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={() => header.setFlash(!header.flash)}>
@@ -137,6 +136,20 @@ export default function CameraLayout() {
     );
   }
 
+  useEffect(() => {
+    // 使用 Expo Router 的方式隐藏底部导航栏
+    if (router.canGoBack()) {
+      router.setParams({ hideTabBar: 'true' });
+    }
+    
+    return () => {
+      // 组件卸载时恢复底部导航栏
+      if (router.canGoBack()) {
+        router.setParams({ hideTabBar: 'false' });
+      }
+    };
+  }, []);
+
   return (
     <SocialDataContext.Provider value={{
       userId: userId as number,
@@ -151,17 +164,22 @@ export default function CameraLayout() {
         pictureTaken, setPictureTaken,
         flash, setFlash,
       }}>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerShown: true,
+            header: () => <CameraHeader />,
+          }}
+        >
           <Stack.Screen 
             name="index" 
             options={{
-              header: () => <CameraHeader />,
+              // 可以在这里设置特定于索引页面的选项
             }}
           />
           <Stack.Screen 
             name="displayPicture" 
             options={{
-              header: () => <CameraHeader />,
+              // 可以在这里设置特定于显示图片页面的选项
             }}
           />
         </Stack>
@@ -169,4 +187,21 @@ export default function CameraLayout() {
     </SocialDataContext.Provider>
   );
 }
+
+// 将样式名称改为 headerStyles 以避免冲突
+const headerStyles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 10,
+    backgroundColor: '#000',
+  },
+  text: {
+    color: 'white',
+    fontSize: 16,
+  },
+});
 
