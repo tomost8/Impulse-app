@@ -7,8 +7,6 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/chats/queries';
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
-import RemoveFriendModal from '@/components/old/chats/RemoveFriendModal';
-import { debugRenders } from '@/utils/debug';
 import { useSendMessage } from '@/hooks/graphql/chats/mutations';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
@@ -67,7 +65,7 @@ function ChatScreen({
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   
-  // 获取聊天伙伴信息
+  // 获取聊天伙伴信息 
   let partner: any = null;
   if (chat?.type === 'direct') {
     chatMembers?.forEach((member: any) => {
@@ -225,7 +223,7 @@ function ChatScreen({
   };
 
   // 自定义日期分隔符
-  const renderDay = (props: DayProps<IMessage>) => {
+  const renderDay = (props: /*DayProps<IMessage>*/ any) => {
     return (
       <Day
         {...props}
@@ -303,7 +301,7 @@ function ChatScreen({
   if (isChatLoading || isChatMembersLoading || isMessagesLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <Text>加载中...</Text>
+        <Text>加载中... (Loading...)</Text>
       </View>
     );
   }
@@ -332,20 +330,19 @@ function ChatScreen({
               : chat?.title || '聊天'}
           </Text>
           {wsError ? (
-            <Text style={styles.errorText}>连接错误</Text>
+            <Text style={styles.errorText}>连接错误 (Connection Error)</Text>
           ) : isConnected ? (
-            <Text style={styles.connectedText}>已连接</Text>
+            <Text style={styles.connectedText}>已连接 (Connected)</Text>
           ) : (
-            <Text style={styles.disconnectedText}>未连接</Text>
+            <Text style={styles.disconnectedText}>未连接 (Disconnected)</Text>
           )}
         </View>
         
         <TouchableOpacity onPress={() => {
           if (chat?.type === 'direct') {
-            showModal();
+            router.push(`/user/${partner.id}`)
           } else {
-            // 群组选项菜单
-            router.push(`/chats/${chatId}/invite`);
+            router.push(`/chats/${chatId}/groupInfo`)
           }
         }} style={styles.menuButton}>
           <Ionicons name="ellipsis-vertical" size={20} color="#000" />
@@ -366,7 +363,7 @@ function ChatScreen({
         renderActions={renderActions}
         renderComposer={renderComposer}
         alwaysShowSend
-        scrollToBottom
+        //scrollToBottom
         inverted={true}
         renderAvatar={null}
         timeTextStyle={{
@@ -374,18 +371,6 @@ function ChatScreen({
           right: { color: '#888' },
         }}
       />
-
-      {/* 好友删除确认弹窗 */}
-      {chat?.type === 'direct' && (
-        <RemoveFriendModal 
-          visible={visible} 
-          hideModal={hideModal} 
-          userId={userId} 
-          friendId={partner?.id} 
-          handleDeleteFriendship={handleDeleteFriendship} 
-          isDeletingFriendship={isDeletingFriendship}
-        />
-      )}
     </SafeAreaView>
   );
 }
