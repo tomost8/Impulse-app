@@ -65,7 +65,7 @@ export default function AuthScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
-        {/* 心电图logo图标 */}
+
         <View style={styles.logo} />
       </View>
       
