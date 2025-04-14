@@ -50,8 +50,8 @@ const HomePage = () => {
     }
   }, [hasNewLeaderboardData]);
 
-  const loadingData = !hasFetchedFriends.current || fetching;
-  if (debugRenders && !loadingData) {
+  const loading = !hasFetchedFriends.current || fetching;
+  if (debugRenders && !loading) {
     console.log("Rendering HomePage. Counter: ", renderCounter,
       "\nActivities:", activities,
       "\nLeaderboard:", leaderboardRef.current,
@@ -60,9 +60,10 @@ const HomePage = () => {
   }
 
   return <HomeScreen  
-    isLoading={loadingData}
+    loading={loading}
     name={user?.first_name}
     activities={activities}
+    timezone={timezone}
     friendsLeaderboard={leaderboardRef.current}
   />;
 };

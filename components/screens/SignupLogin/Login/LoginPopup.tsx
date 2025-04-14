@@ -15,23 +15,30 @@ import ForgotPassword from './forgotPassword';
 
 interface LoginPopupProps {
   isVisible: boolean;
+  error: string | null;
   onClose: () => void;
+  tryLogin: (
+    email: string, 
+    password: string, 
+    rememberMe: boolean, 
+    onSuccess?: () => void
+  ) => void;
 }
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, onClose }) => {
+
+const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, error, onClose, tryLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const handleLogin = () => {
-    onClose();
-    router.push('/(auth)/loginTemp'); // temporary login screen for now
-  };
+  const handleLogin = async () => {
+    tryLogin(email, password, rememberMe, onClose);
+  }
 
   const handleCreateAccount = () => {
-    onClose(); // Close the popup
+    onClose();
     router.push('/(auth)/createAccount');
   };
 

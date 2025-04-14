@@ -14,19 +14,21 @@ import { router } from "expo-router";
 
 function Header() {
   return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reset Password</Text>
-      </View>
+    <View style={styles.headerBackground}>
+      <SafeAreaView>
+        <View style={styles.headerContent}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={() => router.back()}
+          >
+            <Image
+              source={require("@/assets/icons/backArrow.png")}
+              style={styles.backIcon}
+            />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Reset Password</Text>
+        </View>
+      </SafeAreaView>
     </View>
   );
 }
@@ -67,18 +69,38 @@ function PasswordInput({
   );
 }
 
-const ResetPasswordScreen = () => {
+interface ResetPasswordScreenProps {
+  loading: boolean;
+  errorMessage: string;
+  handleResetPassword: (currentPassword: string, newPassword: string) => void;
+}
+
+const ResetPasswordScreen = ({ loading, errorMessage, handleResetPassword }: ResetPasswordScreenProps) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleResetPassword = () => {
-    // Handle password reset logic here
+  const handleResetClick = () => {
+    if (currentPassword === "" || newPassword === "" || confirmPassword === "") {
+      setError("Please fill in all fields");
+    } else if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+    } else {
+      console.log('Reset Password');
+      handleResetPassword(currentPassword, newPassword);
+      if (errorMessage === "Firebase: Error (auth/invalid-credential).") {
+        setError("Invalid current password");
+      } else if (errorMessage === '') {
+        setError("Password updated successfully");
+      }
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Header />
+      <Text>{error}</Text>
       <View style={styles.content}>
         <PasswordInput
           placeholder="Current Password"
@@ -98,11 +120,11 @@ const ResetPasswordScreen = () => {
       </View>
       <TouchableOpacity
         style={styles.resetButton}
-        onPress={handleResetPassword}
+        onPress={handleResetClick}
       >
         <Text style={styles.resetButtonText}>Reset</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -111,15 +133,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),
@@ -171,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
     marginTop: 'auto',
-    marginBottom: s(20),
+    marginBottom: 40,
     padding: s(13),
     borderRadius: s(100),
     alignItems: 'center',

@@ -12,25 +12,6 @@ import { useUserInfo } from '@/services/UserContext';
 import { router } from "expo-router";
 import { s } from "react-native-size-matters";
 
-function Header() {
-  return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile Settings</Text>
-      </View>
-    </View>
-  );
-}
-
 function SettingsItem({ 
   title, 
   icon, 
@@ -105,8 +86,24 @@ function LogoutButton() {
 
 function ProfileSettings() {
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Settings</Text>
+          </View>
+        </SafeAreaView>
+      </View>
+
       <ScrollView style={styles.content}>
         <View style={styles.settingsContainer}>
           <SettingsItem
@@ -137,13 +134,13 @@ function ProfileSettings() {
           <SettingsItem
             title="Feature Help Guide"
             icon={require("@/assets/icons/settingsGuide.png")}
-            onPress={() => {}}
+            onPress={() => router.push('/(tabs)/account/settings/featureGuide')}
           />
           <DualLensToggle />
         </View>
         <LogoutButton />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -152,31 +149,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
-    marginRight: s(8),
+    marginRight: 12,
   },
   backIcon: {
     width: 10,
     height: 15,
     tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5, 
   },
   headerTitle: {
-    color: '#242020',
     fontSize: 16,
     fontFamily: 'Poppins',
     fontWeight: '600',
+    color: '#242020',
   },
   content: {
     flex: 1,
@@ -222,8 +217,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
-    marginTop: s(175),
-    marginBottom: s(20),
+    marginTop: s(230),
+    marginBottom: 0,
     padding: s(13),
     borderRadius: s(100),
   },

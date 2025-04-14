@@ -43,22 +43,25 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Top Navigation Bar */}
-      <View style={styles.topSection}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.postTitle}>post/[id]</Text>
-      </View>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerBackground}>
+          <SafeAreaView>
+            <View style={styles.headerContent}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Post</Text>
+            </View>
+          </SafeAreaView>
+        </View>
 
-      <ScrollView style={styles.scrollContainer}>
         {/* Full Post Card */}
         <FullPostCard post={{
           username: post.author.username,
@@ -102,7 +105,7 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
           placeholder={showReply ? `Reply to @${selectedComment?.username}...` : "Type comment..."}
         />
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -111,34 +114,38 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  scrollContainer: {
+  scrollView: {
     flex: 1,
   },
   bottomContainer: {
     borderTopWidth: 1,
-    borderTopColor: '#E1E1E1',
+    borderTopColor: '#FFFFFF',
+    marginBottom: 16,
   },
-  topSection: {
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#0066FF',
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
-    padding: 8,
-    marginRight: 12,
+    marginRight: 8,
   },
   backIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-    tintColor: '#FFFFFF',
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+    marginLeft: 5,
+    marginRight: 5,
   },
-  postTitle: {
+  headerTitle: {
+    color: '#242020',
     fontSize: 16,
-    color: '#FFFFFF',
-    fontFamily: 'Open Sans',
+    fontFamily: 'Poppins',
     fontWeight: '600',
   },
 });

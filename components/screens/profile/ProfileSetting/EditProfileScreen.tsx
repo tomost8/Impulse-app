@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  SafeAreaView,
 } from "react-native";
 import PickerModal from "@/components/ui/common/pickers/PickerModal";
 import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
@@ -33,145 +34,150 @@ const ProfileScreen = ({ formData, handleFormDataChange, handleFormSubmit, isSub
   const [isSecondaryGoalModalVisible, setSecondaryGoalModalVisible] = useState(false);
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Edit Profile</Text>
+          </View>
+        </SafeAreaView>
+      </View>
+
+      <ScrollView>
+        <View style={styles.content}>
+          <View style={styles.contentContainer}>
+            <TouchableWithoutFeedback onPress={() => pickImage(handleFormDataChange)}>
+              <Image
+                source={{
+                  uri: formData.profile_picture ? formData.profile_picture : DEFAULT_PROFILE_PICTURE,
+                }}
+                style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
+                accessibilityLabel="Profile picture"
+              />
+            </TouchableWithoutFeedback>
+
+            <Text style={styles.sectionTitle}>Personal Profile</Text>
+
+            <ProfileField label="Email" value={formData.email} onChange={(newValue) => handleFormDataChange('email', newValue)} editable={false} />
+            <ProfileField label="First Name" value={formData.first_name} onChange={(newValue) => handleFormDataChange('first_name', newValue)} />
+            <ProfileField label="Last Name" value={formData.last_name} onChange={(newValue) => handleFormDataChange('last_name', newValue)} />
+            <ProfileField label="Username" value={formData.username} onChange={(newValue) => handleFormDataChange('username', newValue)} />
+
+            <View style={styles.row}>
+              <ProfileNumberButton 
+                label="Age" 
+                value={String(formData.age)} 
+                style={styles.halfWidth} 
+                onPress={(value) => handleFormDataChange('age', value)}
+              />
+              <ProfileDropdown 
+                label="Gender" 
+                value={formData.gender} 
+                style={styles.halfWidth} 
+                onPress={() => setGenderModalVisible(true)}
+              />
+            </View>
+
+            <ProfileDropdown 
+              label="Timezone" 
+              value={formData.timezone} 
+              onPress={() => setTimezoneModalVisible(true)}
             />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-        </View>
-      </View>
 
-      <View style={styles.contentContainer}>
-        <TouchableWithoutFeedback onPress={() => pickImage(handleFormDataChange)}>
-          <Image
-            source={{
-              uri: formData.profile_picture ? formData.profile_picture : DEFAULT_PROFILE_PICTURE,
-            }}
-            style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
-            accessibilityLabel="Profile picture"
-          />
-        </TouchableWithoutFeedback>
+            <ProfileField
+              label="Bio"
+              value={formData.bio}
+              multiline
+              onChange={(newValue) => handleFormDataChange('bio', newValue)}
+            />
 
-        <Text style={styles.sectionTitle}>Personal Profile</Text>
+            <Text style={styles.sectionTitle}>Goal Setting</Text>
 
-        <ProfileField label="Email" value={formData.email} onChange={(newValue) => handleFormDataChange('email', newValue)} editable={false} />
-        <ProfileField label="First Name" value={formData.first_name} onChange={(newValue) => handleFormDataChange('first_name', newValue)} />
-        <ProfileField label="Last Name" value={formData.last_name} onChange={(newValue) => handleFormDataChange('last_name', newValue)} />
-        <ProfileField label="Username" value={formData.username} onChange={(newValue) => handleFormDataChange('username', newValue)} />
+            <View style={styles.goalContainer}>
+              <View style={styles.goalHeader}>
+                <Text style={styles.goalLabel}>Primary Goal</Text>
+                <Text style={styles.pointsText}>100 points</Text>
+              </View>
+              <ProfileDropdown label="" value={getLabelByCategory(formData.primary_goal)} onPress={() => setPrimaryGoalModalVisible(true)} />
+            </View>
 
-        <View style={styles.row}>
-          <ProfileNumberButton 
-            label="Age" 
-            value={String(formData.age)} 
-            style={styles.halfWidth} 
-            onPress={(value) => handleFormDataChange('age', value)}
-          />
-          <ProfileDropdown 
-            label="Gender" 
-            value={formData.gender} 
-            style={styles.halfWidth} 
-            onPress={() => setGenderModalVisible(true)}
-          />
-        </View>
+            <View style={styles.goalContainer}>
+              <View style={styles.goalHeader}>
+                <Text style={styles.goalLabel}>Secondary Goal</Text>
+                <Text style={styles.pointsText}>75 points</Text>
+              </View>
+              <ProfileDropdown label="" value={getLabelByCategory(formData.secondary_goal)} onPress={() => setSecondaryGoalModalVisible(true)} />
+            </View>
 
-        <ProfileDropdown 
-          label="Timezone" 
-          value={formData.timezone} 
-          onPress={() => setTimezoneModalVisible(true)}
-        />
+            <TouchableOpacity
+              style={styles.editButton}
+              accessibilityRole="button"
+              accessibilityLabel="Save profile changes"
+              onPress={() => handleFormSubmit(formData)}
+            >
+              <Text style={styles.editButtonText}>Save</Text>
+            </TouchableOpacity>
 
-        <ProfileField
-          label="Bio"
-          value={formData.bio}
-          multiline
-          onChange={(newValue) => handleFormDataChange('bio', newValue)}
-        />
+            {/* Gender */}
+            <PickerModal
+              visible={isGenderModalVisible}
+              onClose={() => setGenderModalVisible(false)}
+              onValueSelected={(value) => handleFormDataChange('gender', value)}
+              selectedValue={formData.gender}
+              options={GENDER_OPTIONS}
+              placeholder="Select Gender"
+            />
 
-        <Text style={styles.sectionTitle}>Goal Setting</Text>
+            {/* Timezone Picker Modal */}
+            <PickerModal
+              visible={isTimezoneModalVisible}
+              onClose={() => setTimezoneModalVisible(false)}
+              onValueSelected={(value) => handleFormDataChange('timezone', value)}
+              selectedValue={formData.timezone}
+              options={TIMEZONE_OPTIONS}
+              placeholder="Select Timezone"
+            />
 
-        <View style={styles.goalContainer}>
-          <View style={styles.goalHeader}>
-            <Text style={styles.goalLabel}>Primary Goal</Text>
-            <Text style={styles.pointsText}>100 points</Text>
+            {/* Primary Goal Picker Modal */}
+            <PickerModal
+              visible={isPrimaryGoalModalVisible}
+              onClose={() => setPrimaryGoalModalVisible(false)}
+              onValueSelected={(value) => {
+                // Clear secondary goal if it matches the new primary goal
+                if (value === formData.secondary_goal) {
+                  handleFormDataChange('secondary_goal', '');
+                }
+                handleFormDataChange('primary_goal', value);
+              }}
+              selectedValue={formData.primary_goal}
+              options={GOAL_OPTIONS}
+              placeholder="Select Primary Goal"
+            />
+
+            {/* Secondary Goal Picker Modal */}
+            <PickerModal
+              visible={isSecondaryGoalModalVisible}
+              onClose={() => setSecondaryGoalModalVisible(false)}
+              onValueSelected={(value) => handleFormDataChange('secondary_goal', value)}
+              selectedValue={formData.secondary_goal}
+              options={[
+                { label: 'Select Secondary Goal', value: '' },
+                ...GOAL_OPTIONS.filter(goal => goal.value !== formData.primary_goal)
+              ]}
+            />
           </View>
-          <ProfileDropdown label="" value={getLabelByCategory(formData.primary_goal)} onPress={() => setPrimaryGoalModalVisible(true)} />
         </View>
-
-        <View style={styles.goalContainer}>
-          <View style={styles.goalHeader}>
-            <Text style={styles.goalLabel}>Secondary Goal</Text>
-            <Text style={styles.pointsText}>75 points</Text>
-          </View>
-          <ProfileDropdown label="" value={getLabelByCategory(formData.secondary_goal)} onPress={() => setSecondaryGoalModalVisible(true)} />
-        </View>
-
-        <TouchableOpacity
-          style={styles.editButton}
-          accessibilityRole="button"
-          accessibilityLabel="Save profile changes"
-          onPress={() => handleFormSubmit(formData)}
-        >
-          <Text style={styles.editButtonText}>Save</Text>
-        </TouchableOpacity>
-
-        {/* Gender */}
-        <PickerModal
-          visible={isGenderModalVisible}
-          onClose={() => setGenderModalVisible(false)}
-          onValueSelected={(value) => handleFormDataChange('gender', value)}
-          selectedValue={formData.gender}
-          options={GENDER_OPTIONS}
-          placeholder="Select Gender"
-        />
-
-        {/* Timezone Picker Modal */}
-        <PickerModal
-          visible={isTimezoneModalVisible}
-          onClose={() => setTimezoneModalVisible(false)}
-          onValueSelected={(value) => handleFormDataChange('timezone', value)}
-          selectedValue={formData.timezone}
-          options={TIMEZONE_OPTIONS}
-          placeholder="Select Timezone"
-        />
-
-        {/* Primary Goal Picker Modal */}
-        <PickerModal
-          visible={isPrimaryGoalModalVisible}
-          onClose={() => setPrimaryGoalModalVisible(false)}
-          onValueSelected={(value) => {
-            // Clear secondary goal if it matches the new primary goal
-            if (value === formData.secondary_goal) {
-              handleFormDataChange('secondary_goal', '');
-            }
-            handleFormDataChange('primary_goal', value);
-          }}
-          selectedValue={formData.primary_goal}
-          options={GOAL_OPTIONS}
-          placeholder="Select Primary Goal"
-        />
-
-        {/* Secondary Goal Picker Modal */}
-        <PickerModal
-          visible={isSecondaryGoalModalVisible}
-          onClose={() => setSecondaryGoalModalVisible(false)}
-          onValueSelected={(value) => handleFormDataChange('secondary_goal', value)}
-          selectedValue={formData.secondary_goal}
-          options={[
-            { label: 'Select Secondary Goal', value: '' },
-            ...GOAL_OPTIONS.filter(goal => goal.value !== formData.primary_goal)
-          ]}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -213,7 +219,7 @@ const ProfileNumberButton = ({ label, value, style, onPress }:
 const ProfileDropdown = ({ label, value, style, onPress }: { label: string, value: string, style?: any, onPress: () => void }) => {
   return (
     <View style={[styles.fieldContainer, style]}>
-      {label && <Text style={styles.fieldLabel}>{label}</Text>}
+      {label ? <Text style={styles.fieldLabel}>{label}</Text> : null}
       <TouchableOpacity
         style={styles.dropdown}
         accessibilityRole="button"
@@ -235,33 +241,34 @@ const ProfileDropdown = ({ label, value, style, onPress }: { label: string, valu
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
-    marginRight: s(8),
+    marginRight: 12,
   },
   backIcon: {
     width: 10,
     height: 15,
     tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5,
   },
   headerTitle: {
-    color: '#242020',
     fontSize: 16,
     fontFamily: 'Poppins',
     fontWeight: '600',
+    color: '#242020',
+  },
+  content: {
+    flex: 1,
   },
   contentContainer: {
     borderRadius: 30,

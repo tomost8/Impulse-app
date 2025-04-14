@@ -11,12 +11,11 @@ interface RewardItemProps {
 
 function RewardItem({ title, points, isRedeemable, onRedeem }: RewardItemProps) {
   return (
-    <View style={styles.container} accessibilityRole="article">
+    <View style={styles.container}>
       <View style={styles.content}>
         <Text
           style={styles.title}
-          accessibilityRole="heading"
-          accessibilityLevel={2}
+          accessibilityRole="header"
         >
           {title}
         </Text>

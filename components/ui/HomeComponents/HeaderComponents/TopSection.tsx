@@ -27,17 +27,13 @@ const TopSectionContainer: React.FC<{ name: string }> = ({ name }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 390, // ✅ Matches Figma width
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 141, // ✅ Matches Figma height
-    backgroundColor: "#E0EDFD", // ✅ Matches Figma background color
-    padding: 15, // ✅ Ensures proper spacing
-    borderRadius: 10, // ✅ Optional: rounded edges (if needed)
-    alignSelf: "center", // ✅ Centers the entire section on the screen
+    width: '100%',
+    minHeight: 130,
+    backgroundColor: "#E0EDFD",
+    paddingHorizontal: 15,
+    paddingTop: 6,
     flexDirection: "column",
-    justifyContent: "flex-start", // Ensures spacing between Greeting & Streak Badge
+    justifyContent: "flex-start",
   },
   streakContainer: {
     alignSelf: "flex-start", // ✅ Aligns to the left as per Figma

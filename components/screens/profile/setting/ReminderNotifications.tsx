@@ -20,25 +20,7 @@ import Info2 from '@/components/screens/profile/setting/info2';
 import Info3 from '@/components/screens/profile/setting/info3';
 import Info4 from '@/components/screens/profile/setting/info4';
 import Info1 from '@/components/screens/profile/setting/info1';
-
-function Header() {
-  return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Reminders and Notifications</Text>
-      </View>
-    </View>
-  );
-}
+import PreferencesUpdatedPopup from './PreferencesUpdatedPopup';
 
 function ReminderItem({ 
   title, 
@@ -139,6 +121,7 @@ function ReminderNotifications(): JSX.Element {
   const [showInfo3, setShowInfo3] = useState(false);
   const [showInfo4, setShowInfo4] = useState(false);
   const [showInfo1, setShowInfo1] = useState(false);
+  const [showUpdatedPopup, setShowUpdatedPopup] = useState(false);
 
   // Generate time options
   const morningOptions = Array.from({ length: 21 }, (_, i) => {
@@ -163,12 +146,28 @@ function ReminderNotifications(): JSX.Element {
   ];
 
   const handleSave = () => {
-    // Handle save logic
+    // Save logic here
+    setShowUpdatedPopup(true);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Reminders and Notifications</Text>
+          </View>
+        </SafeAreaView>
+      </View>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
@@ -268,7 +267,11 @@ function ReminderNotifications(): JSX.Element {
         visible={showInfo1}
         onClose={() => setShowInfo1(false)}
       />
-    </SafeAreaView>
+      <PreferencesUpdatedPopup
+        isVisible={showUpdatedPopup}
+        onClose={() => setShowUpdatedPopup(false)}
+      />
+    </View>
   );
 }
 
@@ -277,31 +280,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
-    marginRight: s(8),
+    marginRight: 12,
   },
   backIcon: {
     width: 10,
     height: 15,
     tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5,
   },
   headerTitle: {
-    color: '#242020',
     fontSize: 16,
     fontFamily: 'Poppins',
     fontWeight: '600',
+    color: '#242020',
   },
   content: {
     flex: 1,
@@ -386,6 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DE728D',
     marginHorizontal: s(20),
     marginVertical: s(20),
+    marginBottom: 35, 
     padding: s(13),
     borderRadius: s(100),
     alignItems: 'center',

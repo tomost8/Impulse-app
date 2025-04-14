@@ -13,7 +13,7 @@ interface CommunityCardProps {
 const CommunityCard: React.FC<CommunityCardProps> = ({
   id,
   name = "Community Name",
-  memberCount = 25,
+  memberCount,
   image,
   onJoin
 }) => {
@@ -39,7 +39,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
       />
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.memberCount}>{memberCount} members</Text>
+        <Text style={styles.memberCount}>{memberCount} {memberCount === 1 ? 'member' : 'members'}</Text>
         <TouchableOpacity 
           style={styles.joinButton}
           onPress={handleJoinPress}

@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
@@ -40,102 +41,103 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Profile</Text>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Profile</Text>
+          </View>
+        </SafeAreaView>
       </View>
 
-      <View style={styles.profileContainer}>
-        <View style={styles.avatarContainer}>
-          <Image
-            accessibilityLabel="User profile picture"
-            resizeMode="contain"
-            source={{
-              uri: user.profile_picture,
-            }}
-            style={[styles.avatar, { borderWidth: 1, borderColor: 'black' }]}
-          />
-        </View>
-        <View style={styles.personalInfoContainer}>
-          <Text style={styles.sectionTitle}>Personal Profile</Text>
-          {infoItems.map((item, index) => (
-            <View key={index} style={styles.infoItem}>
-              <Text style={styles.label}>{item.label}</Text>
-              <Text style={styles.value}>{item.value}</Text>
-            </View>
-          ))}
-        </View>
-        <View style={styles.goalSettingContainer}>
-          <Text style={styles.sectionTitle}>Goal Setting</Text>
-          {goals.map((goal, index) => (
-            <View key={index} style={styles.goalItem}>
-              <View style={styles.goalHeader}>
-                <Text style={styles.goalType}>{goal.type}</Text>
-                <Text style={styles.points}>{goal.points} points</Text>
+      <ScrollView>
+        <View style={styles.profileContainer}>
+          <View style={styles.avatarContainer}>
+            <Image
+              accessibilityLabel="User profile picture"
+              resizeMode="contain"
+              source={{
+                uri: user.profile_picture,
+              }}
+              style={[styles.avatar, { borderWidth: 1, borderColor: 'black' }]}
+            />
+          </View>
+          <View style={styles.personalInfoContainer}>
+            <Text style={styles.sectionTitle}>Personal Profile</Text>
+            {infoItems.map((item, index) => (
+              <View key={index} style={styles.infoItem}>
+                <Text style={styles.label}>{item.label}</Text>
+                <Text style={styles.value}>{item.value}</Text>
               </View>
-              <Text style={styles.description}>{goal.description}</Text>
-            </View>
-          ))}
+            ))}
+          </View>
+          <View style={styles.goalSettingContainer}>
+            <Text style={styles.sectionTitle}>Goal Setting</Text>
+            {goals.map((goal, index) => (
+              <View key={index} style={styles.goalItem}>
+                <View style={styles.goalHeader}>
+                  <Text style={styles.goalType}>{goal.type}</Text>
+                  <Text style={styles.points}>{goal.points} points</Text>
+                </View>
+                <Text style={styles.description}>{goal.description}</Text>
+              </View>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.editProfileButton}
+            onPress={() => router.push('/account/settings/editProfile')}
+            accessibilityLabel="Edit Profile"
+            accessibilityRole="button"
+          >
+            <Text style={styles.editProfileButtonText}>Edit Profile</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.editProfileButton}
-          onPress={() => router.push('/account/settings/editProfile')}
-          accessibilityLabel="Edit Profile"
-          accessibilityRole="button"
-        >
-          <Text style={styles.editProfileButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(18),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
-    marginRight: s(8),
+    marginRight: 12,
   },
   backIcon: {
     width: 10,
     height: 15,
     tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5,
   },
   headerTitle: {
-    color: '#242020',
     fontSize: 16,
     fontFamily: 'Poppins',
     fontWeight: '600',
+    color: '#242020',
   },
-  contentContainer: {
-    borderRadius: 30,
-    alignItems: "stretch",
+  content: {
+    flex: 1,
+    padding: 20,
   },
   profileContainer: {
     borderRadius: 30,
@@ -147,7 +149,7 @@ const styles = StyleSheet.create({
     minHeight: 130,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 35,
+    marginBottom: 40,
   },
   avatar: {
     width: 130,
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   goalSettingContainer: {
-    marginBottom: 20,
+    marginBottom: 30,
   },
   goalItem: {
     marginBottom: 20,
@@ -216,7 +218,7 @@ const styles = StyleSheet.create({
     minHeight: 50,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   editProfileButtonText: {
     color: "#FFFFFF",

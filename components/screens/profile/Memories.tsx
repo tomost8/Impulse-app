@@ -52,45 +52,43 @@ export default function Memories() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Memories</Text>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Memories</Text>
+          </View>
+        </SafeAreaView>
       </View>
 
-      {/* Calendar Container */}
-      <View style={styles.calendarContainer}>
-        <Calendar
-          current={INITIAL_DATE}
-          firstDay={1}
-          hideExtraDays
-          onDayPress={handleDayPress}
-          dayComponent={({ date }) => (
-            <DayComponent 
-              date={date} 
-              imagesByDate={imagesByDate} 
-              onPress={handleDayPress}
-            />
-          )}
-          theme={{
-            arrowColor: '#DE728D',
-            textDayFontSize: 14,
-            dayTextColor: '#1E1E1E',
-          }}
-        />
-      </View>
-    </SafeAreaView>
+      <Calendar
+        current={INITIAL_DATE}
+        firstDay={1}
+        hideExtraDays
+        onDayPress={handleDayPress}
+        dayComponent={({ date }) => (
+          <DayComponent 
+            date={date} 
+            imagesByDate={imagesByDate} 
+            onPress={handleDayPress}
+          />
+        )}
+        theme={{
+          arrowColor: '#DE728D',
+          textDayFontSize: 14,
+          dayTextColor: '#1E1E1E',
+        }}
+      />
+    </View>
   );
 }
 
@@ -133,15 +131,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),

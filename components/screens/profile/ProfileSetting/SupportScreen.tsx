@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,37 +8,58 @@ import {
   ScrollView,
   Linking,
   SafeAreaView,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import AccountChangedConfirmation from '../popups/AccountChangedConfirmation';
 
-function Header() {
-  return (
-    <View style={styles.headerContainer}>
-      <View style={styles.headerContent}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Image
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Support and Account Deletion</Text>
-      </View>
-    </View>
-  );
+interface SupportScreenProps {
+  loading: boolean;
+  handleUpdateUser: () => void;
 }
 
-const SupportScreen = () => {
+const SupportScreen = ({ handleUpdateUser, loading }: SupportScreenProps) => {
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const handleApply = () => {
+    if (code === 'INSPIRE') {
+      handleUpdateUser();
+      setError('');
+      setShowConfirmation(true);
+    } else {
+      setError('Error: Code is incorrect');
+    }
+  };
+
   const handleDeleteAccountPress = () => {
     Linking.openURL('https://share.hsforms.com/1w35t-H25T2CMEpiTciIoyAscwc9');
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Header />
+    <View style={styles.container}>
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={() => router.back()}
+            >
+              <Image
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Support and Account Deletion</Text>
+          </View>
+        </SafeAreaView>
+      </View>
       <View style={styles.emailSection}>
         <View style={styles.emailContainer}>
           <Image 
@@ -51,13 +72,35 @@ const SupportScreen = () => {
           </View>
         </View>
       </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Community Leader Account Change</Text>
+        <View style={styles.codeSection}>
+          <TextInput
+            style={styles.codeInput}
+            placeholder="Enter given code"
+            value={code}
+            onChangeText={setCode}
+          />
+          <TouchableOpacity 
+            style={styles.applyButton}
+            onPress={handleApply}
+          >
+            <Text style={styles.applyButtonText}>Apply</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
       <TouchableOpacity
         style={styles.deleteAccountButton}
         onPress={handleDeleteAccountPress}
       >
         <Text style={styles.buttonText}>Account Deletion Form</Text>
       </TouchableOpacity>
-    </SafeAreaView>
+      <AccountChangedConfirmation 
+        visible={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+      />
+    </View>
   );
 };
 
@@ -66,15 +109,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerContainer: {
+  headerBackground: {
     backgroundColor: '#E0EDFD',
-    paddingTop: s(25),
-    paddingBottom: s(16),
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: s(16),
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 16,
   },
   backButton: {
     marginRight: s(8),
@@ -118,11 +161,57 @@ const styles = StyleSheet.create({
     fontSize: s(15),
     fontWeight: "400",
   },
+  section: {
+    padding: 16,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginBottom: 16,
+  },
+  codeSection: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  codeInput: {
+    flex: 1,
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: 24,
+    paddingHorizontal: 16,
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+  },
+  applyButton: {
+    height: 48,
+    paddingHorizontal: 24,
+    backgroundColor: '#DE728D',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  applyButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+  },
+  errorText: {
+    color: '#DE728D',
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    marginTop: 8,
+    marginLeft: 16,
+  },
   deleteAccountButton: {
     borderRadius: 30,
     backgroundColor: "#DE728D",
     marginTop: "auto",
-    marginBottom: 20,
+    marginBottom: 40,
     marginHorizontal: 20,
     paddingVertical: 12,
     alignItems: "center",

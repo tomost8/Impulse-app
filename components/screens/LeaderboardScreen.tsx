@@ -24,14 +24,17 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
     }
   
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          {/* Header + Leaderboard Selector */}
-          <LeaderboardHeader
-            onBackPress={() => router.back()}
-            selectedPeriod={selectedPeriod}
-            setSelectedPeriod={setSelectedPeriod}
-          />
+          <View style={styles.headerBackground}>
+            <SafeAreaView>
+              <LeaderboardHeader
+                onBackPress={() => router.back()}
+                selectedPeriod={selectedPeriod}
+                setSelectedPeriod={setSelectedPeriod}
+              />
+            </SafeAreaView>
+          </View>
   
           {/* Tabs Section - Fixing Alignment */}
           <View>
@@ -52,7 +55,7 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
             <LeaderboardList leaderboardData={allLeaderboard.slice(3)} />
           )}
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   };
   
@@ -61,16 +64,13 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
       flex: 1,
       backgroundColor: "#F8F8F8",
     },
-    scrollContent: {
-      paddingBottom: 20, // Prevents cutoff
+    headerBackground: {
+      backgroundColor: '#E0EDFD',
     },
-    headerContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        marginTop: 10, // Adjust spacing as needed
-      },
+    scrollContent: {
+      paddingBottom: 20,
+      paddingTop: 0,
+    },
   });
   
   export default LeaderboardScreen;

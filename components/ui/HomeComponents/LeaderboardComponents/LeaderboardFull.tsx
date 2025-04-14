@@ -50,12 +50,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
     alignSelf: "center",
-    gap: 107,
-    width: 330, // ✅ Matches leaderboard width
+    gap: 112,
+    width: 340, // ✅ Matches leaderboard width
     marginBottom: 10, // ✅ Adds spacing before leaderboard
   },
   title: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "700",
     fontFamily: "Poppins",
     color: "#242020",

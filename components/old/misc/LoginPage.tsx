@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 //authentication
 import { auth } from '@/config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FIREBASE_AUTH } from '../../hooks/graphql/auth';
+import { FIREBASE_AUTH } from '../../../hooks/graphql/auth';
 import { useMutation } from '@apollo/client';
 
 import { useUserInfo } from '@/services/UserContext';

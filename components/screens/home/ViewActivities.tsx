@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { 
   View, 
   SafeAreaView, 
@@ -11,9 +10,9 @@ import {
 } from "react-native";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
+import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
+import React, { useState } from "react";
 import { router } from "expo-router";
-import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
-import EditActivityCard from "@/components/ui/common/EditActivityCard";
 
 interface GoalFormData {
   startTime: string;
@@ -27,66 +26,16 @@ interface ViewGoalsScreenProps {
   timezone: string;
   authToken: string;
   selectedActivity: number | null;
-  setSelectedActivity: (activityId: number | null) => void;
+  handleSelectGoal: (goalId: number) => void;
   formData: any;
   handleFormDataChange: (field: string, value: any) => void;
-  setFormData: (formData: any) => void;
-  handleUpdateActivity: (input: any) => Promise<void>;
+  onSave: () => Promise<void>;
 }
   
-const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
+const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
-
-  const resetFormData = () => {
-    props.setFormData({
-      startTime: '',
-      duration: { hours: 0, minutes: 0 },
-      description: ''
-    });
-  }
-
-  const handleSelectGoal = (goalId: number) => {
-    if (props.selectedActivity === goalId) {
-      // Collapse expanded goal and reset form data
-      props.setSelectedActivity(null);
-      resetFormData();
-    } else {
-      // Expand goal and set form data to corresponding activity data
-      props.setSelectedActivity(goalId);
-      const selectedActivity = props.activities.find((activity: any) => activity.id === goalId);
-      const activityData = {
-        startTime: convertUtcToLocal(selectedActivity?.scheduledDatetime, props.timezone),
-        duration: {
-          hours: Math.floor(selectedActivity?.duration / 60),
-          minutes: selectedActivity?.duration % 60
-        },
-        description: selectedActivity?.description || ''
-      }
-      if (selectedActivity) {
-        console.log("Activity Selected:", selectedActivity, "\nForm Data:", activityData);
-        props.setFormData(activityData);
-      }
-    }
-  };
-
-  const handleSaveChanges = async () => {
-    const utcTime = props.formData.startTime 
-      ? convertLocalToUtc(props.formData.startTime, props.timezone)
-      : new Date(Date.now());
-    const totalMinutes = (props.formData.duration.hours * 60) + props.formData.duration.minutes;
-    const input = {
-      scheduledDatetime: utcTime,
-      ...(totalMinutes > 0 && { duration: totalMinutes }),
-      ...(props.formData.description && { description: props.formData.description }),
-    };
-    props.handleUpdateActivity(input);
-    props.setSelectedActivity(null);
-    resetFormData();
-  };
-
-  // Keyboard stuff idek
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const scrollViewRef = React.useRef<ScrollView>(null);
@@ -113,18 +62,22 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
-        <GoalsHeader onBackPress={() => router.back()} />
-
         <ScrollView 
           ref={scrollViewRef}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
+          <View style={styles.headerBackground}>
+            <SafeAreaView>
+              <GoalsHeader onBackPress={() => router.back()} />
+            </SafeAreaView>
+          </View>
+
           {/* Section Title - "Goals for the Day" */}
           <Text style={styles.sectionTitle}>Goals for the Day</Text>
 
@@ -135,10 +88,10 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
                 key={activity.id}
                 category={activity.category}
                 isSelected={props.selectedActivity === activity.id}
-                onSelect={() => handleSelectGoal(activity.id)}
+                onSelect={() => props.handleSelectGoal(activity.id)}
                 formData={props.formData}
                 onFormDataChange={(field, value) => props.handleFormDataChange(field as keyof GoalFormData, value)}
-                onSave={handleSaveChanges}
+                onSave={props.onSave}
                 scrollViewRef={scrollViewRef}
               />
             ))}
@@ -148,18 +101,21 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: any) => {
         {/* Only show button when keyboard is not visible */}
         {!isKeyboardVisible && (
           <View style={styles.buttonContainer}>
-            <AddGoalButton onPress={() => router.push("/home/activityAdd")} />
+            <AddGoalButton onPress={() => router.push("/home/addActivity")} />
           </View>
         )}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 };
   
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: "#FFFFFF", // Match Figma background
+    backgroundColor: "#FFFFFF",
+  },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
   },
   keyboardView: {
     flex: 1,
@@ -180,6 +136,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    marginBottom: 10, 
   },
   sectionTitle: {
     fontSize: 18,

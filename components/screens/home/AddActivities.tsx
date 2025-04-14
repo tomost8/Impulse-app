@@ -1,12 +1,8 @@
-import React, { useState } from "react";
-import { View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
-import Header from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/Header";
-import AddActivityCard from "@/components/ui/common/AddActivityCard";
+import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image } from "react-native";
+import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
-import { goals, getCategoryById } from "@/utils/goals";
-import { useCreateActivity } from "@/hooks/graphql/activities/mutations";
-import { useUserData } from "@/services/UserPreferencesContext";
-import { convertLocalToUtc } from "@/utils/timezoneProcessing";
+import { goals } from "@/utils/goals";
+import { useRouter } from "expo-router";
 
 interface GoalFormData {
   startTime: string;
@@ -15,129 +11,63 @@ interface GoalFormData {
 }
 
 interface AddDailyGoalsScreenProps {
-  authToken: string;
-  onSuccess?: () => void;
-  onError?: (error: any) => void;
+  loading: boolean;
+  selectedGoals: number[];
+  expandedGoal: number | null;
+  goalFormData: Record<number, GoalFormData>;
+  onSelectGoal: (goalId: number) => void;
+  onCheckIconPress: (goalId: number) => void;
+  onFormDataChange: (goalId: number, field: keyof GoalFormData, value: string) => void;
+  onAddGoals: () => void;
 }
 
-const AddDailyGoalsScreen = ({ authToken, onSuccess, onError }: AddDailyGoalsScreenProps) => {
-  const {timezone, loading: timezoneLoading} = useUserData();
-  
-  const { createActivity } = useCreateActivity();
-  const [selectedGoals, setSelectedGoals] = useState<number[]>([]);
-  const [expandedGoal, setExpandedGoal] = useState<number | null>(null);
-  const [goalFormData, setGoalFormData] = useState<Record<number, GoalFormData>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  
-  const handleSelectGoal = (goalId: number) => {
-    // Only add goalId if it's not already in the array
-    if (!selectedGoals.includes(goalId)) {
-      setSelectedGoals((prev) => [...prev, goalId]);
-      // Initialize form data if it doesn't exist
-      if (!goalFormData[goalId]) {
-        setGoalFormData(prev => ({
-          ...prev,
-          [goalId]: {
-            startTime: '',
-            duration: { hours: 0, minutes: 0 },
-            description: ''
-          }
-        }));
-      }
-    }
-    if (expandedGoal === goalId) {
-      setExpandedGoal(null);
-    } else {
-      setExpandedGoal(goalId);
-    }
-  };
+const AddDailyGoalsScreen = ({
+  loading,
+  selectedGoals,
+  expandedGoal,
+  goalFormData,
+  onSelectGoal,
+  onCheckIconPress,
+  onFormDataChange,
+  onAddGoals
+}: AddDailyGoalsScreenProps) => {
+  const router = useRouter();
 
-  const handleCheckIconPress = (goalId: number) => {
-    if (expandedGoal === goalId) {
-      setExpandedGoal(null);
-    }
-    // Remove goal from selectedGoals and formData
-    setSelectedGoals(prev => prev.filter(id => id !== goalId));
-    setGoalFormData(prev => {
-      const newData = { ...prev };
-      delete newData[goalId];
-      return newData;
-    });
-  }
-
-  const handleFormDataChange = (goalId: number, field: keyof GoalFormData, value: string) => {
-    setGoalFormData(prev => ({
-      ...prev,
-      [goalId]: {
-        ...prev[goalId],
-        [field]: value
-      }
-    }));
-  };
-
-  const handleAddGoals = async () => {
-    setIsSubmitting(true);
-    try {
-      if (timezoneLoading) {
-        throw new Error('Timezone is still loading');
-      }
-      for (const goalId of selectedGoals) {
-        const formData = goalFormData[goalId];
-        if (formData) {
-          // Get Mutation Input
-          const utcTime = formData.startTime 
-            ? convertLocalToUtc(formData.startTime, timezone)
-            : new Date(Date.now());
-          const totalMinutes = (formData.duration.hours * 60) + formData.duration.minutes;
-          const input = {
-            category: getCategoryById(goalId),
-            scheduledDatetime: utcTime,
-            ...(totalMinutes > 0 && { duration: totalMinutes }),
-            ...(formData.description && { description: formData.description }),
-          };
-          // Create Activities
-          console.log("input", input);
-          const response = await createActivity(input, authToken);
-          if (!response.success) {
-            throw new Error(`Failed to create activity: ${goalId}`);
-          }
-          console.log("response", response);
-        }
-      }
-      onSuccess?.();
-    } catch (error) {
-      console.error('Error adding goals:', error);
-      onError?.(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-  
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <Header/>
-  
-      {/* Goals List */}
+      <View style={styles.headerBackground}>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Add Daily Goals</Text>
+          </View>
+        </SafeAreaView>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {goals.map((goal) => (
           <AddActivityCard
             key={goal.id}
             category={goal.category}
             isSelected={selectedGoals.includes(goal.id)}
-            onSelect={() => handleSelectGoal(goal.id)}
+            onSelect={() => onSelectGoal(goal.id)}
             isExpanded={expandedGoal === goal.id}
-            onCheckIconPress={() => handleCheckIconPress(goal.id)}
+            onCheckIconPress={() => onCheckIconPress(goal.id)}
             formData={goalFormData[goal.id]}
             onFormDataChange={(field, value) => 
-              handleFormDataChange(goal.id, field as keyof GoalFormData, value as string)
+              onFormDataChange(goal.id, field as keyof GoalFormData, value as string)
             }
           />
         ))}
       </ScrollView>
-  
-      {/* Add Goal Button */}
-      <AddGoalButton onPress={handleAddGoals} />
+      <AddGoalButton onPress={onAddGoals} />
     </View>
   );
 };
@@ -152,6 +82,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingHorizontal: 20,
     paddingBottom: 30,
+    paddingTop: 10,
   },
   goalContainer: {
       backgroundColor: "#FFF",
@@ -162,6 +93,31 @@ const styles = StyleSheet.create({
       marginBottom: 20, // Adds more spacing between each goal
       marginTop: 20, // Adds extra space above the first goal
     },
+  headerBackground: {
+    backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 15,
+  },
+  backButton: {
+    marginRight: 13,
+    marginLeft: 5,
+  },
+  backIcon: {
+    width: 10,
+    height: 15,
+    tintColor: '#242020',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
 });
   
 export default AddDailyGoalsScreen;

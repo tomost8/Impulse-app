@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import AddActivityCard from '@/components/ui/common/AddActivityCard';
+import AddActivityCard from '@/components/ui/common/activityCards/AddActivityCard';
 import { goals } from '@/utils/goals'; // Import goals from the same source
 
 interface DailyAddPopupProps {

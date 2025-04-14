@@ -14,16 +14,15 @@ import RedeemedModal from "./RedeemedModal";
 interface RedeemRewardPopupProps {
   isVisible: boolean;
   onClose: () => void;
-  reward: {
-    title: string;
-    points: string;
-  };
+  reward: any;
+  handleCreateRedeem: (rewardId: number) => void;
 }
 
 const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
   isVisible,
   onClose,
   reward,
+  handleCreateRedeem,
 }) => {
   const [email, setEmail] = useState("");
   const [paymentOption, setPaymentOption] = useState("");
@@ -54,6 +53,8 @@ const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
   };
 
   const handleSubmit = () => {
+    console.log("handleSubmit", email, paymentOption, reward);
+    handleCreateRedeem(reward.id);
     if (validateForm()) {
       setShowRedeemedModal(true);
     }
@@ -78,7 +79,6 @@ const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
             <Text style={styles.subtitle}>
               Fill out all the information below and we will be in contact via email!
             </Text>
-
             <View style={styles.formContainer}>
               {/* Email Input */}
               <View style={styles.inputContainer}>
@@ -94,7 +94,6 @@ const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
                 />
                 {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
               </View>
-
               {/* Payment Option Dropdown */}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Payment Option</Text>
@@ -128,7 +127,7 @@ const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
                 )}
               </View>
             </View>
-
+            
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -140,8 +139,7 @@ const RedeemRewardPopup: React.FC<RedeemRewardPopupProps> = ({
           </View>
         </View>
       </View>
-
-      {showRedeemedModal && <RedeemedModal onClose={handleRedeemedModalClose} />}
+      {showRedeemedModal && <RedeemedModal isVisible={showRedeemedModal} onClose={handleRedeemedModalClose} />}
     </Modal>
   );
 };

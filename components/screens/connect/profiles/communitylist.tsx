@@ -25,23 +25,26 @@ const CommunityList = (props: CommunityListProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Communities</Text>
-      </View>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.headerExtension}>
+          <SafeAreaView>
+            <View style={styles.headerRow}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Communities</Text>
+            </View>
+          </SafeAreaView>
+        </View>
 
-      {/* Communities List */}
-      <ScrollView style={styles.scrollContainer}>
+        {/* Communities List */}
         {props.communities.map((community) => (
           <View key={community.id} style={styles.communityItem}>
             <View style={styles.communityInfo}>
@@ -57,7 +60,7 @@ const CommunityList = (props: CommunityListProps) => {
           </View>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -66,43 +69,50 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  header: {
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+  },
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingTop: 5,
+    paddingBottom: 18,
   },
   backButton: {
-    padding: 8,
-    marginRight: 12,
+    width: 11,
+    height: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+    marginLeft: 8,
   },
   backIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
+    width: 11,
+    height: 15,
   },
-  title: {
+  headerTitle: {
     fontSize: 16,
-    fontFamily: 'Open Sans',
+    fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#242020',
   },
-  scrollContainer: {
+  scrollView: {
     flex: 1,
-    paddingHorizontal: 16,
   },
   communityItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    marginTop: 16, 
   },
   communityInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 20,
   },
   communityImage: {
     width: 40,
@@ -113,12 +123,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#242020',
+    fontWeight: '500',
   },
   viewButton: {
     backgroundColor: '#DE728D',
-    paddingHorizontal: 16,
+    paddingHorizontal: 22,
     paddingVertical: 8,
     borderRadius: 100,
+    marginRight: 2, 
   },
   viewButtonText: {
     color: '#FFFFFF',

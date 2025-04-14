@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal } from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, Modal, ImageSourcePropType } from "react-native";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
-import ActivityDetailsSection from './ActivityDetailsSection';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
+import ActivityDetails from "./ActivityDetails";  
 
 // Importing assets
 import { SvgXml } from "react-native-svg"; // For rendering the checkmark SVG
@@ -13,7 +11,6 @@ const checkmarkSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none
 </svg>`;
 const goalSelectedIcon = require("@/assets/icons/goalselected.png");
 const dropdownIcon = require("@/assets/icons/arrow-down.png");
-const defaultIcon = require("@/assets/icons/riseshine.png");
 
 type AddActivityCardProps = {
   category: string;
@@ -29,75 +26,6 @@ type AddActivityCardProps = {
   onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
 };
 
-const PickerModal = ({ visible, onClose, onSelect, items, selectedValue, title }) => (
-  <Modal
-    visible={visible}
-    transparent={true}
-    animationType="slide"
-  >
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalContent}>
-        <View style={styles.modalHeader}>
-          <Text style={styles.modalTitle}>{title}</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.modalDoneButton}>Done</Text>
-          </TouchableOpacity>
-        </View>
-        <Picker
-          selectedValue={selectedValue}
-          onValueChange={onSelect}
-          style={styles.picker}
-          itemStyle={styles.pickerItem}
-        >
-          {items}
-        </Picker>
-      </View>
-    </View>
-  </Modal>
-);
-
-const TimeInput = ({ 
-  value, 
-  placeholder, 
-  onPress, 
-  type, 
-  onChangeText, 
-  width = '100%' 
-}) => {
-  if (type === 'description') {
-    return (
-      <TextInput
-        style={[styles.inputContainer, { width, height: 100, textAlignVertical: 'top' }]}
-        placeholder={placeholder}
-        placeholderTextColor="#979797"
-        value={value}
-        onChangeText={onChangeText}
-        multiline
-        returnKeyType="done"
-        blurOnSubmit={true}
-        onSubmitEditing={() => {
-          Keyboard.dismiss();
-        }}
-      />
-    );
-  }
-
-  return (
-    <TouchableOpacity 
-      style={[styles.inputContainer, { width }]}
-      onPress={onPress}
-    >
-      <Text style={value ? styles.inputText : styles.placeholderText}>
-        {value || placeholder}
-      </Text>
-      <Image 
-        source={require('@/assets/icons/arrow-down-grey.png')}
-        style={styles.arrowIcon}
-      />
-    </TouchableOpacity>
-  );
-};
-
 const AddActivityCard: React.FC<AddActivityCardProps> = ({
   category,
   isSelected,
@@ -107,42 +35,12 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [showHoursPicker, setShowHoursPicker] = useState(false);
-  const [showMinsPicker, setShowMinsPicker] = useState(false);
-
-  const handleTimeChange = (event, selectedDate) => {
-    setShowTimePicker(false);
-    if (selectedDate) {
-      onFormDataChange('startTime', selectedDate.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit'
-      }));
-    }
-  };
-
-  const handleHoursChange = (hours) => {
-    setShowHoursPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      hours: parseInt(hours) 
-    });
-  };
-
-  const handleMinutesChange = (minutes) => {
-    setShowMinsPicker(false);
-    onFormDataChange('duration', { 
-      ...formData.duration, 
-      minutes: parseInt(minutes) 
-    });
-  };
-
   const renderCollapsedCard = () => (
     <TouchableOpacity onPress={onSelect}
       style={[styles.container, isSelected && styles.selectedContainer]}
     >
       <View style={styles.iconContainer}>
-        <Image source={getIconByCategory(category) || defaultIcon} style={styles.icon} />
+        <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles.icon} />
       </View>
       <Text style={styles.title}>{getLabelByCategory(category)}</Text>
       {isSelected ? (
@@ -161,7 +59,7 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
     <View style={[styles2.container, isSelected ? styles.selectedContainer : null]}>
       <TouchableOpacity onPress={onSelect} style={styles.header}>
         <View style={styles2.iconContainer}>
-          <Image source={getIconByCategory(category) || defaultIcon} style={styles2.icon} />
+          <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles2.icon} />
         </View>
         <Text style={styles2.title}>{getLabelByCategory(category)}</Text>
         <Image
@@ -175,82 +73,12 @@ const AddActivityCard: React.FC<AddActivityCardProps> = ({
         )}
       </TouchableOpacity>
 
-      {isSelected && (
-        <View style={styles.formContainer}>
-          {/* Start Time */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Start Time (optional)</Text>
-            <TimeInput
-              value={formData?.startTime}
-              placeholder="Choose"
-              onPress={() => setShowTimePicker(true)}
-            />
-            {showTimePicker && (
-              <DateTimePicker
-                value={new Date()}
-                mode="time"
-                is24Hour={false}
-                display="default"
-                onChange={handleTimeChange}
-              />
-            )}
-          </View>
-
-          {/* Duration */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Activity Duration (optional)</Text>
-            <View style={styles.durationContainer}>
-              <TimeInput
-                value={formData?.duration?.hours ? `${formData.duration.hours} hrs` : "0 hrs"}
-                placeholder="0 hrs"
-                onPress={() => setShowHoursPicker(true)}
-                width="48%"
-              />
-              <TimeInput
-                value={formData?.duration?.minutes ? `${formData.duration.minutes} mins` : "0 mins"}
-                placeholder="0 mins"
-                onPress={() => setShowMinsPicker(true)}
-                width="48%"
-              />
-            </View>
-            
-            {/* Hours Picker Modal */}
-            <PickerModal
-              visible={showHoursPicker}
-              onClose={() => setShowHoursPicker(false)}
-              onSelect={handleHoursChange}
-              selectedValue={formData?.duration?.hours?.toString()}
-              title="Select Hours"
-              items={Array.from({ length: 11 }, (_, i) => (
-                <Picker.Item key={i} label={`${i} hrs`} value={i.toString()} />
-              ))}
-            />
-
-            {/* Minutes Picker Modal */}
-            <PickerModal
-              visible={showMinsPicker}
-              onClose={() => setShowMinsPicker(false)}
-              onSelect={handleMinutesChange}
-              selectedValue={formData?.duration?.minutes?.toString()}
-              title="Select Minutes"
-              items={Array.from({ length: 60 }, (_, i) => (
-                <Picker.Item key={i} label={`${i} mins`} value={i.toString()} />
-              ))}
-            />
-          </View>
-
-          {/* Description */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Description (optional)</Text>
-            <TimeInput
-              type="description"
-              value={formData?.description}
-              placeholder="Enter description"
-              onChangeText={(text) => onFormDataChange('description', text)}
-            />
-          </View>
-        </View>
-      )}
+      {isSelected && 
+        <ActivityDetails 
+          formData={formData} 
+          onFormDataChange={onFormDataChange} 
+        />
+      }
     </View>
   );
 

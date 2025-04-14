@@ -73,19 +73,23 @@ const JoinGroupScreen = (props: JoinGroupScreenProps) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Image 
-            source={require("@/assets/icons/backArrow.png")}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Joining a Group</Text>
+        <SafeAreaView>
+          <View style={styles.headerContent}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.title}>Join Group</Text>
+          </View>
+        </SafeAreaView>
       </View>
 
       {/* Search Bar */}
@@ -137,7 +141,7 @@ const JoinGroupScreen = (props: JoinGroupScreenProps) => {
         onClose={() => setIsPasswordPopupVisible(false)}
         onSubmit={handlePasswordSubmit}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -147,11 +151,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    height: 65,
     backgroundColor: '#E0EDFD',
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
+    paddingTop: 2,
+    paddingBottom: 10,
   },
   backButton: {
     padding: 8,

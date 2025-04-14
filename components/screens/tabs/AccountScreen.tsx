@@ -33,27 +33,30 @@ function AccountProfile({
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
+        <View style={styles.headerExtension}>
+          <SafeAreaView>
+            <View style={styles.headerRow}>
+              <Text style={styles.headerTitle}>My Account</Text>
+              <TouchableOpacity 
+                style={styles.settingsButton}
+                onPress={() => router.push('/account/settings')}
+              >
+                <Image
+                  source={require('@/assets/icons/setting.png')}
+                  style={styles.settingsIcon}
+                />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
+
         {/* Custom Header Section */}
         <View style={styles.headerContainer}>
           {/* Crescent Background */}
           <View style={styles.crescentContainer}>
             <View style={styles.crescent} />
-          </View>
-
-          {/* Header Title and Settings */}
-          <View style={styles.headerRow}>
-            <Text style={styles.headerTitle}>My Account</Text>
-            <TouchableOpacity 
-              style={styles.settingsButton}
-              onPress={() => router.push('/account/settings')}
-            >
-              <Image
-                source={require('@/assets/icons/setting.png')}
-                style={styles.settingsIcon}
-              />
-            </TouchableOpacity>
           </View>
 
           {/* Profile Section */}
@@ -73,13 +76,13 @@ function AccountProfile({
             <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
               <Text style={styles.pointsGuide}>Points Earning Guide</Text>
             </TouchableOpacity>
-            <Text style={styles.pointsValue}>{user.point?.points} / 7.5k pts</Text>
+            <Text style={styles.pointsValue}>{user.point?.spending_points} / 7.5k pts</Text>
           </View>
           <View style={styles.progressContainer}>
             <View 
               style={[
                 styles.progressBar,
-                { width: `${Math.min((user.point?.points || 0) / 7500 * 100, 100)}%` }
+                { width: `${Math.min((user.point?.spending_points || 0) / 7500 * 100, 100)}%` }
               ]} 
             />
           </View>
@@ -124,7 +127,7 @@ function AccountProfile({
         visible={pointsModalVisible}
         onClose={() => setPointsModalVisible(false)}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -133,8 +136,73 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+  },
   scrollView: {
     flex: 1,
+  },
+  headerContainer: {
+    position: 'relative',
+    paddingBottom: 16,
+  },
+  crescentContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 200,
+    overflow: 'hidden',
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 2,
+    marginBottom: -8, 
+    zIndex: 1,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  settingsButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingsIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: 'contain',
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginTop: 60,
+    zIndex: 1,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  profileName: {
+    fontSize: 24,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginTop: 16,
+  },
+  username: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+    marginTop: 4,
   },
   pointsContainer: {
     paddingHorizontal: 20,
@@ -221,26 +289,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 20,
     marginTop: 15,
-    marginBottom: 80,
+    marginBottom: 110,
   },
   memoriesButtonText: {
     fontFamily: 'Poppins',
     fontSize: 12,
     fontWeight: '600',
     color: '#010001',
-  },
-  // New header styles
-  headerContainer: {
-    position: 'relative',
-    paddingBottom: 16,
-  },
-  crescentContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 350,
-    overflow: 'hidden',
   },
   crescent: {
     position: 'absolute',
@@ -253,57 +308,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0EDFD',
     transform: [
       { scaleX: 1.3 },
-      { translateY: -350 },
+      { translateY: -380 },
     ],
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    marginBottom: 24,
-    zIndex: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-  },
-  settingsButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  settingsIcon: {
-    width: 24,
-    height: 24,
-    resizeMode: 'contain',
-  },
-  profileSection: {
-    alignItems: 'center',
-    marginTop: 12,
-    zIndex: 1,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  profileName: {
-    fontSize: 24,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginTop: 16,
-  },
-  username: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#979797',
-    marginTop: 4,
   },
 });
 

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 
 export const FIREBASE_AUTH = gql`
   mutation {
@@ -18,3 +18,23 @@ export const FIREBASE_AUTH = gql`
     }
   }
 `;
+
+export function useFirebaseAuth() {
+  const [firebaseAuthMutation] = useMutation(FIREBASE_AUTH);
+  const firebaseAuth = async (authToken: string) => {
+    try {
+      const response = await firebaseAuthMutation({
+        context: {
+          headers: { 
+            Authorization: `Bearer ${authToken}`
+          }
+        }
+      });
+      return response.data.firebaseAuth;
+    } catch (error) {
+      console.error('Firebase Auth failed:', error);
+      throw error;
+    }
+  };
+  return { firebaseAuth };
+}

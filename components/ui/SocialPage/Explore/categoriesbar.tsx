@@ -1,5 +1,6 @@
 import React from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { goals } from '@/utils/goals';
 
 interface CategoriesBarProps {
   selectedCategory: string;
@@ -10,14 +11,7 @@ const CategoriesBar: React.FC<CategoriesBarProps> = ({
   selectedCategory, 
   onSelectCategory 
 }) => {
-  const categories = [
-    "Rise and Shine",
-    "Workout",
-    "Studying / Working",
-    "Wellness",
-    "Food",
-    "My Passion / Hobby"
-  ];
+  const categories = goals.map(goal => goal.label);
 
   return (
     <ScrollView

@@ -6,30 +6,45 @@ import {
   CategoriesBar,
   CommunityCard 
 } from '@/components/ui/SocialPage/Explore';
+import { getLabelByCategory } from '@/utils/goals';
 
 interface ExploreScreenProps {
   loading: boolean;
   communities: any[];
-  selectedCategory: string;
-  handleCategorySelect: (category: string) => void;
+  categoryList: any[];
+  memberList: any[];
   handleJoinCommunity: (communityId: number) => void;
 }
 
-const ExploreScreen = ({ loading, communities, selectedCategory, handleCategorySelect, handleJoinCommunity }: ExploreScreenProps) => {
+const ExploreScreen = ({ 
+  loading, communities, categoryList, memberList, handleJoinCommunity 
+}: ExploreScreenProps) => {
   if (loading) {
     return <Text>Loading...</Text>;
   }
-  const [filteredCommunities, setFilteredCommunities] = useState(communities);
 
-  //const [searchQuery, setSearchQuery] = useState('');
-  //console.log('ExploreScreen Communities:', communities, filteredCommunities);
-
-  const handleSearch = (text: string) => {
-    const filtered = communities.filter(community => 
-      text === '' || community.name.toLowerCase().includes(text.toLowerCase())
-    );
-    setFilteredCommunities(filtered);
+  // Filtering
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
   };
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+  };
+
+  // Filter by both selectedGoal and search query
+  const filteredCommunities = communities?.filter((community: any) => {
+    const matchesCategory = selectedCategory === null || categoryList?.some((category: any) => 
+      category.community_id === community.id && getLabelByCategory(category.category) === selectedCategory
+    );
+    const matchesSearch = searchQuery === '' || 
+      community.name.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    return matchesCategory && matchesSearch;
+  });
+
+  console.log("communities", communities, "selectedCategory", selectedCategory, "\nfilteredCommunities", filteredCommunities);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,7 +56,7 @@ const ExploreScreen = ({ loading, communities, selectedCategory, handleCategoryS
         <View style={styles.content}>
           <SearchBar onSearch={handleSearch} />
           <CategoriesBar
-            selectedCategory={selectedCategory}
+            selectedCategory={selectedCategory || ''}
             onSelectCategory={handleCategorySelect}
           />
           <View style={styles.feedContainer}>
@@ -52,7 +67,7 @@ const ExploreScreen = ({ loading, communities, selectedCategory, handleCategoryS
                   id={community.id}
                   name={community.name}
                   image={community.thumbnail}
-                  memberCount={25} // TODO: fetch this
+                  memberCount={community.memberCount}
                   onJoin={() => handleJoinCommunity(Number(community.id))}
                 />
               ))}

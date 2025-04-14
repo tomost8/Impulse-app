@@ -22,8 +22,8 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
     }
   
     return (
-      <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
           {/* Header + Leaderboard Selector */}
           <LeaderboardHeader
             onBackPress={() => router.back()}
@@ -37,7 +37,7 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
           <LeaderboardList leaderboardData={communityLeaderboard.slice(3)} />
 
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   };
   
@@ -46,16 +46,9 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
       flex: 1,
       backgroundColor: "#F8F8F8",
     },
-    scrollContent: {
-      paddingBottom: 20, // Prevents cutoff
+    scrollView: {
+      flex: 1,
     },
-    headerContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        marginTop: 10, // Adjust spacing as needed
-      },
   });
   
   export default LeaderboardScreen;

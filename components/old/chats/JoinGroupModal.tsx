@@ -29,18 +29,18 @@ export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGro
       <Modal visible={visible} onDismiss={hideModal}>
         <View style={styles.modal}>
           {chat === null ? (
-            <>
+            <View>
               <Text style={styles.text}>No chat available, something went wrong.</Text>
-            </>
+            </View>
           ) : hasJoined || !chat.password ? (
-            <>
-              {!hasJoined && handleJoinGroup(chat)}
+            <View>
+              {/* {!hasJoined && handleJoinGroup(chat)} */}
               <Text style={styles.text}>Success Image</Text>
               <Text style={styles.text}>Successfully Joined Group</Text>
               <Button style={styles.button} onPress={hideModal}>Okay</Button>
-            </>
+            </View>
           ) : (
-            <>
+            <View>
               <Text style={styles.text}>Enter Password:</Text>
               <TextInput
                 style={[styles.input, { borderWidth: 1, borderColor: 'black', borderRadius: 5 }]}
@@ -49,7 +49,7 @@ export default function JoinGroupModal({ visible, hideModal, chat, handleJoinGro
                 secureTextEntry
               />
               <Button style={styles.button} onPress={handlePasswordSubmit}>Join Group</Button>
-            </>
+            </View>
           )}
         </View>
       </Modal>

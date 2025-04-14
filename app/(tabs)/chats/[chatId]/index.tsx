@@ -7,7 +7,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
 import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/chats/queries';
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
-import RemoveFriendModal from '@/components/modals/RemoveFriendModal';
+import RemoveFriendModal from '@/components/old/chats/RemoveFriendModal';
 import { debugRenders } from '@/utils/debug';
 import { useSendMessage } from '@/hooks/graphql/chats/mutations';
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -487,6 +487,14 @@ const ChatPage = (props: any) => {
       authToken={authToken}
     />
   );
+  /*
+  if (chatRef.current.type === "direct") {
+    const partner = chatMembersRef.current?.find((member: any) => member.user.id !== userId)?.user;
+    return <IndividualChat partner={partner} />;
+  } else if (chatRef.current.type === "group") {
+    return <GroupChat chat={chatRef.current} />;
+  }
+  */
 }
 
 const styles = StyleSheet.create({

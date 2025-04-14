@@ -1,16 +1,17 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { useUserInfo } from '@/services/UserContext';
+import { Redirect } from 'expo-router';
 
 const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
   return (props: any) => {
-    const { userId, authToken, isLoading } = useUserInfo();
+    const { userId, authToken, loading } = useUserInfo();
 
-    if (isLoading) {
+    if (loading) {
       return <Text>Loading...</Text>;
     }
-    if (!userId || !authToken || typeof userId !== 'number') {
-      return <Text>Not authenticated</Text>;
+    if (!authToken || !userId || typeof userId !== 'number') {
+      return <Redirect href="/(auth)/getStarted" />;
     }
 
     return <WrappedComponent {...props} userId={userId} authToken={authToken} />;
