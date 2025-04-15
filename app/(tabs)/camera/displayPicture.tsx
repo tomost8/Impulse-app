@@ -5,100 +5,107 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { CameraHeaderContext } from './_layout';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // GraphQL hooks
-import { useGetActivities } from "@/hooks/graphql/activities/queries";
 // Components
 import { debugRenders } from '@/utils/debug';
 import SendPhotoModal from "@/components/modals/SendPhotoModal";
+import { useUserData } from "@/services/UserPreferencesContext";
 
-const DisplayPicturePage = (props: any) => {
-    const context = useContext(CameraHeaderContext);
-    if (!context) return null;
+const DisplayPicturePage = () => {
+  const context = useContext(CameraHeaderContext);
+  if (!context) return null;
+  const { fetching, activities } = useUserData();
 
-    const { photo, id, category } = useLocalSearchParams();
-    const imageSource = photo ? { uri: photo as string } : require('@/assets/images/favicon.png');
+  const { id, category, frontPhoto, backPhoto } = useLocalSearchParams();
 
-    useEffect(() => {
-        context.setPictureTaken(true);
-        context.setCategory(category as string);
-    }, [category]);
+  const defaultImage = require('@/assets/images/favicon.png');
+  const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : defaultImage;
+  const backImageSource = backPhoto ? { uri: backPhoto as string } : defaultImage;
+  
+  // Add debugging logs to see what values we're actually getting
+  console.log('Image Sources:', {
+    frontImageSource,
+    backImageSource
+  });
 
-    const { userId, authToken } = props;
-    const [renderCounter, setRenderCounter] = useState(0);
+  useEffect(() => {
+    context.setPictureTaken(true);
+    context.setCategory(category as string);
+  }, [category]);
 
-    const activitiesRef = useRef<any[] | null>(null);
-    const hasFetchedActivities = useRef(false);
-    const { activities, fetched: hasNewActivitiesData } = useGetActivities(userId as number, authToken, !hasFetchedActivities.current);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTab, setModalTab] = useState<string>("activity");
 
-    useEffect(() => {
-        if (!hasNewActivitiesData) {
-            return;
-        }
-        if (hasNewActivitiesData) {
-            activitiesRef.current = activities;
-            hasFetchedActivities.current = true;
-        }
-        if (hasFetchedActivities.current) {
-            setRenderCounter(prev => prev + 1);
-        }
-    }, [hasNewActivitiesData]);
-
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalTab, setModalTab] = useState<string>("activity");
-
-    useEffect(() => {
-        if (id && category) {
-            setModalTab("closed");
-        } else {
-            setModalTab("activity");
-        }
-    }, [id, category]);
-
-    const showModal = () => setModalVisible(true);
-    const hideModal = () => setModalVisible(false);
-
-    // Debug
-    const loading = !hasFetchedActivities.current; 
-    if (debugRenders && !loading) {
-        console.log("Rendering DisplayPicturePage\n",
-            "Activities:", activitiesRef.current, "\n",
-            "Modal Tab:", modalTab, "\n",
-            "Render Counter:", renderCounter, "\n",
-        );
+  useEffect(() => {
+    if (id && category) {
+      setModalTab("closed");
+    } else {
+      setModalTab("activity");
     }
+  }, [id, category]);
 
-    return (
-        <View style={styles.container}>
-            <Image source={imageSource} style={styles.image} />
-            {modalTab === "activity" ? (
-                <TouchableOpacity style={styles.button} onPress={showModal}>
-                    <Text style={styles.text}>Select Daily Goal</Text>
-                </TouchableOpacity>
-            ) : (
-                <View>
-                    <TouchableOpacity style={styles.button} onPress={() => {
-                        setModalTab("caption");
-                        showModal();
-                    }}>
-                        <Text style={styles.text}>Add Caption</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => {
-                        setModalTab("users");
-                        showModal();
-                    }}>
-                        <Text style={styles.text}>Select Users</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
-            <SendPhotoModal 
-                visible={modalVisible} 
-                hideModal={hideModal} 
-                currentTab={modalTab}
-                setCurrentTab={setModalTab}
-                activitiesList={activitiesRef.current || []} // Need list of activities to choose from
-                imageSource={imageSource} // Need image source in form data
-            />
-        </View>
+  const showModal = () => setModalVisible(true);
+  const hideModal = () => setModalVisible(false);
+
+  // Debug
+  const loading = fetching;
+  const debugRenders = false;
+  if (debugRenders && !loading) {
+    console.log("Rendering DisplayPicturePage\n",
+      "Activities:", activities, "\n",
+      "Modal Tab:", modalTab, "\n",
     );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        {/* Main large image */}
+        <Image 
+          source={frontImageSource} 
+          style={styles.mainImage} 
+        />
+        {/* Only show preview if both photos exist */}
+        {frontPhoto && backPhoto && (
+          <View style={styles.previewContainer}>
+            <Image 
+              source={backImageSource} 
+              style={styles.previewImage} 
+            />
+          </View>
+        )}
+      </View>
+
+      {modalTab === "activity" ? (
+        <TouchableOpacity style={styles.button} onPress={showModal}>
+          <Text style={styles.text}>Select Daily Goal</Text>
+        </TouchableOpacity>
+      ) : (
+        <View>
+          <TouchableOpacity style={styles.button} onPress={() => {
+            setModalTab("caption");
+            showModal();
+          }}>
+            <Text style={styles.text}>Add Caption</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => {
+            setModalTab("users");
+            showModal();
+          }}>
+            <Text style={styles.text}>Select Users</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      <SendPhotoModal 
+        visible={modalVisible} 
+        hideModal={hideModal} 
+        currentTab={modalTab}
+        setCurrentTab={setModalTab}
+        activitiesList={activities || []}
+        imageSource={frontImageSource}
+        //secondImageSource={backImageSource}
+      />
+    </View>
+  );
 }
 
 export default AuthWrapper(DisplayPicturePage);

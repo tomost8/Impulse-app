@@ -91,7 +91,33 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderWidth: 1,
     borderColor: '#ccc',
-  }
+  },
+  imageContainer: {
+    flex: 1,
+    position: 'relative',
+    width: '100%',
+  },
+  mainImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  previewContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    width: '30%',
+    aspectRatio: 3/4,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#fff',
+    overflow: 'hidden',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
 });
 
 export default styles; 

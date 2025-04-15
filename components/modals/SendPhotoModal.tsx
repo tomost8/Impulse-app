@@ -29,7 +29,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
   const id = cameraHeader?.id;
   const category = cameraHeader?.category;
 
-  console.log("id", id, "category", category);
+  //console.log("id", id, "category", category);
 
   const [caption, setCaption] = useState<string>("");
   const [selectedTargets, setSelectedTargets] = useState<{[key: string]: boolean}>({});
@@ -80,6 +80,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
   };
 
   // Debug
+  const debugRenders = false;
   if (debugRenders) {
     console.log("Rendering SendPhotoModal\n",
       "Friends:", friends, "\n",
