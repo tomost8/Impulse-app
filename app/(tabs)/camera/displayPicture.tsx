@@ -10,6 +10,9 @@ import { debugRenders } from '@/utils/debug';
 import SendPhotoModal from "@/components/modals/SendPhotoModal";
 import { useUserData } from "@/services/UserPreferencesContext";
 
+import { pageDisplay } from "@/utils/debug";
+import PictureTaken from "@/components/screens/camera/SingleLensCamera/pictureTaken";
+
 const DisplayPicturePage = () => {
   const context = useContext(CameraHeaderContext);
   if (!context) return null;
@@ -57,6 +60,10 @@ const DisplayPicturePage = () => {
       "Front Image Source:", frontImageSource, "\n",
       "Back Image Source:", backImageSource, "\n",
     );
+  }
+
+  if (pageDisplay) {
+    return <PictureTaken />;
   }
 
   return (
