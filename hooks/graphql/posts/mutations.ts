@@ -9,7 +9,7 @@ export const CREATE_POST = gql`
         id
         author_id
         caption
-        mediaUrl
+        mediaUrls
         is_deleted
         created_at
         updated_at

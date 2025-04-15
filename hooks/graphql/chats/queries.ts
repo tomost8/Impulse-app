@@ -206,7 +206,7 @@ export const GET_MESSAGES = gql`
         post {
           id
           caption
-          mediaUrl
+          mediaUrls
         }
         created_at
       }

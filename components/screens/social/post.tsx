@@ -68,7 +68,7 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
           timeAgo: getTimeAgo(post.created_at),
           profileImage: post.author.profile_picture,
           caption: post.caption,
-          image: post.mediaUrl,
+          image: post.mediaUrls[0],
           likes: 67, // Hardcoded for now
           comments: 10 // Hardcoded for now
         }} />

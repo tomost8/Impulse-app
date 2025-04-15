@@ -8,7 +8,7 @@ import { getTimeAgo, convertUtcToLocal } from '@/utils/timezoneProcessing';
 interface PostCardProps {
   post: {
     id: number;
-    mediaUrl: string;
+    mediaUrls: string[];
     caption: string;
     author: {
       profile_picture: string;
@@ -49,7 +49,7 @@ export default function PostCard({
         params: { id: post.id, isLiked: post.liked.toString(), likeCount: post.likeCount }
       })}>
         <Image 
-          source={{ uri: post.mediaUrl }}
+          source={{ uri: post.mediaUrls[0] }}
           style={styles.smallImage}
         />
       </TouchableOpacity>

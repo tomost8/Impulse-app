@@ -38,13 +38,10 @@ interface ChatScreenProps {
       last_name: string;
     };
     post?: {
-      mediaUrl?: string;
+      mediaUrls?: string[];
     };
   }>;
   isMessagesLoading: boolean;
-  handleDeleteFriendship: (friendId: number) => Promise<void>;
-  isDeletingFriendship: boolean;
-  authToken: string;
 }
 
 function ChatScreen({
@@ -56,9 +53,6 @@ function ChatScreen({
   isChatMembersLoading,
   messages,
   isMessagesLoading,
-  handleDeleteFriendship,
-  isDeletingFriendship,
-  authToken,
 }: ChatScreenProps) {
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
   const [visible, setVisible] = useState(false);
@@ -88,7 +82,7 @@ function ChatScreen({
           avatar: msg.sender.id !== userId ? partner?.profile_picture : undefined,
         },
         // 如果消息包含帖子，添加图片
-        ...(msg.post?.mediaUrl ? { image: msg.post.mediaUrl } : {}),
+        ...(msg.post?.mediaUrls?.[0] ? { image: msg.post.mediaUrls[0] } : {}),
       }));
       
       setChatMessages(formattedMessages);
@@ -467,9 +461,6 @@ const ChatPage = (props: any) => {
       isChatMembersLoading={!hasFetchedChatMembers.current}
       messages={currentMessages}
       isMessagesLoading={!hasFetchedMessages.current}
-      handleDeleteFriendship={handleDeleteFriendship}
-      isDeletingFriendship={isDeletingFriendship}
-      authToken={authToken}
     />
   );
   /*

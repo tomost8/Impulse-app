@@ -65,7 +65,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
         category: category,
         caption: caption,
         post_targets: postTargets,
-        mediaUrl: downloadURL,
+        mediaUrls: downloadURL,
         expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
       };
       console.log("input", input);

@@ -9,7 +9,7 @@ import { getTimeAgo } from "@/utils/timezoneProcessing";
 interface PostCardProps {
   post: {
     id: string;
-    mediaUrl?: string;
+    mediaUrls?: string[];
     caption?: string;
     author?: {
       profile_picture?: string;
@@ -46,7 +46,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
       activeOpacity={0.7}
     >
       <PostContent
-        imageUrl={post?.mediaUrl}
+        imageUrl={post?.mediaUrls?.[0]}
         caption={post?.caption || ""}
       />
       
