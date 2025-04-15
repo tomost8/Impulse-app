@@ -9,7 +9,7 @@ interface FullPostCardProps {
     timeAgo?: string;
     profileImage?: string;
     caption?: string;
-    image?: string;
+    images?: string[];
     likes?: number;
     comments?: number;
   };
@@ -25,7 +25,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
       />
       <Content 
         caption={post.caption}
-        imageUrl={post.image}
+        imageUrls={post.images}
       />
       <View style={styles.interactionContainer}>
         <View style={styles.interactionGroup}>

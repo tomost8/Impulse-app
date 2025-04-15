@@ -2,11 +2,11 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 
 interface PostContentProps {
-  imageUrl?: string;
+  imageUrls?: string[];
   caption?: string;
 }
 
-const PostContent: React.FC<PostContentProps> = ({ imageUrl, caption }) => {
+const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption }) => {
   const hasCaption = caption && caption.trim().length > 0;
   
   return (
@@ -14,10 +14,13 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrl, caption }) => {
       styles.container,
       !hasCaption && styles.containerNoCaption
     ]}>
-      <Image
-        source={{ uri: imageUrl }}
-        style={styles.image}
-      />
+      {imageUrls?.map((imageUrl, index) => (
+        <Image
+          key={index}
+          source={{ uri: imageUrl }}
+          style={styles.image}
+        />
+      ))}
       {hasCaption && (
         <Text style={styles.caption}>{caption}</Text>
       )}

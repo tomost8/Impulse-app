@@ -46,7 +46,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
       activeOpacity={0.7}
     >
       <PostContent
-        imageUrl={post?.mediaUrls?.[0]}
+        imageUrls={post?.mediaUrls}
         caption={post?.caption || ""}
       />
       

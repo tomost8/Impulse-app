@@ -17,10 +17,10 @@ interface SendPhotoModalProps {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
   activitiesList: any[];
-  imageSource: string;
+  imageSources: string[];
 }
 
-const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activitiesList, imageSource }: SendPhotoModalProps) => {
+const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activitiesList, imageSources }: SendPhotoModalProps) => {
 
   const { userId, authToken } = useUserInfo();
   const { fetching, user, friends, chats, communities } = useUserData();
@@ -33,6 +33,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
   const category = cameraHeader?.category;
 
   //console.log("id", id, "category", category);
+  console.log("imageSources", imageSources);
 
   const [caption, setCaption] = useState<string>("");
   const [selectedTargets, setSelectedTargets] = useState<{[key: string]: boolean}>({});
@@ -58,14 +59,14 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
           target_id: parseInt(targetId, 10),
         };
       });
-      const downloadURL = await processAndUploadImage(imageSource);
+      const downloadURLs = await Promise.all(imageSources.map(processAndUploadImage));
       const input = {
         authorId: userId,
         activityId: id,
         category: category,
         caption: caption,
         post_targets: postTargets,
-        mediaUrls: downloadURL,
+        mediaUrls: downloadURLs,
         expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
       };
       console.log("input", input);

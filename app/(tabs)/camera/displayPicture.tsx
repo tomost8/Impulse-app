@@ -17,9 +17,17 @@ const DisplayPicturePage = () => {
 
   const { id, category, frontPhoto, backPhoto } = useLocalSearchParams();
 
-  const defaultImage = require('@/assets/images/favicon.png');
-  const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : defaultImage;
-  const backImageSource = backPhoto ? { uri: backPhoto as string } : defaultImage;
+  const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : null;
+  const backImageSource = backPhoto ? { uri: backPhoto as string } : null;
+
+  // Get the main image (prefer front, fallback to back)
+  const mainImageSource = frontImageSource || backImageSource;
+  const previewImageSource = frontImageSource && backImageSource ? backImageSource : null;
+
+  // Convert image sources to array of URI strings
+  const imageSources: string[] = [frontImageSource, backImageSource]
+    .filter(Boolean)
+    .map(source => source!.uri);
 
   useEffect(() => {
     context.setPictureTaken(true);
@@ -55,15 +63,17 @@ const DisplayPicturePage = () => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         {/* Main large image */}
-        <Image 
-          source={frontImageSource} 
-          style={styles.mainImage} 
-        />
-        {/* Only show preview if both photos exist */}
-        {frontPhoto && backPhoto && (
+        {mainImageSource && (
+          <Image 
+            source={mainImageSource} 
+            style={styles.mainImage} 
+          />
+        )}
+        {/* Only show preview if we have a preview image */}
+        {previewImageSource && (
           <View style={styles.previewContainer}>
             <Image 
-              source={backImageSource} 
+              source={previewImageSource} 
               style={styles.previewImage} 
             />
           </View>
@@ -96,8 +106,7 @@ const DisplayPicturePage = () => {
         currentTab={modalTab}
         setCurrentTab={setModalTab}
         activitiesList={activities || []}
-        imageSource={frontImageSource}
-        //secondImageSource={backImageSource}
+        imageSources={imageSources}
       />
     </View>
   );
