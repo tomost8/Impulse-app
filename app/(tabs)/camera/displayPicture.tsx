@@ -20,12 +20,6 @@ const DisplayPicturePage = () => {
   const defaultImage = require('@/assets/images/favicon.png');
   const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : defaultImage;
   const backImageSource = backPhoto ? { uri: backPhoto as string } : defaultImage;
-  
-  // Add debugging logs to see what values we're actually getting
-  console.log('Image Sources:', {
-    frontImageSource,
-    backImageSource
-  });
 
   useEffect(() => {
     context.setPictureTaken(true);
@@ -48,11 +42,12 @@ const DisplayPicturePage = () => {
 
   // Debug
   const loading = fetching;
-  const debugRenders = false;
   if (debugRenders && !loading) {
     console.log("Rendering DisplayPicturePage\n",
       "Activities:", activities, "\n",
       "Modal Tab:", modalTab, "\n",
+      "Front Image Source:", frontImageSource, "\n",
+      "Back Image Source:", backImageSource, "\n",
     );
   }
 

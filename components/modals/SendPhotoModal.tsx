@@ -3,10 +3,13 @@ import { Modal, Portal, Checkbox } from 'react-native-paper';
 import styles from '@/utils/testStyles';
 
 import { useState, useContext } from 'react';
-import { CameraHeaderContext, SocialDataContext } from '@/app/(tabs)/camera/_layout';
+import { CameraHeaderContext } from '@/app/(tabs)/camera/_layout';
 import { debugRenders } from '@/utils/debug';
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 import { processAndUploadImage } from '@/utils/imageProcessing';
+// Services
+import { useUserData } from '@/services/UserPreferencesContext';
+import { useUserInfo } from '@/services/UserContext';
 
 interface SendPhotoModalProps {
   visible: boolean;
@@ -18,13 +21,13 @@ interface SendPhotoModalProps {
 }
 
 const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activitiesList, imageSource }: SendPhotoModalProps) => {
-  const socialData = useContext(SocialDataContext);
-  const userId = socialData?.userId;
-  const authToken = socialData?.authToken;
-  const friends = socialData?.friends ?? [];
-  const groups = socialData?.groups ?? [];
-  const communities = socialData?.communities ?? [];
-  
+
+  const { userId, authToken } = useUserInfo();
+  const { fetching, user, friends, chats, communities } = useUserData();
+  const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");
+  const acceptedGroups = chats?.filter((chat: any) => chat.status === "ACCEPTED" && chat.chat.type === "group");
+  const acceptedCommunities = communities?.filter((community: any) => community.status === "ACCEPTED");
+
   const cameraHeader = useContext(CameraHeaderContext);
   const id = cameraHeader?.id;
   const category = cameraHeader?.category;
@@ -80,12 +83,11 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
   };
 
   // Debug
-  const debugRenders = false;
   if (debugRenders) {
     console.log("Rendering SendPhotoModal\n",
-      "Friends:", friends, "\n",
-      "Groups:", groups, "\n",
-      "Communities:", communities, "\n",
+      "Accepted Friends:", acceptedFriends, "\n",
+      "Accepted Groups:", acceptedGroups, "\n",
+      "Accepted Communities:", acceptedCommunities, "\n",
     );
   }
 
@@ -146,7 +148,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
               />
               <Text style={styles.text}>Post to Feed</Text>
             </View>
-            {friends?.map((friend: any) => (
+            {acceptedFriends?.map((friend: any) => (
               <View key={friend.friend.id} style={styles.checkbox}>
                 <Checkbox
                   status={selectedTargets["friend" + friend.friend.id] ? 'checked' : 'unchecked'}
@@ -155,7 +157,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
                 <Text style={styles.text}>{friend.friend.username}</Text>
               </View>
             ))}
-            {groups?.map((group: any) => (
+            {acceptedGroups?.map((group: any) => (
               <View key={group.chat.id} style={styles.checkbox}> 
                 <Checkbox 
                   status={selectedTargets["group" + group.chat.id] ? 'checked' : 'unchecked'}
@@ -164,7 +166,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
                 <Text style={styles.text}>{group.chat.title}</Text>
               </View>
             ))}
-            {communities?.map((community: any) => (
+            {acceptedCommunities?.map((community: any) => (
               <View key={community.community.id} style={styles.checkbox}>
                 <Checkbox
                   status={selectedTargets["community" + community.community.id] ? 'checked' : 'unchecked'}

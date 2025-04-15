@@ -10,7 +10,7 @@ const GET_FEED_COMMUNITIES = gql`
         id
         caption
         category
-        mediaUrl
+        mediaUrls
         author {
           id
           profile_picture
@@ -70,7 +70,7 @@ const GET_FEED_FRIENDS = gql`
         id
         caption
         category
-        mediaUrl
+        mediaUrls
         author {
           id
           profile_picture
@@ -130,7 +130,7 @@ const GET_POST = gql`
       success
       post {
         id
-        mediaUrl
+        mediaUrls
         caption
         author {
           id
@@ -229,7 +229,7 @@ const GET_POSTS = gql`
         id
         caption
         category
-        mediaUrl
+        mediaUrls
         author {
           id
           profile_picture
@@ -301,7 +301,7 @@ const GET_POSTS_BY_USER_ID = gql`
           first_name
           last_name
         }
-        mediaUrl
+        mediaUrls
         post_targets {
           id
           target_type
