@@ -6,7 +6,9 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import { router } from 'expo-router';
 import LeaderboardTabs from '@/components/ui/Leaderboard/LeaderboardTabs';
@@ -130,6 +132,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     height: 65,
@@ -138,6 +141,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerLeft: {
     flexDirection: 'row',

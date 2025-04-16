@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   SafeAreaView,
+  Platform,
+  StatusBar,
 } from "react-native";
 import PickerModal from "@/components/ui/common/pickers/PickerModal";
 import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
@@ -242,9 +244,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',

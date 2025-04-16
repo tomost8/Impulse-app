@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image } from "react-native";
+import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image, Platform, StatusBar} from "react-native";
 import { s } from "react-native-size-matters";
 import { useRouter } from "expo-router";
 import PointsDisplay from "./PointsDisplay";
@@ -83,9 +83,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView, Text, Platform, StatusBar } from "react-native";
 import LeaderboardHeader from "@/components/ui/Leaderboard/LeaderboardHeader";
 import LeaderboardPodium from "@/components/ui/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "@/components/ui/Leaderboard/LeaderboardList";

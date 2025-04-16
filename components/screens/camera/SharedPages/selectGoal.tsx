@@ -7,18 +7,21 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
+import SelectUsers from './selectUsers';
 
 interface ActivityCardProps {
   title: string;
   timeRange: string;
+  description?: string;
   icon: any;
   isSelected: boolean;
   onSelect: () => void;
 }
 
-const ActivityCard = ({ title, timeRange, icon, isSelected, onSelect }: ActivityCardProps) => (
+const ActivityCard = ({ title, timeRange, description, icon, isSelected, onSelect }: ActivityCardProps) => (
   <TouchableOpacity 
     style={[styles.activityCard, isSelected && styles.selectedCard]}
     onPress={onSelect}
@@ -28,11 +31,14 @@ const ActivityCard = ({ title, timeRange, icon, isSelected, onSelect }: Activity
       <View style={styles.textContainer}>
         <Text style={styles.activityTitle}>{title}</Text>
         <Text style={styles.timeRange}>{timeRange}</Text>
+        {description && (
+          <Text style={styles.description}>{description}</Text>
+        )}
       </View>
     </View>
     <Image 
       source={isSelected ? 
-        require("@/assets/icons/checkGreen.png") : 
+        require("@/assets/icons/greencheck.png") : 
         require("@/assets/icons/circleunfilled.png")
       } 
       style={styles.checkIcon}
@@ -47,11 +53,12 @@ interface SelectGoalProps {
 
 const SelectGoal = ({ isVisible, onClose }: SelectGoalProps) => {
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
+  const [showSelectUsers, setShowSelectUsers] = useState(false);
 
   const handleNext = () => {
     if (selectedActivity) {
+      setShowSelectUsers(true);
       onClose();
-      router.push('/camera/addCaption');
     }
   };
 
@@ -62,45 +69,56 @@ const SelectGoal = ({ isVisible, onClose }: SelectGoalProps) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      <TouchableOpacity 
-        style={styles.overlay}
-        activeOpacity={1}
-        onPress={onClose}
-      >
+      <View style={styles.overlay}>
+        <TouchableOpacity 
+          style={styles.dismissArea}
+          activeOpacity={1}
+          onPress={onClose}
+        />
         <View style={styles.container}>
-          <TouchableOpacity 
-            activeOpacity={1}
-            style={styles.content}
-          >
-            <ActivityCard
-              title="Studying / Working"
-              timeRange="02:00 Pm to 04:00 Pm"
-              icon={require("@/assets/icons/studyingworking.png")}
-              isSelected={selectedActivity === 'studying'}
-              onSelect={() => setSelectedActivity('studying')}
-            />
-            
-            <ActivityCard
-              title="Rise and Shine"
-              timeRange="08:00 Am to 09:00 Am"
-              icon={require("@/assets/icons/riseshine.png")}
-              isSelected={selectedActivity === 'rise'}
-              onSelect={() => setSelectedActivity('rise')}
-            />
+          <Text style={styles.title}>Select Daily Goal</Text>
 
-            <TouchableOpacity 
-              style={[
-                styles.nextButton,
-                !selectedActivity && styles.nextButtonDisabled
-              ]}
-              onPress={handleNext}
-              disabled={!selectedActivity}
-            >
-              <Text style={styles.nextButtonText}>Next</Text>
-            </TouchableOpacity>
+          <ScrollView 
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContentContainer}
+          >
+            <View style={styles.content}>
+              <ActivityCard
+                title="Studying / Working"
+                timeRange="02:00 Pm to 04:00 Pm"
+                icon={require("@/assets/icons/studyingworking.png")}
+                isSelected={selectedActivity === 'studying'}
+                onSelect={() => setSelectedActivity('studying')}
+              />
+              
+              <ActivityCard
+                title="Rise and Shine"
+                timeRange="08:00 Am to 09:00 Am"
+                description="Waking up early today and eating a healthy breakfast"
+                icon={require("@/assets/icons/riseshine.png")}
+                isSelected={selectedActivity === 'rise'}
+                onSelect={() => setSelectedActivity('rise')}
+              />
+            </View>
+          </ScrollView>
+
+          <TouchableOpacity 
+            style={[
+              styles.nextButton,
+              !selectedActivity && styles.nextButtonDisabled
+            ]}
+            onPress={handleNext}
+            disabled={!selectedActivity}
+          >
+            <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
+
+          <SelectUsers
+            isVisible={showSelectUsers}
+            onClose={() => setShowSelectUsers(false)}
+          />
         </View>
-      </TouchableOpacity>
+      </View>
     </Modal>
   );
 };
@@ -111,22 +129,41 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
+  dismissArea: {
+    flex: 1,
+  },
   container: {
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    height: '80%',
     paddingTop: 20,
+  },
+  title: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    textAlign: 'center',
+    marginBottom: 20,
     paddingHorizontal: 20,
-    paddingBottom: 34,
+  },
+  scrollContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  scrollContentContainer: {
+    flexGrow: 1,
   },
   content: {
-    gap: 16,
+    gap: 18,
+    paddingBottom: 20,
   },
   activityCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
+    alignItems: 'flex-start',
+    padding: 18,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     borderWidth: 1,
@@ -137,8 +174,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   cardContent: {
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: 12,
   },
   activityIcon: {
@@ -147,6 +185,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   textContainer: {
+    flex: 1,
     gap: 4,
   },
   activityTitle: {
@@ -160,6 +199,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     color: '#979797',
   },
+  description: {
+    fontSize: 12,
+    fontFamily: 'Open Sans',
+    color: '#242020',
+    marginTop: 2,
+  },
   checkIcon: {
     width: 24,
     height: 24,
@@ -170,6 +215,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: 'center',
     marginTop: 8,
+    marginHorizontal: 20,
+    marginBottom: 34,
   },
   nextButtonDisabled: {
     backgroundColor: 'rgba(222, 114, 141, 0.5)',

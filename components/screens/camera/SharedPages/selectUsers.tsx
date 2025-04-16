@@ -28,7 +28,7 @@ const UserOption = ({ name, profilePic, isSelected, onSelect }: UserOptionProps)
     </View>
     <Image 
       source={isSelected ? 
-        require("@/assets/icons/checkGreen.png") : 
+        require("@/assets/icons/greencheck.png") : 
         require("@/assets/icons/circleunfilled.png")
       }
       style={styles.checkIcon}
@@ -83,7 +83,7 @@ const SelectUsers = ({ isVisible, onClose }: SelectUsersProps) => {
             </View>
             <Image 
               source={selectedOptions.includes('friendFeed') ? 
-                require("@/assets/icons/checkGreen.png") : 
+                require("@/assets/icons/greencheck.png") : 
                 require("@/assets/icons/circleunfilled.png")
               }
               style={styles.checkIcon}
@@ -153,24 +153,23 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#F7F7F7',
     justifyContent: 'center',
     alignItems: 'center',
   },
   addPostIcon: {
-    width: 24,
-    height: 24,
+    width: 40,
+    height: 40,
   },
   scrollContainer: {
     paddingTop: 20,
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 15,
   },
   optionContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 5,
     marginBottom: 20,
   },
   optionContent: {

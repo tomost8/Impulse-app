@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
+  StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -194,12 +195,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   keyboardAvoidingView: {
     flex: 1,
   },
   header: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',

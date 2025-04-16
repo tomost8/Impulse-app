@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import FullPostCard from '@/components/ui/SocialPage/Post/fullpostcard';
 import CommentInput from '@/components/ui/SocialPage/Post/CommentInput';
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scrollView: {
     flex: 1,
@@ -124,6 +125,7 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',
@@ -139,8 +141,8 @@ const styles = StyleSheet.create({
     width: 10,
     height: 15,
     tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5,
+    marginLeft: 6,
+    marginRight: 6,
   },
   headerTitle: {
     color: '#242020',
