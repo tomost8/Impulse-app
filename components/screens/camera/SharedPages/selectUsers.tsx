@@ -39,9 +39,27 @@ const UserOption = ({ name, profilePic, isSelected, onSelect }: UserOptionProps)
 interface SelectUsersProps {
   isVisible: boolean;
   onClose: () => void;
+  onSend: () => void;
+  acceptedFriends: any[];
+  acceptedGroups: any[];
+  acceptedCommunities: any[];
+  loading: boolean;
 }
 
-const SelectUsers = ({ isVisible, onClose }: SelectUsersProps) => {
+const SelectUsers = ({ 
+  isVisible, 
+  onClose, 
+  onSend, 
+  loading,
+  acceptedFriends,
+  acceptedGroups,
+  acceptedCommunities 
+}: SelectUsersProps) => {
+  if (loading) {
+    return (
+      <Text>Loading...</Text>
+    );
+  }
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const toggleOption = (optionId: string) => {
@@ -53,9 +71,8 @@ const SelectUsers = ({ isVisible, onClose }: SelectUsersProps) => {
   };
 
   const handleSend = () => {
-    // Handle send logic
-    console.log('Selected options:', selectedOptions);
-    router.push('/home');
+    console.log("Sending to:", selectedOptions);
+    onSend();
   };
 
   return (
@@ -92,18 +109,33 @@ const SelectUsers = ({ isVisible, onClose }: SelectUsersProps) => {
 
           {/* Scrollable Options */}
           <ScrollView style={styles.scrollContainer}>
-            <UserOption
-              name="Gabe's Running Club"
-              profilePic={require("@/assets/images/andrew.png")}
-              isSelected={selectedOptions.includes('club')}
-              onSelect={() => toggleOption('club')}
-            />
-            <UserOption
-              name="Sarah Jackson"
-              profilePic={require("@/assets/images/andrew.png")}
-              isSelected={selectedOptions.includes('sarah')}
-              onSelect={() => toggleOption('sarah')}
-            />
+            {acceptedFriends?.map((friend: any) => (
+              <UserOption
+                key={friend.friend.id}
+                name={friend.friend.username}
+                profilePic={friend.friend.profile_picture}
+                isSelected={selectedOptions.includes(`friend${friend.friend.id}`)}
+                onSelect={() => toggleOption(`friend${friend.friend.id}`)}
+              />
+            ))}
+            {acceptedGroups?.map((group: any) => (
+              <UserOption
+                key={group.chat.id}
+                name={group.chat.title}
+                profilePic={group.chat.profile_pic}
+                isSelected={selectedOptions.includes(`group${group.chat.id}`)}
+                onSelect={() => toggleOption(`group${group.chat.id}`)}
+              />
+            ))}
+            {acceptedCommunities?.map((community: any) => (
+              <UserOption
+                key={community.community.id}
+                name={community.community.name}
+                profilePic={community.community.thumbnail}
+                isSelected={selectedOptions.includes(`community${community.community.id}`)}
+                onSelect={() => toggleOption(`community${community.community.id}`)}
+              />
+            ))}
           </ScrollView>
 
           {/* Bottom Buttons */}

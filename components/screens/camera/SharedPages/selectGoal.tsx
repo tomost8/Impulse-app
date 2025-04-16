@@ -9,58 +9,24 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import { router } from 'expo-router';
-import SelectUsers from './selectUsers';
-
-interface ActivityCardProps {
-  title: string;
-  timeRange: string;
-  description?: string;
-  icon: any;
-  isSelected: boolean;
-  onSelect: () => void;
-}
-
-const ActivityCard = ({ title, timeRange, description, icon, isSelected, onSelect }: ActivityCardProps) => (
-  <TouchableOpacity 
-    style={[styles.activityCard, isSelected && styles.selectedCard]}
-    onPress={onSelect}
-  >
-    <View style={styles.cardContent}>
-      <Image source={icon} style={styles.activityIcon} />
-      <View style={styles.textContainer}>
-        <Text style={styles.activityTitle}>{title}</Text>
-        <Text style={styles.timeRange}>{timeRange}</Text>
-        {description && (
-          <Text style={styles.description}>{description}</Text>
-        )}
-      </View>
-    </View>
-    <Image 
-      source={isSelected ? 
-        require("@/assets/icons/greencheck.png") : 
-        require("@/assets/icons/circleunfilled.png")
-      } 
-      style={styles.checkIcon}
-    />
-  </TouchableOpacity>
-);
+import PostActivityCard from '@/components/ui/common/activityCards/PostActivityCard';
 
 interface SelectGoalProps {
+  loading: boolean;
   isVisible: boolean;
   onClose: () => void;
+  onNext: () => void;
+  activitiesList: any[];
+  timezone: string;
 }
 
-const SelectGoal = ({ isVisible, onClose }: SelectGoalProps) => {
+const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, loading }: SelectGoalProps) => {
+  if (loading) {
+    return (
+      <Text>Loading...</Text>
+    );
+  }
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
-  const [showSelectUsers, setShowSelectUsers] = useState(false);
-
-  const handleNext = () => {
-    if (selectedActivity) {
-      setShowSelectUsers(true);
-      onClose();
-    }
-  };
 
   return (
     <Modal
@@ -83,22 +49,19 @@ const SelectGoal = ({ isVisible, onClose }: SelectGoalProps) => {
             contentContainerStyle={styles.scrollContentContainer}
           >
             <View style={styles.content}>
-              <ActivityCard
-                title="Studying / Working"
-                timeRange="02:00 Pm to 04:00 Pm"
-                icon={require("@/assets/icons/studyingworking.png")}
-                isSelected={selectedActivity === 'studying'}
-                onSelect={() => setSelectedActivity('studying')}
-              />
-              
-              <ActivityCard
-                title="Rise and Shine"
-                timeRange="08:00 Am to 09:00 Am"
-                description="Waking up early today and eating a healthy breakfast"
-                icon={require("@/assets/icons/riseshine.png")}
-                isSelected={selectedActivity === 'rise'}
-                onSelect={() => setSelectedActivity('rise')}
-              />
+              {activitiesList.map((activity) => (
+                <PostActivityCard
+                  key={activity.id}
+                  category={activity.category}
+                  scheduledDatetime={activity.scheduledDatetime}
+                  duration={activity.duration}
+                  status={activity.status}
+                  description={activity.description}
+                  timezone={timezone}
+                  isSelected={selectedActivity === activity.id}
+                  onSelect={() => setSelectedActivity(activity.id)}
+                />
+              ))}
             </View>
           </ScrollView>
 
@@ -107,16 +70,11 @@ const SelectGoal = ({ isVisible, onClose }: SelectGoalProps) => {
               styles.nextButton,
               !selectedActivity && styles.nextButtonDisabled
             ]}
-            onPress={handleNext}
+            onPress={onNext}
             disabled={!selectedActivity}
           >
             <Text style={styles.nextButtonText}>Next</Text>
           </TouchableOpacity>
-
-          <SelectUsers
-            isVisible={showSelectUsers}
-            onClose={() => setShowSelectUsers(false)}
-          />
         </View>
       </View>
     </Modal>
