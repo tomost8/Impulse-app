@@ -6,7 +6,9 @@ import {
   TouchableOpacity, 
   StyleSheet, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  Platform,
+  StatusBar
 } from 'react-native';
 import { router } from 'expo-router';
 import ConnectPopup from '@/components/screens/connect/connectpopup';
@@ -110,6 +112,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
     backgroundColor: '#E0EDFD',
@@ -219,6 +222,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
 });
 

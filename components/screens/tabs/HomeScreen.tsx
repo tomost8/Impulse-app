@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Image, Platform, StatusBar } from "react-native";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
@@ -73,10 +73,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
+    paddingTop: Platform.OS === 'android' ? 10 : 0, // Add some padding for Android header
   },
   scrollView: {
     flex: 1,

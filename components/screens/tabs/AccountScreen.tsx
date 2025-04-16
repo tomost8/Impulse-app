@@ -7,6 +7,8 @@ import {
   ScrollView,
   SafeAreaView,
   Image,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
@@ -135,10 +137,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   scrollView: {
     flex: 1,

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, Platform} from "react-native";
 import LeaderboardSelector from "./LeaderboardSelector"; // ✅ Import selector
 import { StatusBar } from "react-native";
 
@@ -39,6 +39,7 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ onBackPress, sele
 const styles = StyleSheet.create({
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',
@@ -52,6 +53,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1, // ✅ Ensures it occupies only required space
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   backButton: {
     padding: 14, // Adds touchable area

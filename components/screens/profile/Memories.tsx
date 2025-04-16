@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s } from 'react-native-size-matters';
@@ -130,9 +132,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   headerContent: {
     flexDirection: 'row',

@@ -7,7 +7,9 @@ import {
   TextInput,
   StyleSheet, 
   SafeAreaView,
-  ScrollView 
+  ScrollView,
+  Platform,
+  StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
 import RemoveUserPopup from './removeuserpopup';
@@ -126,9 +128,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   topBar: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   topBarContent: {
     flexDirection: 'row',

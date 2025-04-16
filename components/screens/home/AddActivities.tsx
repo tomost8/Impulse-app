@@ -1,4 +1,4 @@
-import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image } from "react-native";
+import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image, Platform, StatusBar } from "react-native";
 import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
 import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
 import { goals } from "@/utils/goals";
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF",
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   scrollContainer: {
     paddingHorizontal: 20,
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
     },
   headerBackground: {
     backgroundColor: '#E0EDFD',
+    paddingTop: Platform.OS === 'android' ? 8 : 0,
   },
   headerContent: {
     flexDirection: 'row',
