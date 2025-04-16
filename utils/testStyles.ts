@@ -118,6 +118,20 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
   },
+  captionContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  captionInput: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    maxHeight: 20, // Single line when keyboard is hidden
+    minHeight: 20,
+  },
+  captionInputExpanded: {
+    maxHeight: 100, // Expands when keyboard is visible
+  },
 });
 
 export default styles; 

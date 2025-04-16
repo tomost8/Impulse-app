@@ -12,7 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
-import SelectUsers from './SharedPages/selectUsers';
+import SelectUsers from '@/components/screens/camera/SharedPages/selectUsers';
 
 const AddCaption = () => {
   const [caption, setCaption] = useState('');
@@ -81,10 +81,12 @@ const AddCaption = () => {
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>
 
+        {/*
         <SelectUsers
           isVisible={showSelectUsers}
           onClose={() => setShowSelectUsers(false)}
         />
+        */}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
