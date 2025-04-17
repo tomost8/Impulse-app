@@ -9,7 +9,6 @@ import {
   Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
-import SelectGoal from '../SharedPages/selectGoal';
 
 const PictureTaken = () => {
   const [showSelectGoal, setShowSelectGoal] = useState(false);
@@ -69,11 +68,6 @@ const PictureTaken = () => {
       >
         <Text style={styles.selectButtonText}>Select Daily Goal</Text>
       </TouchableOpacity>
-
-      <SelectGoal
-        isVisible={showSelectGoal}
-        onClose={() => setShowSelectGoal(false)}
-      />
     </View>
   );
 };

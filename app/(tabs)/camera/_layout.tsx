@@ -1,8 +1,9 @@
 import { Stack } from 'expo-router';
 import React, { createContext, useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
+import { getLabelByCategory } from '@/utils/goals';
 
 export const CameraHeaderContext = createContext<{
   id: number;
@@ -45,7 +46,7 @@ function CameraHeader() {
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
       {/* Display Category Text for Selected Activity*/}
-      <Text style={headerStyles.text}>{header.category}</Text>
+      <Text style={headerStyles.text}>{getLabelByCategory(header.category)}</Text>
       {/* Retake Button or Flash Button*/}
       {header.pictureTaken ? (
         <TouchableOpacity onPress={() => {
@@ -54,7 +55,10 @@ function CameraHeader() {
           header.setCategory('');
           header.setPictureTaken(false);
         }}>
-          <Text style={headerStyles.text}>Retake</Text>
+          <Image 
+            source={require("@/assets/icons/retake.png")}
+            style={{ width: 24, height: 24, tintColor: '#FFFFFF' }}
+          />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={() => header.setFlash(!header.flash)}>

@@ -1,33 +1,28 @@
-import styles from "@/utils/testStyles";
-import { View, Image, TouchableOpacity, Text, KeyboardAvoidingView, TextInput, Platform } from "react-native";
-import { useLocalSearchParams } from "expo-router";
 import { useState, useEffect, useRef, useContext } from 'react';
 import { CameraHeaderContext } from './_layout';
 import AuthWrapper from '@/components/auth/AuthWrapper';
-import { debugRenders, pageDisplay } from '@/utils/debug';
-import { useUserData } from "@/services/UserPreferencesContext";
+import { useLocalSearchParams, router } from 'expo-router';
+// GraphQL Hooks
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';
-import { processAndUploadImage } from '@/utils/imageProcessing';
-import { useUserInfo } from '@/services/UserContext';
 // Components
-import PictureTaken from "@/components/screens/camera/SingleLensCamera/pictureTaken";
-import AddCaption from "@/components/screens/camera/SingleLensCamera/addCaption";
+import { View, StyleSheet } from "react-native";
+import DisplayPictureScreen from "@/components/screens/camera/SingleLensCamera/displayPictureScreen";
 import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
 import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from "@/services/UserPreferencesContext";
+import { processAndUploadImage } from '@/utils/imageProcessing';
 
 const DisplayPicturePage = () => {
   const context = useContext(CameraHeaderContext);
   if (!context) return null;
   const { id, category, frontPhoto, backPhoto } = useLocalSearchParams();
-
+  // Get image sources
   const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : null;
   const backImageSource = backPhoto ? { uri: backPhoto as string } : null;
-
-  // Get the main image (prefer front, fallback to back)
   const mainImageSource = frontImageSource || backImageSource;
   const previewImageSource = frontImageSource && backImageSource ? backImageSource : null;
-
-  // Convert image sources to array of URI strings
   const imageSources: string[] = [frontImageSource, backImageSource]
     .filter(Boolean)
     .map(source => source!.uri);
@@ -84,10 +79,12 @@ const DisplayPicturePage = () => {
     }
   };
 
-  // Modals
+  // Modals + Buttons
   const [activityModalVisible, setActivityModalVisible] = useState(false);
+  const [activityButtonVisible, setActivityButtonVisible] = useState(true);
   const [captionFooterVisible, setCaptionFooterVisible] = useState(false);
   const [usersModalVisible, setUsersModalVisible] = useState(false);
+  const [usersButtonVisible, setUsersButtonVisible] = useState(false);
   // Form Data State Management
   const [caption, setCaption] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -120,7 +117,9 @@ const DisplayPicturePage = () => {
   const handleActivityNext = () => {
     console.log("Next Activity Button Pressed");
     setActivityModalVisible(false);
+    setActivityButtonVisible(false);
     setCaptionFooterVisible(true);
+    setUsersButtonVisible(true);
   };
 
   const handlePostSend = () => {
@@ -144,69 +143,21 @@ const DisplayPicturePage = () => {
     );
   }
 
-  
-  if (pageDisplay) {
-    return <PictureTaken />;
-  }
-  
-
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <View style={styles.imageContainer}>
-        {/* Main large image */}
-        {mainImageSource && (
-          <Image 
-            source={mainImageSource} 
-            style={styles.mainImage} 
-          />
-        )}
-        {/* Only show preview if we have a preview image */}
-        {previewImageSource && (
-          <View style={styles.previewContainer}>
-            <Image 
-              source={previewImageSource} 
-              style={styles.previewImage} 
-            />
-          </View>
-        )}
-      </View>
-
-      {captionFooterVisible && (
-        <View style={styles.captionContainer}>
-          <TextInput
-            style={[
-              styles.captionInput,
-              isKeyboardVisible && styles.captionInputExpanded
-            ]}
-            placeholder="Add caption...."
-            placeholderTextColor="#979797"
-            value={caption}
-            onChangeText={setCaption}
-            multiline={true}
-            onFocus={() => setIsKeyboardVisible(true)}
-            onBlur={() => setIsKeyboardVisible(false)}
-          />
-        </View>
-      )}
-
-      <View>
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => setActivityModalVisible(true)}
-        >
-          <Text style={styles.text}>Select Daily Goal</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={() => setUsersModalVisible(true)}
-        >
-          <Text style={styles.text}>Select Users</Text>
-        </TouchableOpacity>
-      </View>
+    <View style={styles.container}>
+      <DisplayPictureScreen
+        mainImageSource={mainImageSource}
+        previewImageSource={previewImageSource}
+        captionFooterVisible={captionFooterVisible}
+        isKeyboardVisible={isKeyboardVisible}
+        caption={caption}
+        setCaption={setCaption}
+        setIsKeyboardVisible={setIsKeyboardVisible}
+        activityButtonVisible={activityButtonVisible}
+        usersButtonVisible={usersButtonVisible}
+        setActivityModalVisible={setActivityModalVisible}
+        setUsersModalVisible={setUsersModalVisible}
+      />
       <SelectGoal 
         isVisible={activityModalVisible}
         loading={fetching}
@@ -228,9 +179,15 @@ const DisplayPicturePage = () => {
         onClose={() => setUsersModalVisible(false)}
         onSend={handlePostSend}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
+  },
+});
 
 export default AuthWrapper(DisplayPicturePage);
