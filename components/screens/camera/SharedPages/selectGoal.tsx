@@ -15,18 +15,23 @@ interface SelectGoalProps {
   loading: boolean;
   isVisible: boolean;
   onClose: () => void;
+  onSelectActivity: (activityId: string, category: string) => void;
   onNext: () => void;
   activitiesList: any[];
   timezone: string;
 }
 
-const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, loading }: SelectGoalProps) => {
+const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, loading, onSelectActivity }: SelectGoalProps) => {
   if (loading) {
     return (
       <Text>Loading...</Text>
     );
   }
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
+  const handleSelectActivity = (activityId: string, category: string) => {
+    setSelectedActivity(activityId);
+    onSelectActivity(activityId, category);
+  };
 
   return (
     <Modal
@@ -49,7 +54,7 @@ const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, load
             contentContainerStyle={styles.scrollContentContainer}
           >
             <View style={styles.content}>
-              {activitiesList.map((activity) => (
+              {activitiesList?.map((activity) => (
                 <PostActivityCard
                   key={activity.id}
                   category={activity.category}
@@ -59,7 +64,7 @@ const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, load
                   description={activity.description}
                   timezone={timezone}
                   isSelected={selectedActivity === activity.id}
-                  onSelect={() => setSelectedActivity(activity.id)}
+                  onSelect={() => handleSelectActivity(activity.id, activity.category)}
                 />
               ))}
             </View>

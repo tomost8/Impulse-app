@@ -6,6 +6,9 @@ import { CameraHeaderContext } from './_layout';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { debugRenders, pageDisplay } from '@/utils/debug';
 import { useUserData } from "@/services/UserPreferencesContext";
+import { useCreatePost } from '@/hooks/graphql/posts/mutations';
+import { processAndUploadImage } from '@/utils/imageProcessing';
+import { useUserInfo } from '@/services/UserContext';
 // Components
 import PictureTaken from "@/components/screens/camera/SingleLensCamera/pictureTaken";
 import AddCaption from "@/components/screens/camera/SingleLensCamera/addCaption";
@@ -30,6 +33,7 @@ const DisplayPicturePage = () => {
     .map(source => source!.uri);
 
   // User Data
+  const { authToken } = useUserInfo();
   const { fetching, user, activities, friends, chats, communities } = useUserData();
   const timezone = user?.timezone;
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");
@@ -38,19 +42,19 @@ const DisplayPicturePage = () => {
 
   useEffect(() => {
     context.setPictureTaken(true);
-    context.setCategory(category as string);
-  }, [category]);
+    if (id) context.setId(Number(id));
+    if (category) context.setCategory(category as string);
+  }, []);
 
   // Mutations
-  /*
   const { createPost } = useCreatePost();
   const [isCreatingPost, setIsCreatingPost] = useState(false);
 
   const handleCreatePost = async () => {
     setIsCreatingPost(true);
     try {
-      const postTargets = Object.entries(selectedTargets).map(([key, value]) => {
-        const [targetType, targetId] = key.split(/(\d+)/).filter(Boolean);
+      const postTargets = selectedPostTargets.map(target => {
+        const [targetType, targetId] = target.match(/([a-zA-Z]+)(\d+)/)?.slice(1) || [];
         return {
           target_type: targetType,
           target_id: parseInt(targetId, 10),
@@ -58,9 +62,9 @@ const DisplayPicturePage = () => {
       });
       const downloadURLs = await Promise.all(imageSources.map(processAndUploadImage));
       const input = {
-        authorId: userId,
-        activityId: id,
-        category: category,
+        authorId: user?.id,
+        activityId: context?.id,
+        category: context?.category,
         caption: caption,
         post_targets: postTargets,
         mediaUrls: downloadURLs,
@@ -79,24 +83,27 @@ const DisplayPicturePage = () => {
       setIsCreatingPost(false);
     }
   };
-  */
-
-  // Debug
-  if (debugRenders) {
-    console.log("Rendering SendPhotoModal\n",
-      "Accepted Friends:", acceptedFriends, "\n",
-      "Accepted Groups:", acceptedGroups, "\n",
-      "Accepted Communities:", acceptedCommunities, "\n",
-    );
-  }
 
   // Modals
   const [activityModalVisible, setActivityModalVisible] = useState(false);
   const [captionFooterVisible, setCaptionFooterVisible] = useState(false);
   const [usersModalVisible, setUsersModalVisible] = useState(false);
-  // Add new state for caption and keyboard visibility
+  // Form Data State Management
   const [caption, setCaption] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [selectedPostTargets, setSelectedPostTargets] = useState<string[]>([]);
+  const togglePostTarget = (optionId: string) => {
+    setSelectedPostTargets(prev => 
+      prev.includes(optionId) 
+        ? prev.filter(id => id !== optionId)
+        : [...prev, optionId]
+    );
+  };
+  const handleSelectActivity = (activityId: string, category: string) => {
+    context?.setId(Number(activityId));
+    context?.setCategory(category);
+    console.log("Selected Activity:", activityId, category);
+  };
 
   useEffect(() => {
     if (id && category) {
@@ -116,8 +123,14 @@ const DisplayPicturePage = () => {
     setCaptionFooterVisible(true);
   };
 
+  const handlePostSend = () => {
+    console.log("Selected Post Targets:", selectedPostTargets);
+    handleCreatePost();
+  };
+
   // Debug
   const loading = fetching;
+  const debugRenders = false;
   if (debugRenders && !loading) {
     console.log("Rendering DisplayPicturePage\n",
       "Activities:", activities, "\n",
@@ -126,14 +139,16 @@ const DisplayPicturePage = () => {
       "Communities:", acceptedCommunities, "\n",
       "Front Image Source:", frontImageSource, "\n",
       "Back Image Source:", backImageSource, "\n",
+      "Caption:", caption, "\n",
+      "Selected Post Targets:", selectedPostTargets, "\n",
     );
   }
 
-  /*
+  
   if (pageDisplay) {
     return <PictureTaken />;
   }
-  */
+  
 
   return (
     <KeyboardAvoidingView 
@@ -199,15 +214,19 @@ const DisplayPicturePage = () => {
         timezone={timezone}
         onClose={() => setActivityModalVisible(false)}
         onNext={handleActivityNext}
+        onSelectActivity={handleSelectActivity}
       />
       <SelectUsers 
         isVisible={usersModalVisible}
         loading={fetching}
+        userId={user?.id}
         acceptedFriends={acceptedFriends}
         acceptedGroups={acceptedGroups}
         acceptedCommunities={acceptedCommunities}
+        selectedPostTargets={selectedPostTargets}
+        togglePostTarget={togglePostTarget}
         onClose={() => setUsersModalVisible(false)}
-        onSend={() => console.log("Send Button Pressed")}
+        onSend={handlePostSend}
       />
     </KeyboardAvoidingView>
   );
