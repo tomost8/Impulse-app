@@ -89,7 +89,7 @@ const FriendsList = (props: FriendProps) => {
         <ScrollView style={styles.friendsList}>
           {filteredFriends.map((friend) => (
             <View key={friend.id} style={styles.friendItem}>
-              <TouchableOpacity onPress={() => console.log("Profile pressed:", friend.id)}>
+              <TouchableOpacity onPress={() => router.push(`/user/${friend.id}`)}>
                 <Image
                   source={{ uri: friend.profile_picture }}
                   style={styles.friendAvatar}

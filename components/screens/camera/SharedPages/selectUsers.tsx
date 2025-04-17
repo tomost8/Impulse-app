@@ -44,6 +44,9 @@ interface SelectUsersProps {
   acceptedGroups: any[];
   acceptedCommunities: any[];
   loading: boolean;
+  selectedPostTargets: string[];
+  togglePostTarget: (optionId: string) => void;
+  userId: string;
 }
 
 const SelectUsers = ({ 
@@ -51,27 +54,20 @@ const SelectUsers = ({
   onClose, 
   onSend, 
   loading,
+  selectedPostTargets,
+  togglePostTarget,
   acceptedFriends,
   acceptedGroups,
-  acceptedCommunities 
+  acceptedCommunities,
+  userId 
 }: SelectUsersProps) => {
   if (loading) {
     return (
       <Text>Loading...</Text>
     );
   }
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-
-  const toggleOption = (optionId: string) => {
-    setSelectedOptions(prev => 
-      prev.includes(optionId) 
-        ? prev.filter(id => id !== optionId)
-        : [...prev, optionId]
-    );
-  };
 
   const handleSend = () => {
-    console.log("Sending to:", selectedOptions);
     onSend();
   };
 
@@ -87,7 +83,7 @@ const SelectUsers = ({
           {/* Fixed Post to Friend Feed Option */}
           <TouchableOpacity 
             style={styles.friendFeedOption}
-            onPress={() => toggleOption('friendFeed')}
+            onPress={() => togglePostTarget(`feed${userId}`)}
           >
             <View style={styles.optionContent}>
               <View style={styles.addPostIconContainer}>
@@ -99,7 +95,7 @@ const SelectUsers = ({
               <Text style={styles.optionName}>Post to Friend Feed</Text>
             </View>
             <Image 
-              source={selectedOptions.includes('friendFeed') ? 
+              source={selectedPostTargets.includes(`feed${userId}`) ? 
                 require("@/assets/icons/greencheck.png") : 
                 require("@/assets/icons/circleunfilled.png")
               }
@@ -114,8 +110,8 @@ const SelectUsers = ({
                 key={friend.friend.id}
                 name={friend.friend.username}
                 profilePic={friend.friend.profile_picture}
-                isSelected={selectedOptions.includes(`friend${friend.friend.id}`)}
-                onSelect={() => toggleOption(`friend${friend.friend.id}`)}
+                isSelected={selectedPostTargets.includes(`friend${friend.friend.id}`)}
+                onSelect={() => togglePostTarget(`friend${friend.friend.id}`)}
               />
             ))}
             {acceptedGroups?.map((group: any) => (
@@ -123,8 +119,8 @@ const SelectUsers = ({
                 key={group.chat.id}
                 name={group.chat.title}
                 profilePic={group.chat.profile_pic}
-                isSelected={selectedOptions.includes(`group${group.chat.id}`)}
-                onSelect={() => toggleOption(`group${group.chat.id}`)}
+                isSelected={selectedPostTargets.includes(`group${group.chat.id}`)}
+                onSelect={() => togglePostTarget(`group${group.chat.id}`)}
               />
             ))}
             {acceptedCommunities?.map((community: any) => (
@@ -132,8 +128,8 @@ const SelectUsers = ({
                 key={community.community.id}
                 name={community.community.name}
                 profilePic={community.community.thumbnail}
-                isSelected={selectedOptions.includes(`community${community.community.id}`)}
-                onSelect={() => toggleOption(`community${community.community.id}`)}
+                isSelected={selectedPostTargets.includes(`community${community.community.id}`)}
+                onSelect={() => togglePostTarget(`community${community.community.id}`)}
               />
             ))}
           </ScrollView>
