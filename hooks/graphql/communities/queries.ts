@@ -16,6 +16,7 @@ export const GET_COMMUNITIES = gql`
           last_name
           email
         }
+        code
       }
       errors {
         field
@@ -95,6 +96,7 @@ export const GET_COMMUNITY = gql`
           profile_picture
           bio
         }
+        code
       }
     }
   }

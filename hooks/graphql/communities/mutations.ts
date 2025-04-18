@@ -11,7 +11,7 @@ export const CREATE_COMMUNITY = gql`
     createCommunity(input: $input) {
       success
       community { 
-        id name description thumbnail 
+        id name description thumbnail code
         influencer { id first_name last_name username } 
       }
       errors { field message }
@@ -81,7 +81,7 @@ const UPDATE_COMMUNITY = gql`
     updateCommunity(id: $id, input: $input) {
       success
       community { 
-        id name description thumbnail
+        id name description thumbnail code
       }
       errors { field message }
     }

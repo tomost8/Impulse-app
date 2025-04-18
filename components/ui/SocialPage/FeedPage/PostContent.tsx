@@ -13,7 +13,7 @@ const PADDING = 7; // Half the padding of full post view
 const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption }) => {
   const hasCaption = caption && caption.trim().length > 0;
   
-  if (!imageUrls || imageUrls.length < 2) return null;
+  if (!imageUrls || imageUrls.length < 2) return null; // Fix This
 
   return (
     <View style={[

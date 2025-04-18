@@ -125,6 +125,9 @@ const DisplayPicturePage = () => {
   const handlePostSend = () => {
     console.log("Selected Post Targets:", selectedPostTargets);
     handleCreatePost();
+    setCaptionFooterVisible(false);
+    setUsersModalVisible(false);
+    router.replace("/home");
   };
 
   // Debug

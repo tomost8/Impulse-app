@@ -22,7 +22,7 @@ interface EditCommunityScreenProps {
     name: string;
     description: string;
     thumbnail: string | null;
-    // joinCode: string;
+    code: string;
   };
   handleFormDataChange: (field: string, value: string) => void;
   selectedCategories: string[];
@@ -49,6 +49,11 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
     } catch (error) {
       console.error('Error picking image:', error);
     }
+  };
+
+  // Ensure values are always strings
+  const getInputValue = (value: string | null | undefined): string => {
+    return value || '';
   };
 
   return (
@@ -98,7 +103,7 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
             <Text style={styles.inputLabel}>Community Name</Text>
             <TextInput
               style={styles.textInput}
-              value={props.formData.name}
+              value={getInputValue(props.formData.name)}
               onChangeText={(value) => props.handleFormDataChange('name', value)}
               placeholder="Enter community name"
               placeholderTextColor="#979797"
@@ -110,7 +115,7 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
             <Text style={styles.inputLabel}>Description (optional)</Text>
             <TextInput
               style={[styles.textInput, styles.descriptionInput]}
-              value={props.formData.description}
+              value={getInputValue(props.formData.description)}
               onChangeText={(value) => props.handleFormDataChange('description', value)}
               placeholder="Add a description for your community"
               placeholderTextColor="#979797"
@@ -156,8 +161,8 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
             <Text style={styles.inputLabel}>Community Join Code</Text>
             <TextInput
               style={styles.textInput}
-              value={joinCode}
-              onChangeText={setJoinCode}
+              value={getInputValue(props.formData.code)}
+              onChangeText={(value) => props.handleFormDataChange('code', value)}
               placeholder="Enter join code"
               placeholderTextColor="#979797"
             />

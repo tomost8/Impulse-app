@@ -53,6 +53,7 @@ export const GET_USER = gql`
         timezone
         searchable
         last_login_at
+        is_double_cam
         point {
           points
           spending_points

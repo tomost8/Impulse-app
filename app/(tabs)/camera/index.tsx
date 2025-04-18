@@ -7,6 +7,8 @@ import { useTheme } from 'react-native-paper';
 import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useUserData } from '@/services/UserPreferencesContext';
+
 // 获取屏幕尺寸 (Get screen dimensions)
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -16,6 +18,10 @@ export default function CameraScreen() {
   const theme = useTheme<AppTheme>();
   
   if (!context) return null;
+
+  const { fetching, user } = useUserData();
+
+
 
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
@@ -71,7 +77,7 @@ export default function CameraScreen() {
 
   // 拍照 (Take picture: double camera)
   async function takePicture() {
-    const is_double_camera = true;
+    const is_double_camera = !fetching && user?.is_double_cam;
     if (cameraRef.current) {
       try {
         const firstPhoto = await cameraRef.current.takePictureAsync();

@@ -41,9 +41,13 @@ function SettingsItem({
   );
 }
 
-function DualLensToggle() {
-  const [isEnabled, setIsEnabled] = useState(false);
-
+function DualLensToggle({ 
+  isEnabled, 
+  onToggle 
+}: { 
+  isEnabled: boolean;
+  onToggle: (value: boolean) => Promise<void> | void;
+}) {
   return (
     <View style={styles.settingsRow}>
       <View style={styles.settingsLeft}>
@@ -53,7 +57,7 @@ function DualLensToggle() {
         />
         <Text style={styles.settingsText}>Dual Lens Camera</Text>
       </View>
-      <TouchableOpacity onPress={() => setIsEnabled(!isEnabled)}>
+      <TouchableOpacity onPress={() => onToggle(!isEnabled)}>
         <Image
           source={isEnabled ? 
             require("@/assets/icons/toggleOn.png") : 
@@ -86,7 +90,23 @@ function LogoutButton() {
   );
 }
 
-function ProfileSettings() {
+interface ProfileSettingsProps {
+  loading: boolean;
+  isDoubleCameraEnabled: boolean;
+  onToggleDoubleCamera: (value: boolean) => Promise<void> | void; 
+}
+
+function ProfileSettings({ isDoubleCameraEnabled, onToggleDoubleCamera, loading }: ProfileSettingsProps) {
+  const [isSwitchEnabled, setIsSwitchEnabled] = useState(!loading && isDoubleCameraEnabled);
+  const handleSwitchToggle = async (value: boolean) => {
+    try {
+      await onToggleDoubleCamera(value);
+      setIsSwitchEnabled(value);
+    } catch (error) {
+      console.error('Failed to update dual lens settings:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.headerBackground}>
@@ -138,7 +158,10 @@ function ProfileSettings() {
             icon={require("@/assets/icons/settingsGuide.png")}
             onPress={() => router.push('/(tabs)/account/settings/featureGuide')}
           />
-          <DualLensToggle />
+          <DualLensToggle 
+            isEnabled={isSwitchEnabled}
+            onToggle={handleSwitchToggle}
+          />
         </View>
         <LogoutButton />
       </ScrollView>
