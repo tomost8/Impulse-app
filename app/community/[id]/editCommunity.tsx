@@ -34,7 +34,8 @@ const EditCommunityPage = () => {
       const communityInfo = {
         name: community.name,
         description: community.description,
-        thumbnail: community.thumbnail
+        thumbnail: community.thumbnail,
+        code: community.code
       }
      communityRef.current = communityInfo;
      hasFetchedCommunity.current = true;
@@ -68,6 +69,7 @@ const EditCommunityPage = () => {
     const input = {
       name: formData.name || communityRef.current?.name,
       description: formData.description,
+      code: formData.code,
       ...(thumbnail && { thumbnail })
     }
     response_log += `Input: ${JSON.stringify(input)}\n`;
@@ -118,7 +120,8 @@ const EditCommunityPage = () => {
  const [formData, setFormData] = useState({
   name: '',
   description: '',
-  thumbnail: ''
+  thumbnail: '',
+  code: ''
  });
 
  const handleFormDataChange = (field: string, value: string) => {

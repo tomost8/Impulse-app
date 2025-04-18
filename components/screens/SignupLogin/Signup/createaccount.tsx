@@ -10,37 +10,40 @@ import {
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
+import { useSignup } from '@/contexts/SignupContext';
 
 const CreateAccountScreen = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    username: '',
-    email: '',
-    password: '',
-  });
+  const { signupData, updateSignupData } = useSignup();
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    updateSignupData({ [field]: value });
     // Clear error message when user starts typing
     if (errorMessage) setErrorMessage('');
   };
 
   const validateForm = (): boolean => {
-    // Check if all fields are filled
-    const isAnyFieldEmpty = Object.values(formData).some(value => value.trim() === '');
+    // Check if required string fields are filled
+    const requiredFields = {
+      firstName: signupData.firstName,
+      lastName: signupData.lastName,
+      username: signupData.username,
+      email: signupData.email,
+      password: signupData.password,
+    };
+
+    const isAnyFieldEmpty = Object.values(requiredFields).some(value => 
+      !value || value.trim() === ''
+    );
+
     if (isAnyFieldEmpty) {
       setErrorMessage('All information has to be filled out');
       return false;
     }
 
     // Check password length
-    if (formData.password.length < 8) {
+    if (signupData.password.length < 8) {
       setErrorMessage('Password does not meet requirements');
       return false;
     }
@@ -86,7 +89,7 @@ const CreateAccountScreen = () => {
             style={styles.input}
             placeholder="First Name"
             placeholderTextColor="#979797"
-            value={formData.firstName}
+            value={signupData.firstName}
             onChangeText={(value) => handleInputChange('firstName', value)}
           />
 
@@ -94,7 +97,7 @@ const CreateAccountScreen = () => {
             style={styles.input}
             placeholder="Last Name"
             placeholderTextColor="#979797"
-            value={formData.lastName}
+            value={signupData.lastName}
             onChangeText={(value) => handleInputChange('lastName', value)}
           />
 
@@ -102,7 +105,7 @@ const CreateAccountScreen = () => {
             style={styles.input}
             placeholder="Username"
             placeholderTextColor="#979797"
-            value={formData.username}
+            value={signupData.username}
             onChangeText={(value) => handleInputChange('username', value)}
           />
 
@@ -110,7 +113,7 @@ const CreateAccountScreen = () => {
             style={styles.input}
             placeholder="Email Address"
             placeholderTextColor="#979797"
-            value={formData.email}
+            value={signupData.email}
             onChangeText={(value) => handleInputChange('email', value)}
             keyboardType="email-address"
             autoCapitalize="none"
@@ -124,7 +127,7 @@ const CreateAccountScreen = () => {
               ]}
               placeholder="Enter Password"
               placeholderTextColor="#979797"
-              value={formData.password}
+              value={signupData.password}
               onChangeText={(value) => handleInputChange('password', value)}
               secureTextEntry={!showPassword}
             />

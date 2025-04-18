@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,30 +6,51 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  ImageSourcePropType,
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router, useLocalSearchParams } from 'expo-router';
 import { goals } from '@/utils/goals';
+import { useSignup } from '@/contexts/SignupContext';
 
-const SecondaryGoalScreen = () => {
+interface SecondaryGoalScreenProps {
+  handleCreateAccount: (formData: any) => void;
+}
+
+const SecondaryGoalScreen = ({ handleCreateAccount }: SecondaryGoalScreenProps) => {
+  const { signupData, updateSignupData } = useSignup();
   const { primaryGoalId } = useLocalSearchParams<{ primaryGoalId: string }>();
-  const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
 
   // Filter out the primary goal
   const availableGoals = goals.filter(goal => goal.id !== Number(primaryGoalId));
 
   const handleGoalSelect = (goalId: number) => {
     // If clicking the same goal, unselect it
-    if (selectedGoal === goalId) {
-      setSelectedGoal(null);
+    if (signupData.secondaryGoalId === goalId) {
+      updateSignupData({ secondaryGoalId: null });
     } else {
       // Select the new goal
-      setSelectedGoal(goalId);
+      updateSignupData({ secondaryGoalId: goalId });
     }
   };
 
   const handleFinish = () => {
-    console.log('finish: goals selected', primaryGoalId, selectedGoal);
+    const formData = {
+      firstName: signupData.firstName,
+      lastName: signupData.lastName,
+      email: signupData.email,
+      username: signupData.username,
+      password: signupData.password,
+      age: signupData.age,
+      gender: signupData.gender,
+      timezone: signupData.timezone,
+      bio: signupData.bio,
+      code: signupData.code,
+      communityId: signupData.communityId,
+      primaryGoalId: signupData.primaryGoalId,
+      secondaryGoalId: signupData.secondaryGoalId,
+    }
+    handleCreateAccount(formData);
   };
 
   return (
@@ -61,26 +82,26 @@ const SecondaryGoalScreen = () => {
               key={goal.id}
               style={[
                 styles.goalCard,
-                selectedGoal === goal.id && styles.goalCardSelected
+                signupData.secondaryGoalId === goal.id && styles.goalCardSelected
               ]}
               onPress={() => handleGoalSelect(goal.id)}
             >
               <View style={styles.iconContainer}>
                 <Image
-                  source={goal.icon}
+                  source={goal.icon as ImageSourcePropType}
                   style={[
                     styles.goalIcon,
-                    selectedGoal === goal.id && styles.goalIconSelected
+                    signupData.secondaryGoalId === goal.id && styles.goalIconSelected
                   ]}
                 />
               </View>
               <Text style={[
                 styles.goalText,
-                selectedGoal === goal.id && styles.goalTextSelected
+                signupData.secondaryGoalId === goal.id && styles.goalTextSelected
               ]}>
                 {goal.label}
               </Text>
-              {selectedGoal === goal.id && (
+              {signupData.secondaryGoalId === goal.id && (
                 <Image
                   source={require('@/assets/icons/checkGreen.png')}
                   style={styles.checkIcon}

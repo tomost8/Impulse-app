@@ -1,7 +1,44 @@
 import ProfileSettings from '@/components/screens/profile/ProfileSetting/ProfileSettings';
+// GraphQL hooks
+import { useUpdateUser } from '@/hooks/graphql/users/mutations';
+// Services
+import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
+import { useState } from 'react';
 
 export default function SettingsPage() {
+  const { authToken } = useUserInfo();
+  const { fetching, user, setUser } = useUserData();
+
+  // Mutations
+  const { updateUser } = useUpdateUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleFormSubmit = async (isEnabled: any) => {
+    setIsSubmitting(true);
+    try {
+      const input = {
+        is_double_cam: isEnabled,
+      };
+      const response = await updateUser(input, authToken as string);
+      if (response.success) {
+        console.log('User Profile Updated', response.user);
+        setUser(response.user);
+      } else {
+        throw new Error('updateUser response.success is false');
+      }
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const isLoading = fetching || isSubmitting;
   return (
-    <ProfileSettings />
+    <ProfileSettings 
+      loading={isLoading}
+      isDoubleCameraEnabled={user?.is_double_cam}
+      onToggleDoubleCamera={handleFormSubmit} 
+    />
   );
 }

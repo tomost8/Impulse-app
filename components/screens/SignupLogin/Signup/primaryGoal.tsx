@@ -6,35 +6,37 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  ImageSourcePropType,
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { goals } from '@/utils/goals';
+import { useSignup } from '@/contexts/SignupContext';
 
 const PrimaryGoalScreen = () => {
-  const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
+  const { signupData, updateSignupData } = useSignup();
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleGoalSelect = (goalId: number) => {
     // If clicking the same goal, unselect it
-    if (selectedGoal === goalId) {
-      setSelectedGoal(null);
+    if (signupData.primaryGoalId === goalId) {
+      updateSignupData({ primaryGoalId: null });
     } else {
       // Select the new goal
-      setSelectedGoal(goalId);
+      updateSignupData({ primaryGoalId: goalId });
     }
     // Clear any error message when making a selection
     if (errorMessage) setErrorMessage('');
   };
 
   const handleNext = () => {
-    if (selectedGoal === null) {
+    if (signupData.primaryGoalId === null || signupData.primaryGoalId === undefined) {
       setErrorMessage('Please select a primary goal');
       return;
     }
     router.push({
       pathname: '/(auth)/secondaryGoal',
-      params: { primaryGoalId: selectedGoal }
+      params: { primaryGoalId: signupData.primaryGoalId }
     });
   };
 
@@ -71,26 +73,26 @@ const PrimaryGoalScreen = () => {
               key={goal.id}
               style={[
                 styles.goalCard,
-                selectedGoal === goal.id && styles.goalCardSelected
+                signupData.primaryGoalId === goal.id && styles.goalCardSelected
               ]}
               onPress={() => handleGoalSelect(goal.id)}
             >
               <View style={styles.iconContainer}>
                 <Image
-                  source={goal.icon}
+                  source={goal.icon as ImageSourcePropType}
                   style={[
                     styles.goalIcon,
-                    selectedGoal === goal.id && styles.goalIconSelected
+                    signupData.primaryGoalId === goal.id && styles.goalIconSelected
                   ]}
                 />
               </View>
               <Text style={[
                 styles.goalText,
-                selectedGoal === goal.id && styles.goalTextSelected
+                signupData.primaryGoalId === goal.id && styles.goalTextSelected
               ]}>
                 {goal.label}
               </Text>
-              {selectedGoal === goal.id && (
+              {signupData.primaryGoalId === goal.id && (
                 <Image
                   source={require('@/assets/icons/checkGreen.png')}
                   style={styles.checkIcon}

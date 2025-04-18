@@ -21,6 +21,7 @@ interface CreateCommunityScreenProps {
     name: string;
     description: string;
     thumbnail: string | null;
+    code: string;
   };
   handleFormDataChange: (field: string, value: string) => void;
   selectedCategories: string[];
@@ -29,7 +30,6 @@ interface CreateCommunityScreenProps {
 }
 
 const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
-  const [joinCode, setJoinCode] = useState('');
 
   const handleImagePick = async () => {
     try {
@@ -159,8 +159,8 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
             <Text style={styles.inputLabel}>Community Join Code</Text>
             <TextInput
               style={styles.textInput}
-              value={joinCode}
-              onChangeText={setJoinCode}
+              value={props.formData.code}
+              onChangeText={(value) => props.handleFormDataChange('code', value)}
               placeholder="Enter join code"
               placeholderTextColor="#979797"
             />

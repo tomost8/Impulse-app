@@ -16,39 +16,35 @@ import {
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
+import { useSignup } from '@/contexts/SignupContext';
+import { GENDER_OPTIONS } from '@/utils/userOptions';
 
-const GENDER_OPTIONS = ['Male', 'Female', 'Non-Binary', 'Prefer Not to Answer'];
+interface PersonalProfileScreenProps {
+  loading: boolean;
+  communities: any[];
+}
 
-const PersonalProfileScreen = () => {
-  const [formData, setFormData] = useState({
-    age: '',
-    gender: '',
-    timezone: '',
-    bio: '',
-    communityCode: '',
-  });
+const PersonalProfileScreen = ({ loading, communities }: PersonalProfileScreenProps) => {
+  const { signupData, updateSignupData } = useSignup();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [showGenderPicker, setShowGenderPicker] = useState(false);
   const [showTimezonePicker, setShowTimezonePicker] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    updateSignupData({ [field]: value });
     // Clear error when user starts typing
     if (errorMessage) setErrorMessage('');
   };
 
   const validateForm = (): boolean => {
     // Check required fields (age, gender, timezone)
-    if (!formData.age || !formData.gender || !formData.timezone) {
+    if (!signupData.age || !signupData.gender || !signupData.timezone) {
       setErrorMessage('All required information must be filled out');
       return false;
     }
 
     // Check age requirement
-    const age = parseInt(formData.age);
+    const age = parseInt(signupData.age);
     if (age < 13) {
       setErrorMessage('Must be at least 13 years old to use this app');
       return false;
@@ -61,6 +57,22 @@ const PersonalProfileScreen = () => {
     if (!validateForm()) {
       return;
     }
+
+    // Check if there's a matching community code
+    if (signupData.code) {
+      const matchingCommunity = communities.find(
+        community => community.code === signupData.code
+      );
+      
+      if (matchingCommunity) {
+        // Store the matching community ID
+        updateSignupData({ communityId: matchingCommunity.id });
+        console.log("Matching Community:", matchingCommunity.id, matchingCommunity.name);
+      } else {
+        return;
+      }
+    }
+
     // Navigate to primary goal screen
     router.push('/(auth)/primaryGoal');
   };
@@ -102,7 +114,7 @@ const PersonalProfileScreen = () => {
                 style={[styles.input, errorMessage && styles.inputError]}
                 placeholder="Age"
                 placeholderTextColor="#979797"
-                value={formData.age}
+                value={signupData.age}
                 onChangeText={(value) => {
                   if (/^\d*$/.test(value)) {
                     handleInputChange('age', value);
@@ -118,8 +130,8 @@ const PersonalProfileScreen = () => {
                 style={[styles.dropdownButton, errorMessage && styles.inputError]}
                 onPress={() => setShowGenderPicker(true)}
               >
-                <Text style={[styles.dropdownText, !formData.gender && styles.placeholder]}>
-                  {formData.gender || 'Gender'}
+                <Text style={[styles.dropdownText, !signupData.gender && styles.placeholder]}>
+                  {signupData.gender || 'Gender'}
                 </Text>
                 <Image
                   source={require('@/assets/icons/arrow-down.png')}
@@ -141,14 +153,14 @@ const PersonalProfileScreen = () => {
                   <View style={styles.modalContent}>
                     {GENDER_OPTIONS.map((option) => (
                       <TouchableOpacity
-                        key={option}
+                        key={option.value}
                         style={styles.optionButton}
                         onPress={() => {
-                          handleInputChange('gender', option);
+                          handleInputChange('gender', option.value);
                           setShowGenderPicker(false);
                         }}
                       >
-                        <Text style={styles.optionText}>{option}</Text>
+                        <Text style={styles.optionText}>{option.label}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -160,8 +172,8 @@ const PersonalProfileScreen = () => {
                 style={[styles.dropdownButton, errorMessage && styles.inputError]}
                 onPress={() => setShowTimezonePicker(true)}
               >
-                <Text style={[styles.dropdownText, !formData.timezone && styles.placeholder]}>
-                  {formData.timezone || 'Timezone'}
+                <Text style={[styles.dropdownText, !signupData.timezone && styles.placeholder]}>
+                  {signupData.timezone || 'Timezone'}
                 </Text>
                 <Image
                   source={require('@/assets/icons/arrow-down.png')}
@@ -204,12 +216,11 @@ const PersonalProfileScreen = () => {
                 style={[styles.input, styles.bioInput]}
                 placeholder="Bio (Optional)"
                 placeholderTextColor="#979797"
-                value={formData.bio}
+                value={signupData.bio}
                 onChangeText={(value) => handleInputChange('bio', value)}
                 multiline={true}
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
-                blurOnSubmit={true}
               />
 
               {/* Community Code Input */}
@@ -217,11 +228,10 @@ const PersonalProfileScreen = () => {
                 style={styles.input}
                 placeholder="Community Code (Optional)"
                 placeholderTextColor="#979797"
-                value={formData.communityCode}
-                onChangeText={(value) => handleInputChange('communityCode', value)}
+                value={signupData.code}
+                onChangeText={(value) => handleInputChange('code', value)}
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
-                blurOnSubmit={true}
               />
             </View>
 

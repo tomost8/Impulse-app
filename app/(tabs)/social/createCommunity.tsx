@@ -32,6 +32,7 @@ const CreateCommunityPage = () => {
         name: formData.name,
         ...(formData.description && { description: formData.description }),
         ...(thumbnail && { thumbnail }),
+        ...(formData.code && { code: formData.code }),
       }
       response_log += `Input: ${JSON.stringify(input)}\n`;
 
@@ -70,6 +71,7 @@ const CreateCommunityPage = () => {
     name: '',
     description: '',
     thumbnail: '',
+    code: '',
   });
 
   const handleFormDataChange = (field: string, value: string) => {

@@ -49,7 +49,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption }) => {
     setMainImageIndex(prev => prev === 0 ? 1 : 0);
   };
 
-  if (!imageUrls || imageUrls.length < 2) return null;
+  if (!imageUrls || imageUrls.length < 2) return null; // Fix This
 
   return (
     <View style={[styles.container, !hasCaption && styles.containerNoCaption]}>
