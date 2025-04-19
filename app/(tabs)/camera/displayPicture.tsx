@@ -104,12 +104,18 @@ const DisplayPicturePage = () => {
 
   useEffect(() => {
     if (id && category) {
+      //console.log("Selected Activity:", id, category);
       setActivityModalVisible(false);
+      setActivityButtonVisible(false);
       setCaptionFooterVisible(true);
+      setUsersButtonVisible(true);
       setUsersModalVisible(false);
     } else {
+      //console.log("No Activity Selected");
+      setActivityButtonVisible(true);
       setActivityModalVisible(false);
       setCaptionFooterVisible(false);
+      setUsersButtonVisible(false);
       setUsersModalVisible(false);
     }
   }, [id, category]);

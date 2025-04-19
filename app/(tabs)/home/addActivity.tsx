@@ -19,7 +19,7 @@ interface GoalFormData {
 }
 
 const AddActivityPage = () => {
-  const { fetching, timezone, activities, setActivities } = useUserData();
+  const { fetching, timezone, activities, setActivities, setCameraClickable } = useUserData();
 
   // Mutations
   const { createActivity } = useCreateActivity();
@@ -27,6 +27,7 @@ const AddActivityPage = () => {
   const handleAddGoals = async () => {
     setIsCreatingActivity(true);
     try {
+      const newActivities: any[] = [];
       for (const goalId of selectedGoals) {
         const formData = goalFormData[goalId];
         if (formData) {
@@ -42,13 +43,15 @@ const AddActivityPage = () => {
           };
           const response = await createActivity(input);
           if (response.success) {
-            setActivities([...activities, response.activity]);
-            router.replace("/home");
+            newActivities.push(response.activity);
           } else {
             throw new Error(`Response.success from createActivity was false for goalId: ${goalId}`);
           }
         }
       }
+      setActivities([...activities, ...newActivities]);
+      setCameraClickable(true);
+      router.replace("/home");
     } catch (error) {
       console.error('Error adding activities:', error);
     } finally {

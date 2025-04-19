@@ -13,6 +13,7 @@ interface HomeScreenProps {
   activities: any[]; 
   timezone: string;
   friendsLeaderboard: any[]; 
+  handleAddGoals: (selectedGoals: any[], goalFormData: any) => Promise<void>;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ 
@@ -21,11 +22,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   activities,
   timezone,
   friendsLeaderboard,
+  handleAddGoals,
 }) => {
   if (loading) {
     return <Text>Loading...</Text>;
   }
-  const [showDailyAddPopup, setShowDailyAddPopup] = useState(false);
+  const [showDailyAddPopup, setShowDailyAddPopup] = useState(activities.length === 0);
+
+  const onConfirm = async (selectedGoals: any[], goalFormData: any) => {
+    await handleAddGoals(selectedGoals, goalFormData);
+    setShowDailyAddPopup(false);
+  }
 
   return (
     <View style={styles.container}>
@@ -60,10 +67,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </View>
       </ScrollView>
 
-      <DailyAddPopup 
+      <DailyAddPopup  
         isVisible={showDailyAddPopup}
         onClose={() => setShowDailyAddPopup(false)}
-        onConfirm={() => setShowDailyAddPopup(false)}
+        onConfirm={onConfirm}
       />
     </View>
   );

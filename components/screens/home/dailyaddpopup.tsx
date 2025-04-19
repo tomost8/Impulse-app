@@ -14,7 +14,7 @@ import { goals } from '@/utils/goals'; // Import goals from the same source
 interface DailyAddPopupProps {
   isVisible: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (selectedGoals: any[], goalFormData: any) => Promise<void>;
   userName?: string;
 }
 
@@ -116,7 +116,7 @@ const DailyAddPopup: React.FC<DailyAddPopupProps> = ({
               styles.addButton,
               selectedGoals.length === 0 && styles.addButtonDisabled
             ]}
-            onPress={onConfirm}
+            onPress={() => onConfirm(selectedGoals, goalFormData)}
             disabled={selectedGoals.length === 0}
           >
             <Text style={styles.addButtonText}>Add to Schedule</Text>
