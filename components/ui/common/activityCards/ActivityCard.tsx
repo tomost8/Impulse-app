@@ -1,9 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ImageSourcePropType } from "react-native";
+import { View, Text, StyleSheet, Image, ImageSourcePropType, Pressable } from "react-native";
 import { convertUtcToLocal } from "@/utils/timezoneProcessing";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
+import { useRouter } from "expo-router";
 
 type ActivityCardProps = {
+  id: number;
   category: string;
   scheduledDatetime: string;
   duration: number;
@@ -13,6 +15,7 @@ type ActivityCardProps = {
 };
 
 const ActivityCard: React.FC<ActivityCardProps> = ({
+  id,
   category,
   scheduledDatetime,
   duration,
@@ -20,7 +23,18 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   description,
   timezone,
 }) => {
-  return (
+  const router = useRouter();
+
+  const handlePress = () => {
+    if (status.toLowerCase() === "pending") {
+      router.push({
+        pathname: "/camera",
+        params: { id, category }
+      });
+    }
+  };
+
+  const CardContent = (
     <View style={styles.container}>
       {/* Icon */}
       <View style={styles.iconContainer}>
@@ -43,6 +57,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       {/* Status */}
       <Text style={styles.status}>{status}</Text>
     </View>
+  );
+
+  return status.toLowerCase() === "pending" ? (
+    <Pressable onPress={handlePress}>{CardContent}</Pressable>
+  ) : (
+    CardContent
   );
 };
 

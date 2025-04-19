@@ -22,11 +22,16 @@ const PostActivityCard: React.FC<PostActivityCardProps> = ({
   timezone,
   isSelected,
   onSelect,
+  status,
 }) => {
   return (
     <TouchableOpacity 
-      style={[styles.container, isSelected && styles.selectedCard]}
+      style={[
+        styles.container, 
+        isSelected && styles.selectedCard,
+      ]}
       onPress={onSelect}
+      disabled={status === "completed"}
     >
       <View style={styles.cardContent}>
         {/* Icon */}
@@ -48,15 +53,19 @@ const PostActivityCard: React.FC<PostActivityCardProps> = ({
         </View>
       </View>
 
-      {/* Check Icon */}
+      {/* Check Icon or Completed Text */}
       <View style={styles.rightContent}>
-        <Image 
-          source={isSelected ? 
-            require("@/assets/icons/greencheck.png") : 
-            require("@/assets/icons/circleunfilled.png")
-          } 
-          style={styles.checkIcon}
-        />
+        {status === "completed" ? (
+          <Text style={styles.completedText}>Completed</Text>
+        ) : (
+          <Image 
+            source={isSelected ? 
+              require("@/assets/icons/greencheck.png") : 
+              require("@/assets/icons/circleunfilled.png")
+            } 
+            style={styles.checkIcon}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -169,6 +178,12 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     textAlign: "right",
     lineHeight: 21,
+  },
+  completedText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#DE728D",
+    fontFamily: "Open Sans",
   },
 });
 

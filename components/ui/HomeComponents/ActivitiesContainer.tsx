@@ -25,6 +25,7 @@ const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
         activities.map((activity) => (
           <ActivityCard
             key={activity.id}
+            id={activity.id}
             category={activity.category}
             scheduledDatetime={activity.scheduledDatetime}
             duration={activity.duration}
