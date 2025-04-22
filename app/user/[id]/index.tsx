@@ -15,6 +15,7 @@ import { debugRenders } from '@/utils/debug';
 import { useUserInfo } from '@/services/UserContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { getLocalDay } from '@/utils/timezoneProcessing';
+import { useAcceptFriendRequest, useSendFriendRequest } from '@/hooks/graphql/friends/mutations';
 
 const UserPage = () => {
   const { id } = useLocalSearchParams();
@@ -70,9 +71,57 @@ const UserPage = () => {
     }
   }, [hasNewFriendsData, hasNewUserData, hasNewCommunitiesData, hasNewActivitiesData]);
 
+  // Mutation
+  const { sendFriendRequest } = useSendFriendRequest();
+  const [isSendingFriendRequest, setIsSendingFriendRequest] = useState(false);
+  const handleSendFriendRequest = async (friendId: number) => {
+    setIsSendingFriendRequest(true);
+    try {
+      const input = {
+        sender_id: user.id,
+        receiver_id: friendId,
+      }
+      const response = await sendFriendRequest(input, authToken as string);
+      if (response.success) {
+        console.log("Friend request sent successfully", response);
+      } else {
+        console.error("Error sending friend request:", response.errors);
+      }
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+    } finally {
+      setIsSendingFriendRequest(false);
+    }
+  }
+
+  const { acceptFriendRequest } = useAcceptFriendRequest();
+  const [isAcceptingFriendRequest, setIsAcceptingFriendRequest] = useState(false);
+  const handleAcceptFriendRequest = async (friendId: number) => {
+    setIsAcceptingFriendRequest(true);
+    try {
+      const input = {
+        status: 'ACCEPTED',
+      }
+      const response = await acceptFriendRequest(user.id, friendId, input, authToken as string);
+      if (response.success) {
+        console.log("Friend request accepted successfully", response);
+      } else {
+        console.error("Error accepting friend request:", response.errors);
+      }
+    } catch (error) {
+      console.error("Error accepting friend request:", error);
+    } finally {
+      setIsAcceptingFriendRequest(false);
+    }
+  }
+
   // Check if the profile user is an accepted friend
   const isAcceptedFriend = friendRef.current?.some(
     friendship => friendship.friend.id === Number(id) && friendship.status === 'ACCEPTED'
+  ) ?? false;
+
+  const isPendingRequest = friendRef.current?.some(
+    friendship => friendship.friend.id === Number(id) && friendship.status === 'PENDING'
   ) ?? false;
 
   const acceptedCommunityCount = communitiesRef.current?.filter(
@@ -80,11 +129,12 @@ const UserPage = () => {
   ).length ?? 0;
 
   // Debug
-  const loading = !hasFetchedUser.current || !hasFetchedFriends.current || !hasFetchedCommunities.current || !hasFetchedActivities.current;
+  const loading = !hasFetchedUser.current || !hasFetchedFriends.current || !hasFetchedCommunities.current || !hasFetchedActivities.current || isAcceptingFriendRequest || isSendingFriendRequest;
   if (debugRenders && !loading) {
     console.log("Rendering UserPage for user:", id, "\n",
       "User Profile:", userRef.current, "\n",
       "isAcceptedFriend:", isAcceptedFriend, "\n",
+      "isPendingRequest:", isPendingRequest, "\n",
       "communityCount:", acceptedCommunityCount, "\n",
       "activities:", activitiesRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
@@ -106,6 +156,9 @@ const UserPage = () => {
         loading={loading}
         nonFriend={userRef.current}
         communityCount={acceptedCommunityCount}
+        isPendingRequest={isPendingRequest}
+        onAcceptRequest={handleAcceptFriendRequest}
+        onSendRequest={handleSendFriendRequest}
       />
     );
   }

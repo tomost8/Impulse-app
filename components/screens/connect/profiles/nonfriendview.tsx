@@ -23,7 +23,8 @@ interface NonFriendViewScreenProps {
   nonFriend: any;
   communityCount: number;
   isPendingRequest?: boolean;
-  onAcceptRequest?: () => void;
+  onAcceptRequest?: (friendId: number) => void;
+  onSendRequest?: (friendId: number) => void;
 }
 
 const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
@@ -34,11 +35,9 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   const [isRequestSent, setIsRequestSent] = useState(false);
   const [showRequestSentPopup, setShowRequestSentPopup] = useState(false);
 
-  // Add this to test if isPendingRequest is true
-  console.log('isPendingRequest:', props.isPendingRequest);
-
   const handleSendRequest = () => {
     if (!isRequestSent) {
+      props.onSendRequest?.(props.nonFriend.id);
       setShowRequestSentPopup(true);
     }
   };
@@ -49,18 +48,14 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   };
 
   const handleAcceptRequest = () => {
+    if (props.onAcceptRequest) {
+      props.onAcceptRequest(props.nonFriend.id);
+    }
     setShowAcceptedPopup(true);
   };
 
   const handleAcceptedPopupClose = () => {
     setShowAcceptedPopup(false);
-  };
-
-  // Force isPendingRequest to true for testing
-  const testProps = {
-    ...props,
-    isPendingRequest: true,
-    onAcceptRequest: () => console.log('Accept request clicked')
   };
 
   return (
@@ -118,25 +113,26 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        {/* Update the accept button to use handleAcceptRequest */}
-        <TouchableOpacity 
-          style={styles.acceptRequestButton}
-          onPress={handleAcceptRequest}
-        >
-          <Text style={styles.buttonText}>Accept Friend Request</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.friendRequestButton,
-            isRequestSent && styles.requestSentButton
-          ]}
-          onPress={handleSendRequest}
-        >
-          <Text style={styles.buttonText}>
-            {isRequestSent ? "Request Sent" : "Send Friend Request"}
-          </Text>
-        </TouchableOpacity>
+        {props.isPendingRequest ? (
+          <TouchableOpacity 
+            style={styles.acceptRequestButton}
+            onPress={handleAcceptRequest}
+          >
+            <Text style={styles.buttonText}>Accept Friend Request</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity 
+            style={[
+              styles.friendRequestButton,
+              isRequestSent && styles.requestSentButton
+            ]}
+            onPress={handleSendRequest}
+          >
+            <Text style={styles.buttonText}>
+              {isRequestSent ? "Request Sent" : "Send Friend Request"}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Add the accepted popup */}
