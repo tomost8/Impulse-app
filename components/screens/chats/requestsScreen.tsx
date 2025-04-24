@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     resizeMode: 'contain',
-    tintColor: '#DE728D',
+    tintColor: '#A4ACBC',
   },
 });
 
