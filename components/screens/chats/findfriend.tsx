@@ -258,7 +258,6 @@ const styles = StyleSheet.create({
     height: 16,
     resizeMode: 'contain',
     tintColor: '#DE728D',
-    marginRight: 4,
   },
   addButton: {
     paddingVertical: 8,
