@@ -132,7 +132,7 @@ const headerStyles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 10,
+    paddingBottom: 15,
     backgroundColor: '#000',
   },
   text: {

@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 interface DisplayPictureScreenProps {
@@ -44,63 +45,71 @@ const DisplayPictureScreen = ({
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-    <SafeAreaView style={styles.safeArea}>
-      {/* Full Screen Image */}
-      <View style={styles.imageContainer}>
-        {mainImageSource && (
-          <Image
-            source={mainImageSource}
-            style={styles.mainImage}
-            resizeMode="contain"
-          />
-        )}
-        {previewImageSource && (
-          <Image
-            source={previewImageSource}
-            style={styles.previewImage}
-            resizeMode="contain"
-          />
-        )}
-      </View>
-
-      {/* Buttons + Captions */}
-      <View style={styles.overlayContainer}>
-        {activityButtonVisible && (
-          <TouchableOpacity 
-            style={styles.activityButton}
-            onPress={() => setActivityModalVisible(true)}
-          >
-            <Text style={styles.buttonText}>Select Activity</Text>
-          </TouchableOpacity>
-        )}
-
-        {captionFooterVisible && (
-          <View style={styles.captionContainer}>
-            <TextInput
-              style={[
-                styles.captionInput,
-                isKeyboardVisible && styles.captionInputExpanded
-              ]}
-              placeholder="Add caption...."
-              placeholderTextColor="#979797"
-              value={caption}
-              onChangeText={setCaption}
-              multiline={true}
-              onFocus={() => setIsKeyboardVisible(true)}
-              onBlur={() => setIsKeyboardVisible(false)}
-            />
+      <SafeAreaView style={styles.safeArea}>
+        {/* Touchable Background */}
+        <TouchableWithoutFeedback onPress={() => setIsKeyboardVisible(false)}>
+          <View style={styles.backgroundTouchable}>
+            {/* Full Screen Image */}
+            <View style={styles.imageContainer}>
+              {mainImageSource && (
+                <Image
+                  source={mainImageSource}
+                  style={styles.mainImage}
+                  resizeMode="contain"
+                />
+              )}
+              {previewImageSource && (
+                <Image
+                  source={previewImageSource}
+                  style={styles.previewImage}
+                  resizeMode="contain"
+                />
+              )}
+            </View>
           </View>
-        )}
+        </TouchableWithoutFeedback>
 
-        {usersButtonVisible && (
-          <TouchableOpacity 
-            style={styles.nextButton}
-            onPress={() => setUsersModalVisible(true)}
-          >
-            <Text style={styles.nextButtonText}>Select Users</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+        {/* Buttons + Captions */}
+        <View style={styles.overlayContainer}>
+          {activityButtonVisible && (
+            <TouchableOpacity 
+              style={styles.activityButton}
+              onPress={() => setActivityModalVisible(true)}
+            >
+              <Text style={styles.buttonText}>Select Activity</Text>
+            </TouchableOpacity>
+          )}
+
+          {captionFooterVisible && (
+            <View style={styles.captionContainer}>
+              <TextInput
+                style={[
+                  styles.captionInput,
+                  isKeyboardVisible && { height: 'auto' }
+                ]}
+                placeholder="Add caption...."
+                placeholderTextColor="#979797"
+                value={caption}
+                onChangeText={setCaption}
+                multiline={true}
+                onFocus={() => setIsKeyboardVisible(true)}
+                onBlur={() => setIsKeyboardVisible(false)}
+                returnKeyType="done"
+                onSubmitEditing={() => setIsKeyboardVisible(false)}
+                blurOnSubmit={true}
+              />
+            </View>
+          )}
+
+          {usersButtonVisible && (
+            <TouchableOpacity 
+              style={styles.nextButton}
+              onPress={() => setUsersModalVisible(true)}
+            >
+              <Text style={styles.nextButtonText}>Select Users</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -114,10 +123,19 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
   },
+  backgroundTouchable: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
   imageContainer: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: '82%',
+    zIndex: 2,
   },
   mainImage: {
     width: '100%',
@@ -127,8 +145,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     left: 16,
-    width: 100,
-    height: 133,
+    width: 145,
+    height: 150,
     borderRadius: 8,
   },
   overlayContainer: {
@@ -137,24 +155,23 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
+    zIndex: 3,
   },
   captionContainer: {
-    marginBottom: 16,
+    marginBottom: 13,
   },
   captionInput: {
     color: '#FFFFFF',
     fontSize: 14,
     fontFamily: 'Open Sans',
-    maxHeight: 20,
     minHeight: 20,
-  },
-  captionInputExpanded: {
-    maxHeight: 100,
+    paddingTop: 0,  // Remove default padding
+    paddingBottom: 0,  // Remove default padding
   },
   activityButton: {
     backgroundColor: '#DE728D',
     marginHorizontal: 20,
-    marginBottom: 16,
+    marginBottom: 30,
     paddingVertical: 14,
     borderRadius: 100,
     alignItems: 'center',
@@ -162,7 +179,7 @@ const styles = StyleSheet.create({
   nextButton: {
     backgroundColor: '#DE728D',
     marginHorizontal: 20,
-    marginBottom: 34,
+    marginBottom: 30,
     paddingVertical: 14,
     borderRadius: 100,
     alignItems: 'center',

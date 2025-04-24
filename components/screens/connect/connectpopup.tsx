@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   closeIcon: {
-    width: 14,
-    height: 14,
+    width: 15,
+    height: 15,
     resizeMode: 'contain',
     tintColor: '#979797',
   },
@@ -170,6 +170,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
+    fontWeight: '600',
   },
 });
 

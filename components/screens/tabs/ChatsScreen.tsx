@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     color: '#242020',
     fontWeight: '600',
-    marginLeft: 6,
+    paddingLeft: 5,
   },
   addButton: {
     padding: 8,
