@@ -8,12 +8,10 @@ import { router } from "expo-router";
 const exploreIcon = require("@/assets/icons/explore.png");
 
 interface SocialScreenProps {
+  loading: boolean;
   communityMembers: any[];
-  isCommunityMembersLoading: boolean;
   friendsFeed: any[];
-  isFriendsFeedLoading: boolean;
   communityFeed: any[];
-  isCommunityFeedLoading: boolean;
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
   isHandlingLike: boolean;
@@ -23,16 +21,12 @@ interface SocialScreenProps {
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
   communityMembers,
-  isCommunityMembersLoading,
   friendsFeed,
-  isFriendsFeedLoading,
   communityFeed,
-  isCommunityFeedLoading,
   handleLikePost,
   handleUnlikePost,
   isHandlingLike,
   isHandlingUnlike,
-  updatePostLikeState,
 }) => {
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
   const handleTabChange = (tab: 'friends' | 'communities') => {

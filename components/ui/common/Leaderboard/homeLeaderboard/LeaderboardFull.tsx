@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import LeaderboardCard from "./LeaderboardCard";
-import LeaderboardList from "./LeaderboardList";
 import { router } from "expo-router";
 
-import LeaderboardCard2 from "./LeaderboardCard2"; // same as normal leaderboard podium
+import LeaderboardPodium from "../LeaderboardPodium";
+import LeaderboardList from "./LeaderboardList";
 
 interface LeaderboardFullProps {
   users: any[];
@@ -24,13 +23,8 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Leaderboard Card with Podium */}
-      {/*
-      <LeaderboardCard users={podiumUsers} />
-      */}
       
-      <LeaderboardCard2 podiumData={podiumUsers} />
+      <LeaderboardPodium podiumData={podiumUsers} />
       
       {/* Leaderboard List (Ranks 4+) */}
       {listUsers.length > 0 && (

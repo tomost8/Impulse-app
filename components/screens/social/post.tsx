@@ -69,8 +69,8 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
           profileImage: post.author.profile_picture,
           caption: post.caption,
           images: post.mediaUrls,
-          likes: 67, // Hardcoded for now
-          comments: 10 // Hardcoded for now
+          likeCount: post.likeCount,
+          commentCount: comments.length
         }} />
 
         {/* Comments Section */}

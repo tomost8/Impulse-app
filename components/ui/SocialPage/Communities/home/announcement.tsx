@@ -8,7 +8,7 @@ interface AnnouncementProps {
 }
 
 const Announcement: React.FC<AnnouncementProps> = ({
-  announcement = "Lorem ipsum dolor sit amet consectetur. Natoque quisque lobortis nullam hendrerit. Parturient euismod etiam luctus pharetra erat scelerisque. Mus a orci ut platea rhoncus orci mi dui cursus. Quis viverra sit.",
+  announcement,
   onViewAll,
   onMakeAnnouncement,
 }) => {

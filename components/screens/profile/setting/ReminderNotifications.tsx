@@ -110,7 +110,11 @@ function ReminderItem({
   );
 }
 
-function ReminderNotifications(): JSX.Element {
+interface ReminderNotificationsProps {
+  onSave: (input: any) => void;
+}
+
+function ReminderNotifications({ onSave }: ReminderNotificationsProps): JSX.Element {
   const [reminders, setReminders] = useState({
     morning: { enabled: false, time: '9:00 AM' },
     afternoon: { enabled: false, time: '2:00 PM' },
@@ -148,6 +152,15 @@ function ReminderNotifications(): JSX.Element {
 
   const handleSave = () => {
     // Save logic here
+    const input = {
+      type: 'REMINDER',
+      title: 'title',
+      schedule_type: 'ONCE',
+      schedule_time: new Date(Date.now() + 30 * 1000).toISOString(), // ISO 8601 format, e.g., 2025-01-20T23:31:00.000Z
+      content: "content test",
+    }
+    console.log(input);
+    onSave(input);
     setShowUpdatedPopup(true);
   };
 

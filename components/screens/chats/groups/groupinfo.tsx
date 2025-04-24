@@ -12,8 +12,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import LeavePopup from './leavepopup';
-import LeaderboardCard from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardCard';
-import LeaderboardCard2 from '@/components/ui/HomeComponents/LeaderboardComponents/LeaderboardFull';
+import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
+import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
 
 interface Member {
   id: string;
@@ -97,7 +97,8 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
     } else {
       return (
         <View style={styles.leaderboardContainer}>
-          <LeaderboardCard users={props.leaderboard} />
+          <LeaderboardPodium podiumData={props.leaderboard.slice(0, 3)} />
+          <LeaderboardList leaderboardData={props.leaderboard.slice(3)} />
         </View>
       );
     }

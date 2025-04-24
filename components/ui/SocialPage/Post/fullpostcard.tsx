@@ -10,8 +10,8 @@ interface FullPostCardProps {
     profileImage?: string;
     caption?: string;
     images?: string[];
-    likes?: number;
-    comments?: number;
+    likeCount?: number;
+    commentCount?: number;
   };
 }
 
@@ -34,7 +34,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
               source={require("@/assets/icons/heart.png")}
               style={styles.icon}
             />
-            <Text style={styles.count}>67 likes</Text>
+            <Text style={styles.count}>{post.likeCount} like{post.likeCount === 1 ? '' : 's'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -44,7 +44,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
               source={require("@/assets/icons/commenticon.png")}
               style={styles.icon}
             />
-            <Text style={styles.count}>10 comments</Text>
+            <Text style={styles.count}>{post.commentCount} comment{post.commentCount === 1 ? '' : 's'}</Text>
           </TouchableOpacity>
         </View>
       </View>

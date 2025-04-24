@@ -4,7 +4,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useGetUsersLeaderboard } from '@/hooks/graphql/users/queries';
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
-import LeaderboardScreen from '@/components/screens/LeaderboardScreen';
+import LeaderboardScreen from '@/components/screens/home/LeaderboardScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';

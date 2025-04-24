@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView, Text, Platform, StatusBar } from "react-native";
-import LeaderboardHeader from "@/components/ui/Leaderboard/LeaderboardHeader";
-import LeaderboardPodium from "@/components/ui/Leaderboard/LeaderboardPodium";
-import LeaderboardList from "@/components/ui/Leaderboard/LeaderboardList";
-import LeaderboardTabs from "@/components/ui/Leaderboard/LeaderboardTabs";
+import LeaderboardHeader from "@/components/ui/common/Leaderboard/LeaderboardHeader";
+import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
+import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
 
 import { router } from "expo-router";
 

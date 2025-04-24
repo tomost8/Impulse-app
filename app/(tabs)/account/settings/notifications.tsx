@@ -1,33 +1,25 @@
-import { View, Text } from 'react-native';
-import styles from '@/utils/testStyles';
-import { pageDisplay } from '@/utils/debug';
+
 import ReminderNotifications from '@/components/screens/profile/setting/ReminderNotifications';
+import { useSendBroadcastNotification } from '@/hooks/graphql/notifications/mutations';
+import { useCreateReminder } from '@/hooks/graphql/notifications/mutations';
+
+
+import { useUserInfo } from '@/services/UserContext';
 
 export default function NotificationsScreen() {
-  if (pageDisplay) {
+    const { authToken } = useUserInfo();
+    // Mutations
+    //const { sendBroadcastNotification } = useSendBroadcastNotification();
+    const { createReminder } = useCreateReminder();
+    const handleSendBroadcastNotification = async (input: any) => {
+        const response = await createReminder(input, authToken as string);
+        console.log(response);
+    }
+
     return (
-      <ReminderNotifications />
+        <ReminderNotifications 
+            onSave={handleSendBroadcastNotification} 
+        />
   );
-  } else {
-    return (
-        <View style={styles.container}>
-        <Text style={styles.todoText}>
-            Reminders and Notifications (TODO after backend implemented)
-        </Text>
-        <Text style={styles.text}>
-            Morning Scheduling Reminder
-        </Text>
-        <Text style={styles.text}>
-            Afternoon Motivation
-        </Text>
-        <Text style={styles.text}>
-            Activities Reminder
-        </Text>
-        <Text style={styles.text}>
-            Nudge Message
-        </Text>
-    </View>
-    );
-  }
 }
 
