@@ -10,12 +10,14 @@ import { router } from 'expo-router';
 interface CommunityMainScreenProps {
   community: any;
   members: any[];
+  announcements: any[];
   isAdmin: boolean;
 }
 
 const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
   community,
   members,
+  announcements,
   isAdmin
 }) => {
   const handleLeaderboardPress = () => {
@@ -72,6 +74,7 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
           founderImage={community?.influencer?.profile_picture}
         />
         <Announcement
+          announcement={announcements[0]?.content}
           onViewAll={handleViewAllAnnouncements}
           onMakeAnnouncement={handleMakeAnnouncement}
         />

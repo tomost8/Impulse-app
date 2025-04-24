@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import { router } from 'expo-router';
-import LeaderboardTabs from '@/components/ui/Leaderboard/LeaderboardTabs';
+import LeaderboardTabs from '@/components/ui/common/Leaderboard/LeaderboardTabs';
 
 interface LeaderboardUser {
   id: string;

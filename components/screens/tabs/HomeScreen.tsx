@@ -4,7 +4,7 @@ import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Ima
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
 import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
-import LeaderboardFull from "../../ui/HomeComponents/LeaderboardComponents/LeaderboardFull";
+import LeaderboardFull from "@/components/ui/common/Leaderboard/homeLeaderboard/LeaderboardFull"
 import DailyAddPopup from "../home/dailyaddpopup";
 
 interface HomeScreenProps {

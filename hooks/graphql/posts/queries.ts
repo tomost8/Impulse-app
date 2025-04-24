@@ -144,6 +144,7 @@ const GET_POST = gql`
         category
         liked
         likeCount
+        commentCount
       }
       errors {
         field

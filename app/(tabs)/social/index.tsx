@@ -6,7 +6,6 @@ import { useGetFeedCommunities, useGetFeedFriends } from '@/hooks/graphql/posts/
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import SocialScreen from '@/components/screens/tabs/SocialScreen';
-import SocialScreenOld from '@/components/old/social/SocialScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
@@ -115,15 +114,12 @@ const SocialPage = (props: any) => {
     );
   }
 
-  if (pageDisplay) {
     return (
       <SocialScreen 
+      loading={loading}
       communityMembers={communitiesRef.current || []}
-      isCommunityMembersLoading={!hasFetchedCommunities.current}
       friendsFeed={friendsFeedRef.current || []}
-      isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
       communityFeed={communityFeedRef.current || []}
-      isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
       isHandlingLike={isHandlingLike}
@@ -131,23 +127,6 @@ const SocialPage = (props: any) => {
       updatePostLikeState={updatePostLikeState}
     />
   );
-  } else {
-    return (
-      <SocialScreenOld 
-      communityMembers={communitiesRef.current || []}
-      isCommunityMembersLoading={!hasFetchedCommunities.current}
-      friendsFeed={friendsFeedRef.current || []}
-      isFriendsFeedLoading={!hasFetchedFriendsFeed.current}
-      communityFeed={communityFeedRef.current || []}
-      isCommunityFeedLoading={!hasFetchedCommunityFeed.current}
-      handleLikePost={handleLikePost}
-      handleUnlikePost={handleUnlikePost}
-      isHandlingLike={isHandlingLike}
-      isHandlingUnlike={isHandlingUnlike}
-      updatePostLikeState={updatePostLikeState}
-      />
-    );
-  }
 }
 
 export default AuthWrapper(SocialPage);

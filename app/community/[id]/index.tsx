@@ -5,6 +5,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useUserInfo } from '@/services/UserContext';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
+import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 // Components
 import CommunityMainScreen from '@/components/screens/social/main/communitymainscreen';
 // Debug
@@ -12,7 +13,7 @@ import { debugRenders } from '@/utils/debug';
 
 const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
-  const { userId } = useUserInfo();
+  const { userId, authToken } = useUserInfo();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -24,8 +25,12 @@ const CommunityPage = () => {
   const hasFetchedMembers = useRef(false);
   const { communityMembers, fetched: hasNewMembersData } = useGetCommunityMembers(Number(id), !hasFetchedMembers.current);
 
+  const announcementsRef = useRef<any[] | null>(null);
+  const hasFetchedAnnouncements = useRef(false);
+  const { announcements, fetched: hasNewAnnouncementsData } = useGetCommunityAnnouncements(Number(id), authToken as string, !hasFetchedAnnouncements.current);
+
   useEffect(() => {
-    if (!hasNewCommunityData && !hasNewMembersData) {
+    if (!hasNewCommunityData && !hasNewMembersData && !hasNewAnnouncementsData) {
       return;
     }
     if (hasNewCommunityData) {
@@ -39,19 +44,24 @@ const CommunityPage = () => {
       membersRef.current = filteredMembers;
       hasFetchedMembers.current = true;
     }
-    if (hasFetchedCommunity.current && hasFetchedMembers.current) {
+    if (hasNewAnnouncementsData) {
+      announcementsRef.current = announcements;
+      hasFetchedAnnouncements.current = true;
+    }
+    if (hasFetchedCommunity.current && hasFetchedMembers.current && hasFetchedAnnouncements.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunityData, hasNewMembersData]);
+  }, [hasNewCommunityData, hasNewMembersData, hasNewAnnouncementsData]);
 
   const isAdmin = communityRef.current?.influencer?.id === userId;
 
   // Debug
-  const loading = !hasFetchedCommunity.current || !hasFetchedMembers.current;
+  const loading = !hasFetchedCommunity.current || !hasFetchedMembers.current || !hasFetchedAnnouncements.current;
   if (debugRenders && !loading) {
     console.log("Rendering CommunityScreen\n",
       "Community:", communityRef.current, "\n",
       "Members:", membersRef.current, "\n",
+      "Announcements:", announcementsRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
       "Is Admin:", isAdmin, "\n",
     );
@@ -61,6 +71,7 @@ const CommunityPage = () => {
     <CommunityMainScreen 
       community={communityRef.current}
       members={membersRef.current || []}
+      announcements={announcementsRef.current || []}
       isAdmin={isAdmin}
     />
   );
