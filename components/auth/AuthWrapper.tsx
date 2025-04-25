@@ -11,6 +11,7 @@ const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
       return <Text>Loading...</Text>;
     }
     if (!authToken || !userId || typeof userId !== 'number') {
+      console.log('Missing some auth info:', 'authToken:', authToken, 'userId:', userId);
       return <Redirect href="/(auth)/getStarted" />;
     }
 

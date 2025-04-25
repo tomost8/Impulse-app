@@ -8,6 +8,7 @@ import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useUserData } from '@/services/UserPreferencesContext';
+import { FlipType, SaveFormat, useImageManipulator } from 'expo-image-manipulator';
 
 // 获取屏幕尺寸 (Get screen dimensions)
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -29,6 +30,7 @@ export default function CameraScreen() {
   
   // 前置摄像头的预览图片 (Front camera preview image)
   const [frontCameraImage, setFrontCameraImage] = useState<string | null>(null);
+  const [backCameraImage, setBackCameraImage] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(true);
   
   
@@ -81,6 +83,14 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const firstPhoto = await cameraRef.current.takePictureAsync();
+        /*
+        const photoContext = useImageManipulator(firstPhoto?.uri || '');
+        photoContext.flip(FlipType.Horizontal);
+        const flippedPhoto = await photoContext.renderAsync();
+        const result = await flippedPhoto.saveAsync({
+          format: SaveFormat.JPEG,
+        });
+        */
         if (is_double_camera) {
           const firstCameraFacing = facing;
           const secondCameraFacing = facing === 'front' ? 'back' : 'front';

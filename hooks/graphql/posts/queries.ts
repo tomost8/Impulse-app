@@ -288,7 +288,8 @@ export function useGetPosts(currentUserId: number, authToken: string, targetType
 }
 
 
-// Variables: 
+// Used for memories
+// Variables:
 const GET_POSTS_BY_USER_ID = gql`
   query($userId: Int!, $skip: Int, $take: Int) {
     postsByUserId(userId: $userId, skip: $skip, take: $take) {
@@ -296,18 +297,8 @@ const GET_POSTS_BY_USER_ID = gql`
       posts {
         id
         caption
-        category
-        author {
-          id
-          first_name
-          last_name
-        }
+        created_at
         mediaUrls
-        post_targets {
-          id
-          target_type
-          target_id
-        }
       }
       errors {
         field
@@ -317,8 +308,10 @@ const GET_POSTS_BY_USER_ID = gql`
   }
 `;
 
-export function useGetPostsByUserId(userId: number, skip: number = 0, take: number = 10) {
+export function useGetPostsByUserId(userId: number, shouldFetch: boolean=true,
+  skip: number = 0, take: number = 20) {
   const { data, loading, error } = useQuery(GET_POSTS_BY_USER_ID, {
+    skip: !shouldFetch,
     variables: { userId, skip, take },
     onError: (error) => {
       console.error('GraphQL Error:', error);

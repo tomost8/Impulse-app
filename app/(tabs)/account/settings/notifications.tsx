@@ -11,14 +11,14 @@ export default function NotificationsScreen() {
     // Mutations
     //const { sendBroadcastNotification } = useSendBroadcastNotification();
     const { createReminder } = useCreateReminder();
-    const handleSendBroadcastNotification = async (input: any) => {
+    const handleCreateReminder = async (input: any) => {
         const response = await createReminder(input, authToken as string);
         console.log(response);
     }
 
     return (
         <ReminderNotifications 
-            onSave={handleSendBroadcastNotification} 
+            onSave={handleCreateReminder} 
         />
   );
 }

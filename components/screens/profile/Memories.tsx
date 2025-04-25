@@ -13,17 +13,30 @@ import { Calendar } from 'react-native-calendars';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 
-function DayComponent({ date, imagesByDate, onPress }) {
-  const dateKey = date.dateString;
-  const hasImage = imagesByDate[dateKey];
+function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }) {
+  // Get memory entry for each date
+  const memoryForDate = imagesByDate.find((memory: any) => memory.date === date.dateString);
+  const hasImage = memoryForDate && memoryForDate.mediaUrls.length > 0;
+
+  const handleDayPress = () => {
+    if (memoryForDate?.id) {
+      router.push(`/post/${memoryForDate.id}`);
+    } else {
+      console.log('No memory for date:', date);
+    }
+  };
 
   return (
     <TouchableOpacity 
       style={dayStyles.dayContainer}
-      onPress={() => onPress(date)}
+      onPress={handleDayPress}
+      disabled={!memoryForDate}
     >
       {hasImage ? (
-        <Image source={hasImage} style={dayStyles.dayImage} />
+        <Image 
+          source={{ uri: memoryForDate.mediaUrls[0] }} 
+          style={dayStyles.dayImage} 
+        />
       ) : (
         <View style={dayStyles.noImage} />
       )}
@@ -32,26 +45,20 @@ function DayComponent({ date, imagesByDate, onPress }) {
   );
 }
 
-const dayImages = {
-  '2023-07-05': { uri: 'https://picsum.photos/id/237/200/300' },
-  '2023-07-12': { uri: 'https://picsum.photos/id/238/200/300' },
-  '2023-07-23': { uri: 'https://picsum.photos/id/239/200/300' },
-};
+interface MemoriesProps {
+  loading: boolean;
+  memories: any[];
+}
 
-export default function Memories() {
-  const [imagesByDate, setImagesByDate] = useState({});
-
-  useEffect(() => {
-    setImagesByDate(dayImages);
-  }, []);
+export default function Memories({ loading, memories }: MemoriesProps) {
+  if (loading) {
+    return (
+        <Text>Loading...</Text>
+    );
+  }
 
   const currentDate = new Date();
   const INITIAL_DATE = currentDate.toISOString().split('T')[0];
-
-  const handleDayPress = (day) => {
-    console.log('Day pressed:', day);
-    // Handle day press - e.g., open modal or navigate to detail screen
-  };
 
   return (
     <View style={styles.container}>
@@ -76,12 +83,11 @@ export default function Memories() {
         current={INITIAL_DATE}
         firstDay={1}
         hideExtraDays
-        onDayPress={handleDayPress}
-        dayComponent={({ date }) => (
+        onDayPress={() => {}}
+        dayComponent={({ date }: any) => (
           <DayComponent 
-            date={date} 
-            imagesByDate={imagesByDate} 
-            onPress={handleDayPress}
+            date={date}
+            imagesByDate={memories}
           />
         )}
         theme={{
