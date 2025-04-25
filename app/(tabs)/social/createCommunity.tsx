@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 import { router } from 'expo-router';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
@@ -13,7 +13,7 @@ import { debugRenders } from '@/utils/debug';
 
 
 const CreateCommunityPage = () => {
-  const { userId } = useUserInfo();
+  const { fetching, user } = useUserData();
 
   // Mutations
   const {createCommunity} = useCreateCommunity();
@@ -28,7 +28,7 @@ const CreateCommunityPage = () => {
         ? await processAndUploadImage(formData.thumbnail)
         : null;
       const input = {
-        influencer_id: userId,
+        influencer_id: user.id,
         name: formData.name,
         ...(formData.description && { description: formData.description }),
         ...(thumbnail && { thumbnail }),

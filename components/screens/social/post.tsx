@@ -70,7 +70,8 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
           caption: post.caption,
           images: post.mediaUrls,
           likeCount: post.likeCount,
-          commentCount: comments.length
+          commentCount: comments.reduce((total, comment) => 
+            total + 1 + (comment.replies?.length || 0), 0)
         }} />
 
         {/* Comments Section */}

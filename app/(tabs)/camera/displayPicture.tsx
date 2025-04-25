@@ -10,7 +10,7 @@ import DisplayPictureScreen from "@/components/screens/camera/SingleLensCamera/d
 import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
 import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from "@/services/UserPreferencesContext";
 import { processAndUploadImage } from '@/utils/imageProcessing';
 
@@ -30,7 +30,7 @@ const DisplayPicturePage = () => {
     .map(source => source!.uri);
 
   // User Data
-  const { authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
   const { fetching, user, activities, friends, chats, communities } = useUserData();
   const timezone = user?.timezone;
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");

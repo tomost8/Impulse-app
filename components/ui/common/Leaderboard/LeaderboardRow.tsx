@@ -15,7 +15,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ rank, name, points, ima
       <Text style={styles.rank}>{rank}</Text>
 
       {/* Profile Image */}
-      <Image source={imageUrl} style={styles.profileImage} />
+      <Image source={{uri: imageUrl}} style={styles.profileImage} />
 
       {/* Name */}
       <View style={styles.textContainer}>

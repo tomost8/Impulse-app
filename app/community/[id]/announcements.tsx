@@ -8,11 +8,11 @@ import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 import { useLocalSearchParams } from 'expo-router';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 const AnnouncementsPage = () => {
  const { id } = useLocalSearchParams(); // communityId
- const { userId, authToken } = useUserInfo();
+ const { authToken } = useUserAuth();
 
  // Queries
  const announcementsRef = useRef<any[] | null>(null);

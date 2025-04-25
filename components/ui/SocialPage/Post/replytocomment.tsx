@@ -20,7 +20,7 @@ const ReplyToComment: React.FC<ReplyToCommentProps> = ({
       <View style={styles.commentHeader}>
         <View style={styles.userInfo}>
           <Image
-            source={profileImage}
+            source={{uri: profileImage}}
             style={styles.profilePicture}
           />
           <View style={styles.textContainer}>

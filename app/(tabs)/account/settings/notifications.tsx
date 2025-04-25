@@ -4,10 +4,10 @@ import { useSendBroadcastNotification } from '@/hooks/graphql/notifications/muta
 import { useCreateReminder } from '@/hooks/graphql/notifications/mutations';
 
 
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 export default function NotificationsScreen() {
-    const { authToken } = useUserInfo();
+    const { authToken } = useUserAuth();
     // Mutations
     //const { sendBroadcastNotification } = useSendBroadcastNotification();
     const { createReminder } = useCreateReminder();

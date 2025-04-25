@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 // GraphQL Hooks
@@ -13,7 +13,7 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userId, authToken } = useUserInfo();
+  const { userId, authToken } = useUserAuth();
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak

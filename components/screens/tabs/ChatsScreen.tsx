@@ -80,7 +80,7 @@ const ChatScreen = (props: ChatScreenProps) => {
             <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
             <View style={styles.messageInfo}>
               <Image 
-                source={chat.profile_pic}
+                source={{uri: chat.profile_pic}}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>

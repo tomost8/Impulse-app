@@ -12,14 +12,14 @@ import NonFriendViewScreen from '@/components/screens/connect/profiles/nonfriend
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 import { useAcceptFriendRequest, useSendFriendRequest } from '@/hooks/graphql/friends/mutations';
 
 const UserPage = () => {
   const { id } = useLocalSearchParams();
-  const { authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
   const { fetching, user } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 

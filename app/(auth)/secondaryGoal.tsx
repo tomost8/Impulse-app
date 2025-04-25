@@ -1,5 +1,5 @@
 import SecondaryGoalScreen from '@/components/screens/SignupLogin/Signup/secondaryGoal';
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { getCategoryById } from '@/utils/goals';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { router } from 'expo-router';
@@ -14,7 +14,7 @@ import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations'
 
 // Signup Page 4
 export default function SecondaryGoal() {
-  const {login} = useUserInfo();
+  const {login} = useUserAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [firebaseAuth] = useMutation(FIREBASE_AUTH, {

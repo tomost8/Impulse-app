@@ -9,11 +9,12 @@ import StartGroupScreen from '@/components/screens/connect/startgroup';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const CreateGroupPage = () => {
-  const {userId, authToken} = useUserInfo();
+  const {fetching, user} = useUserData();
 
   // Mutations
   const {createGroup} = useCreateGroup();
@@ -25,7 +26,7 @@ const CreateGroupPage = () => {
       const profile_pic = await processAndUploadImage(formData.profile_pic);
       const input = {
         type: "group",
-        creator_id: userId as number,
+        creator_id: user.id,
         profile_pic: profile_pic,
         title: formData.name,
         password: formData.isPasswordEnabled ? formData.password : null,

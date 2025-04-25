@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from 'firebase/auth';
 
-interface UserContextType {
+interface AuthContextType {
   authToken: string | null;
   userId: number | null;
   loading: boolean;
@@ -11,7 +11,7 @@ interface UserContextType {
   refreshAuthToken: () => Promise<string | null>;
 }
 
-const UserContext = createContext<UserContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -113,7 +113,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider 
+    <AuthContext.Provider 
       value={{ 
         authToken, 
         userId, 
@@ -124,14 +124,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-export const useUserInfo = () => {
-  const context = useContext(UserContext);
+export const useUserAuth = () => {
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useUserInfo must be used within a UserProvider');
+    throw new Error('useUserAuth must be used within a UserProvider');
   }
   return context;
 }; 

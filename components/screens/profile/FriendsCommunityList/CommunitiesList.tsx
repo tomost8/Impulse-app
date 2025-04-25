@@ -89,7 +89,7 @@ const CommunitiesList = (props: CommunityProps) => {
             <View key={community.id} style={styles.communityItem}>
               <TouchableOpacity onPress={() => console.log("Community pressed:", community.id)}>
                 <Image
-                  source={community.thumbnail}
+                  source={{uri: community.thumbnail}}
                   style={styles.communityAvatar}
                 />
               </TouchableOpacity>

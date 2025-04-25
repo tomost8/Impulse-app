@@ -7,7 +7,7 @@ import type { AppTheme } from '../theme/theme';
 
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/config/firebaseConfig';
 
@@ -15,7 +15,7 @@ export default function GetStarted() {
   const [error, setError] = useState<string | null>(null); 
   // maybe add a loading state
 
-  const { login } = useUserInfo();
+  const { login } = useUserAuth();
   const { firebaseAuth } = useFirebaseAuth();
   const tryLogin = async (email: string, password: string, rememberMe: boolean, onSuccess?: () => void) => {
     try {

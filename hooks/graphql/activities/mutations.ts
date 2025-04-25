@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 // Mutation - Create Activity
 export const CREATE_ACTIVITY = gql`
@@ -25,7 +25,7 @@ export const CREATE_ACTIVITY = gql`
 
 export function useCreateActivity() {
   const [createActivityMutation] = useMutation(CREATE_ACTIVITY);
-  const { refreshAuthToken } = useUserInfo();
+  const { refreshAuthToken } = useUserAuth();
   const createActivity = async (input: any) => {
     try {
       const refreshedToken = await refreshAuthToken();

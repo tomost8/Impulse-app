@@ -7,11 +7,11 @@ import DeletionScreen from '@/components/screens/profile/ProfileSetting/SupportS
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 
 const DeletionPage = () => {
-  const { authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
 
   // Mutations
   const { updateUser } = useUpdateUser();

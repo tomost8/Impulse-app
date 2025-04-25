@@ -6,7 +6,7 @@ import 'react-native-reanimated';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/client';
 import { PaperProvider, adaptNavigationTheme } from 'react-native-paper';
-import { UserProvider } from '@/services/UserContext';
+import { UserProvider } from '@/services/AuthContext';
 import { useColorScheme } from 'react-native';
 import { UserDataProvider } from '@/services/UserPreferencesContext';
 import { InitialDataLoader } from '@/components/InitialDataLoader';

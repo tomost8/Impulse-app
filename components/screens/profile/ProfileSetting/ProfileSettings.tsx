@@ -10,7 +10,7 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { router } from "expo-router";
 import { s } from "react-native-size-matters";
 
@@ -71,7 +71,7 @@ function DualLensToggle({
 }
 
 function LogoutButton() {
-  const { logout } = useUserInfo();
+  const { logout } = useUserAuth();
   
   return (
     <TouchableOpacity 

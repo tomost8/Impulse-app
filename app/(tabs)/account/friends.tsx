@@ -7,13 +7,13 @@ import FriendsList from '@/components/screens/profile/FriendsCommunityList/Frien
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 
 
 const FriendsPage = () => {
-  const { authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
   const { fetching, user, friends } = useUserData();
 
    // Mutations: Cancel

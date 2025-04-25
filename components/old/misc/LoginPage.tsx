@@ -7,10 +7,10 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../../../hooks/graphql/auth';
 import { useMutation } from '@apollo/client';
 
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 export default function Login() {
-  const { login } = useUserInfo();
+  const { login } = useUserAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

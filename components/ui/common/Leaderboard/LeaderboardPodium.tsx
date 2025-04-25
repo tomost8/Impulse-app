@@ -22,7 +22,7 @@ const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData }) => 
             {/* Profile Image, Username, and Points only shown if user exists */}
             {user && (
               <>
-                <Image source={user.profile_picture} style={styles.profileImage} />
+                <Image source={{uri: user.profile_picture}} style={styles.profileImage} />
                 <Text style={styles.username}>{user.username}</Text>
                 <Text style={styles.points}>{user.point.weekly_points} Pts</Text>
               </>
