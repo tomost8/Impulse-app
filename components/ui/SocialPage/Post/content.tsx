@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar, Dimensions } from 'react-native';
 
 interface PostContentProps {
   imageUrls?: string[];
@@ -18,6 +18,11 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
 
   const hasCaption = caption && caption.trim().length > 0;
 
+  const handleImageSwap = () => {
+    // Toggle mainImageIndex between 0 and 1 to swap images
+    setMainImageIndex(prev => prev === 0 ? 1 : 0);
+  };
+
   const pan = PanResponder.create({
     onStartShouldSetPanResponder: () => !isSinglePost,
     onPanResponderMove: (_, gesture) => {
@@ -29,8 +34,8 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
       if (isSinglePost) return;
       
       const { moveX, moveY } = gesture;
-      const screenWidth = styles.image.width;
-      const screenHeight = styles.image.height;
+      const screenWidth = Dimensions.get('window').width;
+      const screenHeight = screenWidth * (4/3); // Using aspect ratio for height
       
       const isRight = moveX > screenWidth / 2;
       const isBottom = moveY > screenHeight / 2;
@@ -55,7 +60,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
       {/* Main Image Container */}
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: imageUrls[0] }}
+          source={{ uri: imageUrls[mainImageIndex] }}
           style={styles.image}
           resizeMode="cover"
         />
@@ -69,7 +74,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
             ]}
             {...pan.panHandlers}
           >
-            <TouchableOpacity onPress={() => setMainImageIndex(prev => prev === 0 ? 1 : 0)}>
+            <TouchableOpacity onPress={handleImageSwap}>
               <Image
                 source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
                 style={styles.smallImage}
