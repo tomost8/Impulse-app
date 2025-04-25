@@ -17,6 +17,7 @@ import { router } from 'expo-router';
 
 interface AnnouncementScreenProps {
   communityName?: string;
+  announcements?: any[];
 }
 
 const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({

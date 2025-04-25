@@ -25,6 +25,7 @@ interface DisplayPictureScreenProps {
   usersButtonVisible: boolean;
   setActivityModalVisible: (visible: boolean) => void;
   setUsersModalVisible: (visible: boolean) => void;
+  swapImages: () => void;
 }
 
 const DisplayPictureScreen = ({
@@ -39,6 +40,7 @@ const DisplayPictureScreen = ({
   usersButtonVisible,
   setActivityModalVisible,
   setUsersModalVisible,
+  swapImages,
 }: DisplayPictureScreenProps) => {
   return (
     <KeyboardAvoidingView 
@@ -59,11 +61,16 @@ const DisplayPictureScreen = ({
                 />
               )}
               {previewImageSource && (
-                <Image
-                  source={previewImageSource}
-                  style={styles.previewImage}
-                  resizeMode="contain"
-                />
+                <TouchableOpacity
+                  style={styles.previewImageWrapper}
+                  onPress={swapImages}
+                >
+                  <Image
+                    source={previewImageSource}
+                    style={styles.previewImage}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
               )}
             </View>
           </View>
@@ -141,12 +148,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  previewImage: {
+  previewImageWrapper: {
     position: 'absolute',
     top: 16,
     left: 16,
     width: 145,
     height: 150,
+    borderRadius: 8,
+    overflow: 'hidden',
+    zIndex: 10,
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
     borderRadius: 8,
   },
   overlayContainer: {

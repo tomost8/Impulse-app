@@ -152,6 +152,7 @@ function ReminderNotifications({ onSave }: ReminderNotificationsProps): JSX.Elem
 
   const handleSave = () => {
     // Save logic here
+    /*
     const input = {
       type: 'REMINDER',
       title: 'title',
@@ -161,6 +162,7 @@ function ReminderNotifications({ onSave }: ReminderNotificationsProps): JSX.Elem
     }
     console.log(input);
     onSave(input);
+    */
     setShowUpdatedPopup(true);
   };
 

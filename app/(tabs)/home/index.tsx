@@ -16,7 +16,7 @@ import { getCategoryById } from '@/utils/goals';
 
 const HomePage = () => {
   const { userId, authToken } = useUserInfo();
-  const { fetching, user, activities, timezone, setActivities } = useUserData();
+  const { fetching, user, activities, timezone, setActivities, setCameraClickable } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
   const router = useRouter();
@@ -85,6 +85,7 @@ const HomePage = () => {
         }
       }
       setActivities([...activities, ...newActivities]);
+      setCameraClickable(true);
       router.replace("/home");
     } catch (error) {
       console.error('Error adding activities:', error);

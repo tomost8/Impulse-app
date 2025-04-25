@@ -19,10 +19,12 @@ const DisplayPicturePage = () => {
   if (!context) return null;
   const { id, category, frontPhoto, backPhoto } = useLocalSearchParams();
   // Get image sources
-  const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : null;
+  const frontImageSource = frontPhoto ? { uri: frontPhoto as string } : null; // Selfie
   const backImageSource = backPhoto ? { uri: backPhoto as string } : null;
-  const mainImageSource = frontImageSource || backImageSource;
-  const previewImageSource = frontImageSource && backImageSource ? backImageSource : null;
+  const [mainImageSource, setMainImageSource] = useState(backImageSource || frontImageSource);
+  const [previewImageSource, setPreviewImageSource] = useState(
+    frontImageSource && backImageSource ? frontImageSource : null
+  );
   const imageSources: string[] = [frontImageSource, backImageSource]
     .filter(Boolean)
     .map(source => source!.uri);
@@ -136,6 +138,11 @@ const DisplayPicturePage = () => {
     router.replace("/home");
   };
 
+  const swapImages = () => {
+    setMainImageSource(previewImageSource);
+    setPreviewImageSource(mainImageSource);
+  };
+
   // Debug
   const loading = fetching;
   const debugRenders = false;
@@ -157,6 +164,7 @@ const DisplayPicturePage = () => {
       <DisplayPictureScreen
         mainImageSource={mainImageSource}
         previewImageSource={previewImageSource}
+        swapImages={swapImages}
         captionFooterVisible={captionFooterVisible}
         isKeyboardVisible={isKeyboardVisible}
         caption={caption}
