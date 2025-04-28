@@ -18,33 +18,52 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
-
-  // Initial load
+  
+  // Initialize auth state from AsyncStorage first
   useEffect(() => {
-    getUserInfo();
+    const initializeAuth = async () => {
+      try {
+        const [storedToken, storedRememberMe, storedUserId] = await Promise.all([
+          AsyncStorage.getItem('authToken'),
+          AsyncStorage.getItem('rememberMe'),
+          AsyncStorage.getItem('userId'),
+        ]);
+
+        const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
+        
+        if (rememberMeData?.rememberMe && storedToken && storedUserId) {
+          setAuthToken(storedToken);
+          setUserId(Number(storedUserId));
+        }
+      } catch (error) {
+        console.error('Error initializing auth state:', error);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
-  const getUserInfo = async () => {
-    try {
-      const [storedRememberMe, storedAuthToken, storedUserId] = await Promise.all([
-        AsyncStorage.getItem('rememberMe'),
-        AsyncStorage.getItem('authToken'),
-        AsyncStorage.getItem('userId'),
-      ]);
-
-      const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
-      if (rememberMeData?.rememberMe) {
-        setAuthToken(storedAuthToken);
-        setUserId(Number(storedUserId));
-      } else {
+  // Firebase auth state listener
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Only refresh token if we already have an authToken (user was logged in)
+        if (authToken) {
+          const token = await refreshAuthToken();
+          if (!token) {
+            await logout();
+          }
+        }
+      } else if (authToken) {
+        // Only logout if we actually had an authToken (user was logged in)
         await logout();
       }
-    } catch (error) {
-      console.error('Error fetching data from AsyncStorage:', error);
-    } finally {
       setLoading(false);
-    }
-  };
+    });
+
+    return () => unsubscribe();
+  }, [authToken]); // Add authToken as dependency
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
     try {

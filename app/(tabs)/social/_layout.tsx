@@ -1,11 +1,32 @@
 import { Stack } from 'expo-router';
 
-export default function CommunitiesLayout() {
+export default function SocialLayout() {
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="explore" />
-      <Stack.Screen name="createCommunity" />
+    <Stack 
+      screenOptions={{
+        headerShown: false,
+        animation: 'none'
+      }}
+    >
+      <Stack.Screen 
+        name="."
+        options={{
+          headerShown: false,
+          title: 'Social'
+        }}
+      />
+      <Stack.Screen 
+        name="explore"
+        options={{
+          headerShown: false
+        }}
+      />
+      <Stack.Screen 
+        name="createCommunity"
+        options={{
+          headerShown: false
+        }}
+      />
     </Stack>
   );
 }

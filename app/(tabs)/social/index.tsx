@@ -11,6 +11,8 @@ import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 
+
+
 const SocialPage = (props: any) => {
   const { userId, authToken} = props;
   const { timezone } = useUserData();
@@ -129,4 +131,5 @@ const SocialPage = (props: any) => {
   );
 }
 
-export default AuthWrapper(SocialPage);
+//export default AuthWrapper(SocialPage);
+export default SocialPage;

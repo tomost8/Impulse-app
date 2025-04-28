@@ -23,7 +23,7 @@ const HomePage = () => {
   /* friends leaderboard */
   const leaderboardRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(user.id, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); 
+  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(user?.id, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); 
 
   const loading = !hasFetchedFriends.current || fetching || isCreatingActivity;
 
