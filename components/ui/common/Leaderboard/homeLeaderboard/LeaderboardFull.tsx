@@ -41,12 +41,11 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
-    alignSelf: "center",
-    gap: 112,
-    width: 340, // ✅ Matches leaderboard width
-    marginBottom: 10, // ✅ Adds spacing before leaderboard
+    width: '100%',
+    paddingHorizontal: 16,
+    marginBottom: 10,
   },
   title: {
     fontSize: 18,

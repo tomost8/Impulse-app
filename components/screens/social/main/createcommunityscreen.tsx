@@ -9,7 +9,8 @@ import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  StatusBar
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
@@ -60,7 +61,7 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
         >
           {/* Top Bar */}
           <View style={styles.topBar}>
-            <SafeAreaView>
+            <SafeAreaView style={styles.safeArea}>
               <View style={styles.topBarContent}>
                 <TouchableOpacity 
                   style={styles.backButton}
@@ -183,6 +184,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  safeArea: {
+    backgroundColor: '#E0EDFD',
   },
   topBar: {
     backgroundColor: '#E0EDFD',

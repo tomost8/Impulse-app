@@ -33,12 +33,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: '#FFFFFF',
   },
   backButton: {
-    marginRight: 16,
+    marginRight: 5,
   },
   backIcon: {
     width: 18,
@@ -50,6 +51,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#000000',
+    flex: 1,
+    marginLeft: 5,
   },
   createButton: {
     width: 75,
@@ -60,7 +63,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
     flexShrink: 0,
-    marginLeft: 155,
   },
   createButtonText: {
     color: '#FFFFFF',

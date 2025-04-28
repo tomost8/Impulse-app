@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform } from "react-native";
 import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
@@ -8,10 +8,12 @@ import { router } from "expo-router";
 const exploreIcon = require("@/assets/icons/explore.png");
 
 interface SocialScreenProps {
-  loading: boolean;
   communityMembers: any[];
+  isCommunityMembersLoading: boolean;
   friendsFeed: any[];
+  isFriendsFeedLoading: boolean;
   communityFeed: any[];
+  isCommunityFeedLoading: boolean;
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
   isHandlingLike: boolean;
@@ -21,12 +23,16 @@ interface SocialScreenProps {
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
   communityMembers,
+  isCommunityMembersLoading,
   friendsFeed,
+  isFriendsFeedLoading,
   communityFeed,
+  isCommunityFeedLoading,
   handleLikePost,
   handleUnlikePost,
   isHandlingLike,
   isHandlingUnlike,
+  updatePostLikeState,
 }) => {
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
   const handleTabChange = (tab: 'friends' | 'communities') => {
@@ -110,6 +116,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF",
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   fixedContent: {
     paddingTop: 35,
@@ -148,6 +155,11 @@ const styles = StyleSheet.create({
   },
   feedSection: {
     flex: 1,
+  },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
 });
 
