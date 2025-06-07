@@ -9,7 +9,7 @@ export default function SocialLayout() {
       }}
     >
       <Stack.Screen 
-        name="."
+        name="index"
         options={{
           headerShown: false,
           title: 'Social'

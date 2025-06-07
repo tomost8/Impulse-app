@@ -23,6 +23,7 @@ interface NonFriendViewScreenProps {
   nonFriend: any;
   communityCount: number;
   isPendingRequest?: boolean;
+  pendingRole?: string;
   onAcceptRequest?: (friendId: number) => void;
   onSendRequest?: (friendId: number) => void;
 }
@@ -32,7 +33,7 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
     return <Text>Loading...</Text>;
   }
   const [showAcceptedPopup, setShowAcceptedPopup] = useState(false);
-  const [isRequestSent, setIsRequestSent] = useState(false);
+  const [isRequestSent, setIsRequestSent] = useState(props.isPendingRequest && props.pendingRole === 'sender');
   const [showRequestSentPopup, setShowRequestSentPopup] = useState(false);
 
   const handleSendRequest = () => {
@@ -113,7 +114,7 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        {props.isPendingRequest ? (
+        {props.isPendingRequest && props.pendingRole === 'receiver' ? (
           <TouchableOpacity 
             style={styles.acceptRequestButton}
             onPress={handleAcceptRequest}
@@ -127,6 +128,7 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
               isRequestSent && styles.requestSentButton
             ]}
             onPress={handleSendRequest}
+            disabled={isRequestSent}
           >
             <Text style={styles.buttonText}>
               {isRequestSent ? "Request Sent" : "Send Friend Request"}

@@ -7,29 +7,31 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import SocialScreen from '@/components/screens/tabs/SocialScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
+// Services
+import { useUserAuth } from '@/services/AuthContext';
 
 
 
-
-const SocialPage = (props: any) => {
-  const { userId, authToken} = props;
-  const { timezone } = useUserData();
+const SocialPage = () => {
+  const { userId, authToken} = useUserAuth();
+  const { timezone, friendsFeed:friendsFeedFromContext, communityFeed:communityFeedFromContext, refetchFriendsFeed, refetchCommunityFeed } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
   const communitiesRef = useRef<any[] | null>(null);
   const hasFetchedCommunities = useRef(false);
   const { communityMembers, fetched: hasNewCommunitiesData } = useGetUserCommunities(userId as number, !hasFetchedCommunities.current);
+  
 
   const friendsFeedRef = useRef<any[] | null>(null);
   const hasFetchedFriendsFeed = useRef(false);
-  const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeedFriends(userId as number, authToken, !hasFetchedFriendsFeed.current);
+  const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeedFriends(userId as number, authToken as string, !hasFetchedFriendsFeed.current);
 
   const communityFeedRef = useRef<any[] | null>(null);
   const hasFetchedCommunityFeed = useRef(false);
-  const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetFeedCommunities(userId as number, authToken, !hasFetchedCommunityFeed.current);
+  const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetFeedCommunities(userId as number, authToken as string, !hasFetchedCommunityFeed.current);
 
   useEffect(() => {
     if (!hasNewCommunitiesData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
@@ -77,9 +79,10 @@ const SocialPage = (props: any) => {
 
   // Update the handlers to use optimistic updates
   const handleLikePost = async (postId: number) => {
+    console.log("handleLikePost", postId);
     setIsHandlingLike(true);
     try {
-      await likePost(postId, authToken);
+      await likePost(postId, authToken as string);
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error liking post:", error);
@@ -91,9 +94,10 @@ const SocialPage = (props: any) => {
   }
 
   const handleUnlikePost = async (postId: number) => {
+    console.log("handleUnlikePost", postId);
     setIsHandlingUnlike(true);
     try {
-      await unlikePost(postId, authToken);
+      await unlikePost(postId, authToken as string);
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error unliking post:", error);
@@ -105,12 +109,15 @@ const SocialPage = (props: any) => {
   }
 
   // Debug
-  const loading = !hasFetchedCommunities.current || !hasFetchedFriendsFeed.current || !hasFetchedCommunityFeed.current;
+  const handlingLike = isHandlingLike || isHandlingUnlike;
+  const loading = !hasFetchedCommunities.current || !hasFetchedFriendsFeed.current || !hasFetchedCommunityFeed.current || handlingLike;
   if (debugRenders && !loading) {
     console.log("Rendering SocialPage\n",
       "Communities:", communitiesRef.current, "\n",
       "Friends Feed:", friendsFeedRef.current, "\n",
       "Community Feed:", communityFeedRef.current, "\n",
+      "Friends Feed from Context:", friendsFeedFromContext, "\n",
+      "Community Feed from Context:", communityFeedFromContext, "\n",
       "Render Counter:", renderCounter, "\n",
       "Timezone:", timezone
     );
@@ -124,9 +131,7 @@ const SocialPage = (props: any) => {
       communityFeed={communityFeedRef.current || []}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
-      isHandlingLike={isHandlingLike}
-      isHandlingUnlike={isHandlingUnlike}
-      updatePostLikeState={updatePostLikeState}
+      //updatePostLikeState={updatePostLikeState}
     />
   );
 }

@@ -21,7 +21,7 @@ interface AnnouncementScreenProps {
 }
 
 const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
-  communityName = "Gabe's Running Club"
+  communityName = "Community Name"
 }) => {
   const [announcement, setAnnouncement] = useState('');
 

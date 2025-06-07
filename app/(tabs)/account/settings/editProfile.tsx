@@ -62,6 +62,10 @@ const EditProfilePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormSubmit = async (input: any) => {
+    if (fetching || !user?.id) {
+      console.warn('Cannot update user profile: User data is not yet available');
+      return;
+    }
     setIsSubmitting(true);
     try {
       // Check if profile_picture is not already uploaded to Firestore

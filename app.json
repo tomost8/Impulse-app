@@ -46,6 +46,7 @@
       "eas": {
         "projectId": "f9cf2a86-aa04-48ec-97fc-cbfb63095ff0"
       }
-    }
+    },
+    "sdkVersion": "52.0.0"
   }
 }

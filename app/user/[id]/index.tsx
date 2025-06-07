@@ -20,14 +20,16 @@ import { useAcceptFriendRequest, useSendFriendRequest } from '@/hooks/graphql/fr
 const UserPage = () => {
   const { id } = useLocalSearchParams();
   const { authToken } = useUserAuth();
-  const { fetching, user } = useUserData();
+  const { fetching, user, friends, setFriends } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries
   // Check if the profile user is an accepted friend
+  /*
   const friendRef = useRef<any[] | null>(null);
   const hasFetchedFriends = useRef(false);
   const { friends, fetched: hasNewFriendsData } = useGetFriends(user.id, !hasFetchedFriends.current && !fetching);
+  */
 
   // Profile for User we are viewing
   const userRef = useRef<any | null>(null);
@@ -45,7 +47,7 @@ const UserPage = () => {
   const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(Number(id), currentDate.current, authToken as string, shouldFetchActivities);
 
   useEffect(() => {
-    if (!hasNewUserData && !hasNewFriendsData && !hasNewCommunitiesData && !hasNewActivitiesData) {
+    if (!hasNewUserData && !hasNewCommunitiesData && !hasNewActivitiesData) {
       return;
     }
     if (hasNewUserData) {
@@ -53,10 +55,6 @@ const UserPage = () => {
       hasFetchedUser.current = true;
       const userLocalDate = getLocalDay(new Date().toISOString(), profileUser.timezone);
       currentDate.current = userLocalDate;
-    }
-    if (hasNewFriendsData) {
-      friendRef.current = friends;
-      hasFetchedFriends.current = true;
     }
     if (hasNewCommunitiesData) {
       communitiesRef.current = communityMembers;
@@ -66,10 +64,10 @@ const UserPage = () => {
       activitiesRef.current = activities;
       hasFetchedActivities.current = true;
     }
-    if (hasFetchedUser.current && hasFetchedFriends.current && hasFetchedCommunities.current && hasFetchedActivities.current) {
+    if (hasFetchedUser.current && hasFetchedCommunities.current && hasFetchedActivities.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewFriendsData, hasNewUserData, hasNewCommunitiesData, hasNewActivitiesData]);
+  }, [hasNewUserData, hasNewCommunitiesData, hasNewActivitiesData]);
 
   // Mutation
   const { sendFriendRequest } = useSendFriendRequest();
@@ -84,6 +82,7 @@ const UserPage = () => {
       const response = await sendFriendRequest(input, authToken as string);
       if (response.success) {
         console.log("Friend request sent successfully", response);
+        setFriends([...friends, response.friendship]);
       } else {
         console.error("Error sending friend request:", response.errors);
       }
@@ -105,6 +104,8 @@ const UserPage = () => {
       const response = await acceptFriendRequest(user.id, friendId, input, authToken as string);
       if (response.success) {
         console.log("Friend request accepted successfully", response);
+        const updatedFriends = friends.map((friend: any) => friend.friend.id === friendId ? response.friendship : friend);
+        setFriends(updatedFriends);
       } else {
         console.error("Error accepting friend request:", response.errors);
       }
@@ -116,23 +117,28 @@ const UserPage = () => {
   }
 
   // Check if the profile user is an accepted friend
-  const isAcceptedFriend = friendRef.current?.some(
+  const isAcceptedFriend = friends.some(
     friendship => friendship.friend.id === Number(id) && friendship.status === 'ACCEPTED'
   ) ?? false;
 
-  const isPendingRequest = friendRef.current?.some(
+  const isPendingRequest = friends.some(
     friendship => friendship.friend.id === Number(id) && friendship.status === 'PENDING'
   ) ?? false;
+
+  const pendingRole = friends.find(
+    friendship => friendship.friend.id === Number(id) && friendship.status === 'PENDING'
+  )?.role ?? 'PENDING';
 
   const acceptedCommunityCount = communitiesRef.current?.filter(
     community => community.status === 'ACCEPTED'
   ).length ?? 0;
 
   // Debug
-  const loading = !hasFetchedUser.current || !hasFetchedFriends.current || !hasFetchedCommunities.current || !hasFetchedActivities.current || isAcceptingFriendRequest || isSendingFriendRequest;
+  const loading = !hasFetchedUser.current || !hasFetchedCommunities.current || !hasFetchedActivities.current || isAcceptingFriendRequest || isSendingFriendRequest;
   if (debugRenders && !loading) {
     console.log("Rendering UserPage for user:", id, "\n",
       "User Profile:", userRef.current, "\n",
+      "Friends:", friends, "\n",
       "isAcceptedFriend:", isAcceptedFriend, "\n",
       "isPendingRequest:", isPendingRequest, "\n",
       "communityCount:", acceptedCommunityCount, "\n",
@@ -157,6 +163,7 @@ const UserPage = () => {
         nonFriend={userRef.current}
         communityCount={acceptedCommunityCount}
         isPendingRequest={isPendingRequest}
+        pendingRole={pendingRole}
         onAcceptRequest={handleAcceptFriendRequest}
         onSendRequest={handleSendFriendRequest}
       />

@@ -14,7 +14,7 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 const FriendsPage = () => {
   const { authToken } = useUserAuth();
-  const { fetching, user, friends } = useUserData();
+  const { fetching, user, friends, setFriends } = useUserData();
 
    // Mutations: Cancel
 const { deleteFriendship } = useDeleteFriendship();
@@ -24,7 +24,8 @@ const handleRemoveFriend = async (friendId: number) => {
     setIsRemovingFriend(true);
     const response = await deleteFriendship(user.id, friendId, authToken as string);
     if (response.success) {
-      console.log("Successfully removed friend.");
+      console.log("Successfully removed friend.", friendId);
+      setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
     } else {
       throw new Error("Response.success from deleteFriendship was false:" + response.errors);
     }

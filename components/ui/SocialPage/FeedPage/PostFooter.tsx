@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import LikeButton from "./LikeButton";
 import CommentButton from "./CommentButton";
@@ -7,16 +7,22 @@ interface PostFooterProps {
   profileImage?: any;
   username: string;
   timeAgo: string;
+  liked: boolean;
   initialLikes: number;
   initialComments: number;
+  handleLikePost: () => Promise<void>;
+  handleUnlikePost: () => Promise<void>;
 }
 
 const PostFooter: React.FC<PostFooterProps> = ({
   profileImage,
   username,
   timeAgo,
+  liked = false,
   initialLikes = 0,
   initialComments = 0,
+  handleLikePost,
+  handleUnlikePost,
 }) => {
   return (
     <View style={styles.container}>
@@ -33,7 +39,12 @@ const PostFooter: React.FC<PostFooterProps> = ({
 
       <View style={styles.interactions}>
         <CommentButton initialComments={initialComments} />
-        <LikeButton initialLikes={initialLikes} />
+        <LikeButton 
+          initialLikes={initialLikes} 
+          liked={liked} 
+          handleLikePost={handleLikePost}
+          handleUnlikePost={handleUnlikePost}
+        />
       </View>
     </View>
   );

@@ -7,13 +7,15 @@ interface HeaderProps {
   memberCount: number;
   thumbnail: string;
   communityId: string;
+  isAdmin: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({
   name = "Community Name",
   memberCount = 25,
   thumbnail,
-  communityId
+  communityId,
+  isAdmin
 }) => {
   const handleEdit = () => {
     router.push(`/community/${communityId}/editCommunity`);
@@ -29,12 +31,14 @@ const Header: React.FC<HeaderProps> = ({
       <View style={styles.contentContainer}>
         <View style={styles.titleSection}>
           <Text style={styles.title}>{name}</Text>
-          <TouchableOpacity onPress={handleEdit}>
-            <Image 
-              source={require("@/assets/icons/edit.png")}
-              style={styles.editIcon}
-            />
-          </TouchableOpacity>
+          {isAdmin && (
+            <TouchableOpacity onPress={handleEdit}>
+              <Image 
+                source={require("@/assets/icons/edit.png")}
+                style={styles.editIcon}
+              />
+            </TouchableOpacity>
+          )}
         </View>
         
         <Text style={styles.memberCount}>{memberCount} members</Text>

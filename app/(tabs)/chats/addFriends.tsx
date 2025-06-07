@@ -15,7 +15,7 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 const AddFriendsPage = () => {
   const { authToken } = useUserAuth();
-  const { fetching, user, friends } = useUserData();
+  const { fetching, user, friends, setFriends } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries
@@ -49,6 +49,7 @@ const AddFriendsPage = () => {
       const response = await sendFriendRequest(input, authToken as string);
       if (response.success) {
         console.log("Friend request sent successfully", response);
+        setFriends([...friends, response.friendship]);
       } else {
         console.error("Error sending friend request:", response.errors);
       }
@@ -67,6 +68,7 @@ const AddFriendsPage = () => {
       const response = await deleteFriendship(user.id, friendId, authToken as string);
       if (response.success) {
         console.log("Friend request deleted successfully", response);
+        setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
       } else {
         console.error("Error deleting friend request:", response.errors);
       }

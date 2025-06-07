@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
@@ -11,12 +12,16 @@ import { useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 
 import { getLocalDay } from '@/utils/timezoneProcessing';
+import { useGetFeedCommunities } from '@/hooks/graphql/posts/queries';
+import { useGetFeedFriends } from '@/hooks/graphql/posts/queries';
 
 export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userId, authToken } = useUserAuth();
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
-    setTimezone, setCameraClickable, setLoginStreak
+    setTimezone, setCameraClickable, setLoginStreak,
+    setCommunityFeed, setFriendsFeed, refetchFriendsFeed, refetchCommunityFeed,
+    refetchFriendsFeedTrigger, refetchCommunityFeedTrigger
   } = useUserData();
 
   const [hasValidAuth, setHasValidAuth] = useState(false);
@@ -45,6 +50,22 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   const hasFetchedFriends = useRef(false);
   const { friends, fetched: hasNewFriendsData } = useGetFriends(userId as number, !hasFetchedFriends.current && hasValidAuth);
 
+  const friendsFeedRef = useRef<any[] | null>(null);
+  const hasFetchedFriendsFeed = useRef(false);
+  const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeedFriends(
+    userId as number, 
+    authToken as string, 
+    !hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0
+  );
+
+  const communityFeedRef = useRef<any[] | null>(null);
+  const hasFetchedCommunityFeed = useRef(false);
+  const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetFeedCommunities(
+    userId as number, 
+    authToken as string, 
+    !hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0
+  );
+
   // Mutations (only for setting default profile picture)
   const { updateUser } = useUpdateUser();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -61,11 +82,15 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       communitiesRef.current = null;
       chatsRef.current = null;
       friendsRef.current = null;
+      friendsFeedRef.current = null;
+      communityFeedRef.current = null;
       hasFetchedUser.current = false;
       hasFetchedActivities.current = false;
       hasFetchedCommunities.current = false;
       hasFetchedChats.current = false;
       hasFetchedFriends.current = false;
+      hasFetchedFriendsFeed.current = false;
+      hasFetchedCommunityFeed.current = false;
     }
     const oldAuthToken = lastFetchedAuthToken.current ? lastFetchedAuthToken.current.substring(0, 20) + '...' : null;
     const newAuthToken = authToken ? authToken.substring(0, 20) + '...' : null;
@@ -81,7 +106,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!hasValidAuth) {
         return;
     }
-    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewFriendsData) {
+    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewFriendsData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
       return;
     }
     if (hasNewUserData) {
@@ -116,7 +141,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
             if (response.success) {
               console.log("Profile picture set to default");
             } else {
-              throw new Error("updateUser response.success is false:", response.errors);
+              throw new Error("updateUser response.success is false:" + response.errors);
             }
           })
           .catch(error => {
@@ -149,7 +174,17 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       hasFetchedFriends.current = true;
       setFriends(friends);
     }
-    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedFriends.current) {
+    if (hasNewFriendsFeedData) {
+      friendsFeedRef.current = friendsFeed;
+      hasFetchedFriendsFeed.current = true;
+      setFriendsFeed(friendsFeed);
+    }
+    if (hasNewCommunityFeedData) {
+      communityFeedRef.current = communityFeed;
+      hasFetchedCommunityFeed.current = true;
+      setCommunityFeed(communityFeed);
+    }
+    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
       setFetching(false);
       console.log("Initial User Data Fetched:", 
         "\nUser:", hasFetchedUser.current, userRef.current,
@@ -157,10 +192,25 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
         "\nActivities:", hasFetchedActivities.current, activitiesRef.current,
         "\nCommunities:", hasFetchedCommunities.current, communitiesRef.current,
         "\nChats:", hasFetchedChats.current, chatsRef.current,
-        "\nFriends:", hasFetchedFriends.current, friendsRef.current
+        "\nFriends:", hasFetchedFriends.current, friendsRef.current,
+        "\nFriends Feed:", hasFetchedFriendsFeed.current, friendsFeedRef.current,
+        "\nCommunity Feed:", hasFetchedCommunityFeed.current, communityFeedRef.current
         );
     }
-  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData]);
+  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData]);
+
+  // Add new effect to handle refetching
+  useEffect(() => {
+    if (refetchFriendsFeedTrigger > 0) {
+      hasFetchedFriendsFeed.current = false;
+    }
+  }, [refetchFriendsFeedTrigger]);
+
+  useEffect(() => {
+    if (refetchCommunityFeedTrigger > 0) {
+      hasFetchedCommunityFeed.current = false;
+    }
+  }, [refetchCommunityFeedTrigger]);
 
   // Could add loading states here if needed
   return <>{children}</>;

@@ -58,6 +58,10 @@ const HomePage = () => {
   }, [hasNewLeaderboardData]);
 
   const handleAddGoals = async (selectedGoals: any[], goalFormData: any) => {
+    if (fetching || !user?.id) {
+      console.warn('Cannot add goals: User data is not yet available');
+      return;
+    }
     setIsCreatingActivity(true);
     try {
       const newActivities: any[] = [];

@@ -7,13 +7,14 @@ import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
 import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import PostScreen from '@/components/screens/social/post';
-import PostScreenOld from '@/components/old/social/PostScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 
-const PostPage = (props: any) => {
+import { useUserAuth } from '@/services/AuthContext';
+
+const PostPage = () => {
   const { id, isLiked } = useLocalSearchParams(); // postId
-  const { userId, authToken } = props;
+  const { authToken } = useUserAuth();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -67,7 +68,7 @@ const PostPage = (props: any) => {
   const handleLikePost = async () => {
     setIsHandlingLike(true);
     try {
-      await likePost(Number(id), authToken);
+      await likePost(Number(id), authToken as string);
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error liking post:", error);
@@ -81,7 +82,7 @@ const PostPage = (props: any) => {
   const handleUnlikePost = async () => {
     setIsHandlingUnlike(true);
     try {
-      await unlikePost(Number(id), authToken);
+      await unlikePost(Number(id), authToken as string);
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error unliking post:", error);
@@ -106,14 +107,14 @@ const PostPage = (props: any) => {
         content: content,
         parent_comment_id: parentCommentId || null
       }
-      const response = await createComment(input, authToken);
+      const response = await createComment(input, authToken as string);
       console.log("Response:", response);
       // Clear input and hide reply field on success
       if (parentCommentId) {
         setReplyText('');
         setReplyingToCommentId(null);
       } else {
-        setCommentText('');
+        //setCommentText('');
       }
     } catch (error) {
       console.error("Error creating comment:", error);
@@ -122,9 +123,6 @@ const PostPage = (props: any) => {
     }
   }
 
-  const [commentText, setCommentText] = useState('');
-  const [isCommentBoxVisible, setIsCommentBoxVisible] = useState(false);
-
   // Debug
   const loading = !hasFetchedPost.current || !hasFetchedComments.current;
   if (debugRenders && !loading) {
@@ -132,41 +130,20 @@ const PostPage = (props: any) => {
       "Post:", postRef.current, "\n",
       "Comments:", commentsRef.current, "\n",
       "Render Counter:", renderCounter, "\n",
+      "Liked local param:", isLiked, "\n",
     );
   }
 
-  if (pageDisplay) {
-    return (
-      <PostScreen
-        loading={loading}
-        post={postRef.current}
-        comments={commentsRef.current}
-        createComment={handleCreateComment}
-      />
-    );
-  } else {
-    return (
-      <PostScreenOld
-        postRef={postRef}
-        commentsRef={commentsRef}
-        isCommentBoxVisible={isCommentBoxVisible}
-        commentText={commentText}
-        setCommentText={setCommentText}
-        isHandlingCreateComment={isHandlingCreateComment}
-        handleCreateComment={handleCreateComment}
-        setIsCommentBoxVisible={setIsCommentBoxVisible}
-        replyingToCommentId={replyingToCommentId}
-        setReplyingToCommentId={setReplyingToCommentId}
-        replyText={replyText}
-        setReplyText={setReplyText}
-        updatePostLikeState={updatePostLikeState}
-        handleLikePost={handleLikePost}
-        handleUnlikePost={handleUnlikePost}
-        isHandlingLike={isHandlingLike}
-        isHandlingUnlike={isHandlingUnlike}
-      />
-    );
-  }
+  return (
+    <PostScreen
+      loading={loading}
+      post={postRef.current}
+      comments={commentsRef.current}
+      createComment={handleCreateComment}
+      onLike={handleLikePost}
+      onUnlike={handleUnlikePost}
+    />
+  );
 }
 
 export default AuthWrapper(PostPage);

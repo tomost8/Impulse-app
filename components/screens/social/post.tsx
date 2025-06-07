@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import FullPostCard from '@/components/ui/SocialPage/Post/fullpostcard';
@@ -12,9 +12,11 @@ interface PostScreenProps {
   comments: any[];
   loading: boolean;
   createComment: (comment: string, parentCommentId?: number) => void;
+  onLike: () => void;
+  onUnlike: () => void;
 }
 
-const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps) => {
+const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike }: PostScreenProps) => {
   if (loading) {
     return (
       <View style={styles.container}>
@@ -69,10 +71,11 @@ const PostScreen = ({ post, comments, loading, createComment }: PostScreenProps)
           profileImage: post.author.profile_picture,
           caption: post.caption,
           images: post.mediaUrls,
+          liked: post.liked,
           likeCount: post.likeCount,
           commentCount: comments.reduce((total, comment) => 
             total + 1 + (comment.replies?.length || 0), 0)
-        }} />
+        }} onLike={onLike} onUnlike={onUnlike} />
 
         {/* Comments Section */}
         <CommentSection

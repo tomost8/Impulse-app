@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
 import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
@@ -14,20 +14,19 @@ interface SocialScreenProps {
   communityFeed: any[];
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
-  isHandlingLike: boolean;
-  isHandlingUnlike: boolean;
-  updatePostLikeState: (postId: number, liked: boolean) => void;
 }
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
+  loading,
   communityMembers,
   friendsFeed,
   communityFeed,
   handleLikePost,
   handleUnlikePost,
-  isHandlingLike,
-  isHandlingUnlike,
 }) => {
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
   const handleTabChange = (tab: 'friends' | 'communities') => {
     setSelectedTab(tab);
@@ -98,6 +97,8 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
             <Feed 
               currentTab={selectedTab}
               posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
+              handleLikePost={handleLikePost}
+              handleUnlikePost={handleUnlikePost}
             />
           </View>
         </View>

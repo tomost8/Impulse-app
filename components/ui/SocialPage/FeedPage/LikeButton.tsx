@@ -1,27 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 interface LikeButtonProps {
-  initialLikes?: number;
+  initialLikes: number;
+  liked: boolean;
+  handleLikePost: () => Promise<void>;
+  handleUnlikePost: () => Promise<void>;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ initialLikes = 67 }) => {
-  const [liked, setLiked] = useState(false);
+const LikeButton: React.FC<LikeButtonProps> = ({ 
+  initialLikes = 0, 
+  liked = false, 
+  handleLikePost, 
+  handleUnlikePost 
+}) => {
+  const [isLiked, setIsLiked] = useState(liked);
   const [likeCount, setLikeCount] = useState(initialLikes);
 
   const handlePress = () => {
-    setLiked(!liked);
-    setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+    if (isLiked) {
+      handleUnlikePost();
+    } else {
+      handleLikePost();
+    }
+    setIsLiked(!isLiked);
+    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
   };
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.container}>
       <Text style={styles.likeCount}>{likeCount}</Text>
       <MaterialCommunityIcons
-        name={liked ? "heart" : "heart-outline"}
+        name={isLiked ? "heart" : "heart-outline"}
         size={20}
-        color={liked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
+        color={isLiked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
         style={styles.icon}
       />
     </TouchableOpacity>

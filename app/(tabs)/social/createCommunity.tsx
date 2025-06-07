@@ -20,6 +20,11 @@ const CreateCommunityPage = () => {
   const {createCommunityCategory} = useCreateCommunityCategory();
   const [isCreatingCommunity, setIsCreatingCommunity] = useState(false);
   const handleCreateCommunity = async () => {
+    if (fetching || !user?.id) {
+      console.warn('Cannot create community: User data is not yet available');
+      return;
+    }
+
     setIsCreatingCommunity(true);
     let response_log = "";
     let communityId = null;
@@ -90,7 +95,7 @@ const CreateCommunityPage = () => {
   };
 
   // Debug
-  const loadingData = isCreatingCommunity;
+  const loadingData = fetching || isCreatingCommunity;
   if (debugRenders && !loadingData) {
     console.log("Rendering CreateCommunityPage",
       "\nForm Data:", formData,
