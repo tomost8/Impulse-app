@@ -1,6 +1,6 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef, useEffect, useContext } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Platform } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CameraHeaderContext } from './_layout';
 import { useTheme } from 'react-native-paper';
@@ -82,16 +82,30 @@ export default function CameraScreen() {
     const is_double_camera = !fetching && user?.is_double_cam;
     if (cameraRef.current) {
       try {
-        const firstPhoto = await cameraRef.current.takePictureAsync();
-        
-        // Fix front camera mirroring
-        const processedFirstPhoto = facing === 'front' 
-          ? await manipulateAsync(
-              firstPhoto.uri,
-              [{ flip: FlipType.Horizontal }],
-              { compress: 1 }
-            )
-          : firstPhoto;
+        // Take first photo with better options
+        const firstPhoto = await cameraRef.current.takePictureAsync({
+          quality: 1,
+          exif: true,
+          skipProcessing: false // Ensure Android processes the image
+        });
+
+        if (!firstPhoto) return;
+
+        // Process first photo with proper orientation
+        const processedFirstPhoto = await manipulateAsync(
+          firstPhoto.uri,
+          [
+            // Only flip horizontally for front camera
+            ...(facing === 'front' ? [{ flip: FlipType.Horizontal }] : []),
+            // Fix Android orientation
+            ...(Platform.OS === 'android' ? [{ rotate: 0 }] : [])
+          ],
+          { 
+            compress: 1,
+            format: SaveFormat.JPEG,
+            base64: false
+          }
+        );
 
         if (is_double_camera) {
           const firstCameraFacing = facing;
@@ -99,12 +113,12 @@ export default function CameraScreen() {
           setIsCameraReady(false);
           setFacing(secondCameraFacing);
           
-          // Wait for camera to be ready...
+          // Wait for camera switch
           await new Promise(resolve => {
             const checkReady = () => {
               if (isCameraReady) {
                 setTimeout(() => {
-                  console.log('Camera should be physically switched now');
+                  console.log('Camera switched and ready');
                   resolve(true);
                 }, 500);
               } else {
@@ -114,19 +128,33 @@ export default function CameraScreen() {
             checkReady();
           });
 
-          const secondPhoto = await cameraRef.current.takePictureAsync();
-          
-          // Fix front camera mirroring for second photo
-          const processedSecondPhoto = secondCameraFacing === 'front'
-            ? await manipulateAsync(
-                secondPhoto.uri,
-                [{ flip: FlipType.Horizontal }],
-                { compress: 1 }
-              )
-            : secondPhoto;
-          
+          // Take second photo with same options
+          const secondPhoto = await cameraRef.current.takePictureAsync({
+            quality: 1,
+            exif: true,
+            skipProcessing: false
+          });
+
+          if (!secondPhoto) return;
+
+          // Process second photo
+          const processedSecondPhoto = await manipulateAsync(
+            secondPhoto.uri,
+            [
+              ...(secondCameraFacing === 'front' ? [{ flip: FlipType.Horizontal }] : []),
+              ...(Platform.OS === 'android' ? [{ rotate: 0 }] : [])
+            ],
+            { 
+              compress: 1,
+              format: SaveFormat.JPEG,
+              base64: false
+            }
+          );
+
           setIsCameraReady(false);
           setFacing(firstCameraFacing);
+
+          if (!processedFirstPhoto || !processedSecondPhoto) return;
           
           const frontPhoto = firstCameraFacing === 'front' 
             ? processedFirstPhoto.uri 
@@ -134,6 +162,22 @@ export default function CameraScreen() {
           const backPhoto = firstCameraFacing === 'front' 
             ? processedSecondPhoto.uri 
             : processedFirstPhoto.uri;
+
+          router.push({
+            pathname: '/camera/displayPicture',
+            params: { 
+              frontPhoto,
+              backPhoto,
+              id: id,
+              category: category,
+            }
+          });
+        } else {
+          if (!processedFirstPhoto) return;
+          
+          const photo = processedFirstPhoto;
+          const frontPhoto = facing === 'front' ? photo.uri : null;
+          const backPhoto = facing === 'back' ? photo.uri : null;
           
           router.push({
             pathname: '/camera/displayPicture',
@@ -141,20 +185,7 @@ export default function CameraScreen() {
               frontPhoto,
               backPhoto,
               id: id,
-              category: context?.category,
-            }
-          });
-        } else {
-          const photo = processedFirstPhoto;
-          const frontPhoto = facing === 'front' ? photo.uri : null;
-          const backPhoto = facing === 'back' ? photo.uri : null;
-          router.push({
-            pathname: '/camera/displayPicture',
-            params: { 
-              frontPhoto,
-              backPhoto,
-              id: id,
-              category: context?.category,
+              category: category,
             }
           });
         }
@@ -228,7 +259,7 @@ const styles = StyleSheet.create({
   },
   frontPreviewContainer: {
     position: 'absolute',
-    top: 20,
+    top: Platform.OS === 'android' ? 120 : 20, // Increased Android offset to 120
     left: 20,
     width: 100,
     height: 100,

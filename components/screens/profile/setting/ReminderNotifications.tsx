@@ -309,11 +309,12 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backButton: {
-    marginRight: 12,
+    marginRight: s(12),
+    paddingLeft: 4, 
   },
   backIcon: {
-    width: 10,
-    height: 15,
+    width: 12,
+    height: 16,
     tintColor: '#242020',
   },
   headerTitle: {

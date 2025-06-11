@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, StatusBar, Platform } from 'react-native';
 
 interface PostContentProps {
   imageUrls?: string[];

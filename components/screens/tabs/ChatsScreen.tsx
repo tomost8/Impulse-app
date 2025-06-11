@@ -44,15 +44,6 @@ const ChatScreen = (props: ChatScreenProps) => {
         <SafeAreaView>
           <View style={styles.headerContent}>
             <View style={styles.headerLeft}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Image 
-                  source={require("@/assets/icons/backArrow.png")}
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
               <Text style={styles.title}>Chats</Text>
             </View>
             <TouchableOpacity 
@@ -129,21 +120,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain',
-    tintColor: '#242020',
-  },
   title: {
     fontSize: 16,
     fontFamily: 'Poppins',
     color: '#242020',
     fontWeight: '600',
-    paddingLeft: 5,
   },
   addButton: {
     padding: 8,
