@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.icanghai.Impulseapp"
+      "bundleIdentifier": "com.icanghai.Impulseapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -34,6 +37,18 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "deploymentTarget": "13.0",
+            "podMainTargetVersion": "13.0",
+            "moduleMapFile": true,
+            "modularHeaders": true
+          }
+        }
       ]
     ],
     "experiments": {
@@ -44,9 +59,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "f9cf2a86-aa04-48ec-97fc-cbfb63095ff0"
+        "projectId": "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
       }
     },
-    "sdkVersion": "52.0.0"
+    "owner": "williamwangimpulse"
   }
 }
