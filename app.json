@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.icanghai.Impulseapp",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "This app needs access to the camera to take photos."
       }
     },
     "android": {
@@ -43,10 +44,7 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "deploymentTarget": "13.0",
-            "podMainTargetVersion": "13.0",
-            "moduleMapFile": true,
-            "modularHeaders": true
+            "modular_headers": true
           }
         }
       ]
