@@ -13,7 +13,10 @@
       "bundleIdentifier": "com.icanghai.Impulseapp",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSCameraUsageDescription": "This app needs access to the camera to take photos."
+        "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {

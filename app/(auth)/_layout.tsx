@@ -8,27 +8,27 @@ export default function AuthLayout() {
         <Stack.Screen 
           name="getStarted"
           options={{ headerShown: false }}
-          component={require('./getStarted').default}
+          //component={require('./getStarted').default}
         />
         <Stack.Screen 
           name="createAccount"
           options={{ headerShown: false }}
-          component={require('./createAccount').default}
+          //component={require('./createAccount').default}
         />
         <Stack.Screen 
           name="personalProfile"
           options={{ headerShown: false }}
-          component={require('./personalProfile').default}
+          //component={require('./personalProfile').default}
         />
         <Stack.Screen 
           name="primaryGoal"
           options={{ headerShown: false }}
-          component={require('./primaryGoal').default}
+          //component={require('./primaryGoal').default}
         />
         <Stack.Screen 
           name="secondaryGoal"
           options={{ headerShown: false }}
-          component={require('./secondaryGoal').default}
+          //component={require('./secondaryGoal').default}
         />
       </Stack>
     </SignupProvider>

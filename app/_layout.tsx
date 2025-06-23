@@ -12,10 +12,10 @@ import { UserDataProvider } from '@/services/UserPreferencesContext';
 import { InitialDataLoader } from '@/components/InitialDataLoader';
 import { useEffect } from 'react';
 import { lightTheme, darkTheme } from './theme/theme';
+import { API_CONFIG } from '@/config/apiConfig';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
-
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -23,6 +23,21 @@ export default function RootLayout() {
   useEffect(() => {
     // Hide splash screen once the app is ready
     SplashScreen.hideAsync();
+  }, []);
+
+  useEffect(() => {
+    console.log('Testing fetch with URL:', API_CONFIG.BASE_URL);
+    fetch(API_CONFIG.BASE_URL, { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: '{ __typename }'
+      })
+    })
+      .then(res => console.log('✅ Fetch success - Status:', res.status))
+      .catch(err => console.log('❌ Fetch error:', err.message, err));
   }, []);
 
   return (
