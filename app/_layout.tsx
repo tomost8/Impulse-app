@@ -26,7 +26,15 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
+    console.log('=== APOLLO CLIENT DEBUG ===');
     console.log('Testing fetch with URL:', API_CONFIG.BASE_URL);
+    console.log('API_CONFIG object:', API_CONFIG);
+    
+    if (!API_CONFIG.BASE_URL) {
+      console.log('❌ ERROR: BASE_URL is empty!');
+      return;
+    }
+
     fetch(API_CONFIG.BASE_URL, { 
       method: 'POST',
       headers: {
@@ -36,8 +44,21 @@ export default function RootLayout() {
         query: '{ __typename }'
       })
     })
-      .then(res => console.log('✅ Fetch success - Status:', res.status))
-      .catch(err => console.log('❌ Fetch error:', err.message, err));
+      .then(res => {
+        console.log('✅ Fetch success - Status:', res.status);
+        console.log('✅ Response headers:', res.headers);
+        return res.text();
+      })
+      .then(text => {
+        console.log('✅ Response body:', text);
+      })
+      .catch(err => {
+        console.log('❌ Fetch error:', err.message);
+        console.log('❌ Full error object:', err);
+        console.log('❌ Error stack:', err.stack);
+      });
+    
+    console.log('=== END APOLLO CLIENT DEBUG ===');
   }, []);
 
   return (
