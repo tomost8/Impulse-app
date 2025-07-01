@@ -1,6 +1,5 @@
 //import React from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import { BlurView } from 'expo-blur';
 
 interface FlipScreenProps {
   imageSource?: string; // Optional prop to allow different images
@@ -13,15 +12,11 @@ const FlipScreen: React.FC<FlipScreenProps> = ({ imageSource = require('@/assets
         source={imageSource} 
         style={styles.backgroundImage}
       >
-        <BlurView
-          intensity={80}
-          tint="dark"
-          style={styles.blurContainer}
-        >
+        <View style={styles.blurContainer}>
           <View style={styles.textContainer}>
             <Text style={styles.text}>Hold still and smile :)</Text>
           </View>
-        </BlurView>
+        </View>
       </ImageBackground>
     </View>
   );
@@ -38,7 +33,7 @@ const styles = StyleSheet.create({
   },
   blurContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Additional overlay for darker effect
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Changed from BlurView to dark overlay
   },
   textContainer: {
     flex: 1,
