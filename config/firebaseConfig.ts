@@ -1,4 +1,4 @@
-// firebaseConfig.js
+/*
 import { initializeApp } from 'firebase/app';
 import { getAuth, initializeAuth } from 'firebase/auth';
 
@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import crashlytics from '@react-native-firebase/crashlytics';
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -28,12 +29,20 @@ const app = initializeApp(firebaseConfig);
 crashlytics().log('App mounted.');
 
 const auth = getAuth(app);
-/*
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
-});*/
 
 const db = getFirestore(app);
 const storage = getStorage(app);
 
 export { auth, db, storage, crashlytics };
+*/
+
+// firebaseConfig.js
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import crashlytics from '@react-native-firebase/crashlytics';
+
+// Initialize Crashlytics
+crashlytics().log('App mounted.');
+
+export { auth, firestore, storage, crashlytics };
