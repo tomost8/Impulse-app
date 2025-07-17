@@ -10,7 +10,15 @@ export default ({ config }) => {
         : (process.env.API_AWS_URL || 'http://18.191.234.29:3000/graphql'),
     },
     plugins: [
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          ios: {
+            useFrameworks: "static",
+            modular_headers: true
+          }
+        }
+      ]
     ],
   };
 }; 
