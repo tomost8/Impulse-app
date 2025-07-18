@@ -11,6 +11,9 @@
         "API_ENVIROMENT": "aws",
         "API_AWS_URL": "http://18.191.234.29:3000/graphql",
         "API_LOCAL_URL": "http://localhost:3000/graphql"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       }
     },
     "preview": {
@@ -19,6 +22,9 @@
         "API_ENVIROMENT": "aws",
         "API_AWS_URL": "http://18.191.234.29:3000/graphql",
         "API_LOCAL_URL": "http://localhost:3000/graphql"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       }
     },
     "production": {
@@ -27,6 +33,9 @@
         "API_ENVIROMENT": "aws",
         "API_AWS_URL": "http://18.191.234.29:3000/graphql",
         "API_LOCAL_URL": "http://localhost:3000/graphql"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       }
     }
   },

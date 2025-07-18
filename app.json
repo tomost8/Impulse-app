@@ -21,6 +21,7 @@
       "package": "com.icanghai.Impulseapp"
     },
     "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.icanghai.Impulseapp",
       "supportsTablet": true,
       "infoPlist": {
@@ -43,7 +44,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "modular_headers": true
           }
         }
       ],
