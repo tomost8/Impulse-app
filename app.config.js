@@ -2,6 +2,10 @@ export default ({ config }) => {
   //console.log('Current ENV:', process.env); 
   return {
     ...config,
+    ios: {
+      ...config.ios,
+      googleServicesFile: process.env.GOOGLE_SERVICES_IOS ?? './GoogleService-Info.plist',
+    },
     extra: {
       ...config.extra,
       apiEnv: process.env.API_ENVIROMENT || 'aws',
