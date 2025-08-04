@@ -1,7 +1,6 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import { storage } from '@/config/firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import storage from '@react-native-firebase/storage';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 export const pickImage = async (
@@ -64,13 +63,13 @@ export async function processAndUploadImage(photo: PhotoInput | string): Promise
 
     // Create a unique filename
     const filename = `posts/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
-    const storageRef = ref(storage, filename);
+    const storageRef = storage().ref(filename);
 
     // Upload to Firebase Storage
-    const uploadResult = await uploadBytes(storageRef, blob);
+    const uploadResult = await storageRef.put(blob);
     
     // Get the download URL
-    const downloadURL = await getDownloadURL(uploadResult.ref);
+    const downloadURL = await storageRef.getDownloadURL();
     
     return downloadURL;
   } catch (error) {

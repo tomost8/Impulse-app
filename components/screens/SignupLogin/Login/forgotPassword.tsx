@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -11,8 +11,7 @@ import {
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 // Firebase
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/config/firebaseConfig';
+import auth from '@react-native-firebase/auth';
 
 interface ForgotPasswordProps {
   isVisible: boolean;
@@ -34,7 +33,7 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ isVisible, onClose }) =
     setError('');
     
     try {
-      await sendPasswordResetEmail(auth, email);
+      await auth().sendPasswordResetEmail(email);
       console.log('Reset email sent successfully');
       onClose();
     } catch (error: any) {

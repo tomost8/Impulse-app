@@ -13,7 +13,8 @@ import { InitialDataLoader } from '@/components/InitialDataLoader';
 import { useEffect } from 'react';
 import { lightTheme, darkTheme } from './theme/theme';
 import { API_CONFIG } from '@/config/apiConfig';
-import { crashlytics } from '@/config/firebaseConfig';
+import crashlytics from '@react-native-firebase/crashlytics';
+import { NativeModules } from 'react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,15 +28,17 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    // Test Crashlytics
-    try {
-      crashlytics().log('App mounted successfully');
-      crashlytics().setAttribute('custom_blur_enabled', 'true');
-      crashlytics().setAttribute('app_version', '1.0.0');
-      console.log('✅ Crashlytics test completed');
-    } catch (error) {
-      console.error('❌ Crashlytics test failed:', error);
-    }
+    // Test Crashlytics with delay to ensure Firebase is initialized
+    setTimeout(() => {
+      try {
+        crashlytics().log('App mounted successfully');
+        crashlytics().setAttribute('custom_blur_enabled', 'true');
+        crashlytics().setAttribute('app_version', '1.0.0');
+        console.log('✅ Crashlytics test completed');
+      } catch (error) {
+        console.error('❌ Crashlytics test failed:', error);
+      }
+    }, 500);
 
     console.log('=== APOLLO CLIENT DEBUG ===');
     console.log('Testing fetch with URL:', API_CONFIG.BASE_URL);
@@ -43,7 +46,11 @@ export default function RootLayout() {
     
     if (!API_CONFIG.BASE_URL) {
       console.log('❌ ERROR: BASE_URL is empty!');
-      crashlytics().recordError(new Error('BASE_URL is empty'));
+      try {
+        crashlytics().recordError(new Error('BASE_URL is empty'));
+      } catch (error) {
+        console.error('Crashlytics error:', error);
+      }
       return;
     }
 
@@ -63,16 +70,69 @@ export default function RootLayout() {
       })
       .then(text => {
         console.log('✅ Response body:', text);
-        crashlytics().log('Apollo client fetch successful');
+        try {
+          crashlytics().log('Apollo client fetch successful');
+        } catch (error) {
+          console.error('Crashlytics error:', error);
+        }
       })
       .catch(err => {
         console.log('❌ Fetch error:', err.message);
         console.log('❌ Full error object:', err);
         console.log('❌ Error stack:', err.stack);
-        crashlytics().recordError(err);
+        try {
+          crashlytics().recordError(err);
+        } catch (error) {
+          console.error('Crashlytics error:', error);
+        }
       });
     
     console.log('=== END APOLLO CLIENT DEBUG ===');
+  }, []);
+
+  useEffect(() => {
+    // Global error handler for React Native bridge errors
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      // Log to Crashlytics
+      try {
+        crashlytics().log(`Console Error: ${args.join(' ')}`);
+        crashlytics().recordError(new Error(`Console Error: ${args.join(' ')}`));
+      } catch (error) {
+        console.error('Crashlytics error:', error);
+      }
+      
+      // Call original console.error
+      originalConsoleError.apply(console, args);
+    };
+
+    // Handle unhandled promise rejections
+    const handleUnhandledRejection = (event: any) => {
+      try {
+        crashlytics().log(`Unhandled Promise Rejection: ${event.reason}`);
+        crashlytics().recordError(new Error(`Unhandled Promise Rejection: ${event.reason}`));
+      } catch (error) {
+        console.error('Crashlytics error:', error);
+      }
+    };
+
+    // Handle JavaScript errors
+    const handleError = (event: any) => {
+      try {
+        crashlytics().log(`JavaScript Error: ${event.message}`);
+        crashlytics().recordError(new Error(`JavaScript Error: ${event.message}`));
+      } catch (error) {
+        console.error('Crashlytics error:', error);
+      }
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('error', handleError);
+
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener('error', handleError);
+    };
   }, []);
 
   return (

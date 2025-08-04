@@ -8,8 +8,7 @@ import type { AppTheme } from '../theme/theme';
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/config/firebaseConfig';
+import auth from '@react-native-firebase/auth';
 
 export default function GetStarted() {
   const [error, setError] = useState<string | null>(null); 
@@ -19,7 +18,7 @@ export default function GetStarted() {
   const { firebaseAuth } = useFirebaseAuth();
   const tryLogin = async (email: string, password: string, rememberMe: boolean, onSuccess?: () => void) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await auth().signInWithEmailAndPassword(email, password);
       let authToken = await userCredential.user.getIdToken();
       console.log("auth", auth);
       console.log("authToken", email, password, authToken);

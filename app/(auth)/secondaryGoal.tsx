@@ -8,8 +8,7 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/config/firebaseConfig';
+import auth from '@react-native-firebase/auth';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 
 // Signup Page 4
@@ -55,7 +54,7 @@ export default function SecondaryGoal() {
 
   const handleCreateAccount = async (formData: any) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, formData.email as string, formData.password as string);
+      const userCredential = await auth().createUserWithEmailAndPassword(formData.email as string, formData.password as string);
       const authToken = await userCredential.user.getIdToken();
       const { data } = await firebaseAuth({
         context: {
