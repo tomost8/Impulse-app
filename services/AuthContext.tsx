@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth } from '@/config/firebaseConfig';
+// Remove the top-level Firebase import to prevent initialization errors
+// import { getAuth } from '@/config/firebaseConfig';
 
 interface AuthContextType {
   authToken: string | null;
@@ -47,6 +48,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const setupAuth = async () => {
       try {
+        // Lazy import Firebase auth to prevent initialization errors
+        const { getAuth } = await import('@/config/firebaseConfig');
         const auth = await getAuth();
         const unsubscribe = auth().onAuthStateChanged(async (user: any) => {
           if (user) {
@@ -105,6 +108,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
+      // Lazy import Firebase auth to prevent initialization errors
+      const { getAuth } = await import('@/config/firebaseConfig');
       const auth = await getAuth();
       const currentUser = auth().currentUser;
       

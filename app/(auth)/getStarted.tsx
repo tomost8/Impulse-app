@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 // GraphQL hooks
 import { useFirebaseAuth } from '@/hooks/graphql/auth';
-// Componentsimport { StyleSheet } from 'react-native';
+// Components
+import { StyleSheet } from 'react-native';
 import type { AppTheme } from '../theme/theme';
 
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';

@@ -3,8 +3,6 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-// Import Firebase config FIRST before any Firebase modules
-import '@/config/firebaseConfig';
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/client';
 import { PaperProvider, adaptNavigationTheme } from 'react-native-paper';

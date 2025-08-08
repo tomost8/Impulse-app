@@ -81,3 +81,6 @@ export const darkTheme = {
 
 // 导出类型
 export type AppTheme = typeof theme; 
+
+// Default export to satisfy Expo Router requirements
+export default theme; 
