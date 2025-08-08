@@ -15,6 +15,9 @@ defaultConfig.resolver = {
   ...defaultConfig.resolver,
   assetExts: defaultConfig.resolver.assetExts.filter((ext) => ext !== "svg"),
   sourceExts: [...defaultConfig.resolver.sourceExts, "svg"],
+  // Add resolver for Firebase ES modules
+  resolverMainFields: ['react-native', 'browser', 'main'],
+  platforms: ['ios', 'android', 'native', 'web'],
 };
 
 module.exports = defaultConfig;

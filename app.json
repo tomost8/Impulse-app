@@ -18,7 +18,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.icanghai.Impulseapp"
+      "package": "com.icanghai.Impulseapp",
+      "googleServicesFile": "./google-services.json"
     },
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -69,7 +70,9 @@
       },
       "eas": {
         "projectId": "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
-      }
+      },
+      "apiEnv": "aws",
+      "apiUrl": "http://18.191.234.29:3000/graphql"
     },
     "owner": "williamwangimpulse"
   }

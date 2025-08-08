@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import auth from '@react-native-firebase/auth';
+import { getAuth } from '@/config/firebaseConfig';
 
 interface AuthContextType {
   authToken: string | null;
@@ -45,23 +45,33 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Firebase auth state listener
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(async (user) => {
-      if (user) {
-        // Only refresh token if we already have an authToken (user was logged in)
-        if (authToken) {
-          const token = await refreshAuthToken();
-          if (!token) {
+    const setupAuth = async () => {
+      try {
+        const auth = await getAuth();
+        const unsubscribe = auth().onAuthStateChanged(async (user: any) => {
+          if (user) {
+            // Only refresh token if we already have an authToken (user was logged in)
+            if (authToken) {
+              const token = await refreshAuthToken();
+              if (!token) {
+                await logout();
+              }
+            }
+          } else if (authToken) {
+            // Only logout if we actually had an authToken (user was logged in)
             await logout();
           }
-        }
-      } else if (authToken) {
-        // Only logout if we actually had an authToken (user was logged in)
-        await logout();
-      }
-      setLoading(false);
-    });
+          setLoading(false);
+        });
 
-    return () => unsubscribe();
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Error setting up auth listener:', error);
+        setLoading(false);
+      }
+    };
+
+    setupAuth();
   }, [authToken]); // Add authToken as dependency
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
@@ -95,6 +105,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
+      const auth = await getAuth();
       const currentUser = auth().currentUser;
       
       if (currentUser) {
