@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "792210030232",
+    "project_id": "quizdemov1",
+    "storage_bucket": "quizdemov1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792210030232:android:9788909b38174649539aed",
+        "android_client_info": {
+          "package_name": "com.impluse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGOOrxpzT9yXzj977FQkt_jnTTkwBmCB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
