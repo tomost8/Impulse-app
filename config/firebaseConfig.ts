@@ -7,6 +7,11 @@ console.log('🔥 Firebase config loading (mock mode)...');
 const mockAuth = () => ({
   onAuthStateChanged: (callback: any) => {
     console.log('Mock auth state listener');
+    // Simulate auth state change with no user after a short delay
+    setTimeout(() => {
+      console.log('Mock auth: calling callback with null user');
+      callback(null);
+    }, 100);
     return () => {};
   },
   currentUser: null,

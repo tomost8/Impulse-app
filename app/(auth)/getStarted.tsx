@@ -9,7 +9,7 @@ import type { AppTheme } from '../theme/theme';
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import auth from '@react-native-firebase/auth';
+import { auth } from '@/config/firebaseConfig';
 
 export default function GetStarted() {
   const [error, setError] = useState<string | null>(null); 

@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
-import auth from '@react-native-firebase/auth';
+import { auth } from '@/config/firebaseConfig';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 
 // Signup Page 4
