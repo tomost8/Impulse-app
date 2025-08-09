@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// Remove the top-level Firebase import to prevent initialization errors
-// import { getAuth } from '@/config/firebaseConfig';
+import { auth } from '@/config/firebaseConfig';
 
 interface AuthContextType {
   authToken: string | null;
@@ -46,14 +45,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Firebase auth state listener
   useEffect(() => {
-    const setupAuth = async () => {
-      try {
-        console.log('🔐 AuthContext - Setting up auth listener...');
-        // Import React Native Firebase auth
-        const { auth } = await import('@/config/firebaseConfig');
-        console.log('🔐 AuthContext - Auth imported:', typeof auth);
-        const unsubscribe = auth().onAuthStateChanged(async (user: any) => {
+    console.log('🔐 AuthContext - Setting up auth listener...');
+    
+    try {
+      const unsubscribe = auth().onAuthStateChanged(async (user: any) => {
+        try {
           if (user) {
+            console.log('🔐 AuthContext - Firebase user exists:', user.uid);
             // Only refresh token if we already have an authToken (user was logged in)
             if (authToken) {
               const token = await refreshAuthToken();
@@ -62,21 +60,24 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
               }
             }
           } else if (authToken) {
+            console.log('🔐 AuthContext - No Firebase user but authToken exists, logging out');
             // Only logout if we actually had an authToken (user was logged in)
             await logout();
           }
           console.log('🔐 AuthContext - Auth state changed, user:', user ? 'exists' : 'null');
+        } catch (error) {
+          console.error('🔐 AuthContext - Error in auth state change:', error);
+        } finally {
           setLoading(false);
-        });
+        }
+      });
 
-        return () => unsubscribe();
-      } catch (error) {
-        console.error('🔐 AuthContext - Error setting up auth listener:', error);
-        setLoading(false);
-      }
-    };
-
-    setupAuth();
+      return () => unsubscribe();
+    } catch (error) {
+      console.error('🔐 AuthContext - Error setting up auth listener:', error);
+      setLoading(false);
+      return () => {};
+    }
   }, [authToken]); // Add authToken as dependency
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
@@ -110,8 +111,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
-      // Import React Native Firebase auth
-      const { auth } = await import('@/config/firebaseConfig');
+      // Get React Native Firebase auth
       const currentUser = auth().currentUser;
       
       if (currentUser) {

@@ -1,89 +1,98 @@
 // firebaseConfig.ts
-// Mock Firebase configuration to prevent initialization errors
+// React Native Firebase configuration
 
-console.log('🔥 Firebase config loading (mock mode)...');
+console.log('🔥 Firebase config loading (React Native Firebase SDK)...');
 
-// Mock Firebase modules to prevent initialization errors
-const mockAuth = () => ({
-  onAuthStateChanged: (callback: any) => {
-    console.log('Mock auth state listener');
-    // Simulate auth state change with no user after a short delay
-    setTimeout(() => {
-      console.log('Mock auth: calling callback with null user');
-      callback(null);
-    }, 100);
-    return () => {};
-  },
-  currentUser: null,
-  signInWithEmailAndPassword: async (email: string, password: string) => {
-    throw new Error('Firebase Auth not available in mock mode');
-  },
-  signOut: async () => {
-    console.log('Mock sign out');
-  }
-});
+// Lazy loading to prevent initialization issues
+let _auth: any = null;
+let _firestore: any = null;
+let _storage: any = null;
+let _crashlytics: any = null;
 
-const mockFirestore = () => ({
-  collection: (path: string) => ({
-    doc: (id: string) => ({
-      get: async () => ({ data: () => null, exists: false }),
-      set: async (data: any) => ({ id }),
-      update: async (data: any) => ({ id }),
-      delete: async () => ({ id })
-    }),
-    add: async (data: any) => ({ id: 'mock-id' }),
-    where: () => mockFirestore(),
-    orderBy: () => mockFirestore(),
-    limit: () => mockFirestore(),
-    get: async () => ({ docs: [], empty: true })
-  })
-});
+// Create an auth wrapper that provides the expected API
+const createAuthWrapper = () => {
+  const authModule = require('@react-native-firebase/auth').default;
+  
+  // Return a function that when called returns the auth instance with all methods
+  const authWrapper = () => {
+    const authInstance = authModule();
+    
+    // Add the authentication methods to the instance
+    return {
+      ...authInstance,
+      // Core auth methods
+      signInWithEmailAndPassword: (email: string, password: string) => 
+        authModule().signInWithEmailAndPassword(email, password),
+      createUserWithEmailAndPassword: (email: string, password: string) => 
+        authModule().createUserWithEmailAndPassword(email, password),
+      signOut: () => authModule().signOut(),
+      sendPasswordResetEmail: (email: string) => 
+        authModule().sendPasswordResetEmail(email),
+      
+      // State management
+      onAuthStateChanged: (callback: any) => authModule().onAuthStateChanged(callback),
+      
+      // User properties
+      currentUser: authModule().currentUser,
+    };
+  };
+  
+  return authWrapper;
+};
 
-const mockStorage = () => ({
-  ref: (path: string) => ({
-    putFile: async (filePath: string) => ({
-      ref: { getDownloadURL: async () => 'mock-url' }
-    }),
-    getDownloadURL: async () => 'mock-url'
-  })
-});
-
-const mockCrashlytics = () => ({
-  log: (message: string) => console.log('Mock crashlytics:', message),
-  recordError: (error: any) => console.log('Mock crashlytics error:', error)
-});
-
-// Export getter functions that return mock modules
+// Export getter functions for consistency with previous API
 export const getAuth = () => {
-  console.log('🔥 Using mock Firebase Auth');
-  return mockAuth;
+  if (!_auth) {
+    console.log('🔥 Lazy loading React Native Firebase Auth');
+    _auth = createAuthWrapper();
+  }
+  return _auth;
 };
 
 export const getFirestore = () => {
-  console.log('🔥 Using mock Firebase Firestore');
-  return mockFirestore;
+  if (!_firestore) {
+    console.log('🔥 Lazy loading React Native Firebase Firestore');
+    const firestore = require('@react-native-firebase/firestore').default;
+    _firestore = firestore;
+  }
+  return _firestore;
 };
 
 export const getStorage = () => {
-  console.log('🔥 Using mock Firebase Storage');
-  return mockStorage;
+  if (!_storage) {
+    console.log('🔥 Lazy loading React Native Firebase Storage');
+    const storage = require('@react-native-firebase/storage').default;
+    _storage = storage;
+  }
+  return _storage;
 };
 
 export const getCrashlytics = () => {
-  console.log('🔥 Using mock Firebase Crashlytics');
-  return mockCrashlytics;
+  if (!_crashlytics) {
+    console.log('🔥 Lazy loading React Native Firebase Crashlytics');
+    const crashlytics = require('@react-native-firebase/crashlytics').default;
+    _crashlytics = crashlytics;
+  }
+  return _crashlytics;
 };
 
 // Export direct references for backwards compatibility
-export const auth = getAuth();
-export const firestore = getFirestore();
-export const storage = getStorage();
-export const crashlytics = getCrashlytics();
+export const auth = getAuth;
+export const firestore = getFirestore;
+export const storage = getStorage;
+export const crashlytics = getCrashlytics;
 
-// Initialize Firebase function (does nothing in mock mode)
+// Initialize Firebase function
 export const initializeFirebase = async () => {
-  console.log('🔥 Mock Firebase initialization complete');
-  return true;
+  try {
+    const authInstance = getAuth();
+    console.log('🔥 React Native Firebase initialization complete');
+    console.log('🔥 Auth state:', authInstance().currentUser ? 'User signed in' : 'No user');
+    return true;
+  } catch (error) {
+    console.error('🔥 Firebase initialization error:', error);
+    return false;
+  }
 };
 
 // Default export to satisfy module requirements
