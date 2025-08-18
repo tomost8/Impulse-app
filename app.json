@@ -38,8 +38,6 @@
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-      "@react-native-firebase/firestore",
-      "@react-native-firebase/storage",
       "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",

@@ -6,12 +6,8 @@ console.log('=== APOLLO CLIENT SETUP ===');
 console.log('API_CONFIG in client.ts:', API_CONFIG);
 console.log('Using BASE_URL:', API_CONFIG.BASE_URL);
 
-// Temporarily hardcode the URL to test
-const apiUrl = "http://18.191.234.29:3000/graphql";
-console.log('Hardcoded URL for testing:', apiUrl);
-
 const httpLink = createHttpLink({
-  uri: apiUrl,
+  uri: API_CONFIG.BASE_URL,
 });
 
 // Add error handling link
@@ -26,12 +22,8 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
 
   if (networkError) {
     console.error(`[Network error]: ${networkError}`);
-    // Don't throw the error, just log it
-    // This prevents crashes in production
   }
 });
-
-console.log('Created httpLink with URI:', apiUrl);
 
 export const client = new ApolloClient({
   link: from([errorLink, httpLink]),

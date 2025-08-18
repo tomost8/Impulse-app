@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 //authentication
-import { auth } from '@/config/firebaseConfig';
+import { getAuth } from '@/config/firebaseConfig';
 import { FIREBASE_AUTH } from '../../../hooks/graphql/auth';
 import { useMutation } from '@apollo/client';
 
@@ -28,7 +28,7 @@ export default function Login() {
     setError(null);
     try {
       let authToken;
-      const userCredential = await auth().signInWithEmailAndPassword(email, password);
+      const userCredential = await getAuth().signInWithEmailAndPassword(email, password);
       authToken = await userCredential.user.getIdToken();
       console.log("authToken", authToken);
       const { data } = await firebaseAuth({

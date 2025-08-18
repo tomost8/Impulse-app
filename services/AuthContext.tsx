@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { auth } from '@/config/firebaseConfig';
+import { getAuth } from '@/config/firebaseConfig';
 
 interface AuthContextType {
   authToken: string | null;
@@ -48,7 +48,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     console.log('🔐 AuthContext - Setting up auth listener...');
     
     try {
-      const unsubscribe = auth().onAuthStateChanged(async (user: any) => {
+      const unsubscribe = getAuth().onAuthStateChanged(async (user: any) => {
         try {
           if (user) {
             console.log('🔐 AuthContext - Firebase user exists:', user.uid);
@@ -112,7 +112,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshAuthToken = async () => {
     try {
       // Get React Native Firebase auth
-      const currentUser = auth().currentUser;
+      const currentUser = getAuth().currentUser;
       
       if (currentUser) {
         // Get the current token without forcing refresh
