@@ -87,9 +87,9 @@ const CommunitiesList = (props: CommunityProps) => {
         <ScrollView style={styles.communitiesList}>
           {filteredCommunities.map((community) => (
             <View key={community.id} style={styles.communityItem}>
-              <TouchableOpacity onPress={() => console.log("Community pressed:", community.id)}>
+              <TouchableOpacity onPress={() => router.push(`/community/${community.id}`)}>
                 <Image
-                  source={community.thumbnail}
+                  source={{uri: community.thumbnail}}
                   style={styles.communityAvatar}
                 />
               </TouchableOpacity>

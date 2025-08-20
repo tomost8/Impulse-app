@@ -20,7 +20,7 @@ const CommunityList: React.FC<CommunityListProps> = ({ communities }) => {
           onPress={() => router.push(`/community/${community.id}`)}
         >
           <Image
-            source={community.thumbnail}
+            source={{uri: community.thumbnail}}
             style={styles.communityImage}
           />
           <Text style={styles.communityName}>{community.name}</Text>

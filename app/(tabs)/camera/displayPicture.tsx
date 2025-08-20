@@ -10,7 +10,7 @@ import DisplayPictureScreen from "@/components/screens/camera/SingleLensCamera/d
 import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
 import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from "@/services/UserPreferencesContext";
 import { processAndUploadImage } from '@/utils/imageProcessing';
 
@@ -30,8 +30,8 @@ const DisplayPicturePage = () => {
     .map(source => source!.uri);
 
   // User Data
-  const { authToken } = useUserInfo();
-  const { fetching, user, activities, friends, chats, communities } = useUserData();
+  const { authToken } = useUserAuth();
+  const { fetching, user, activities, friends, chats, communities, refetchFriendsFeed, refetchCommunityFeed } = useUserData();
   const timezone = user?.timezone;
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");
   const acceptedGroups = chats?.filter((chat: any) => chat.status === "ACCEPTED" && chat.chat.type === "group");
@@ -71,6 +71,11 @@ const DisplayPicturePage = () => {
       const response = await createPost(input, authToken as string);
       if (response.success) {
         console.log("Post created successfully:", response.post);
+        // Refetch both feeds after successful post creation
+        await Promise.all([
+          refetchFriendsFeed(),
+          refetchCommunityFeed()
+        ]);
       } else {
         throw new Error("createPost response.success false:" + response.errors);
       }

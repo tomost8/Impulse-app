@@ -8,7 +8,6 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { router } from 'expo-router';
 
 interface UserOptionProps {
   name: string;
@@ -23,7 +22,7 @@ const UserOption = ({ name, profilePic, isSelected, onSelect }: UserOptionProps)
     onPress={onSelect}
   >
     <View style={styles.optionContent}>
-      <Image source={profilePic} style={styles.profilePic} />
+      <Image source={{uri: profilePic}} style={styles.profilePic} />
       <Text style={styles.optionName}>{name}</Text>
     </View>
     <Image 

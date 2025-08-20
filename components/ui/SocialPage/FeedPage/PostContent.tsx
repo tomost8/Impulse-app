@@ -56,7 +56,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    //paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     gap: 8,
   },
   containerNoCaption: {

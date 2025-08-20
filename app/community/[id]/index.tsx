@@ -2,7 +2,8 @@ import { useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
+import { useUserData } from '@/services/UserPreferencesContext';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
@@ -13,7 +14,8 @@ import { debugRenders } from '@/utils/debug';
 
 const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
-  const { userId, authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
+  const { fetching, user } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
@@ -53,10 +55,10 @@ const CommunityPage = () => {
     }
   }, [hasNewCommunityData, hasNewMembersData, hasNewAnnouncementsData]);
 
-  const isAdmin = communityRef.current?.influencer?.id === userId;
+  const isAdmin = communityRef.current?.influencer?.id === user.id;
 
   // Debug
-  const loading = !hasFetchedCommunity.current || !hasFetchedMembers.current || !hasFetchedAnnouncements.current;
+  const loading = fetching || !hasFetchedCommunity.current || !hasFetchedMembers.current || !hasFetchedAnnouncements.current;
   if (debugRenders && !loading) {
     console.log("Rendering CommunityScreen\n",
       "Community:", communityRef.current, "\n",

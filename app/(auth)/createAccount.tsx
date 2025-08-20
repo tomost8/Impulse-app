@@ -2,8 +2,7 @@ import { useState } from 'react';
 import styles from '@/utils/testStyles';
 import { View, TextInput, Button, Text, Platform } from 'react-native';
 import { router } from 'expo-router';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { auth, db } from '@/config/firebaseConfig';
+import firestore from '@react-native-firebase/firestore';
 
 import CreateAccountScreen from '@/components/screens/SignupLogin/Signup/createaccount';
 
@@ -29,17 +28,19 @@ export default function CreateAccount() {
       }
 
       // Check email availability
-      const emailQuery = await getDocs(
-        query(collection(db, 'users'), where('email', '==', email.toLowerCase()))
-      );
+      const emailQuery = await firestore()
+        .collection('users')
+        .where('email', '==', email.toLowerCase())
+        .get();
       if (!emailQuery.empty) {
         setError('Email is already in use');
         return false;
       }
       // Check username availability
-      const usernameQuery = await getDocs(
-        query(collection(db, 'users'), where('userName', '==', username.toLowerCase()))
-      );
+      const usernameQuery = await firestore()
+        .collection('users')
+        .where('userName', '==', username.toLowerCase())
+        .get();
       if (!usernameQuery.empty) {
         setError('Username is already taken');
         return false;

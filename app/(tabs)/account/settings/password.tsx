@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import PasswordScreen from '@/components/screens/profile/ProfileSetting/ResetPasswordScreen';
 // Firebase
-import { getAuth, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
+import auth from '@react-native-firebase/auth';
 // Debug
 
 const PasswordPage = () => {
@@ -15,19 +15,18 @@ const PasswordPage = () => {
     setError(null);
     
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
+      const user = auth().currentUser;
       
       if (!user || !user.email) {
         throw new Error('User not found or email not verified');
       }
 
       // First, re-authenticate the user with their old password
-      const credential = EmailAuthProvider.credential(user.email, oldPassword);
-      await reauthenticateWithCredential(user, credential);
+      const credential = auth.EmailAuthProvider.credential(user.email, oldPassword);
+      await user.reauthenticateWithCredential(credential);
       
       // If re-authentication successful, update to new password
-      await updatePassword(user, newPassword);
+      await user.updatePassword(newPassword);
       //console.log('Password updated successfully');
     } catch (err: any) {
       setError(err.message || 'Failed to update password');

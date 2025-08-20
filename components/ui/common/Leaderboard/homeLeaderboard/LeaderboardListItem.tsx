@@ -15,7 +15,7 @@ const LeaderboardListItem: React.FC<LeaderboardListItemProps> = ({ rank, name, p
       <Text style={styles.rank}>{rank}</Text>
 
       {/* Profile Image */}
-      <Image source={imageUrl} style={styles.profileImage} />
+      <Image source={{uri: imageUrl}} style={styles.profileImage} />
 
       {/* Name and Points */}
       <View style={styles.textContainer}>

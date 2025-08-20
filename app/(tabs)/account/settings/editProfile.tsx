@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
+import { router } from 'expo-router';
 // GraphQL hooks
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
@@ -8,14 +9,14 @@ import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfi
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 
 
 const EditProfilePage = () => {
-  const { userId, authToken } = useUserInfo();
-  const { fetching, user } = useUserData();
+  const { authToken } = useUserAuth();
+  const { fetching, user, setUser } = useUserData();
 
   // Form Data
   const [formData, setFormData] = useState({
@@ -62,6 +63,10 @@ const EditProfilePage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFormSubmit = async (input: any) => {
+    if (fetching || !user?.id) {
+      console.warn('Cannot update user profile: User data is not yet available');
+      return;
+    }
     setIsSubmitting(true);
     try {
       // Check if profile_picture is not already uploaded to Firestore
@@ -82,7 +87,13 @@ const EditProfilePage = () => {
       console.log('Form Data:', formData, '\nInput:', input);
       const response = await updateUser(input, authToken as string);
       if (response.success) {
-        console.log('User Profile Updated', response.user);
+        const updatedUser = {
+          ...user,           // Start with the stored user data
+          ...response.user   // Update any fields from response.user
+        };
+        setUser(updatedUser);
+        console.log("Updated user data", updatedUser)
+        router.back();
       } else {
         throw new Error('updateUser response.success is false');
       }
@@ -95,6 +106,7 @@ const EditProfilePage = () => {
 
   // Debug
   const loading = isSubmitting;
+  const debugRenders = false;
   if (debugRenders && !loading) {
     console.log("Rendering EditProfilePage\n",
       "User:", user, "\n",

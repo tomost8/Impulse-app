@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform, FlatList } from "react-native";
 import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
@@ -8,32 +8,25 @@ import { router } from "expo-router";
 const exploreIcon = require("@/assets/icons/explore.png");
 
 interface SocialScreenProps {
+  loading: boolean;
   communityMembers: any[];
-  isCommunityMembersLoading: boolean;
   friendsFeed: any[];
-  isFriendsFeedLoading: boolean;
   communityFeed: any[];
-  isCommunityFeedLoading: boolean;
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
-  isHandlingLike: boolean;
-  isHandlingUnlike: boolean;
-  updatePostLikeState: (postId: number, liked: boolean) => void;
 }
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
+  loading,
   communityMembers,
-  isCommunityMembersLoading,
   friendsFeed,
-  isFriendsFeedLoading,
   communityFeed,
-  isCommunityFeedLoading,
   handleLikePost,
   handleUnlikePost,
-  isHandlingLike,
-  isHandlingUnlike,
-  updatePostLikeState,
 }) => {
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
   const handleTabChange = (tab: 'friends' | 'communities') => {
     setSelectedTab(tab);
@@ -80,34 +73,42 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
           selectedTab={selectedTab}
         />
       </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.scrollContent}>
-          {selectedTab === 'communities' && (
-            <>
-              {/* Community List Section */}
-              <View style={styles.communityListSection}>
-                <ListWithProfiles 
-                  communities={joinedCommunities} 
-                />
-              </View>
-              {/* Community Filter Section */}
-              <View style={styles.filterSection}>
-                <Filter 
-                  communities={joinedCommunities} 
-                  handleFilterChange={handleFilterChange} 
-                />
-              </View>
-            </>
-          )}
-          {/* Feed */}
-          <View style={styles.feedSection}>
-            <Feed 
-              currentTab={selectedTab}
-              posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
-            />
+      <FlatList
+        style={styles.scrollContainer}
+        data={[{ key: 'content' }]}
+        renderItem={() => (
+          <View style={styles.scrollContent}>
+            {selectedTab === 'communities' && (
+              <>
+                {/* Community List Section */}
+                <View style={styles.communityListSection}>
+                  <ListWithProfiles 
+                    communities={joinedCommunities} 
+                  />
+                </View>
+                {/* Community Filter Section */}
+                <View style={styles.filterSection}>
+                  <Filter 
+                    communities={joinedCommunities} 
+                    handleFilterChange={handleFilterChange} 
+                  />
+                </View>
+              </>
+            )}
+            {/* Feed */}
+            <View style={styles.feedSection}>
+              <Feed 
+                currentTab={selectedTab}
+                posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
+                handleLikePost={handleLikePost}
+                handleUnlikePost={handleUnlikePost}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        )}
+        keyExtractor={() => 'content'}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };

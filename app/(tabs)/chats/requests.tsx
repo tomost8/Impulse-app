@@ -9,11 +9,11 @@ import RequestsScreen from '@/components/screens/chats/requestsScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 const RequestsPage = () => {
-  const { authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
  const { fetching, user, friends, chats } = useUserData();
 
  // Mutations: Accept

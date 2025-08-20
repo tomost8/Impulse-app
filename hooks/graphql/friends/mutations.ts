@@ -8,8 +8,10 @@ export const SEND_FRIEND_REQUEST = gql`
       success
       friendship {
         user { id first_name last_name }
-        friend { id first_name last_name }
+        friend { id first_name last_name username profile_picture }
+        role
         status
+        chat_id
       }
       errors { field message }
     }
@@ -45,18 +47,17 @@ export const ACCEPT_FRIEND_REQUEST = gql`
     updateFriendship(user_id: $userId, friend_id: $friendId, input: $input) {
       success
       friendship {
-        user {
-          id
-          first_name
-          last_name
-        }
+        user { id first_name last_name }
         friend {
           id
           first_name
           last_name
+          username
+          profile_picture
         }
         role
         status
+        chat_id
       }
       errors {
         field

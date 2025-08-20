@@ -1,35 +1,50 @@
-// firebaseConfig.js
-import { initializeApp } from 'firebase/app';
-import { getAuth, initializeAuth } from 'firebase/auth';
+// firebaseConfig.ts
+// React Native Firebase configuration for v22
 
-//@ts-ignore
-import { getReactNativePersistence } from '@firebase/auth/dist/rn/index.js';
+console.log('🔥 Firebase config loading (React Native Firebase SDK v22)...');
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+// Import the app module to trigger auto-initialization
+import '@react-native-firebase/app';
+import { getApps, getApp } from '@react-native-firebase/app';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import crashlytics from '@react-native-firebase/crashlytics';
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBfwDZ1u34v9EW8WjRpRlDHIwnbkTHt4s4",
-  authDomain: "quizdemov1.firebaseapp.com",
-  projectId: "quizdemov1",
-  storageBucket: "quizdemov1.appspot.com",
-  messagingSenderId: "792210030232",
-  appId: "1:792210030232:web:8a4c73571761bcc6539aed",
-  measurementId: "G-4RNXMWZQPT"
+// Test Firebase initialization
+try {
+  const apps = getApps();
+  console.log('🔥 Firebase apps available:', apps.length);
+  
+  if (apps.length > 0) {
+    const defaultApp = getApp();
+    console.log('✅ Firebase default app exists:', defaultApp.name);
+    console.log('✅ Firebase project ID:', defaultApp.options.projectId);
+  } else {
+    console.log('❌ No Firebase apps found - this indicates an initialization issue');
+  }
+} catch (error) {
+  console.error('❌ Error checking Firebase initialization:', error);
+}
+
+// Export Firebase services as functions (React Native Firebase v22 pattern)
+// These should auto-initialize when Google Services files are present
+export const getAuth = () => auth();
+export const getFirestore = () => firestore();
+export const getStorage = () => storage();
+export const getCrashlytics = () => crashlytics();
+
+// For backward compatibility, also export the modules directly
+export { auth, firestore, storage, crashlytics };
+
+// Default export
+export default {
+  auth,
+  firestore,
+  storage,
+  crashlytics,
+  getAuth,
+  getFirestore,
+  getStorage,
+  getCrashlytics
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-/*
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage)
-});*/
-
-const db = getFirestore(app);
-const storage = getStorage(app);
-
-export { auth, db, storage };

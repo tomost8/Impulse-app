@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import PostCard from "./PostCard";
 import FullPostCard from "../Post/fullpostcard";
@@ -6,14 +6,18 @@ import FullPostCard from "../Post/fullpostcard";
 interface FeedProps {
   currentTab: 'friends' | 'communities';
   posts: any[];
+  handleLikePost: (postId: number) => Promise<void>;
+  handleUnlikePost: (postId: number) => Promise<void>;
 }
 
-const Feed: React.FC<FeedProps> = ({ currentTab, posts }) => {
+const Feed: React.FC<FeedProps> = ({ currentTab, posts, handleLikePost, handleUnlikePost }) => {
   const renderItem = ({ item }: { item: typeof posts[0] }) => (
     <View style={styles.postContainer}>
       <PostCard 
         post={item}
         showCommunityTag={currentTab === 'communities'}
+        handleLikePost={() => handleLikePost(item.id)}
+        handleUnlikePost={() => handleUnlikePost(item.id)}
       />
     </View>
   );

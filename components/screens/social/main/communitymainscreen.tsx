@@ -66,6 +66,7 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
           name={community?.name || "Community Name"}
           memberCount={members?.length || 0}
           communityId={community?.id}
+          isAdmin={isAdmin}
         />
         <About
           description={community?.description}
@@ -77,6 +78,7 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
           announcement={announcements[0]?.content}
           onViewAll={handleViewAllAnnouncements}
           onMakeAnnouncement={handleMakeAnnouncement}
+          isAdmin={isAdmin}
         />
         <MembersList
           members={members}

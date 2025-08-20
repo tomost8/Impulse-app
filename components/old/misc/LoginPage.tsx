@@ -2,15 +2,14 @@ import { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 //authentication
-import { auth } from '@/config/firebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth } from '@/config/firebaseConfig';
 import { FIREBASE_AUTH } from '../../../hooks/graphql/auth';
 import { useMutation } from '@apollo/client';
 
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 export default function Login() {
-  const { login } = useUserInfo();
+  const { login } = useUserAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +28,7 @@ export default function Login() {
     setError(null);
     try {
       let authToken;
-      const userCredential = await signInWithEmailAndPassword(auth, email, password); // imported from firebase/auth
+      const userCredential = await getAuth().signInWithEmailAndPassword(email, password);
       authToken = await userCredential.user.getIdToken();
       console.log("authToken", authToken);
       const { data } = await firebaseAuth({
@@ -43,7 +42,7 @@ export default function Login() {
       
       if (data?.firebaseAuth?.success && data.firebaseAuth?.user) {
         const userData = data.firebaseAuth.user;
-        await login(authToken, userData.id);
+        await login(authToken, userData.id, false, email);
         console.log("redirecting to home");
         router.replace('/(tabs)/home');
       }

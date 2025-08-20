@@ -9,7 +9,7 @@ import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 // Services
 import { useUserData } from '@/services/UserPreferencesContext';
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 
 interface SendPhotoModalProps {
   visible: boolean;
@@ -22,7 +22,7 @@ interface SendPhotoModalProps {
 
 const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activitiesList, imageSources }: SendPhotoModalProps) => {
 
-  const { userId, authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
   const { fetching, user, friends, chats, communities } = useUserData();
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");
   const acceptedGroups = chats?.filter((chat: any) => chat.status === "ACCEPTED" && chat.chat.type === "group");
@@ -61,7 +61,7 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
       });
       const downloadURLs = await Promise.all(imageSources.map(processAndUploadImage));
       const input = {
-        authorId: userId,
+        authorId: user.id,
         activityId: id,
         category: category,
         caption: caption,
@@ -144,8 +144,8 @@ const SendPhotoModal = ({ visible, hideModal, currentTab, setCurrentTab, activit
             <Text style={styles.text}>Send Photo Modal - Users</Text>
             <View style={styles.checkbox}>
               <Checkbox
-                status={selectedTargets["feed" + userId] ? 'checked' : 'unchecked'}
-                onPress={() => toggleTarget("feed" + userId)}
+                status={selectedTargets["feed" + user.id] ? 'checked' : 'unchecked'}
+                onPress={() => toggleTarget("feed" + user.id)}
               />
               <Text style={styles.text}>Post to Feed</Text>
             </View>

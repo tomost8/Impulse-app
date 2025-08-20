@@ -1,7 +1,8 @@
-import React from 'react';
+//import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Header from './header';
 import Content from './content';
+import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 
 interface FullPostCardProps {
   post?: {
@@ -10,12 +11,25 @@ interface FullPostCardProps {
     profileImage?: string;
     caption?: string;
     images?: string[];
+    liked?: boolean;
     likeCount?: number;
     commentCount?: number;
   };
+  onLike?: () => void;
+  onUnlike?: () => void;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
+const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike }) => {
+  const handleLike = () => {
+    console.log("post", post);
+    if (post?.liked) {
+      console.log("unliking post");
+      onUnlike?.();
+    } else {
+      console.log("liking post");
+      onLike?.();
+    }
+  };
   return (
     <View style={styles.container}>
       <Header 
@@ -29,9 +43,18 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {} }) => {
       />
       <View style={styles.interactionContainer}>
         <View style={styles.interactionGroup}>
-          <TouchableOpacity style={styles.interactionButton}>
-            <Image 
+          <TouchableOpacity 
+            style={styles.interactionButton}
+            onPress={handleLike}
+          >
+            {/* <Image 
               source={require("@/assets/icons/heart.png")}
+              style={styles.icon}
+            /> */}
+            <MaterialCommunityIcons
+              name={post?.liked ? "heart" : "heart-outline"}
+              size={20}
+              color={post?.liked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
               style={styles.icon}
             />
             <Text style={styles.count}>{post.likeCount} like{post.likeCount === 1 ? '' : 's'}</Text>

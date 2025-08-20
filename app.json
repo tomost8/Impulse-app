@@ -7,24 +7,52 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.icanghai.Impulseapp"
+    "newArchEnabled": false,
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.icanghai.Impulseapp"
+      "package": "com.icanghai.Impulseapp",
+      "googleServicesFile": "./google-services.json"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.icanghai.Impulseapp",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "This app needs access to the camera to take photos.",
+        "NSAppTransportSecurity": {
+          "NSExceptionDomains": {
+            "18.191.234.29": {
+              "NSExceptionAllowsInsecureHTTPLoads": true,
+              "NSExceptionMinimumTLSVersion": "1.0",
+              "NSExceptionRequiresForwardSecrecy": false,
+              "NSIncludesSubdomains": true
+            }
+          }
+        }
+      }
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "modular_headers": true
+          }
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
@@ -44,8 +72,11 @@
         "origin": false
       },
       "eas": {
-        "projectId": "f9cf2a86-aa04-48ec-97fc-cbfb63095ff0"
-      }
-    }
+        "projectId": "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
+      },
+      "apiEnv": "aws",
+      "apiUrl": "http://18.191.234.29:3000/graphql"
+    },
+    "owner": "williamwangimpulse"
   }
 }

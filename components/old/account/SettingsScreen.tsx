@@ -1,10 +1,10 @@
 import styles from '@/utils/testStyles';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { router } from 'expo-router';
 
 export default function SettingsScreen() {
-    const { logout } = useUserInfo();
+    const { logout } = useUserAuth();
     return (
       <View style={styles.container}>
           <TouchableOpacity style={styles.button} onPress={() => router.push('/account/settings/profile')}>

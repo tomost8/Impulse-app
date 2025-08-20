@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth } from 'firebase/auth';
+import { getAuth } from '@/config/firebaseConfig';
 
-interface UserContextType {
+interface AuthContextType {
   authToken: string | null;
   userId: number | null;
   loading: boolean;
@@ -11,40 +11,74 @@ interface UserContextType {
   refreshAuthToken: () => Promise<string | null>;
 }
 
-const UserContext = createContext<UserContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
-
-  // Initial load
+  
+  // Initialize auth state from AsyncStorage first
   useEffect(() => {
-    getUserInfo();
+    const initializeAuth = async () => {
+      try {
+        const [storedToken, storedRememberMe, storedUserId] = await Promise.all([
+          AsyncStorage.getItem('authToken'),
+          AsyncStorage.getItem('rememberMe'),
+          AsyncStorage.getItem('userId'),
+        ]);
+
+        const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
+        
+        if (rememberMeData?.rememberMe && storedToken && storedUserId) {
+          setAuthToken(storedToken);
+          setUserId(Number(storedUserId));
+        }
+      } catch (error) {
+        console.error('Error initializing auth state:', error);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
-  const getUserInfo = async () => {
+  // Firebase auth state listener
+  useEffect(() => {
+    console.log('🔐 AuthContext - Setting up auth listener...');
+    
     try {
-      const [storedRememberMe, storedAuthToken, storedUserId] = await Promise.all([
-        AsyncStorage.getItem('rememberMe'),
-        AsyncStorage.getItem('authToken'),
-        AsyncStorage.getItem('userId'),
-      ]);
+      const unsubscribe = getAuth().onAuthStateChanged(async (user: any) => {
+        try {
+          if (user) {
+            console.log('🔐 AuthContext - Firebase user exists:', user.uid);
+            // Only refresh token if we already have an authToken (user was logged in)
+            if (authToken) {
+              const token = await refreshAuthToken();
+              if (!token) {
+                await logout();
+              }
+            }
+          } else if (authToken) {
+            console.log('🔐 AuthContext - No Firebase user but authToken exists, logging out');
+            // Only logout if we actually had an authToken (user was logged in)
+            await logout();
+          }
+          console.log('🔐 AuthContext - Auth state changed, user:', user ? 'exists' : 'null');
+        } catch (error) {
+          console.error('🔐 AuthContext - Error in auth state change:', error);
+        } finally {
+          setLoading(false);
+        }
+      });
 
-      const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
-      if (rememberMeData?.rememberMe) {
-        setAuthToken(storedAuthToken);
-        setUserId(Number(storedUserId));
-      } else {
-        await logout();
-      }
+      return () => unsubscribe();
     } catch (error) {
-      console.error('Error fetching data from AsyncStorage:', error);
-    } finally {
+      console.error('🔐 AuthContext - Error setting up auth listener:', error);
       setLoading(false);
+      return () => {};
     }
-  };
+  }, [authToken]); // Add authToken as dependency
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
     try {
@@ -77,8 +111,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
+      // Get React Native Firebase auth
+      const currentUser = getAuth().currentUser;
       
       if (currentUser) {
         // Get the current token without forcing refresh
@@ -113,7 +147,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider 
+    <AuthContext.Provider 
       value={{ 
         authToken, 
         userId, 
@@ -124,14 +158,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-export const useUserInfo = () => {
-  const context = useContext(UserContext);
+export const useUserAuth = () => {
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useUserInfo must be used within a UserProvider');
+    throw new Error('useUserAuth must be used within a UserProvider');
   }
   return context;
 }; 

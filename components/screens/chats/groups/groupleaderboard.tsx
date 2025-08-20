@@ -79,7 +79,7 @@ const GroupLeaderboardScreen = () => {
         <View style={styles.podium}>
           {/* Second Place */}
           <View style={styles.podiumItem}>
-            <Image source={leaderboardData[1].profileImage} style={styles.podiumImage} />
+            <Image source={{uri: leaderboardData[1].profileImage}} style={styles.podiumImage} />
             <Text style={styles.podiumName}>{leaderboardData[1].name}</Text>
             <Text style={styles.podiumPoints}>{leaderboardData[1].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.secondPlace]}>
@@ -89,7 +89,7 @@ const GroupLeaderboardScreen = () => {
 
           {/* First Place */}
           <View style={[styles.podiumItem, styles.firstPlaceItem]}>
-            <Image source={leaderboardData[0].profileImage} style={styles.podiumImage} />
+            <Image source={{uri: leaderboardData[0].profileImage}} style={styles.podiumImage} />
             <Text style={styles.podiumName}>{leaderboardData[0].name}</Text>
             <Text style={styles.podiumPoints}>{leaderboardData[0].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.firstPlace]}>
@@ -99,7 +99,7 @@ const GroupLeaderboardScreen = () => {
 
           {/* Third Place */}
           <View style={styles.podiumItem}>
-            <Image source={leaderboardData[2].profileImage} style={styles.podiumImage} />
+            <Image source={{uri: leaderboardData[2].profileImage}} style={styles.podiumImage} />
             <Text style={styles.podiumName}>{leaderboardData[2].name}</Text>
             <Text style={styles.podiumPoints}>{leaderboardData[2].points.points} Pts</Text>
             <View style={[styles.podiumPosition, styles.thirdPlace]}>
@@ -116,7 +116,7 @@ const GroupLeaderboardScreen = () => {
                 <View style={styles.rankBadge}>
                   <Text style={styles.rankNumber}>{user.rank}</Text>
                 </View>
-                <Image source={user.profileImage} style={styles.rankImage} />
+                <Image source={{uri: user.profileImage}} style={styles.rankImage} />
                 <Text style={styles.rankName}>{user.name}</Text>
               </View>
               <Text style={styles.rankPoints}>{user.points.points}</Text>

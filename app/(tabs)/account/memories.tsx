@@ -6,19 +6,18 @@ import Memories from '@/components/screens/profile/Memories';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 
 const MemoriesPage = () => {
-  const { userId, authToken } = useUserInfo();
-  const {fetching, timezone} = useUserData();
+  const {fetching, user, timezone} = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const memoriesRef = useRef<any | null>(null); 
   const hasFetchedMemories = useRef(false);
-  const { posts, fetched: hasNewMemoriesData } = useGetPostsByUserId(userId as number, !hasFetchedMemories.current);
+  const { posts, fetched: hasNewMemoriesData } = useGetPostsByUserId(user.id, !hasFetchedMemories.current && !fetching);
 
   useEffect(() => {
     if (!hasNewMemoriesData) {

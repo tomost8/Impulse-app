@@ -7,12 +7,12 @@ import ViewGoalsScreen from '@/components/screens/home/ViewActivities';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
 
 const ViewActivityPage = () => {
-  const { userId, authToken } = useUserInfo();
+  const { authToken } = useUserAuth();
   const { fetching, user, activities, setActivities } = useUserData();
 
   // Mutations

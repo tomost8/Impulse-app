@@ -5,12 +5,14 @@ interface AnnouncementProps {
   announcement?: string;
   onViewAll?: () => void;
   onMakeAnnouncement?: () => void;
+  isAdmin: boolean;
 }
 
 const Announcement: React.FC<AnnouncementProps> = ({
   announcement,
   onViewAll,
   onMakeAnnouncement,
+  isAdmin
 }) => {
   return (
     <View style={styles.container}>
@@ -24,13 +26,14 @@ const Announcement: React.FC<AnnouncementProps> = ({
       <View style={styles.announcementCard}>
         <Text style={styles.announcementText}>{announcement}</Text>
       </View>
-
-      <TouchableOpacity 
-        style={styles.makeAnnouncementButton}
-        onPress={onMakeAnnouncement}
-      >
-        <Text style={styles.makeAnnouncementText}>Make an announcement</Text>
-      </TouchableOpacity>
+      {isAdmin && (
+        <TouchableOpacity 
+          style={styles.makeAnnouncementButton}
+          onPress={onMakeAnnouncement}
+        >
+          <Text style={styles.makeAnnouncementText}>Make an announcement</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

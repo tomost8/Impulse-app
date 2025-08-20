@@ -8,36 +8,58 @@ import { pageDisplay, debugRenders } from '@/utils/debug';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 import { useLocalSearchParams } from 'expo-router';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
+import { useGetCommunity } from '@/hooks/graphql/communities/queries';
 
 const AnnouncementsPage = () => {
  const { id } = useLocalSearchParams(); // communityId
- const { userId, authToken } = useUserInfo();
+ const { authToken } = useUserAuth();
+ const [renderCounter, setRenderCounter] = useState(0);
 
  // Queries
+ const communityRef = useRef<any | null>(null);
+ const hasFetchedCommunity = useRef(false);
+ const { community, fetched: hasNewCommunityData } = useGetCommunity(Number(id), !hasFetchedCommunity.current);
+
  const announcementsRef = useRef<any[] | null>(null);
  const hasFetchedAnnouncements = useRef(false);
  const { announcements, fetched: hasNewAnnouncementsData } = useGetCommunityAnnouncements(Number(id), authToken as string, !hasFetchedAnnouncements.current);
 
  useEffect(() => {
-  if (!hasNewAnnouncementsData) {
+  if (!hasNewCommunityData && !hasNewAnnouncementsData) {
     return;
+  }
+  if (hasNewCommunityData) {
+    communityRef.current = community;
+    hasFetchedCommunity.current = true;
   }
   if (hasNewAnnouncementsData) {
     announcementsRef.current = announcements;
     hasFetchedAnnouncements.current = true;
   }
- }, [hasNewAnnouncementsData]);
+  if (hasFetchedCommunity.current && hasFetchedAnnouncements.current) {
+    setRenderCounter(prev => prev + 1);
+  }
+ }, [hasNewCommunityData, hasNewAnnouncementsData]);
+
+ // Mutation for announcement
 
  // Debug
- const loading = !hasFetchedAnnouncements.current;
+ const loading = !hasFetchedCommunity.current || !hasFetchedAnnouncements.current;
  if (debugRenders && !loading) {
-  console.log("Announcements:", announcementsRef.current);
+  console.log("Rendering AnnouncementsScreen\n",
+    "Community:", communityRef.current, "\n",
+    "Announcements:", announcementsRef.current, "\n",
+    "Render Counter:", renderCounter, "\n",
+  );
  }
 
 
  return (
-   <AnnouncementScreen announcements={announcementsRef.current || []} />
+   <AnnouncementScreen 
+    communityName={communityRef.current?.name}
+    announcements={announcementsRef.current || []} 
+   />
  );
 };
 

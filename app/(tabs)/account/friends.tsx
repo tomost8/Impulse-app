@@ -7,14 +7,14 @@ import FriendsList from '@/components/screens/profile/FriendsCommunityList/Frien
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 
 
 const FriendsPage = () => {
-  const { authToken } = useUserInfo();
-  const { fetching, user, friends } = useUserData();
+  const { authToken } = useUserAuth();
+  const { fetching, user, friends, setFriends } = useUserData();
 
    // Mutations: Cancel
 const { deleteFriendship } = useDeleteFriendship();
@@ -24,7 +24,8 @@ const handleRemoveFriend = async (friendId: number) => {
     setIsRemovingFriend(true);
     const response = await deleteFriendship(user.id, friendId, authToken as string);
     if (response.success) {
-      console.log("Successfully removed friend.");
+      console.log("Successfully removed friend.", friendId);
+      setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
     } else {
       throw new Error("Response.success from deleteFriendship was false:" + response.errors);
     }

@@ -15,8 +15,8 @@ const QuoteCard: React.FC<QuoteCardProps> = ({ quote, author }) => {
       {/* Quote Text */}
       <Text style={styles.quoteText}>{quote}</Text>
 
-      {/* Author Name */}
-      <Text style={styles.author}>- {author}</Text>
+      {/* Author Name - only show if author is provided */}
+      {author ? <Text style={styles.author}>- {author}</Text> : null}
 
       {/* Right Quote Icon */}
       <Image source={require("@/assets/icons/quoteright.png")} style={styles.quoteIconRight} />

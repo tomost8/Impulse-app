@@ -2,25 +2,27 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 // GraphQL hooks
 import { useFirebaseAuth } from '@/hooks/graphql/auth';
-// Componentsimport { StyleSheet } from 'react-native';
+// Components
+import { StyleSheet } from 'react-native';
 import type { AppTheme } from '../theme/theme';
 
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
 // Services
-import { useUserInfo } from '@/services/UserContext';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/config/firebaseConfig';
+import { useUserAuth } from '@/services/AuthContext';
+import { getAuth } from '@/config/firebaseConfig';
 
 export default function GetStarted() {
   const [error, setError] = useState<string | null>(null); 
   // maybe add a loading state
 
-  const { login } = useUserInfo();
+  const { login } = useUserAuth();
   const { firebaseAuth } = useFirebaseAuth();
   const tryLogin = async (email: string, password: string, rememberMe: boolean, onSuccess?: () => void) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await getAuth().signInWithEmailAndPassword(email, password);
       let authToken = await userCredential.user.getIdToken();
+      console.log("auth", getAuth());
+      console.log("authToken", email, password, authToken);
       const response = await firebaseAuth(authToken);
       
       if (response.success) {

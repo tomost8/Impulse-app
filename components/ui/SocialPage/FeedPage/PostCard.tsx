@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import { View, StyleSheet, TouchableOpacity, Image, Text } from "react-native";
 import PostContent from "./PostContent";
 import PostFooter from "./PostFooter";
@@ -18,19 +18,22 @@ interface PostCardProps {
     created_at?: string;
     commentCount?: number;
     likeCount?: number;
+    liked?: boolean;
     community?: {
       id: number;
       name: string;
     };
   };
   showCommunityTag?: boolean;
+  handleLikePost: () => Promise<void>;
+  handleUnlikePost: () => Promise<void>;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
+const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag, handleLikePost, handleUnlikePost }) => {
   console.log("post:", post, "showCommunityTag:", showCommunityTag);
 
   const handlePostPress = () => {
-    router.push(`/post/${post.id}`);
+    router.push(`/post/${post.id}?isLiked=${post?.liked ?? false}`);
   };
 
   const hasCaption = post?.caption && post.caption.trim().length > 0;
@@ -67,6 +70,9 @@ const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag }) => {
         username={post?.author?.username || ""}
         timeAgo={getTimeAgo(post?.created_at || "")}
         initialLikes={post?.likeCount ?? 0}
+        liked={post?.liked ?? false}
+        handleLikePost={handleLikePost}
+        handleUnlikePost={handleUnlikePost}
         initialComments={post?.commentCount ?? 0}
       />
     </TouchableOpacity>

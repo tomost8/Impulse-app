@@ -9,13 +9,13 @@ import FindFriendScreen from '@/components/screens/chats/findfriend';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 
 const AddFriendsPage = () => {
-  const { userId, authToken } = useUserInfo();
-  const { fetching, friends } = useUserData();
+  const { authToken } = useUserAuth();
+  const { fetching, user, friends, setFriends } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries
@@ -43,12 +43,13 @@ const AddFriendsPage = () => {
     setIsSendingFriendRequest(true);
     try {
       const input = {
-        sender_id: userId,
+        sender_id: user.id,
         receiver_id: friendId,
       }
       const response = await sendFriendRequest(input, authToken as string);
       if (response.success) {
         console.log("Friend request sent successfully", response);
+        setFriends([...friends, response.friendship]);
       } else {
         console.error("Error sending friend request:", response.errors);
       }
@@ -64,9 +65,10 @@ const AddFriendsPage = () => {
   const handleDeleteFriendRequest = async (friendId: number) => {
     setIsDeletingFriendRequest(true);
     try {
-      const response = await deleteFriendship(userId as number, friendId, authToken as string);
+      const response = await deleteFriendship(user.id, friendId, authToken as string);
       if (response.success) {
         console.log("Friend request deleted successfully", response);
+        setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
       } else {
         console.error("Error deleting friend request:", response.errors);
       }
@@ -79,7 +81,7 @@ const AddFriendsPage = () => {
 
   // Debug
   const sentRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'sender').map((friend: any) => friend.friend);
-  const nonFriends = usersRef.current?.filter((user: any) => user.id !== userId && !friends.some((friend: any) => friend.friend.id === user.id));
+  const nonFriends = usersRef.current?.filter((_user: any) => _user.id !== user.id && !friends.some((friend: any) => friend.friend.id === _user.id));
   
   const loading = fetching || !hasFetchedUsers.current || isSendingFriendRequest || isDeletingFriendRequest;
   if (debugRenders && !loading) {

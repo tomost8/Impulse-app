@@ -9,13 +9,11 @@ import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
 import { getCategoryById } from '@/utils/goals';
 
 const HomePage = () => {
-  const { userId, authToken } = useUserInfo();
   const { fetching, user, activities, timezone, setActivities, setCameraClickable } = useUserData();
   const [renderCounter, setRenderCounter] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
@@ -25,7 +23,7 @@ const HomePage = () => {
   /* friends leaderboard */
   const leaderboardRef = useRef<any | null>(null);
   const hasFetchedFriends = useRef(false);
-  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(userId as number, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); 
+  const { friends, fetched: hasNewLeaderboardData } = useGetFriendsLeaderboard(user?.id, 'POINTS_WEEKLY', !hasFetchedFriends.current && !fetching); 
 
   const loading = !hasFetchedFriends.current || fetching || isCreatingActivity;
 
@@ -60,6 +58,10 @@ const HomePage = () => {
   }, [hasNewLeaderboardData]);
 
   const handleAddGoals = async (selectedGoals: any[], goalFormData: any) => {
+    if (fetching || !user?.id) {
+      console.warn('Cannot add goals: User data is not yet available');
+      return;
+    }
     setIsCreatingActivity(true);
     try {
       const newActivities: any[] = [];

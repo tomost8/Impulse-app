@@ -10,7 +10,7 @@ import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 // Debug
 import { pageDisplay, debugRenders } from '@/utils/debug';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
 
 const { width: screenWidth } = Dimensions.get('window');

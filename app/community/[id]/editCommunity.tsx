@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
-import { useUserInfo } from '@/services/UserContext';
+import { useUserAuth } from '@/services/AuthContext';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityCategories } from '@/hooks/graphql/communities/queries';
@@ -14,7 +14,6 @@ import { debugRenders } from '@/utils/debug';
 
 const EditCommunityPage = () => {
  const { id } = useLocalSearchParams(); // communityId 
- //const { userId, authToken } = useUserInfo();
  const [renderCounter, setRenderCounter] = useState(0);
 
  // Queries
