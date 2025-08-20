@@ -8,7 +8,7 @@ import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useUserData } from '@/services/UserPreferencesContext';
-import { FlipType, SaveFormat, useImageManipulator } from 'expo-image-manipulator';
+import { FlipType, SaveFormat, useImageManipulator, manipulateAsync } from 'expo-image-manipulator';
 
 // 获取屏幕尺寸 (Get screen dimensions)
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -83,23 +83,23 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const firstPhoto = await cameraRef.current.takePictureAsync();
-        /*
-        const photoContext = useImageManipulator(firstPhoto?.uri || '');
-        photoContext.flip(FlipType.Horizontal);
-        const flippedPhoto = await photoContext.renderAsync();
-        const result = await flippedPhoto.saveAsync({
-          format: SaveFormat.JPEG,
-        });
-        */
+        
+        // Fix front camera mirroring
+        const processedFirstPhoto = facing === 'front' 
+          ? await manipulateAsync(
+              firstPhoto.uri,
+              [{ flip: FlipType.Horizontal }],
+              { compress: 1 }
+            )
+          : firstPhoto;
+
         if (is_double_camera) {
           const firstCameraFacing = facing;
           const secondCameraFacing = facing === 'front' ? 'back' : 'front';
           setIsCameraReady(false);
           setFacing(secondCameraFacing);
           
-          // Wait for camera to be ready in the new orientation
-          console.log('Switching camera from', firstCameraFacing, 'to', secondCameraFacing, 
-            'Waiting for camera to be ready...');
+          // Wait for camera to be ready...
           await new Promise(resolve => {
             const checkReady = () => {
               if (isCameraReady) {
@@ -114,16 +114,26 @@ export default function CameraScreen() {
             checkReady();
           });
 
-          console.log('Taking second photo with:', secondCameraFacing);
           const secondPhoto = await cameraRef.current.takePictureAsync();
           
-          // Switch back to original camera orientation
+          // Fix front camera mirroring for second photo
+          const processedSecondPhoto = secondCameraFacing === 'front'
+            ? await manipulateAsync(
+                secondPhoto.uri,
+                [{ flip: FlipType.Horizontal }],
+                { compress: 1 }
+              )
+            : secondPhoto;
+          
           setIsCameraReady(false);
           setFacing(firstCameraFacing);
           
-          // Determine which photo is front/back based on initial camera position
-          const frontPhoto = firstCameraFacing === 'front' ? firstPhoto?.uri : secondPhoto?.uri;
-          const backPhoto = firstCameraFacing === 'front' ? secondPhoto?.uri : firstPhoto?.uri;
+          const frontPhoto = firstCameraFacing === 'front' 
+            ? processedFirstPhoto.uri 
+            : processedSecondPhoto.uri;
+          const backPhoto = firstCameraFacing === 'front' 
+            ? processedSecondPhoto.uri 
+            : processedFirstPhoto.uri;
           
           router.push({
             pathname: '/camera/displayPicture',
@@ -135,10 +145,9 @@ export default function CameraScreen() {
             }
           });
         } else {
-          console.log('is_single_camera');
-          const photo = await cameraRef.current.takePictureAsync();
-          const frontPhoto = facing === 'front' ? photo?.uri : null;
-          const backPhoto = facing === 'back' ? photo?.uri : null;
+          const photo = processedFirstPhoto;
+          const frontPhoto = facing === 'front' ? photo.uri : null;
+          const backPhoto = facing === 'back' ? photo.uri : null;
           router.push({
             pathname: '/camera/displayPicture',
             params: { 
@@ -149,29 +158,6 @@ export default function CameraScreen() {
             }
           });
         }
-
-        /*
-        // 如果是前置摄像头，保存预览图片 (If using front camera, save preview image)
-        if (facing === 'front') {
-          setFrontCameraImage(photo?.uri || null);
-        } else {
-          // 如果已经有前置摄像头照片，跳转到预览页面 (If front camera photo exists, navigate to preview page)
-          if (frontCameraImage) {
-            router.push({
-              pathname: '/camera/displayPicture',
-              params: { 
-                frontPhoto: frontCameraImage,
-                backPhoto: photo?.uri,
-                id: id,
-                category: context?.category,
-              }
-            });
-          } else {
-            // 如果没有前置摄像头照片，切换到前置摄像头 (If no front camera photo exists, switch to front camera)
-            setFacing('front');
-          }
-        }
-        */
       } catch (error) {
         console.error('Error taking picture:', error);
       }
