@@ -8,7 +8,6 @@ import {
   Modal,
   ScrollView,
 } from 'react-native';
-import { router } from 'expo-router';
 
 interface UserOptionProps {
   name: string;

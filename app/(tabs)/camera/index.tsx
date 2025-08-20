@@ -60,12 +60,12 @@ export default function CameraScreen() {
     // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>我们需要您的相机权限</Text>
+        <Text style={styles.message}>Impulse would like permission to use your camera to take photos.</Text>
         <TouchableOpacity 
           style={styles.permissionButton} 
           onPress={requestPermission}
         >
-          <Text style={styles.permissionButtonText}>授予权限</Text>
+          <Text style={styles.permissionButtonText}>Grant permission</Text>
         </TouchableOpacity>
       </View>
     );
