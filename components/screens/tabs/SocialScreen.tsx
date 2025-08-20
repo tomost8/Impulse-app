@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from "react-native";
 import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
@@ -73,36 +73,42 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
           selectedTab={selectedTab}
         />
       </View>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.scrollContent}>
-          {selectedTab === 'communities' && (
-            <>
-              {/* Community List Section */}
-              <View style={styles.communityListSection}>
-                <ListWithProfiles 
-                  communities={joinedCommunities} 
-                />
-              </View>
-              {/* Community Filter Section */}
-              <View style={styles.filterSection}>
-                <Filter 
-                  communities={joinedCommunities} 
-                  handleFilterChange={handleFilterChange} 
-                />
-              </View>
-            </>
-          )}
-          {/* Feed */}
-          <View style={styles.feedSection}>
-            <Feed 
-              currentTab={selectedTab}
-              posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
-              handleLikePost={handleLikePost}
-              handleUnlikePost={handleUnlikePost}
-            />
+      <FlatList
+        style={styles.scrollContainer}
+        data={[{ key: 'content' }]}
+        renderItem={() => (
+          <View style={styles.scrollContent}>
+            {selectedTab === 'communities' && (
+              <>
+                {/* Community List Section */}
+                <View style={styles.communityListSection}>
+                  <ListWithProfiles 
+                    communities={joinedCommunities} 
+                  />
+                </View>
+                {/* Community Filter Section */}
+                <View style={styles.filterSection}>
+                  <Filter 
+                    communities={joinedCommunities} 
+                    handleFilterChange={handleFilterChange} 
+                  />
+                </View>
+              </>
+            )}
+            {/* Feed */}
+            <View style={styles.feedSection}>
+              <Feed 
+                currentTab={selectedTab}
+                posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
+                handleLikePost={handleLikePost}
+                handleUnlikePost={handleUnlikePost}
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        )}
+        keyExtractor={() => 'content'}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
