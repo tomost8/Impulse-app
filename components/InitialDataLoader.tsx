@@ -53,17 +53,17 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   const friendsFeedRef = useRef<any[] | null>(null);
   const hasFetchedFriendsFeed = useRef(false);
   const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeedFriends(
-    userId as number, 
-    authToken as string, 
-    !hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0
+    userId || 0, 
+    authToken || '', 
+    Boolean(userId && authToken && (!hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0))
   );
 
   const communityFeedRef = useRef<any[] | null>(null);
   const hasFetchedCommunityFeed = useRef(false);
   const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetFeedCommunities(
-    userId as number, 
-    authToken as string, 
-    !hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0
+    userId || 0, 
+    authToken || '', 
+    Boolean(userId && authToken && (!hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0))
   );
 
   // Mutations (only for setting default profile picture)
@@ -94,9 +94,9 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
     }
     const oldAuthToken = lastFetchedAuthToken.current ? lastFetchedAuthToken.current.substring(0, 20) + '...' : null;
     const newAuthToken = authToken ? authToken.substring(0, 20) + '...' : null;
-    console.log("hasValidAuth set to", hasValidAuth,
-        "\nset userId from", lastFetchedUserId.current, "to", userId,
-        "\nset authToken from", oldAuthToken, "to", newAuthToken);
+    console.log("🔐 InitialDataLoader - hasValidAuth set to", hasValidAuth,
+        "\n🔐 InitialDataLoader - set userId from", lastFetchedUserId.current, "to", userId,
+        "\n🔐 InitialDataLoader - set authToken from", oldAuthToken, "to", newAuthToken);
     lastFetchedUserId.current = userId as number;
     lastFetchedAuthToken.current = authToken as string;
   }, [userId, authToken]);

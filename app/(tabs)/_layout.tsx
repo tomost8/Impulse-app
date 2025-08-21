@@ -1,4 +1,4 @@
-import { router, Tabs, usePathname, useLocalSearchParams } from 'expo-router';
+import { router, Tabs, usePathname } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Platform, Image, View, Text, Button } from 'react-native';
 
@@ -12,10 +12,9 @@ import { useUserData } from '@/services/UserPreferencesContext';
 
 function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
   const [modalVisible, setModalVisible] = useState(false);
-  const pathname = usePathname();
-  const { hideTabBar } = useLocalSearchParams();
-
   const {cameraClickable} = useUserData();
+
+  const pathname = usePathname();
 
   // Add debug logging
   if (debugRouting) {
@@ -29,32 +28,15 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
     '/',
     '/home',
     '/chats',
-    '/camera',
     '/social',
     '/account',
     '/home/index',
     '/chats/index',
-    '/camera/index',
     '/social/index',
     '/account/index',
-    /*
-    '/(tabs)',
-    '/(tabs)/home',
-    '/(tabs)/home/index',
-    '/(tabs)/chats',
-    '/(tabs)/chats/index',
-    '/(tabs)/camera',
-    '/(tabs)/camera/index',
-    '/(tabs)/social',
-    '/(tabs)/social/index',
-    '/(tabs)/account',
-    '/(tabs)/account/index'
-    */
   ];
 
   const shouldShowTabBar = showForRoutes.includes(pathname);
-  const shouldHideTabBar = hideTabBar === 'true';
-  const isCameraRoute = pathname.startsWith('/camera');
 
   return (
     <>
@@ -63,8 +45,8 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           headerShown: false,
           tabBarBackground: TabBarBackground,
           tabBarStyle: {
-            display: isCameraRoute ? 'none' : (shouldShowTabBar ? 'flex' : 'none'),
-            height: isCameraRoute ? 0 : (shouldShowTabBar ? undefined : 0),
+            display: shouldShowTabBar ? 'flex' : 'none',
+            height: shouldShowTabBar ? undefined : 0,
             ...Platform.select({
               ios: {
                 position: 'absolute',
@@ -92,7 +74,7 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
           listeners={{
             tabPress: (e) => {
               e.preventDefault();
-              router.push('/home');
+              router.replace('/home');
             },
           }}
         />

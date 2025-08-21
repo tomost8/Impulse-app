@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 // Components
 import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugHome } from '@/utils/debug';
 // Services
 import { useUserData } from '@/services/UserPreferencesContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
@@ -96,7 +96,7 @@ const HomePage = () => {
     }
   };
 
-  if (debugRenders && !loading) {
+  if (debugHome && !loading) {
     console.log("Rendering HomePage. Counter: ", renderCounter,
       "\nActivities:", activities,
       "\nLeaderboard:", leaderboardRef.current,

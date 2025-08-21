@@ -8,56 +8,36 @@ import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useUserData } from '@/services/UserPreferencesContext';
-import { FlipType, SaveFormat, useImageManipulator, manipulateAsync } from 'expo-image-manipulator';
+import { FlipType, SaveFormat, ImageManipulator } from 'expo-image-manipulator';
 
 // 获取屏幕尺寸 (Get screen dimensions)
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function CameraScreen() {
   const { id, category } = useLocalSearchParams();
-  const context = useContext(CameraHeaderContext);
-  const theme = useTheme<AppTheme>();
-  
-  if (!context) return null;
-
   const { fetching, user } = useUserData();
-
-
+  const context = useContext(CameraHeaderContext);
+  if (!context) return null;
 
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const cameraRef = useRef<CameraView>(null);
-  
-  // 前置摄像头的预览图片 (Front camera preview image)
-  const [frontCameraImage, setFrontCameraImage] = useState<string | null>(null);
-  const [backCameraImage, setBackCameraImage] = useState<string | null>(null);
   const [isCameraReady, setIsCameraReady] = useState(true);
-  
+
+  // 前置摄像头的预览图片 (Front camera preview image)
+  //const [frontCameraImage, setFrontCameraImage] = useState<string | null>(null);
+  //const [backCameraImage, setBackCameraImage] = useState<string | null>(null);
   
   useEffect(() => {
     context.setPictureTaken(false);
     context.setCategory(category as string);
-    
-    // 使用 Expo Router 的方式隐藏底部导航栏 (Hide bottom navigation bar using Expo Router)
-    if (router.canGoBack()) {
-      router.setParams({ hideTabBar: 'true' });
-    }
-    
-    return () => {
-      // 组件卸载时恢复底部导航栏 (Restore bottom navigation bar when component unmounts)
-      if (router.canGoBack()) {
-        router.setParams({ hideTabBar: 'false' });
-      }
-    };
   }, [category]);
 
+  // Camera permissions
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
-
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>Impulse would like permission to use your camera to take photos.</Text>
@@ -71,49 +51,58 @@ export default function CameraScreen() {
     );
   }
 
-  // 切换前后摄像头 (Toggle between front and back camera)
   function toggleCameraFacing() {
-    console.log('Switching camera from', facing, 'to', (facing === 'back' ? 'front' : 'back'));
+    console.log('Switching camera from', facing, 'to', (facing === 'back' ? 'front (selfie)' : 'back (environment)'));
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // 拍照 (Take picture: double camera)
   async function takePicture() {
-    const is_double_camera = !fetching && user?.is_double_cam;
+    const isDoubleCamera = !fetching && user?.is_double_cam;
     if (cameraRef.current) {
       try {
-        // Take first photo with better options
+        // Take first photo
         const firstPhoto = await cameraRef.current.takePictureAsync({
           quality: 1,
           exif: true,
-          skipProcessing: false // Ensure Android processes the image
+          skipProcessing: false
         });
-
         if (!firstPhoto) return;
 
-        // Process first photo with proper orientation
-        const processedFirstPhoto = await manipulateAsync(
-          firstPhoto.uri,
-          [
-            // Only flip horizontally for front camera
-            ...(facing === 'front' ? [{ flip: FlipType.Horizontal }] : []),
-            // Fix Android orientation
-            ...(Platform.OS === 'android' ? [{ rotate: 0 }] : [])
-          ],
-          { 
-            compress: 1,
-            format: SaveFormat.JPEG,
-            base64: false
-          }
-        );
+        // Process first photo (and flip if selfie camera)
+        const imageContext = ImageManipulator.manipulate(firstPhoto.uri);
+        if (facing === 'front') {
+          imageContext.flip(FlipType.Horizontal);
+        }
+        const renderedImage = await imageContext.renderAsync();
+        const processedFirstPhoto = await renderedImage.saveAsync({
+          compress: 1,
+          format: SaveFormat.JPEG,
+          base64: false
+        });
+        if (!processedFirstPhoto) return;
+        console.log('processedFirstPhoto', processedFirstPhoto);
 
-        if (is_double_camera) {
-          const firstCameraFacing = facing;
-          const secondCameraFacing = facing === 'front' ? 'back' : 'front';
-          setIsCameraReady(false);
-          setFacing(secondCameraFacing);
+        if (!isDoubleCamera) {
+          // Single camera
+          const frontPhoto = facing === 'front' ? processedFirstPhoto.uri : null;
+          const backPhoto = facing === 'back' ? processedFirstPhoto.uri : null;
           
-          // Wait for camera switch
+          router.push({
+            pathname: '/camera/displayPicture',
+            params: { 
+              frontPhoto,
+              backPhoto,
+              id: id,
+              category: category,
+            }
+          });
+        } else {
+          // Double camera
+          const firstCameraDirection = facing;
+          const secondCameraDirection = firstCameraDirection === 'front' ? 'back' : 'front';
+          setIsCameraReady(false);
+          setFacing(secondCameraDirection);
+          // Wait for camera to be ready after switching
           await new Promise(resolve => {
             const checkReady = () => {
               if (isCameraReady) {
@@ -128,57 +117,49 @@ export default function CameraScreen() {
             checkReady();
           });
 
-          // Take second photo with same options
+          // Take second photo
           const secondPhoto = await cameraRef.current.takePictureAsync({
             quality: 1,
             exif: true,
             skipProcessing: false
           });
-
           if (!secondPhoto) return;
 
-          // Process second photo
-          const processedSecondPhoto = await manipulateAsync(
-            secondPhoto.uri,
-            [
-              ...(secondCameraFacing === 'front' ? [{ flip: FlipType.Horizontal }] : []),
-              ...(Platform.OS === 'android' ? [{ rotate: 0 }] : [])
-            ],
-            { 
-              compress: 1,
-              format: SaveFormat.JPEG,
-              base64: false
-            }
-          );
+          // Process second photo (and flip if selfie camera)
+          const imageContext = ImageManipulator.manipulate(secondPhoto.uri);
+          if (facing === 'front') {
+            imageContext.flip(FlipType.Horizontal);
+          }
+          const renderedImage = await imageContext.renderAsync();
+          const processedSecondPhoto = await renderedImage.saveAsync({
+            compress: 1,
+            format: SaveFormat.JPEG,
+            base64: false
+          });
+          if (!processedSecondPhoto) return;
+          console.log('processedSecondPhoto', processedSecondPhoto);
+
+          const firstPhotoIsFront = firstCameraDirection === 'front';
+          const frontPhoto = firstPhotoIsFront ? processedFirstPhoto.uri : processedSecondPhoto.uri;
+          const backPhoto = firstPhotoIsFront ? processedSecondPhoto.uri : processedFirstPhoto.uri;
 
           setIsCameraReady(false);
-          setFacing(firstCameraFacing);
-
-          if (!processedFirstPhoto || !processedSecondPhoto) return;
-          
-          const frontPhoto = firstCameraFacing === 'front' 
-            ? processedFirstPhoto.uri 
-            : processedSecondPhoto.uri;
-          const backPhoto = firstCameraFacing === 'front' 
-            ? processedSecondPhoto.uri 
-            : processedFirstPhoto.uri;
-
-          router.push({
-            pathname: '/camera/displayPicture',
-            params: { 
-              frontPhoto,
-              backPhoto,
-              id: id,
-              category: category,
-            }
+          setFacing(firstCameraDirection);
+          // Switch back and ensure camera is ready
+          await new Promise(resolve => {
+            const checkReady = () => {
+              if (isCameraReady) {
+                setTimeout(() => {
+                  console.log('Camera switched and ready');
+                  resolve(true);
+                }, 500);
+              } else {
+                setTimeout(checkReady, 100);
+              }
+            };
+            checkReady();
           });
-        } else {
-          if (!processedFirstPhoto) return;
-          
-          const photo = processedFirstPhoto;
-          const frontPhoto = facing === 'front' ? photo.uri : null;
-          const backPhoto = facing === 'back' ? photo.uri : null;
-          
+
           router.push({
             pathname: '/camera/displayPicture',
             params: { 
@@ -205,24 +186,23 @@ export default function CameraScreen() {
         onCameraReady={() => setIsCameraReady(true)}
       >
         {/* 左上角前置摄像头预览 (Front camera preview in top-left corner) */}
+        {/*
         {frontCameraImage && (
           <View style={styles.frontPreviewContainer}>
             <Image source={{ uri: frontCameraImage }} style={styles.frontPreviewImage} />
           </View>
         )}
+        */}
       </CameraView>
       
-      {/* 底部控制区域 - 移到相机视图外部 (Bottom control area - moved outside camera view) */}
+      {/* Bottom Control Area */}
       <View style={styles.controlsContainer}>
-        {/* 空白区域，保持布局平衡 (Empty space to maintain layout balance) */}
         <View style={styles.emptySpace} />
-        
-        {/* 拍照按钮 (Capture button) */}
+        {/* Camera Button */}
         <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
           <View style={styles.captureButtonInner} />
         </TouchableOpacity>
-        
-        {/* 翻转相机按钮 (Flip camera button) */}
+        {/* Flip Button */}
         <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
           <Ionicons name="camera-reverse" size={24} color="white" />
         </TouchableOpacity>

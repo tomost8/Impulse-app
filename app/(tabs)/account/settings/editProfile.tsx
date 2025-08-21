@@ -7,7 +7,7 @@ import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfileScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugEditProfile } from '@/utils/debug';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
 import { useUserData } from '@/services/UserPreferencesContext';
@@ -106,8 +106,7 @@ const EditProfilePage = () => {
 
   // Debug
   const loading = isSubmitting;
-  const debugRenders = false;
-  if (debugRenders && !loading) {
+  if (debugEditProfile && !loading) {
     console.log("Rendering EditProfilePage\n",
       "User:", user, "\n",
       "Form Data:", formData, "\n",

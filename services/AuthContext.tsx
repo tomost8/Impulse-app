@@ -6,6 +6,7 @@ interface AuthContextType {
   authToken: string | null;
   userId: number | null;
   loading: boolean;
+  authInitialized: boolean;
   login: (token: string, id: number, rememberMe: boolean, email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string | null>;
@@ -18,25 +19,45 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [authInitialized, setAuthInitialized] = useState(false);
   
   // Initialize auth state from AsyncStorage first
   useEffect(() => {
     const initializeAuth = async () => {
+      console.log('🔐 AuthInitializing - Starting initializeAuth...');
       try {
+        console.log('🔐 AuthInitializing - Fetching data from AsyncStorage...');
         const [storedToken, storedRememberMe, storedUserId] = await Promise.all([
           AsyncStorage.getItem('authToken'),
           AsyncStorage.getItem('rememberMe'),
           AsyncStorage.getItem('userId'),
         ]);
 
+        console.log('🔐 AuthInitializing - AsyncStorage results:');
+        console.log('  - storedToken:', storedToken ? `${storedToken.substring(0, 20)}...` : 'null');
+        console.log('  - storedRememberMe:', storedRememberMe);
+        console.log('  - storedUserId:', storedUserId);
+
         const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
+        console.log('🔐 AuthInitializing - Parsed rememberMeData:', rememberMeData);
         
         if (rememberMeData?.rememberMe && storedToken && storedUserId) {
+          console.log('🔐 AuthInitializing - Remember Me is enabled and data exists, setting auth state...');
+          console.log('  - Setting authToken to:', `${storedToken.substring(0, 20)}...`);
+          console.log('  - Setting userId to:', Number(storedUserId));
           setAuthToken(storedToken);
           setUserId(Number(storedUserId));
+        } else {
+          console.log('🔐 AuthInitializing - Not restoring auth state because:');
+          console.log('  - rememberMeData?.rememberMe:', rememberMeData?.rememberMe);
+          console.log('  - storedToken exists:', !!storedToken);
+          console.log('  - storedUserId exists:', !!storedUserId);
         }
+        console.log('🔐 AuthInitializing - initializeAuth completed');
+        setAuthInitialized(true);
       } catch (error) {
-        console.error('Error initializing auth state:', error);
+        console.error('🔐 AuthInitializing - Error initializing auth state:', error);
+        setAuthInitialized(true);
       }
     };
 
@@ -45,13 +66,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Firebase auth state listener
   useEffect(() => {
-    console.log('🔐 AuthContext - Setting up auth listener...');
+    console.log('AuthToken listener called: ', authToken?.substring(0, 10) + '...', 'authInitialized: ', authInitialized);
     
     try {
       const unsubscribe = getAuth().onAuthStateChanged(async (user: any) => {
         try {
           if (user) {
-            console.log('🔐 AuthContext - Firebase user exists:', user.uid);
+            console.log('🔐 AuthToken context checking - Firebase user exists:', user.uid);
             // Only refresh token if we already have an authToken (user was logged in)
             if (authToken) {
               const token = await refreshAuthToken();
@@ -59,9 +80,9 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 await logout();
               }
             }
-          } else if (authToken) {
+          } else if (authToken && authInitialized) {
             console.log('🔐 AuthContext - No Firebase user but authToken exists, logging out');
-            // Only logout if we actually had an authToken (user was logged in)
+            // Only logout if we actually had an authToken (user was logged in) AND auth has been initialized
             await logout();
           }
           console.log('🔐 AuthContext - Auth state changed, user:', user ? 'exists' : 'null');
@@ -78,7 +99,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
       return () => {};
     }
-  }, [authToken]); // Add authToken as dependency
+  }, [authToken, authInitialized]); // Add authToken and authInitialized as dependencies
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
     try {
@@ -152,6 +173,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         authToken, 
         userId, 
         loading, 
+        authInitialized,
         login, 
         logout,
         refreshAuthToken,

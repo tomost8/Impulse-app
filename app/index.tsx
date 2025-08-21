@@ -3,12 +3,12 @@ import { useUserAuth } from '@/services/AuthContext';
 import { Text } from 'react-native';
 
 export default function Index() {
-  const { loading, userId, authToken } = useUserAuth();
+  const { loading, userId, authToken, authInitialized } = useUserAuth();
 
-  console.log('🏠 Index page - Loading:', loading, 'UserId:', userId, 'AuthToken:', authToken ? 'exists' : 'null');
+  console.log('🏠 Index page - Loading:', loading, 'UserId:', userId, 'AuthToken:', authToken ? 'exists' : 'null', 'AuthInitialized:', authInitialized);
 
-  if (loading) {
-    console.log('🏠 Index page - Showing loading screen');
+  if (loading || !authInitialized) {
+    console.log('🏠 Index page - Showing loading screen (loading:', loading, 'authInitialized:', authInitialized, ')');
     return <Text>Loading...</Text>;
   }
 

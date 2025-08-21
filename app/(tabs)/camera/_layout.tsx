@@ -80,20 +80,6 @@ export default function CameraLayout() {
   const [pictureTaken, setPictureTaken] = useState(false);
   const [flash, setFlash] = useState(false);
 
-  useEffect(() => {
-    // 使用 Expo Router 的方式隐藏底部导航栏
-    if (router.canGoBack()) {
-      router.setParams({ hideTabBar: 'true' });
-    }
-    
-    return () => {
-      // 组件卸载时恢复底部导航栏
-      if (router.canGoBack()) {
-        router.setParams({ hideTabBar: 'false' });
-      }
-    };
-  }, []);
-
   return (
     <CameraHeaderContext.Provider value={{
       id, setId,
@@ -110,13 +96,13 @@ export default function CameraLayout() {
         <Stack.Screen 
           name="index" 
           options={{
-            // 可以在这里设置特定于索引页面的选项
+            // Options specific to the index page can be set here
           }}
         />
         <Stack.Screen 
           name="displayPicture" 
           options={{
-            // 可以在这里设置特定于显示图片页面的选项
+            // Options specific to the display picture page can be set here
           }}
         />
       </Stack>
@@ -124,7 +110,7 @@ export default function CameraLayout() {
   );
 }
 
-// 将样式名称改为 headerStyles 以避免冲突
+// Rename styles to headerStyles to avoid conflicts
 const headerStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
