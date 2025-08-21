@@ -27,6 +27,7 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   const [hasValidAuth, setHasValidAuth] = useState(false);
   const lastFetchedUserId = useRef<number | null>(null);
   const lastFetchedAuthToken = useRef<string | null>(null);
+  const hasEstablishedAuth = useRef(false);
 
   // Fetching Data
   const userRef = useRef<any | null>(null);
@@ -75,8 +76,11 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     if (userId && authToken) {
       setHasValidAuth(true);
-    } else {
+      hasEstablishedAuth.current = true;
+    } else if (userId === null && authToken === null && hasEstablishedAuth.current) {
+      // Only clear auth state if both are explicitly null AND we've previously established auth
       setHasValidAuth(false);
+      hasEstablishedAuth.current = false;
       userRef.current = null;
       activitiesRef.current = null;
       communitiesRef.current = null;
@@ -91,12 +95,11 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       hasFetchedFriends.current = false;
       hasFetchedFriendsFeed.current = false;
       hasFetchedCommunityFeed.current = false;
+    } else if (userId && authToken && !hasValidAuth) {
+      // If we have valid auth data but hasValidAuth is false, fix it
+      setHasValidAuth(true);
+      hasEstablishedAuth.current = true;
     }
-    const oldAuthToken = lastFetchedAuthToken.current ? lastFetchedAuthToken.current.substring(0, 20) + '...' : null;
-    const newAuthToken = authToken ? authToken.substring(0, 20) + '...' : null;
-    console.log("🔐 InitialDataLoader - hasValidAuth set to", hasValidAuth,
-        "\n🔐 InitialDataLoader - set userId from", lastFetchedUserId.current, "to", userId,
-        "\n🔐 InitialDataLoader - set authToken from", oldAuthToken, "to", newAuthToken);
     lastFetchedUserId.current = userId as number;
     lastFetchedAuthToken.current = authToken as string;
   }, [userId, authToken]);

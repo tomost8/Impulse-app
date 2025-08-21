@@ -16,6 +16,10 @@ import '@react-native-firebase/app';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+// Suppress the onAnimatedValueUpdate warning
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
+
 export default function RootLayout() {
   const [showNetworkTest, setShowNetworkTest] = useState(false);
   
@@ -42,8 +46,8 @@ export default function RootLayout() {
             ) : (
               <>
                 <Stack>
-                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                   <Stack.Screen name="community/[id]" options={{ headerShown: false }} />
                   <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
                   <Stack.Screen name="post/[id]" options={{ headerShown: false }} />

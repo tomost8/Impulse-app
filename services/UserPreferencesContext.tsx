@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
 
 type UserDataContextType = {
   fetching: boolean; setFetching: (status: boolean) => void;
@@ -60,7 +60,7 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setRefetchCommunityFeedTrigger(prev => prev + 1);
   };
 
-  const value = {
+  const value = useMemo(() => ({
     fetching, setFetching,
     user, setUser,
     activities, setActivities,
@@ -77,7 +77,10 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     refetchCommunityFeed,
     refetchFriendsFeedTrigger,
     refetchCommunityFeedTrigger
-  };
+  }), [
+    fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed,
+    timezone, cameraClickable, loginStreak, refetchFriendsFeedTrigger, refetchCommunityFeedTrigger
+  ]);
 
   return (
     <UserDataContext.Provider value={value}>

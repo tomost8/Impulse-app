@@ -5,17 +5,25 @@ import LoadingScreen from '@/components/ui/common/loading';
 
 const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
   return (props: any) => {
-    const { userId, authToken, loading } = useUserAuth();
+    try {
+      const { userId, authToken, loading, authInitialized } = useUserAuth();
 
-    if (loading) {
+      // Show loading screen while auth is initializing
+      if (loading || !authInitialized) {
+        return <LoadingScreen />;
+      }
+
+      // Redirect to login if not authenticated
+      if (!authToken || !userId || typeof userId !== 'number') {
+        return <Redirect href="/(auth)/getStarted" />;
+      }
+
+      return <WrappedComponent {...props} userId={userId} authToken={authToken} />;
+    } catch (error) {
+      // If there's an error accessing the context, show loading screen
+      console.warn('AuthWrapper error:', error);
       return <LoadingScreen />;
     }
-    if (!authToken || !userId || typeof userId !== 'number') {
-      console.log('Missing some auth info:', 'authToken:', authToken, 'userId:', userId);
-      return <Redirect href="/(auth)/getStarted" />;
-    }
-
-    return <WrappedComponent {...props} userId={userId} authToken={authToken} />;
   };
 };
 

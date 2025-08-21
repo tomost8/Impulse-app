@@ -22,6 +22,8 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
 
   if (networkError) {
     console.error(`[Network error]: ${networkError}`);
+    // Don't automatically clear auth on network errors
+    console.log('🔐 Apollo - Network error occurred, but keeping auth state intact');
   }
 });
 

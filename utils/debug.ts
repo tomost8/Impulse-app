@@ -1,4 +1,4 @@
-export const debugQueries = true;
+export const debugQueries = false;
 export const debugRenders = true;
 export const debugRouting = false;
 

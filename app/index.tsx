@@ -1,22 +1,30 @@
 import { Redirect } from 'expo-router';
 import { useUserAuth } from '@/services/AuthContext';
 import { Text } from 'react-native';
+import { useEffect, useState } from 'react';
 
 export default function Index() {
   const { loading, userId, authToken, authInitialized } = useUserAuth();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
-  console.log('🏠 Index page - Loading:', loading, 'UserId:', userId, 'AuthToken:', authToken ? 'exists' : 'null', 'AuthInitialized:', authInitialized);
+  // Add a delay to prevent race conditions during re-renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!loading && authInitialized) {
+        setShouldRedirect(true);
+      }
+    }, 500);
 
-  if (loading || !authInitialized) {
-    console.log('🏠 Index page - Showing loading screen (loading:', loading, 'authInitialized:', authInitialized, ')');
+    return () => clearTimeout(timer);
+  }, [loading, authInitialized, userId, authToken]);
+
+  if (loading || !authInitialized || !shouldRedirect) {
     return <Text>Loading...</Text>;
   }
 
   if (userId && authToken) {
-    console.log('🏠 Index page - Redirecting to home');
     return <Redirect href="/(tabs)/home" />;
   } else {
-    console.log('🏠 Index page - Redirecting to get started');
     return <Redirect href="/(auth)/getStarted" />;
   }
 }

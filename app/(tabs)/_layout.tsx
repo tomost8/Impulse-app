@@ -6,15 +6,27 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import CameraPopup from '@/components/screens/home/camerapopup';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import { useUserAuth } from '@/services/AuthContext';
 import { debugRouting } from '@/utils/debug';
 import { useUserData } from '@/services/UserPreferencesContext';
+import LoadingScreen from '@/components/ui/common/loading';
+import { Redirect } from 'expo-router';
 
-function TabLayout({ userId, authToken }: { userId: number, authToken: string }) {
+function TabLayout() {
   const [modalVisible, setModalVisible] = useState(false);
+  const { userId, authToken, loading } = useUserAuth();
   const {cameraClickable} = useUserData();
 
   const pathname = usePathname();
+
+  // Handle authentication
+  if (loading) {
+    return <LoadingScreen />;
+  }
+  
+  if (!authToken || !userId || typeof userId !== 'number') {
+    return <Redirect href="/(auth)/getStarted" />;
+  }
 
   // Add debug logging
   if (debugRouting) {
@@ -153,4 +165,4 @@ function TabLayout({ userId, authToken }: { userId: number, authToken: string })
   );
 }
 
-export default AuthWrapper(TabLayout);
+export default TabLayout;
