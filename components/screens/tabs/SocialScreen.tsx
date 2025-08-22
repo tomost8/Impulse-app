@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform, FlatList } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
 import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
 import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
 import { router } from "expo-router";
 const exploreIcon = require("@/assets/icons/explore.png");
+
+// Persistent tab state across component re-mounts
+const savedTabRef = { current: 'friends' as 'friends' | 'communities' };
 
 interface SocialScreenProps {
   loading: boolean;
@@ -14,6 +17,8 @@ interface SocialScreenProps {
   communityFeed: any[];
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
@@ -23,13 +28,19 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
   communityFeed,
   handleLikePost,
   handleUnlikePost,
+  onRefresh,
+  isRefreshing = false,
 }) => {
   if (loading) {
     return <Text>Loading...</Text>;
   }
-  const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>('friends');
+  
+  // Use persistent ref to maintain tab state across re-mounts
+  const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>(savedTabRef.current);
+  
   const handleTabChange = (tab: 'friends' | 'communities') => {
     setSelectedTab(tab);
+    savedTabRef.current = tab; // Save to persistent ref
   };
   // selectedCommunities is a list of community IDs
   const [selectedCommunities, setSelectedCommunities] = useState<string[]>([]);
@@ -108,6 +119,14 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         )}
         keyExtractor={() => 'content'}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            colors={['#DE728D']} // Android
+            tintColor="#DE728D" // iOS
+          />
+        }
       />
     </View>
   );

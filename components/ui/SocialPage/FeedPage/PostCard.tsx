@@ -30,7 +30,20 @@ interface PostCardProps {
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post, showCommunityTag, handleLikePost, handleUnlikePost }) => {
-  console.log("post:", post, "showCommunityTag:", showCommunityTag);
+  // Clean log without long URLs (commented out to reduce console clutter)
+  // const cleanPost = {
+  //   ...post,
+  //   author: post.author ? {
+  //     ...post.author,
+  //     profile_picture: '[PROFILE_PICTURE_URL]'
+  //   } : post.author,
+  //   community: post.community ? {
+  //     ...post.community,
+  //     thumbnail: '[THUMBNAIL_URL]'
+  //   } : post.community,
+  //   mediaUrls: post.mediaUrls ? `[${post.mediaUrls.length} MEDIA_URLS]` : post.mediaUrls
+  // };
+  // console.log("post:", cleanPost, "showCommunityTag:", showCommunityTag);
 
   const handlePostPress = () => {
     router.push(`/post/${post.id}?isLiked=${post?.liked ?? false}`);

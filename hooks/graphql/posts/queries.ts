@@ -40,12 +40,17 @@ const GET_FEED_COMMUNITIES = gql`
 export function useGetFeedCommunities(currentUserId: number, authToken: string, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_FEED_COMMUNITIES, {
     skip: !shouldFetch,
-    variables: { currentUserId },
+    variables: { 
+      currentUserId,
+      skip: 0,
+      take: 100  // Get up to 100 posts to ensure we get all posts
+    },
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
       },
     },
+    fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
@@ -106,6 +111,7 @@ export function useGetFeedFriends(currentUserId: number, authToken: string, shou
           Authorization: `Bearer ${authToken}`,
       },
     },
+    fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
