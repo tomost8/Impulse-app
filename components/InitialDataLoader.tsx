@@ -85,7 +85,8 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
   const [userDataComplete, setUserDataComplete] = useState(false);
   const lastUserDataCheck = useRef<any | null>(null);
   const [isRefetching, setIsRefetching] = useState(false);
-  const [manualRefetchTrigger, setManualRefetchTrigger] = useState(0);
+  const [actionRefetchTrigger, setActionRefetchTrigger] = useState(0);
+  const isActionRefetch = useRef(false);
 
   // Fetching Data
   const userRef = useRef<any | null>(null);
@@ -94,8 +95,21 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const activitiesRef = useRef<any[] | null>(null);
   const hasFetchedActivities = useRef(false);
+  const activitiesLastTrigger = useRef(0);
   const currentDate = useRef('');  // Initialize empty
-  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(userId as number, currentDate.current, authToken as string, !hasFetchedActivities.current && hasValidAuth && currentDate.current !== '');
+  
+  // Debug logging for activities query
+  const activitiesShouldFetch = Boolean(hasValidAuth && currentDate.current !== '' && (
+    !hasFetchedActivities.current || 
+    (actionRefetchTrigger > 0 && actionRefetchTrigger !== activitiesLastTrigger.current)
+  ));
+  
+  const { activities, fetched: hasNewActivitiesData } = useGetActivitiesByDate(
+    userId as number, 
+    currentDate.current, 
+    authToken as string, 
+    activitiesShouldFetch
+  );
 
   const communitiesRef = useRef<any[] | null>(null);
   const hasFetchedCommunities = useRef(false);
@@ -111,77 +125,30 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const friendsFeedRef = useRef<any[] | null>(null);
   const hasFetchedFriendsFeed = useRef(false);
+  const lastActionRefetchTrigger = useRef(0);
+  const friendsFeedLastTrigger = useRef(0);
   const { posts: friendsFeed, fetched: hasNewFriendsFeedData } = useGetFeedFriends(
     userId || 0, 
     authToken || '', 
-    Boolean(userId && authToken && (!hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0 || manualRefetchTrigger > 0))
+    Boolean(userId && authToken && (
+      !hasFetchedFriendsFeed.current || 
+      (refetchFriendsFeedTrigger > 0 && refetchFriendsFeedTrigger !== friendsFeedLastTrigger.current) ||
+      (actionRefetchTrigger > 0 && actionRefetchTrigger !== friendsFeedLastTrigger.current)
+    ))
   );
 
   const communityFeedRef = useRef<any[] | null>(null);
   const hasFetchedCommunityFeed = useRef(false);
+  const communityFeedLastTrigger = useRef(0);
   const { posts: communityFeed, fetched: hasNewCommunityFeedData } = useGetFeedCommunities(
     userId || 0, 
     authToken || '', 
-    Boolean(userId && authToken && (!hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0 || manualRefetchTrigger > 0))
+    Boolean(userId && authToken && (
+      !hasFetchedCommunityFeed.current || 
+      (refetchCommunityFeedTrigger > 0 && refetchCommunityFeedTrigger !== communityFeedLastTrigger.current) ||
+      (actionRefetchTrigger > 0 && actionRefetchTrigger !== communityFeedLastTrigger.current)
+    ))
   );
-
-  // Debug community feed query
-  useEffect(() => {
-    if (hasNewCommunityFeedData && communityFeed) {
-      console.log("InitialDataLoader: Community feed query returned", {
-        queryUserId: userId,
-        queryAuthToken: authToken ? "present" : "null",
-        feedLength: communityFeed.length,
-        postIds: communityFeed.map((post: any) => post.id),
-        postCaptions: communityFeed.map((post: any) => post.caption)
-      });
-      
-      // Check if we're missing the 6th post (ID 134)
-      const hasPost134 = communityFeed.some((post: any) => post.id === 134);
-      console.log("InitialDataLoader: Checking for post 134:", {
-        hasPost134,
-        allPostIds: communityFeed.map((post: any) => post.id).sort((a: number, b: number) => a - b)
-      });
-    }
-  }, [hasNewCommunityFeedData, communityFeed, userId, authToken]);
-
-  // Debug when community feed query is triggered
-  useEffect(() => {
-    if (userId && authToken && (!hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0 || manualRefetchTrigger > 0)) {
-      console.log("InitialDataLoader: Triggering community feed query", {
-        userId,
-        authToken: authToken ? "present" : "null",
-        hasFetchedCommunityFeed: hasFetchedCommunityFeed.current,
-        refetchCommunityFeedTrigger,
-        manualRefetchTrigger,
-        shouldFetch: Boolean(userId && authToken && (!hasFetchedCommunityFeed.current || refetchCommunityFeedTrigger > 0 || manualRefetchTrigger > 0))
-      });
-    }
-  }, [userId, authToken, hasFetchedCommunityFeed.current, refetchCommunityFeedTrigger, manualRefetchTrigger]);
-
-  // Debug community feed query execution
-  useEffect(() => {
-    console.log("InitialDataLoader: Community feed query state changed", {
-      hasNewCommunityFeedData,
-      communityFeedLength: communityFeed?.length || 0,
-      manualRefetchTrigger,
-      refetchCommunityFeedTrigger
-    });
-  }, [hasNewCommunityFeedData, communityFeed, manualRefetchTrigger, refetchCommunityFeedTrigger]);
-
-  // Debug when friends feed query is triggered
-  useEffect(() => {
-    if (userId && authToken && (!hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0 || manualRefetchTrigger > 0)) {
-      console.log("InitialDataLoader: Triggering friends feed query", {
-        userId,
-        authToken: authToken ? "present" : "null",
-        hasFetchedFriendsFeed: hasFetchedFriendsFeed.current,
-        refetchFriendsFeedTrigger,
-        manualRefetchTrigger,
-        shouldFetch: Boolean(userId && authToken && (!hasFetchedFriendsFeed.current || refetchFriendsFeedTrigger > 0 || manualRefetchTrigger > 0))
-      });
-    }
-  }, [userId, authToken, hasFetchedFriendsFeed.current, refetchFriendsFeedTrigger, manualRefetchTrigger]);
 
   // Mutations (only for setting default profile picture)
   const { updateUser } = useUpdateUser();
@@ -212,58 +179,46 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
     hasFetchedFriends.current = false;
     hasFetchedFriendsFeed.current = false;
     hasFetchedCommunityFeed.current = false;
+    friendsFeedLastTrigger.current = 0; // Reset trigger
+    communityFeedLastTrigger.current = 0; // Reset trigger
+    activitiesLastTrigger.current = 0; // Reset trigger
     setFetching(true);
   };
 
   // Global refetch function that can be called from anywhere
   const refetchAllData = async () => {
-    console.log("Manual refetch triggered - refreshing all user data");
-    console.log("Current manualRefetchTrigger before increment:", manualRefetchTrigger);
+    console.log("Data refresh triggered - updating user data");
     setIsRefetching(true);
+    isActionRefetch.current = true;
     
     // Add a small delay to ensure backend transactions are committed
-    console.log("Waiting 100ms for backend transactions to commit...");
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Force clear Apollo cache for this user's data
-    console.log("Clearing Apollo cache and resetting fetch flags");
     await client.clearStore();
-    console.log("Apollo cache cleared successfully");
     
     resetFetchFlags();
-    console.log("Fetch flags reset");
     
-    const newTriggerValue = manualRefetchTrigger + 1;
-    setManualRefetchTrigger(newTriggerValue);
-    console.log("manualRefetchTrigger incremented to:", newTriggerValue);
+    // Ensure currentDate is set for activities query
+    if (!currentDate.current) {
+      // Try to get timezone from user data if available, otherwise use default
+      const userTimezone = userRef.current?.timezone || 'America/New_York';
+      currentDate.current = getLocalDay(new Date().toISOString(), userTimezone);
+    }
     
-    console.log("Manual refetch completed");
+    const newTriggerValue = actionRefetchTrigger + 1;
+    setActionRefetchTrigger(newTriggerValue);
+    lastActionRefetchTrigger.current = newTriggerValue; // Update the ref
+    
+    console.log("Data refresh completed");
   };
 
   // Handle auth data
   useEffect(() => {
-    console.log("InitialDataLoader: Auth state changed", {
-      userId,
-      authToken: authToken ? "present" : "null",
-      hasEstablishedAuth: hasEstablishedAuth.current,
-      wasLoggedOut: wasLoggedOut.current,
-      hasValidAuth,
-      previousUserId: previousUserId.current
-    });
-
     if (userId && authToken) {
       // Check if this is a new login (user was previously logged out OR different user logged in)
       const isNewLogin = (wasLoggedOut.current && hasEstablishedAuth.current) || 
                         (previousUserId.current !== null && previousUserId.current !== userId);
-      
-      console.log("InitialDataLoader: Checking for new login", {
-        isNewLogin,
-        wasLoggedOut: wasLoggedOut.current,
-        hasEstablishedAuth: hasEstablishedAuth.current,
-        previousUserId: previousUserId.current,
-        currentUserId: userId,
-        isDifferentUser: previousUserId.current !== null && previousUserId.current !== userId
-      });
       
       if (isNewLogin) {
         console.log("New login detected, resetting fetch flags");
@@ -298,7 +253,6 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       lastUserDataCheck.current = null;
     } else if (userId && authToken && !hasValidAuth) {
       // If we have valid auth data but hasValidAuth is false, fix it
-      console.log("Fixing auth state - user has valid credentials");
       setHasValidAuth(true);
       hasEstablishedAuth.current = true;
       previousUserId.current = userId;
@@ -327,21 +281,6 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       );
       const shouldRefetch = !userDataComplete && isUserDataMoreComplete && lastUserDataCheck.current !== null;
       
-      console.log("InitialDataLoader: User data received", {
-        isUserDataMoreComplete,
-        hasUserDataChanged,
-        userDataComplete,
-        shouldRefetch,
-        hasFirstName: !!user.first_name,
-        hasLastName: !!user.last_name,
-        hasUsername: !!user.username,
-        hasPrimaryGoal: !!user.primary_goal,
-        hasSecondaryGoal: !!user.secondary_goal,
-        hasProfilePicture: !!user.profile_picture,
-        previousFirstName: lastUserDataCheck.current?.first_name,
-        currentFirstName: user.first_name
-      });
-      
       if (shouldRefetch) {
         console.log("User data became more complete, triggering refetch");
         refetchUser();
@@ -357,7 +296,6 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       // 设置登录streak数据
       if (user.login_streak) {
         setLoginStreak(user.login_streak);
-        console.log("Login streak data received:", user.login_streak);
       }
       
       if (user.timezone) {
@@ -423,54 +361,54 @@ export const InitialDataLoader: React.FC<{ children: React.ReactNode }> = ({ chi
       communityFeedRef.current = communityFeed;
       hasFetchedCommunityFeed.current = true;
       setCommunityFeed(communityFeed);
-      console.log("InitialDataLoader: Setting community feed in context", {
-        feedLength: communityFeed.length,
-        feedData: communityFeed.map((post: any) => ({ id: post.id, caption: post.caption }))
-      });
-      
-      // Debug: Check if post 134 is in the data being stored
-      const hasPost134InContext = communityFeed.some((post: any) => post.id === 134);
-      console.log("InitialDataLoader: Post 134 in context data:", {
-        hasPost134InContext,
-        contextPostIds: communityFeed.map((post: any) => post.id).sort((a: number, b: number) => a - b)
-      });
     }
     if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
       setFetching(false);
       setIsRefetching(false); // Reset refetching state when complete
-      console.log("Initial User Data Fetched:", 
-        "\nUser:", hasFetchedUser.current, userRef.current,
-        "\nLogin Streak:", userRef.current?.login_streak,
-        "\nActivities:", hasFetchedActivities.current, activitiesRef.current,
-        "\nCommunities:", hasFetchedCommunities.current, communitiesRef.current,
-        "\nChats:", hasFetchedChats.current, chatsRef.current,
-        "\nFriends:", hasFetchedFriends.current, friendsRef.current,
-        "\nFriends Feed:", hasFetchedFriendsFeed.current, friendsFeedRef.current,
-        "\nCommunity Feed:", hasFetchedCommunityFeed.current, communityFeedRef.current
-        );
+      
+      console.log("User Data Loaded Successfully");
     }
-  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, manualRefetchTrigger]);
+  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
 
   // Add new effect to handle refetching
   useEffect(() => {
     if (refetchFriendsFeedTrigger > 0) {
+      friendsFeedLastTrigger.current = refetchFriendsFeedTrigger;
       hasFetchedFriendsFeed.current = false;
     }
   }, [refetchFriendsFeedTrigger]);
 
   useEffect(() => {
     if (refetchCommunityFeedTrigger > 0) {
+      communityFeedLastTrigger.current = refetchCommunityFeedTrigger;
       hasFetchedCommunityFeed.current = false;
     }
   }, [refetchCommunityFeedTrigger]);
 
+  // Track when feed queries are executed to prevent multiple executions
+  useEffect(() => {
+    if (hasNewFriendsFeedData && actionRefetchTrigger > 0) {
+      friendsFeedLastTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewFriendsFeedData, actionRefetchTrigger]);
+
+  useEffect(() => {
+    if (hasNewCommunityFeedData && actionRefetchTrigger > 0) {
+      communityFeedLastTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewCommunityFeedData, actionRefetchTrigger]);
+
+  // Track when activities are refetched to prevent multiple executions
+  useEffect(() => {
+    if (hasNewActivitiesData && actionRefetchTrigger > 0) {
+      activitiesLastTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewActivitiesData, actionRefetchTrigger]);
+
   // Cleanup effect to clear intervals when component unmounts
   useEffect(() => {
     return () => {
-      // if (incompleteDataCheckInterval.current) { // This line is removed
-      //   clearInterval(incompleteDataCheckInterval.current); // This line is removed
-      //   incompleteDataCheckInterval.current = null; // This line is removed
-      // } // This block is removed
+      // Cleanup if needed
     };
   }, []);
 

@@ -33,13 +33,6 @@ const SocialPage = () => {
   const friendsFeed = friendsFeedFromContext || [];
   const communityFeed = communityFeedFromContext || [];
   
-  console.log("SocialPage: Using data from context", {
-    communities: communityMembers.length,
-    friendsFeed: friendsFeed.length,
-    communityFeed: communityFeed.length,
-    isRefetching
-  });
-
   // Update render counter when data changes
   useEffect(() => {
     if (communityMembers.length > 0 || friendsFeed.length > 0 || communityFeed.length > 0) {
@@ -86,13 +79,13 @@ const SocialPage = () => {
   const handlingLike = isHandlingLike || isHandlingUnlike;
   const loading = handlingLike || isRefetching;
   if (debugRenders && !loading) {
-    console.log("Rendering SocialPage\n",
-      "Communities:", communityMembers, "\n",
-      "Friends Feed:", friendsFeed, "\n",
-      "Community Feed:", communityFeed, "\n",
-      "Render Counter:", renderCounter, "\n",
-      "Timezone:", timezone
-    );
+    console.log("Rendering SocialPage", {
+      communities: communityMembers.length,
+      friendsFeed: friendsFeed.length,
+      communityFeed: communityFeed.length,
+      renderCounter,
+      timezone
+    });
   }
 
     return (

@@ -57,7 +57,14 @@ export function useGetFeedCommunities(currentUserId: number, authToken: string, 
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFeedCommunities data", data, error ? 'error:' + error : '');
+    const posts = data?.joinedCommunityPosts.posts || [];
+    const success = data?.joinedCommunityPosts.success;
+    const errors = data?.joinedCommunityPosts.errors;
+    console.log("useGetFeedCommunities:", {
+      success,
+      postCount: posts.length,
+      errors: errors?.length > 0 ? errors : null,
+    });
   }
   return {
     posts: data?.joinedCommunityPosts.posts || [],
@@ -118,7 +125,14 @@ export function useGetFeedFriends(currentUserId: number, authToken: string, shou
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFeed data", data, error ? 'error:' + error : '');
+    const posts = data?.friendsFeedPosts.posts || [];
+    const success = data?.friendsFeedPosts.success;
+    const errors = data?.friendsFeedPosts.errors;
+    console.log("useGetFeedFriends:", {
+      success,
+      postCount: posts.length,
+      errors: errors?.length > 0 ? errors : null,
+    });
   }
   return {
     posts: data?.friendsFeedPosts.posts || [],

@@ -85,7 +85,22 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
   });
   const fetched = hasFetched && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetUser data", data, error ? 'error:' + error : '');
+    const user = data?.user.user;
+    const success = data?.user.success;
+    const errors = data?.user.errors;
+    console.log("useGetUser:", {
+      success,
+      userId: user?.id,
+      name: user ? `${user.first_name} ${user.last_name}` : null,
+      username: user?.username,
+      email: user?.email,
+      primaryGoal: user?.primary_goal,
+      secondaryGoal: user?.secondary_goal,
+      hasProfilePicture: !!user?.profile_picture,
+      timezone: user?.timezone,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     user: data?.user.user || [],

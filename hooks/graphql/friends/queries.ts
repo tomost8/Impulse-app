@@ -36,7 +36,16 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriends data", data, error ? 'error:' + error : '');
+    const friendships = data?.getFriendships.friendships || [];
+    const success = data?.getFriendships.success;
+    const errors = data?.getFriendships.errors;
+    console.log("useGetFriends:", {
+      success,
+      friendCount: friendships.length,
+      userId,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     friends: data?.getFriendships.friendships || [],
@@ -81,7 +90,17 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetFriendsLeaderboard", data, error ? 'error:' + error : '');
+    const friendships = data?.getFriendships.friendships || [];
+    const success = data?.getFriendships.success;
+    const errors = data?.getFriendships.errors;
+    console.log("useGetFriendsLeaderboard:", {
+      success,
+      friendCount: friendships.length,
+      userId,
+      sortBy,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     friends: data?.getFriendships.friendships || [],

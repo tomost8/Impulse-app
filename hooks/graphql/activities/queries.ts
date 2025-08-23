@@ -31,13 +31,24 @@ export const useGetActivitiesByDate = (userId: number, date: string, authToken: 
           Authorization: `Bearer ${authToken}`,
       },
     },
+    fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetActivitiesByDate data", data, error ? 'error:' + error : '');
+    const activities = data?.activitiesByDate.activities || [];
+    const success = data?.activitiesByDate.success;
+    const errors = data?.activitiesByDate.errors;
+    console.log("useGetActivitiesByDate:", {
+      success,
+      activityCount: activities.length,
+      date,
+      userId,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     activities: data?.activitiesByDate.activities || [],

@@ -93,15 +93,24 @@ export const GET_USER_CHATS = gql`
 
 export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_USER_CHATS, {
-    variables: { userId },
     skip: !shouldFetch,
+    variables: { userId },
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetUserChats data", data, error ? 'error:' + error : '');
+    const chatMembers = data?.getUserChats.chat_members || [];
+    const success = data?.getUserChats.success;
+    const errors = data?.getUserChats.errors;
+    console.log("useGetUserChats:", {
+      success,
+      chatCount: chatMembers.length,
+      userId,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     chatMembers: data?.getUserChats.chat_members || [],

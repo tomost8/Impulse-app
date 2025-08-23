@@ -307,7 +307,16 @@ export function useGetUserCommunities(userId: number, shouldFetch: boolean = tru
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetUserCommunities data", data, error ? 'error:' + error : '');
+    const communityMembers = data?.getUserCommunities.community_members || [];
+    const success = data?.getUserCommunities.success;
+    const errors = data?.getUserCommunities.errors;
+    console.log("useGetUserCommunities:", {
+      success,
+      communityCount: communityMembers.length,
+      userId,
+      errors: errors?.length > 0 ? errors : null,
+      hasError: !!error
+    });
   }
   return {
     communityMembers: data?.getUserCommunities.community_members || [],
