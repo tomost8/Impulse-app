@@ -14,10 +14,6 @@ type UserDataContextType = {
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
   loginStreak: any; setLoginStreak: (streak: any) => void;
   debugLog: () => void;
-  refetchFriendsFeed: () => Promise<void>;
-  refetchCommunityFeed: () => Promise<void>;
-  refetchFriendsFeedTrigger: number;
-  refetchCommunityFeedTrigger: number;
 };
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
@@ -36,8 +32,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
   const [loginStreak, setLoginStreak] = useState<any>(null);
-  const [refetchFriendsFeedTrigger, setRefetchFriendsFeedTrigger] = useState(0);
-  const [refetchCommunityFeedTrigger, setRefetchCommunityFeedTrigger] = useState(0);
 
   const debugLog = () => {
     console.log("=== User Data Debug Log ===",
@@ -50,14 +44,6 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       "\nCamera Clickable:", cameraClickable,
       "\nLogin Streak:", loginStreak
     );
-  };
-
-  const refetchFriendsFeed = async () => {
-    setRefetchFriendsFeedTrigger(prev => prev + 1);
-  };
-
-  const refetchCommunityFeed = async () => {
-    setRefetchCommunityFeedTrigger(prev => prev + 1);
   };
 
   const value = useMemo(() => ({
@@ -73,13 +59,9 @@ export const UserDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     cameraClickable, setCameraClickable,
     loginStreak, setLoginStreak,
     debugLog,
-    refetchFriendsFeed,
-    refetchCommunityFeed,
-    refetchFriendsFeedTrigger,
-    refetchCommunityFeedTrigger
   }), [
     fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed,
-    timezone, cameraClickable, loginStreak, refetchFriendsFeedTrigger, refetchCommunityFeedTrigger
+    timezone, cameraClickable, loginStreak
   ]);
 
   return (

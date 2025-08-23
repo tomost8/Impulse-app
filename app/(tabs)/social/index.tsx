@@ -18,15 +18,13 @@ const SocialPage = () => {
     timezone, 
     communities: communitiesFromContext,
     friendsFeed: friendsFeedFromContext, 
-    communityFeed: communityFeedFromContext, 
-    refetchFriendsFeed, 
-    refetchCommunityFeed 
+    communityFeed: communityFeedFromContext
   } = useUserData();
-  const { refetchAllData, isRefetching } = useDataRefetch();
+  const { refetchData, isRefetching } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Pull-to-refresh functionality: refetchAllData will refresh all user data
-  // including communities, friends feed, community feed, and other user data
+  // Pull-to-refresh functionality: refetchData will refresh feeds
+  // Auth-related refreshes (login/signup) are handled automatically by InitialDataLoader
   
   // Use data from global context instead of local queries
   const communityMembers = communitiesFromContext || [];
@@ -53,7 +51,10 @@ const SocialPage = () => {
     try {
       await likePost(postId, authToken as string);
       // Refetch data to get updated like state
-      await refetchAllData();
+      await refetchData({
+        friendsFeed: true,
+        communityFeed: true,
+      });
     } catch (error) {
       console.error("Error liking post:", error);
     } finally {
@@ -67,7 +68,10 @@ const SocialPage = () => {
     try {
       await unlikePost(postId, authToken as string);
       // Refetch data to get updated like state
-      await refetchAllData();
+      await refetchData({
+        friendsFeed: true,
+        communityFeed: true,
+      });
     } catch (error) {
       console.error("Error unliking post:", error);
     } finally {
@@ -96,7 +100,10 @@ const SocialPage = () => {
       communityFeed={communityFeed}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
-      onRefresh={refetchAllData}
+      onRefresh={() => refetchData({
+        friendsFeed: true,
+        communityFeed: true,
+      })}
       isRefreshing={isRefetching}
       //updatePostLikeState={updatePostLikeState}
     />

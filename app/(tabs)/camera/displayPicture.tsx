@@ -32,8 +32,8 @@ const DisplayPicturePage = () => {
 
   // User Data
   const { authToken } = useUserAuth();
-  const { fetching, user, activities, friends, chats, communities, refetchFriendsFeed, refetchCommunityFeed } = useUserData();
-  const { refetchAllData } = useDataRefetch();
+  const { fetching, user, activities, friends, chats, communities } = useUserData();
+  const { refetchData } = useDataRefetch();
   const timezone = user?.timezone;
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");
   const acceptedGroups = chats?.filter((chat: any) => chat.status === "ACCEPTED" && chat.chat.type === "group");
@@ -73,8 +73,12 @@ const DisplayPicturePage = () => {
       const response = await createPost(input, authToken as string);
       if (response.success) {
         console.log("Post created successfully:", response.post);
-        // Refetch all data after successful post creation
-        await refetchAllData();
+        // Refetch relevant data after successful post creation
+        await refetchData({
+          activities: true,      // Update activity completion status
+          friendsFeed: true,     // Show new post in friends feed
+          communityFeed: true,   // Show new post in community feed
+        });
       } else {
         throw new Error("createPost response.success false:" + response.errors);
       }
