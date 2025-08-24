@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 // Components
 import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
-import { debugHome } from '@/debug/utils';
+import { debugHomePage } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
@@ -100,12 +100,13 @@ const HomePage = () => {
     }
   };
 
-  if (debugHome && !loading) {
-    console.log("Rendering HomePage. Counter: ", renderCounter,
-      "\nActivities:", activities,
-      "\nLeaderboard:", leaderboardRef.current,
-      "\nTimezone:", timezone,
-    );
+  if (debugHomePage && !loading) {
+    const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
+      id: item.id,
+      username: item.username,
+      weekly_points: item.point?.weekly_points || 0
+    })) || [];
+    console.log(`Rendering HomePage - Activities: ${activities.length} | Leaderboard:`, leaderboardDetails);
   }
 
   return (

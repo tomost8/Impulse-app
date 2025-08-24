@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 // Components
 import Memories from '@/components/screens/profile/Memories';

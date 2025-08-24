@@ -3,7 +3,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { GiftedChat, Bubble, Day, InputToolbar, Composer, Send, IMessage, BubbleProps, DayProps, InputToolbarProps, SendProps, ComposerProps } from 'react-native-gifted-chat';
 import { Ionicons } from '@expo/vector-icons';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/chats/queries';
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';

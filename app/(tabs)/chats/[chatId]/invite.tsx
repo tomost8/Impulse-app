@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';

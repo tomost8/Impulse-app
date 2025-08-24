@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { CameraHeaderContext } from './_layout';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { useLocalSearchParams, router } from 'expo-router';
 // GraphQL Hooks
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';

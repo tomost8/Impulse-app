@@ -1,25 +1,21 @@
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+SplashScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding before asset loading is complete.
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']); // Suppress the onAnimatedValueUpdate warning
+
+import { ApolloProvider } from '@apollo/client';
+import { client } from '../services/client';
+import '@react-native-firebase/app';
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataProviderContext';
 import { DataFetcher } from '../contexts/DataFetcher';
-import { ApolloProvider } from '@apollo/client';
-import { client } from '../services/client';
-import TokenTestButton from '@/debug/TokenTestButton';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+
 import { debugComponentsOn } from '@/debug/utils';
-
-// Import Firebase app first to ensure early initialization
-import '@react-native-firebase/app';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-// Suppress the onAnimatedValueUpdate warning
-import { LogBox } from 'react-native';
-LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered']);
+import TokenTestButton from '@/debug/TokenTestButton';
 
 export default function RootLayout() {
   useEffect(() => {

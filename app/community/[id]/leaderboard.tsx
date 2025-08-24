@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { useLocalSearchParams } from 'expo-router';
 // GraphQL hooks
 import { useGetCommunityLeaderboard } from '@/hooks/graphql/communities/queries';

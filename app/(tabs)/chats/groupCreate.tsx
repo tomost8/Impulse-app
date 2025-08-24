@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import { router } from 'expo-router';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';

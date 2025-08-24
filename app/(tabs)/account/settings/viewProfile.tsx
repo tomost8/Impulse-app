@@ -1,4 +1,4 @@
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/ProfileScreen';
 // Debug

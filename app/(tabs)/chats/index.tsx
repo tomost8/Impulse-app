@@ -1,14 +1,14 @@
 import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Dimensions, StatusBar } from 'react-native';
 import { router } from 'expo-router';
 import { useState, useEffect, useRef } from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { Ionicons } from '@expo/vector-icons';
 // GraphQL hooks
 
 // Components
 import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/debug/utils';
+import { pageDisplay, debugChatsPage } from '@/debug/utils';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
@@ -197,12 +197,23 @@ const ChatPage = () => {
 
   // Debug
   const loading = fetching;
-  if (debugRenders && !loading) {
-    console.log("Rendering ChatScreen\n",
-      "Chats:", chats, "\n",
-      "Friends:", friends, "\n",
-      "Chat Info:", chatInfo, "\n",
-    );
+  if (debugChatsPage && !loading) {
+    const friendDetails = friends.map((friend: any) => ({
+      id: friend.friend.id,
+      name: friend.friend.username || `${friend.friend.first_name} ${friend.friend.last_name}`,
+      status: friend.status,
+      role: friend.role
+    }));
+    const chatDetails = chats.map((chat: any) => {
+      const chatInfoItem = chatInfo.find((info: any) => info.id === chat.chat.id);
+      return {
+        id: chat.chat.id,
+        name: chatInfoItem?.title || chat.chat.title || 'Direct',
+        type: chat.chat.type,
+        status: chat.status
+      };
+    });
+    console.log(`Rendering ChatPage - Friends:`, friendDetails, `| Chats:`, chatDetails);
   }
 
   if (pageDisplay) {
@@ -212,6 +223,8 @@ const ChatPage = () => {
       requestCount={requestCount}
     />
   }
+  
+  return null;
 }
 
 const styles = StyleSheet.create({

@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetAllUsers } from '@/hooks/graphql/users/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';

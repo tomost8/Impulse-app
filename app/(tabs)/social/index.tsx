@@ -1,11 +1,11 @@
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import SocialScreen from '@/components/screens/tabs/SocialScreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugSocialPage } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,7 +21,6 @@ const SocialPage = () => {
     communityFeed: communityFeedFromContext
   } = useDataProvider();
   const { refetchData, isRefetching } = useDataRefetch();
-  const [renderCounter, setRenderCounter] = useState(0);
 
   // Pull-to-refresh functionality: refetchData will refresh feeds
   // Auth-related refreshes (login/signup) are handled automatically by DataFetcher
@@ -30,13 +29,6 @@ const SocialPage = () => {
   const communityMembers = communitiesFromContext || [];
   const friendsFeed = friendsFeedFromContext || [];
   const communityFeed = communityFeedFromContext || [];
-  
-  // Update render counter when data changes
-  useEffect(() => {
-    if (communityMembers.length > 0 || friendsFeed.length > 0 || communityFeed.length > 0) {
-      setRenderCounter(prev => prev + 1);
-    }
-  }, [communityMembers.length, friendsFeed.length, communityFeed.length]);
 
   // Mutations
   const { likePost } = useLikePost();
@@ -82,14 +74,8 @@ const SocialPage = () => {
   // Debug
   const handlingLike = isHandlingLike || isHandlingUnlike;
   const loading = handlingLike || isRefetching;
-  if (debugRenders && !loading) {
-    console.log("Rendering SocialPage", {
-      communities: communityMembers.length,
-      friendsFeed: friendsFeed.length,
-      communityFeed: communityFeed.length,
-      renderCounter,
-      timezone
-    });
+  if (debugSocialPage && !loading) {
+    console.log(`Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}`);
   }
 
     return (

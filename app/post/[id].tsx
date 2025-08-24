@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
 import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';

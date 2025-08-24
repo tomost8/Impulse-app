@@ -1,9 +1,9 @@
 // Components
 import AccountProfile from '@/components/screens/tabs/AccountScreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugAccountPage } from '@/debug/utils';
 // Services
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const AccountPage = () => {
@@ -11,12 +11,8 @@ const AccountPage = () => {
 
   const acceptedFriends = friends.filter((friend: any) => friend.status === 'ACCEPTED');
 
-  if (debugRenders && !fetching) {
-    console.log("Rendering AccountPage.",
-      "\nUser:", user, 
-      "\nCommunities:", communities, 
-      "\nFriends:", acceptedFriends,
-    );
+  if (debugAccountPage && !fetching) {
+    console.log(`Rendering AccountPage - User: ${user?.username || 'Unknown'} (ID: ${user?.id}, Double Cam: ${user?.is_double_cam}, TZ: ${user?.timezone}) | Communities: ${communities.length} | Friends: ${acceptedFriends.length}`);
   }
 
   return <AccountProfile

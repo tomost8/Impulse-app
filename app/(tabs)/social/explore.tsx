@@ -1,5 +1,5 @@
 import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetCommunities, useGetUserCommunities, useGetAllCategories, useGetAllCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';

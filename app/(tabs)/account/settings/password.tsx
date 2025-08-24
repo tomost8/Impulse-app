@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 // Components
 import PasswordScreen from '@/components/screens/profile/ProfileSetting/ResetPasswordScreen';
 // Firebase

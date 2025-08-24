@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import AuthWrapper from '@/components/auth/AuthWrapper';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 import { router } from 'expo-router';
 // GraphQL hooks
