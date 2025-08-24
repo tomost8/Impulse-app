@@ -5,15 +5,15 @@ import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
 import FriendsList from '@/components/screens/profile/FriendsCommunityList/FriendsList';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 
 const FriendsPage = () => {
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, friends, setFriends } = useDataProvider();
 
    // Mutations: Cancel

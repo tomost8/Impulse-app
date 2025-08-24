@@ -10,7 +10,7 @@ import DisplayPictureScreen from "@/components/screens/camera/SingleLensCamera/d
 import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
 import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from "@/contexts/DataProviderContext";
 import { useDataRefetch } from '@/contexts/DataFetcher';
 import { processAndUploadImage } from '@/utils/imageProcessing';
@@ -31,7 +31,7 @@ const DisplayPicturePage = () => {
     .map(source => source!.uri);
 
   // User Data
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, activities, friends, chats, communities } = useDataProvider();
   const { refetchData } = useDataRefetch();
   const timezone = user?.timezone;

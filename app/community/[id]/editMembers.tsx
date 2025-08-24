@@ -7,7 +7,7 @@ import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations'
 // Components
 import EditMembersScreen from '@/components/screens/social/communities/editmembersscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 
 const EditMembersPage = () => {
  const { id } = useLocalSearchParams();

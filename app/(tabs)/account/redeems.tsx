@@ -7,7 +7,7 @@ import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
 import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 

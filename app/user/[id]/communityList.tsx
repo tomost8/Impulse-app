@@ -6,7 +6,7 @@ import { useDataProvider } from '@/contexts/DataProviderContext';
 // Components
 import CommunityList from '@/components/screens/connect/profiles/communitylist';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 

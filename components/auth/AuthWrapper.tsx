@@ -1,12 +1,12 @@
 import React from 'react';
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Redirect } from 'expo-router';
 import LoadingScreen from '@/components/ui/common/loading';
 
 const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
   return (props: any) => {
     try {
-      const { userId, authToken, loading, authInitialized } = useUserAuth();
+      const { userId, authToken, loading, authInitialized } = useAuth();
 
       // Show loading screen while auth is initializing or if context is not available
       if (loading || !authInitialized) {

@@ -7,7 +7,7 @@ import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
 import JoinGroupScreen from '@/components/screens/connect/joingroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 
 
 const JoinGroupPage = (props: any) => {

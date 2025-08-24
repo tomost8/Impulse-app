@@ -8,13 +8,13 @@ import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/po
 // Components
 import PostScreen from '@/components/screens/social/post';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/debug/utils';
 
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const PostPage = () => {
   const { id, isLiked } = useLocalSearchParams(); // postId
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State

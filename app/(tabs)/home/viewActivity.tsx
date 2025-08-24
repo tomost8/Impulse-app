@@ -5,14 +5,14 @@ import { useUpdateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
 import ViewGoalsScreen from '@/components/screens/home/ViewActivities';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { convertLocalToUtc, convertUtcToLocal } from "@/utils/timezoneProcessing";
 
 const ViewActivityPage = () => {
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, activities, setActivities } = useDataProvider();
 
   // Mutations

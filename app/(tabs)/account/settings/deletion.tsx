@@ -5,13 +5,13 @@ import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import DeletionScreen from '@/components/screens/profile/ProfileSetting/SupportScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 
 const DeletionPage = () => {
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
 
   // Mutations
   const { updateUser } = useUpdateUser();

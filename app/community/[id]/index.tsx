@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
@@ -10,11 +10,11 @@ import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/quer
 // Components
 import CommunityMainScreen from '@/components/screens/social/main/communitymainscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 
 const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 

@@ -7,9 +7,9 @@ import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
 import StartGroupScreen from '@/components/screens/connect/startgroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 

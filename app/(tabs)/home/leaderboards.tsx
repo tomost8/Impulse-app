@@ -6,7 +6,7 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 // Components
 import LeaderboardScreen from '@/components/screens/home/LeaderboardScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 

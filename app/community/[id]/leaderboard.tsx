@@ -6,7 +6,7 @@ import { useGetCommunityLeaderboard } from '@/hooks/graphql/communities/queries'
 // Components
 import LeaderboardScreen from '@/components/screens/social/communities/leaderboardscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const LeaderboardPage = () => { 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef, useState, createContext, useContext } from 'react';
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { useApolloClient } from '@apollo/client';
@@ -73,7 +73,7 @@ export const useDataRefetch = () => {
 };
 
 export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userId, authToken, loading, authInitialized } = useUserAuth();
+  const { userId, authToken, loading, authInitialized } = useAuth();
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,

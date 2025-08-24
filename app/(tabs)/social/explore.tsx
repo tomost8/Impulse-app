@@ -6,7 +6,7 @@ import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations'
 // Components
 import ExploreScreen from '@/components/screens/social/main/explorescreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { getLabelByCategory } from '@/utils/goals';

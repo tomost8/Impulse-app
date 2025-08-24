@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 // Components
 import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
-import { debugHome } from '@/utils/debug';
+import { debugHome } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';

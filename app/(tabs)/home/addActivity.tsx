@@ -5,7 +5,7 @@ import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
 import AddDailyGoalsScreen from '@/components/screens/home/AddActivities';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 import { router } from 'expo-router';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';

@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityCategories } from '@/hooks/graphql/communities/queries';
@@ -10,7 +10,7 @@ import { useUpdateCommunity, useCreateCommunityCategory, useDeleteCommunityCateg
 // Components
 import EditCommunityScreen from '@/components/screens/social/communities/editcommunityscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 
 const EditCommunityPage = () => {
  const { id } = useLocalSearchParams(); // communityId 

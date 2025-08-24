@@ -6,15 +6,15 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
 import CameraPopup from '@/components/screens/home/camerapopup';
-import { useUserAuth } from '@/services/AuthContext';
-import { debugRouting } from '@/utils/debug';
+import { useAuth } from '@/contexts/AuthContext';
+import { debugRouting } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import LoadingScreen from '@/components/ui/common/loading';
 import { Redirect } from 'expo-router';
 
 function TabLayout() {
   const [modalVisible, setModalVisible] = useState(false);
-  const { userId, authToken, loading } = useUserAuth();
+  const { userId, authToken, loading } = useAuth();
   const {cameraClickable} = useDataProvider();
 
   const pathname = usePathname();

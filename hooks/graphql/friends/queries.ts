@@ -1,5 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { debugQueries } from '@/utils/debug';
+import { debugQueries } from '@/debug/utils';
 
 // Query - Get Friends of User (by User ID)
 export const GET_FRIENDS = gql`

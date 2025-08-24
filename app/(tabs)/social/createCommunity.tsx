@@ -9,7 +9,7 @@ import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/
 // Components
 import CreateCommunityScreen from '@/components/screens/social/main/createcommunityscreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 
 
 const CreateCommunityPage = () => {

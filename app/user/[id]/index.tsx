@@ -10,16 +10,16 @@ import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import FriendViewScreen from '@/components/screens/connect/profiles/friendview';
 import NonFriendViewScreen from '@/components/screens/connect/profiles/nonfriendview';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 import { useAcceptFriendRequest, useSendFriendRequest } from '@/hooks/graphql/friends/mutations';
 
 const UserPage = () => {
   const { id } = useLocalSearchParams();
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, friends, setFriends } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 

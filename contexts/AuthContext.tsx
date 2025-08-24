@@ -17,7 +17,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
@@ -368,21 +368,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useUserAuth = () => {
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     // During initialization, the context might not be available yet
     // Return a default state instead of throwing an error
-    console.warn('useUserAuth called outside of UserProvider, returning default state');
+    console.warn('useAuth called outside of AuthProvider, returning default state');
     return {
       authToken: null,
       userId: null,
       loading: true,
       authInitialized: false,
-      login: async () => { throw new Error('UserProvider not available'); },
-      logout: async () => { throw new Error('UserProvider not available'); },
-      refreshAuthToken: async () => { throw new Error('UserProvider not available'); },
-      checkAndRefreshToken: async () => { throw new Error('UserProvider not available'); },
+      login: async () => { throw new Error('AuthProvider not available'); },
+      logout: async () => { throw new Error('AuthProvider not available'); },
+      refreshAuthToken: async () => { throw new Error('AuthProvider not available'); },
+      checkAndRefreshToken: async () => { throw new Error('AuthProvider not available'); },
       getTokenInfo: () => null,
     };
   }

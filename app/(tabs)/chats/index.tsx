@@ -8,9 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 // Components
 import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const { width: screenWidth } = Dimensions.get('window');

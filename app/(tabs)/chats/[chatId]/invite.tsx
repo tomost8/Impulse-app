@@ -8,7 +8,7 @@ import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
 import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 

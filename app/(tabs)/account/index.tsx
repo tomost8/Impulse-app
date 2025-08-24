@@ -1,7 +1,7 @@
 // Components
 import AccountProfile from '@/components/screens/tabs/AccountScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
 import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useDataProvider } from '@/contexts/DataProviderContext';

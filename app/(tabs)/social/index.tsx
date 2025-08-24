@@ -5,15 +5,15 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import SocialScreen from '@/components/screens/tabs/SocialScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataRefetch } from '@/contexts/DataFetcher';
 
 
 const SocialPage = () => {
-  const { userId, authToken} = useUserAuth();
+  const { userId, authToken} = useAuth();
   const { 
     timezone, 
     communities: communitiesFromContext,

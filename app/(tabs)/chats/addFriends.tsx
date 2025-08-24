@@ -7,14 +7,14 @@ import { useSendFriendRequest, useDeleteFriendship } from '@/hooks/graphql/frien
 // Components
 import FindFriendScreen from '@/components/screens/chats/findfriend';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 const AddFriendsPage = () => {
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, friends, setFriends } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 

@@ -4,16 +4,16 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import AnnouncementScreen from '@/components/screens/social/communities/announcementscreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/utils/debug';
+import { pageDisplay, debugRenders } from '@/debug/utils';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 import { useLocalSearchParams } from 'expo-router';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useGetCommunity } from '@/hooks/graphql/communities/queries';
 
 const AnnouncementsPage = () => {
  const { id } = useLocalSearchParams(); // communityId
- const { authToken } = useUserAuth();
+   const { authToken } = useAuth();
  const [renderCounter, setRenderCounter] = useState(0);
 
  // Queries

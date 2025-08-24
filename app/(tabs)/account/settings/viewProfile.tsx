@@ -2,7 +2,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/ProfileScreen';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 

@@ -7,15 +7,15 @@ import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
 import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfileScreen';
 // Debug
-import { debugEditProfile } from '@/utils/debug';
+import { debugEditProfile } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 
 const EditProfilePage = () => {
-  const { authToken } = useUserAuth();
+  const { authToken } = useAuth();
   const { fetching, user, setUser } = useDataProvider();
 
   // Form Data

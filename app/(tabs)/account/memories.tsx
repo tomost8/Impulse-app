@@ -4,9 +4,9 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import Memories from '@/components/screens/profile/Memories';
 // Debug
-import { debugRenders } from '@/utils/debug';
+import { debugRenders } from '@/debug/utils';
 // Services
-import { useUserAuth } from '@/services/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 import { getLocalDay } from '@/utils/timezoneProcessing';
