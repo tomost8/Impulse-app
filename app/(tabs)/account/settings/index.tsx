@@ -3,12 +3,12 @@ import ProfileSettings from '@/components/screens/profile/ProfileSetting/Profile
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useState } from 'react';
 
 export default function SettingsPage() {
   const { authToken } = useUserAuth();
-  const { fetching, user, setUser } = useUserData();
+  const { fetching, user, setUser } = useDataProvider();
 
   // Mutations
   const { updateUser } = useUpdateUser();

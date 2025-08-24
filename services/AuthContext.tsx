@@ -123,6 +123,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [authInitialized]); // Only depend on authInitialized, not authToken
 
+
+
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
     try {
       await Promise.all([

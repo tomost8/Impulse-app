@@ -7,7 +7,7 @@ import { useTheme } from 'react-native-paper';
 import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { FlipType, SaveFormat, ImageManipulator } from 'expo-image-manipulator';
 
 // 获取屏幕尺寸 (Get screen dimensions)
@@ -15,7 +15,7 @@ const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function CameraScreen() {
   const { id, category } = useLocalSearchParams();
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
   const context = useContext(CameraHeaderContext);
   if (!context) return null;
 

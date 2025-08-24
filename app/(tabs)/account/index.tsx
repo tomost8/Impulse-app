@@ -4,10 +4,10 @@ import AccountProfile from '@/components/screens/tabs/AccountScreen';
 import { debugRenders } from '@/utils/debug';
 // Services
 import AuthWrapper from '@/components/auth/AuthWrapper';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const AccountPage = () => {
-  const { user, communities, friends, fetching } = useUserData();
+  const { user, communities, friends, fetching } = useDataProvider();
 
   const acceptedFriends = friends.filter((friend: any) => friend.status === 'ACCEPTED');
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import { useUserData } from "@/services/UserPreferencesContext";
+import { useDataProvider } from "@/contexts/DataProviderContext";
 
 // Importing icons
 import StreakFire from "@/assets/icons/streakFireNew.png";
@@ -24,7 +24,7 @@ const defaultDays: DayItem[] = [
 ];
 
 const StreakTracker: React.FC = () => {
-  const { loginStreak } = useUserData();
+  const { loginStreak } = useDataProvider();
   
   // 使用API返回的formatted_weekly_logins或默认值
   const days: DayItem[] = loginStreak?.formatted_weekly_logins || defaultDays;

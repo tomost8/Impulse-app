@@ -4,11 +4,11 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 // Components
 import CommunityScreen from '@/components/screens/profile/FriendsCommunityList/CommunitiesList';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations';
 
 const CommunitiesPage = () => {
-  const { fetching, user, communities } = useUserData();
+  const { fetching, user, communities } = useDataProvider();
 
   // Mutations
   const { deleteCommunityMember } = useDeleteCommunityMember();

@@ -4,10 +4,10 @@ import ProfileScreen from '@/components/screens/profile/ProfileSetting/ProfileSc
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const ProfilePage = () => {
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
 
   // Debug
   if (debugRenders && !fetching) {

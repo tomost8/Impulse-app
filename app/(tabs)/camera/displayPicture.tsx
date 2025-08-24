@@ -11,8 +11,8 @@ import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
 import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from "@/services/UserPreferencesContext";
-import { useDataRefetch } from '@/components/InitialDataLoader';
+import { useDataProvider } from "@/contexts/DataProviderContext";
+import { useDataRefetch } from '@/contexts/DataFetcher';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 
 const DisplayPicturePage = () => {
@@ -32,7 +32,7 @@ const DisplayPicturePage = () => {
 
   // User Data
   const { authToken } = useUserAuth();
-  const { fetching, user, activities, friends, chats, communities } = useUserData();
+  const { fetching, user, activities, friends, chats, communities } = useDataProvider();
   const { refetchData } = useDataRefetch();
   const timezone = user?.timezone;
   const acceptedFriends = friends?.filter((friend: any) => friend.status === "ACCEPTED");

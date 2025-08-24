@@ -9,10 +9,10 @@ import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScr
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const RedeemsPage = () => {
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries

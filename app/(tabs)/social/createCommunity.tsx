@@ -3,7 +3,7 @@ import AuthWrapper from '@/components/auth/AuthWrapper';
 import { processAndUploadImage } from '@/utils/imageProcessing';
 import { router } from 'expo-router';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
@@ -13,7 +13,7 @@ import { debugRenders } from '@/utils/debug';
 
 
 const CreateCommunityPage = () => {
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
 
   // Mutations
   const {createCommunity} = useCreateCommunity();

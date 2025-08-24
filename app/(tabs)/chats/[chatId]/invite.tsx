@@ -10,12 +10,12 @@ import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const GroupInvitePage = (props: any) => {
   console.log("GroupInvitePage");
   const { chatId } = useLocalSearchParams();
-  const { fetching, friends} = useUserData();
+  const { fetching, friends} = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries 

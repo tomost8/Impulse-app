@@ -9,12 +9,12 @@ import HomeScreen from '@/components/screens/tabs/HomeScreen';
 // Debug
 import { debugHome } from '@/utils/debug';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
 import { getCategoryById } from '@/utils/goals';
 
 const HomePage = () => {
-  const { fetching, user, activities, timezone, setActivities, setCameraClickable } = useUserData();
+  const { fetching, user, activities, timezone, setActivities, setCameraClickable } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
   const router = useRouter();

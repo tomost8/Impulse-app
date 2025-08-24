@@ -10,13 +10,13 @@ import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfi
 import { debugEditProfile } from '@/utils/debug';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 
 const EditProfilePage = () => {
   const { authToken } = useUserAuth();
-  const { fetching, user, setUser } = useUserData();
+  const { fetching, user, setUser } = useDataProvider();
 
   // Form Data
   const [formData, setFormData] = useState({

@@ -8,7 +8,7 @@ import AddDailyGoalsScreen from '@/components/screens/home/AddActivities';
 import { debugRenders } from '@/utils/debug';
 import { router } from 'expo-router';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { getCategoryById } from "@/utils/goals";
 import { convertLocalToUtc } from "@/utils/timezoneProcessing";
 
@@ -19,7 +19,7 @@ interface GoalFormData {
 }
 
 const AddActivityPage = () => {
-  const { fetching, timezone, activities, setActivities, setCameraClickable } = useUserData();
+  const { fetching, timezone, activities, setActivities, setCameraClickable } = useDataProvider();
 
   // Mutations
   const { createActivity } = useCreateActivity();

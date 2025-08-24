@@ -7,11 +7,11 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import LeaderboardScreen from '@/components/screens/home/LeaderboardScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 const LeaderboardsPage = () => {
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
   const [selectedPeriod, setSelectedPeriod] = useState<'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL'>('POINTS_WEEKLY');
   const [renderCounter, setRenderCounter] = useState(0);
 

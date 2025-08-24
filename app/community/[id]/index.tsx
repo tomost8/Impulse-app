@@ -3,7 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/components/auth/AuthWrapper';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
@@ -15,7 +15,7 @@ import { debugRenders } from '@/utils/debug';
 const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
   const { authToken } = useUserAuth();
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State

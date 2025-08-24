@@ -11,7 +11,7 @@ import ChatScreen from '@/components/screens/tabs/ChatsScreen';
 import { pageDisplay, debugRenders } from '@/utils/debug';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -168,7 +168,7 @@ const { width: screenWidth } = Dimensions.get('window');
 // }
 
 const ChatPage = () => {
-  const { fetching, chats, friends } = useUserData();
+  const { fetching, chats, friends } = useDataProvider();
 
   // Queries (maybe for messages)
 

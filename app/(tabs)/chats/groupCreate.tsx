@@ -10,11 +10,11 @@ import StartGroupScreen from '@/components/screens/connect/startgroup';
 import { debugRenders } from '@/utils/debug';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 const CreateGroupPage = () => {
-  const {fetching, user} = useUserData();
+  const {fetching, user} = useDataProvider();
 
   // Mutations
   const {createGroup} = useCreateGroup();

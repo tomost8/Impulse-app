@@ -8,12 +8,12 @@ import ExploreScreen from '@/components/screens/social/main/explorescreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
 // Services
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { getLabelByCategory } from '@/utils/goals';
 
 
 const ExplorePage = () => {
-  const { fetching, user } = useUserData();
+  const { fetching, user } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State

@@ -8,14 +8,14 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import CameraPopup from '@/components/screens/home/camerapopup';
 import { useUserAuth } from '@/services/AuthContext';
 import { debugRouting } from '@/utils/debug';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import LoadingScreen from '@/components/ui/common/loading';
 import { Redirect } from 'expo-router';
 
 function TabLayout() {
   const [modalVisible, setModalVisible] = useState(false);
   const { userId, authToken, loading } = useUserAuth();
-  const {cameraClickable} = useUserData();
+  const {cameraClickable} = useDataProvider();
 
   const pathname = usePathname();
 

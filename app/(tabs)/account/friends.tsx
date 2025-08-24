@@ -8,13 +8,13 @@ import FriendsList from '@/components/screens/profile/FriendsCommunityList/Frien
 import { debugRenders } from '@/utils/debug';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 
 
 const FriendsPage = () => {
   const { authToken } = useUserAuth();
-  const { fetching, user, friends, setFriends } = useUserData();
+  const { fetching, user, friends, setFriends } = useDataProvider();
 
    // Mutations: Cancel
 const { deleteFriendship } = useDeleteFriendship();

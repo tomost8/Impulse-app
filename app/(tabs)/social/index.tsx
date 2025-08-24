@@ -6,10 +6,10 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 import SocialScreen from '@/components/screens/tabs/SocialScreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 // Services
 import { useUserAuth } from '@/services/AuthContext';
-import { useDataRefetch } from '@/components/InitialDataLoader';
+import { useDataRefetch } from '@/contexts/DataFetcher';
 
 
 const SocialPage = () => {
@@ -19,12 +19,12 @@ const SocialPage = () => {
     communities: communitiesFromContext,
     friendsFeed: friendsFeedFromContext, 
     communityFeed: communityFeedFromContext
-  } = useUserData();
+  } = useDataProvider();
   const { refetchData, isRefetching } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Pull-to-refresh functionality: refetchData will refresh feeds
-  // Auth-related refreshes (login/signup) are handled automatically by InitialDataLoader
+  // Auth-related refreshes (login/signup) are handled automatically by DataFetcher
   
   // Use data from global context instead of local queries
   const communityMembers = communitiesFromContext || [];

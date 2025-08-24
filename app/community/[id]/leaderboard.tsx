@@ -7,7 +7,7 @@ import { useGetCommunityLeaderboard } from '@/hooks/graphql/communities/queries'
 import LeaderboardScreen from '@/components/screens/social/communities/leaderboardscreen';
 // Debug
 import { debugRenders } from '@/utils/debug';
-import { useUserData } from '@/services/UserPreferencesContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const LeaderboardPage = () => { 
   const { id } = useLocalSearchParams(); // community ID
