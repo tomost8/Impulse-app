@@ -27,7 +27,7 @@ import { useGetFeedFriends } from '@/hooks/graphql/posts/queries';
  *   const { refetchData, isRefetching } = useDataRefetch();
  *   
  *   const handleRefreshButton = () => {
- *     refetchData({ user: true, activities: true }); // Selective refresh
+ *     refetchData({ user: true, activities: true }); // Selective refresh with cache cleared by default
  *   };
  *   
  *   return (
@@ -41,8 +41,12 @@ import { useGetFeedFriends } from '@/hooks/graphql/posts/queries';
  * 
  * const handleCompleteAction = async () => {
  *   await someMutation();
- *   refetchData({ friendsFeed: true, communityFeed: true }); // Refresh feeds
+ *   refetchData({ friendsFeed: true, communityFeed: true }); // Refresh feeds with fresh data
  * };
+ * 
+ * 3. If you want to use cached data (rare case):
+ * 
+ * refetchData({ friends: true, clearCache: false }); // Use cached data if available
  */
 
 // Context for global data refetch
@@ -59,7 +63,7 @@ interface RefetchOptions {
   friends?: boolean;
   friendsFeed?: boolean;
   communityFeed?: boolean;
-  clearCache?: boolean;
+  clearCache?: boolean; // Defaults to true for fresh data after mutations
 }
 
 const DataRefetchContext = createContext<DataRefetchContextType | null>(null);
@@ -266,8 +270,9 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     console.log("Selective data refresh triggered:", options);
     setIsRefetching(true);
     
-    // Set refetch options
-    currentRefetchOptions.current = options;
+    // Set refetch options with default clearCache: true
+    const optionsWithDefaults = { clearCache: true, ...options };
+    currentRefetchOptions.current = optionsWithDefaults;
     
     // Reset trigger tracking
     lastActionRefetchTrigger.current = 0;
@@ -275,8 +280,8 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     // Small delay for backend transactions
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    // Clear cache if requested
-    if (options.clearCache) {
+    // Clear cache if requested (defaults to true)
+    if (optionsWithDefaults.clearCache) {
       await client.clearStore();
     }
     

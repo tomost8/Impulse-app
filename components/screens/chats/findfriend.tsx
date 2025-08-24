@@ -101,7 +101,7 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
               <View key={friend.id} style={styles.friendCard}>
                 <View style={styles.friendInfo}>
                   <Image 
-                    source={friend.profile_picture}
+                    source={{ uri: friend.profile_picture }}
                     style={styles.profileImage}
                   />
                   <View style={styles.textContainer}>
@@ -111,10 +111,11 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
                 </View>
                 <TouchableOpacity 
                   onPress={() => handleCancel(friend.id)}
+                  disabled={props.loading}
                 >
                   <Image 
                     source={require("@/assets/icons/cancel.png")}
-                    style={styles.cancelIcon}
+                    style={[styles.cancelIcon, props.loading && styles.disabledIcon]}
                   />
                 </TouchableOpacity>
               </View>
@@ -128,7 +129,7 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
             <View key={friend.id} style={styles.friendCard}>
               <View style={styles.friendInfo}>
                 <Image 
-                  source={friend.profile_picture}
+                  source={{ uri: friend.profile_picture }}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
@@ -137,10 +138,11 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
                 </View>
               </View>
               <TouchableOpacity 
-                style={styles.addButton}
+                style={[styles.addButton, props.loading && styles.disabledButton]}
                 onPress={() => handleAddFriend(friend.id)}
+                disabled={props.loading}
               >
-                <Text style={styles.addButtonText}>Add Friend</Text>
+                <Text style={[styles.addButtonText, props.loading && styles.disabledText]}>Add Friend</Text>
               </TouchableOpacity>
             </View>
           ))}
@@ -270,6 +272,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  disabledIcon: {
+    opacity: 0.5,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  disabledText: {
+    opacity: 0.5,
   },
 });
 

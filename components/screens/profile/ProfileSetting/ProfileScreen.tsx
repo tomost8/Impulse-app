@@ -66,11 +66,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
           <View style={styles.avatarContainer}>
             <Image
               accessibilityLabel="User profile picture"
-              resizeMode="contain"
+              resizeMode="cover"
               source={{
                 uri: user.profile_picture,
               }}
-              style={[styles.avatar, { borderWidth: 1, borderColor: 'black' }]}
+              style={styles.avatar}
             />
           </View>
           <View style={styles.personalInfoContainer}>
@@ -160,6 +160,14 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 65,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   personalInfoContainer: {
     marginBottom: 40,

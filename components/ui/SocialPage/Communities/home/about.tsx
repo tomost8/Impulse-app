@@ -21,7 +21,7 @@ const About: React.FC<AboutProps> = ({
       
       <View style={styles.founderCard}>
         <Image
-          source={founderImage}
+          source={{ uri: founderImage }}
           style={styles.founderImage}
         />
         <View style={styles.founderInfo}>

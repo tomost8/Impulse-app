@@ -9,12 +9,14 @@ import { debugRenders } from '@/debug/utils';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
+import { useDataRefetch } from '@/contexts/DataFetcher';
 
 
 
 const FriendsPage = () => {
   const { authToken } = useAuth();
-  const { fetching, user, friends, setFriends } = useDataProvider();
+  const { fetching, user, friends } = useDataProvider();
+  const { refetchData } = useDataRefetch();
 
    // Mutations: Cancel
 const { deleteFriendship } = useDeleteFriendship();
@@ -25,7 +27,7 @@ const handleRemoveFriend = async (friendId: number) => {
     const response = await deleteFriendship(user.id, friendId, authToken as string);
     if (response.success) {
       console.log("Successfully removed friend.", friendId);
-      setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
+      await refetchData({ friends: true });
     } else {
       throw new Error("Response.success from deleteFriendship was false:" + response.errors);
     }

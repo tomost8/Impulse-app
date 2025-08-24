@@ -97,7 +97,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
             <View key={request.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
                 <Image 
-                  source={request.profile_picture}
+                  source={{ uri: request.profile_picture }}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
@@ -114,10 +114,11 @@ const RequestsScreen = (props: RequestsScreenProps) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={() => handleCancelFriendRequest(request.id)}
+                  disabled={props.loading}
                 >
                   <Image 
                     source={require("@/assets/icons/cancel.png")}
-                    style={styles.cancelIcon}
+                    style={[styles.cancelIcon, props.loading && styles.disabledIcon]}
                   />
                 </TouchableOpacity>
               </View>
@@ -132,7 +133,7 @@ const RequestsScreen = (props: RequestsScreenProps) => {
             <View key={invite.id} style={styles.requestCard}>
               <View style={styles.userInfo}>
                 <Image 
-                  source={invite.profile_pic}
+                  source={{ uri: invite.profile_pic }}
                   style={styles.profileImage}
                 />
                 <View style={styles.textContainer}>
@@ -146,15 +147,17 @@ const RequestsScreen = (props: RequestsScreenProps) => {
                 <TouchableOpacity 
                   style={styles.acceptButton}
                   onPress={() => handleAccept(invite.id)}
+                  disabled={props.loading}
                 >
                   <Text style={styles.acceptText}>Accept</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                   onPress={() => handleCancelGroupInvite(invite.id)}
+                  disabled={props.loading}
                 >
                   <Image 
                     source={require("@/assets/icons/cancel.png")}
-                    style={styles.cancelIcon}
+                    style={[styles.cancelIcon, props.loading && styles.disabledIcon]}
                   />
                 </TouchableOpacity>
               </View>
@@ -294,6 +297,9 @@ const styles = StyleSheet.create({
     height: 16,
     resizeMode: 'contain',
     tintColor: '#A4ACBC',
+  },
+  disabledIcon: {
+    opacity: 0.5,
   },
 });
 

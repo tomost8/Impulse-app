@@ -22,8 +22,7 @@ export default function GetStarted() {
     try {
       const userCredential = await signInWithEmailAndPassword(getAuth(), email, password);
       let authToken = await userCredential.user.getIdToken();
-      console.log("auth", getAuth());
-      console.log("authToken", email, password, authToken);
+      console.log("🔐 Login:", { email, userId: userCredential.user.uid });
       const response = await firebaseAuth(authToken);
       
       if (response.success) {

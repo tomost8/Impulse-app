@@ -11,11 +11,13 @@ import { debugRenders } from '@/debug/utils';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
+import { useDataRefetch } from '@/contexts/DataFetcher';
 
 
 const AddFriendsPage = () => {
   const { authToken } = useAuth();
-  const { fetching, user, friends, setFriends } = useDataProvider();
+  const { fetching, user, friends } = useDataProvider();
+  const { refetchData, isRefetching } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries
@@ -48,8 +50,7 @@ const AddFriendsPage = () => {
       }
       const response = await sendFriendRequest(input, authToken as string);
       if (response.success) {
-        console.log("Friend request sent successfully", response);
-        setFriends([...friends, response.friendship]);
+        await refetchData({ friends: true });
       } else {
         console.error("Error sending friend request:", response.errors);
       }
@@ -67,8 +68,8 @@ const AddFriendsPage = () => {
     try {
       const response = await deleteFriendship(user.id, friendId, authToken as string);
       if (response.success) {
-        console.log("Friend request deleted successfully", response);
-        setFriends(friends.filter((friend: any) => friend.friend.id !== friendId));
+        // Refetch friends data (cache cleared by default)
+        await refetchData({ friends: true });
       } else {
         console.error("Error deleting friend request:", response.errors);
       }
@@ -83,16 +84,10 @@ const AddFriendsPage = () => {
   const sentRequests = friends.filter((friend: any) => friend.status === 'PENDING' && friend.role === 'sender').map((friend: any) => friend.friend);
   const nonFriends = usersRef.current?.filter((_user: any) => _user.id !== user.id && !friends.some((friend: any) => friend.friend.id === _user.id));
   
-  const loading = fetching || !hasFetchedUsers.current || isSendingFriendRequest || isDeletingFriendRequest;
-  if (debugRenders && !loading) {
-    console.log("Rendering AddFriendsScreen\n",
-      "Users:", usersRef.current, "\n",
-      "Friends:", friends, "\n",
-      "Sent Requests:", sentRequests, "\n",
-      "Non Friends:", nonFriends, "\n",
-      "Render Counter:", renderCounter, "\n",
-    );
-  }
+  const loading = fetching || !hasFetchedUsers.current || isSendingFriendRequest || isDeletingFriendRequest || isRefetching;
+  
+
+
 
   return (
     <FindFriendScreen 

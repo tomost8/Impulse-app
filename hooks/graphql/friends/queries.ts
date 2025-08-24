@@ -30,6 +30,7 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_FRIENDS, {
     skip: !shouldFetch,
     variables: { userId },
+    fetchPolicy: 'cache-and-network',
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }

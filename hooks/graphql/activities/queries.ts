@@ -85,6 +85,7 @@ export const useGetActivities = (userId: number, authToken: string, shouldFetch:
           Authorization: `Bearer ${authToken}`,
       },
     },
+    fetchPolicy: 'cache-and-network',
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }

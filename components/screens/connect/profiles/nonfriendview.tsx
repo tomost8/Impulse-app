@@ -118,25 +118,38 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
       </ScrollView>
 
       <View style={styles.buttonContainer}>
-        {/* Update the accept button to use handleAcceptRequest */}
-        <TouchableOpacity 
-          style={styles.acceptRequestButton}
-          onPress={handleAcceptRequest}
-        >
-          <Text style={styles.buttonText}>Accept Friend Request</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[
-            styles.friendRequestButton,
-            isRequestSent && styles.requestSentButton
-          ]}
-          onPress={handleSendRequest}
-        >
-          <Text style={styles.buttonText}>
-            {isRequestSent ? "Request Sent" : "Send Friend Request"}
-          </Text>
-        </TouchableOpacity>
+        {/* Show different buttons based on friendship status */}
+        {props.isPendingRequest ? (
+          // Pending request exists - show appropriate button based on role
+          props.pendingRole === 'receiver' ? (
+            // User is the receiver - show accept button
+            <TouchableOpacity 
+              style={styles.acceptRequestButton}
+              onPress={handleAcceptRequest}
+            >
+              <Text style={styles.buttonText}>Accept Friend Request</Text>
+            </TouchableOpacity>
+          ) : (
+            // User is the sender - show request sent state (disabled button)
+            <TouchableOpacity 
+              style={[
+                styles.friendRequestButton,
+                styles.requestSentButton
+              ]}
+              disabled={true}
+            >
+              <Text style={styles.buttonText}>Request Sent</Text>
+            </TouchableOpacity>
+          )
+        ) : (
+          // No pending request - show send friend request button
+          <TouchableOpacity 
+            style={styles.friendRequestButton}
+            onPress={handleSendRequest}
+          >
+            <Text style={styles.buttonText}>Send Friend Request</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Add the accepted popup */}
