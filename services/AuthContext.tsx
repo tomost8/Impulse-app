@@ -11,6 +11,8 @@ interface AuthContextType {
   login: (token: string, id: number, rememberMe: boolean, email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string | null>;
+  checkAndRefreshToken: () => Promise<boolean>;
+  getTokenInfo: () => { createdAt: string; expiresAt: string; timeUntilExpiry: number; isValid: boolean } | null;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -46,11 +48,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
         
         if (rememberMeData?.rememberMe && storedToken && storedUserId) {
+          // For now, just use the stored token without checking validity during initialization
+          // This prevents race conditions during app startup
           setAuthToken(storedToken);
           setUserId(Number(storedUserId));
           currentAuthToken.current = storedToken;
           currentUserId.current = Number(storedUserId);
           hasLoadedAuthData.current = true;
+          
+          // Schedule token refresh based on actual expiration
+          scheduleTokenRefresh(storedToken);
         }
         setAuthInitialized(true);
       } catch (error) {
@@ -62,7 +69,55 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     initializeAuth();
   }, []);
 
-  // Firebase auth state listener - only set up once after initialization
+  // Schedule token refresh based on actual expiration time
+  const scheduleTokenRefresh = (token: string) => {
+    try {
+      // Decode the JWT token to get the expiration time
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      
+      // Calculate time until refresh (5 minutes before expiry)
+      const refreshBuffer = 5 * 60 * 1000; // 5 minutes
+      const timeUntilRefresh = expirationTime - currentTime - refreshBuffer;
+      
+      console.log('🔐 Token expires at:', new Date(expirationTime).toLocaleString());
+      console.log('🔐 Scheduling refresh in:', Math.round(timeUntilRefresh / 1000 / 60), 'minutes');
+      
+      if (timeUntilRefresh > 0) {
+        // Schedule refresh for the future
+        setTimeout(async () => {
+          console.log('🔐 Scheduled token refresh triggered');
+          await refreshAuthToken();
+        }, timeUntilRefresh);
+      } else {
+        // Token needs immediate refresh
+        console.log('🔐 Token needs immediate refresh');
+        refreshAuthToken();
+      }
+    } catch (error) {
+      console.error('Error scheduling token refresh:', error);
+    }
+  };
+
+  // Check token validity (expiration time)
+  const checkTokenValidity = async (token: string): Promise<boolean> => {
+    try {
+      // Decode the JWT token to get the expiration time
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      
+      // Consider token valid if it won't expire in the next 10 minutes
+      const bufferTime = 10 * 60 * 1000; // 10 minutes
+      return (expirationTime - currentTime) > bufferTime;
+    } catch (error) {
+      console.error('Error checking token validity:', error);
+      return false;
+    }
+  };
+
+  // Enhanced Firebase auth state listener with automatic token refresh
   useEffect(() => {
     if (!authInitialized || authListenerSetup.current) return;
 
@@ -87,12 +142,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         
         try {
           if (user) {
-            // Only refresh token if we already have an authToken (user was logged in)
-            if (authToken) {
-              const token = await refreshAuthToken();
-              if (!token) {
-                await logout();
-              }
+            // Get fresh token from Firebase and schedule refresh
+            const freshToken = await getIdToken(user, false);
+            if (freshToken && freshToken !== authToken) {
+              console.log('🔐 Firebase auth state changed, updating token');
+              await AsyncStorage.setItem('authToken', freshToken);
+              setAuthToken(freshToken);
+              currentAuthToken.current = freshToken;
+              
+              // Schedule refresh for the new token
+              scheduleTokenRefresh(freshToken);
             }
           } else {
             // Don't automatically logout when Firebase user is null
@@ -161,25 +220,44 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshAuthToken = async () => {
     try {
+      console.log('🔄 Starting token refresh...');
+      
       // Get React Native Firebase auth
       const currentUser = getAuth().currentUser;
       
       if (currentUser) {
+        console.log('🔄 Firebase user found, getting current token...');
+        
         // Get the current token without forcing refresh
         const currentToken = await getIdToken(currentUser, false);
+        console.log('🔄 Current token obtained');
         
         // Decode the JWT token to get the expiration time
         const tokenPayload = JSON.parse(atob(currentToken.split('.')[1]));
         const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
         const currentTime = Date.now();
         
+        console.log('🔄 Token expires in:', Math.round((expirationTime - currentTime) / 1000 / 60), 'minutes');
+        
         // Only refresh if token will expire in the next 5 minutes
         if (expirationTime - currentTime <= 5 * 60 * 1000) {
+          console.log('🔄 Token expires soon, forcing refresh...');
           const newToken = await getIdToken(currentUser, true);
-          console.log('Refreshing for newToken', newToken);
-          await AsyncStorage.setItem('authToken', newToken);
-          setAuthToken(newToken);
-          return newToken;
+          console.log('🔄 New token obtained:', newToken ? 'SUCCESS' : 'FAILED');
+          
+          if (newToken) {
+            console.log('🔐 Token refreshed successfully');
+            await AsyncStorage.setItem('authToken', newToken);
+            setAuthToken(newToken);
+            currentAuthToken.current = newToken;
+            
+            // Schedule refresh for the new token
+            scheduleTokenRefresh(newToken);
+            
+            return newToken;
+          }
+        } else {
+          console.log('🔄 Token is still valid, no refresh needed');
         }
         
         // If token is still valid, return the current token
@@ -197,6 +275,76 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const checkAndRefreshToken = async (): Promise<boolean> => {
+    if (!authToken) return false;
+    
+    try {
+      console.log('🧪 Force refreshing token for testing...');
+      
+      // For testing, always force a refresh
+      const currentUser = getAuth().currentUser;
+      if (currentUser) {
+        const newToken = await getIdToken(currentUser, true);
+        console.log('🧪 Force refresh result:', newToken ? 'SUCCESS' : 'FAILED');
+        
+                 if (newToken) {
+           // Decode the new token to get creation info
+           const newTokenPayload = JSON.parse(atob(newToken.split('.')[1]));
+           const newTokenCreatedAt = new Date(newTokenPayload.iat * 1000).toLocaleString();
+           const newTokenExpiresAt = new Date(newTokenPayload.exp * 1000).toLocaleString();
+           
+           console.log('🔐 Token force refreshed successfully');
+           console.log('🔐 New token created at:', newTokenCreatedAt);
+           console.log('🔐 New token expires at:', newTokenExpiresAt);
+           
+           await AsyncStorage.setItem('authToken', newToken);
+           setAuthToken(newToken);
+           currentAuthToken.current = newToken;
+           
+           // Schedule refresh for the new token
+           scheduleTokenRefresh(newToken);
+           
+           return true;
+         }
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error force refreshing token:', error);
+      return false;
+    }
+  };
+
+  const getTokenInfo = () => {
+    if (!authToken) return null;
+    
+    try {
+      const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
+      const expirationTime = tokenPayload.exp * 1000;
+      const currentTime = Date.now();
+      const timeUntilExpiry = expirationTime - currentTime;
+      
+      // Add detailed debugging
+      console.log('🔍 Token Debug Info:');
+      console.log('  - Token created at:', new Date(tokenPayload.iat * 1000).toLocaleString());
+      console.log('  - Token expires at:', new Date(expirationTime).toLocaleString());
+      console.log('  - Current time:', new Date(currentTime).toLocaleString());
+      console.log('  - Time until expiry (ms):', timeUntilExpiry);
+      console.log('  - Time until expiry (minutes):', Math.round(timeUntilExpiry / 1000 / 60));
+      console.log('  - Token age (minutes):', Math.round((currentTime - tokenPayload.iat * 1000) / 1000 / 60));
+      
+      return {
+        createdAt: new Date(tokenPayload.iat * 1000).toLocaleString(),
+        expiresAt: new Date(expirationTime).toLocaleString(),
+        timeUntilExpiry: Math.round(timeUntilExpiry / 1000 / 60), // minutes
+        isValid: timeUntilExpiry > 0
+      };
+    } catch (error) {
+      console.error('Error getting token info:', error);
+      return null;
+    }
+  };
+
   // Ensure we don't return null values if we have valid refs
   const stableAuthToken = currentAuthToken.current || authToken;
   const stableUserId = currentUserId.current || userId;
@@ -211,6 +359,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         login, 
         logout,
         refreshAuthToken,
+        checkAndRefreshToken,
+        getTokenInfo,
       }}
     >
       {children}
@@ -232,6 +382,8 @@ export const useUserAuth = () => {
       login: async () => { throw new Error('UserProvider not available'); },
       logout: async () => { throw new Error('UserProvider not available'); },
       refreshAuthToken: async () => { throw new Error('UserProvider not available'); },
+      checkAndRefreshToken: async () => { throw new Error('UserProvider not available'); },
+      getTokenInfo: () => null,
     };
   }
   

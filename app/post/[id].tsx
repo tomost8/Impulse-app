@@ -68,7 +68,7 @@ const PostPage = () => {
   const handleLikePost = async () => {
     setIsHandlingLike(true);
     try {
-      await likePost(Number(id), authToken as string);
+      await likePost(Number(id));
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error liking post:", error);
@@ -82,12 +82,11 @@ const PostPage = () => {
   const handleUnlikePost = async () => {
     setIsHandlingUnlike(true);
     try {
-      await unlikePost(Number(id), authToken as string);
+      await unlikePost(Number(id));
       // No need to refetch - state already updated optimistically
     } catch (error) {
       console.error("Error unliking post:", error);
-      // Revert optimistic update on error
-      updatePostLikeState(true);
+      throw error;
     } finally {
       setIsHandlingUnlike(false);
     }
@@ -107,7 +106,7 @@ const PostPage = () => {
         content: content,
         parent_comment_id: parentCommentId || null
       }
-      const response = await createComment(input, authToken as string);
+      const response = await createComment(input);
       console.log("Response:", response);
       // Clear input and hide reply field on success
       if (parentCommentId) {

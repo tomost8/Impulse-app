@@ -69,14 +69,11 @@ export const LIKE_POST = gql`
 
 export function useLikePost() {
   const [likePostMutation] = useMutation(LIKE_POST);
-  const likePost = async (postId: number, authToken: string) => {
+  const likePost = async (postId: number) => {
     try {
       const response = await likePostMutation({ 
         variables: { 
           postId: postId 
-        },
-        context: {
-          headers: { Authorization: `Bearer ${authToken}` }
         }
       });
       return response.data.likePost;
@@ -103,14 +100,11 @@ export const UNLIKE_POST = gql`
 
 export function useUnlikePost() { 
   const [unlikePostMutation] = useMutation(UNLIKE_POST);
-  const unlikePost = async (postId: number, authToken: string) => {
+  const unlikePost = async (postId: number) => {
     try {
       const response = await unlikePostMutation({ 
         variables: { 
           postId: postId 
-        },
-        context: { 
-          headers: { Authorization: `Bearer ${authToken}` } 
         }
       });
       return response.data.unlikePost;
@@ -149,14 +143,11 @@ export const CREATE_COMMENT = gql`
 //Optional inputs: parent_comment_id (nullable)
 export function useCreateComment() {
   const [createCommentMutation] = useMutation(CREATE_COMMENT);
-  const createComment = async (input: any, authToken: string) => {
+  const createComment = async (input: any) => {
     try {
       const response = await createCommentMutation({ 
         variables: { 
           input: input 
-        },
-        context: {
-          headers: { Authorization: `Bearer ${authToken}` }
         }
       });
       return response.data.createComment;

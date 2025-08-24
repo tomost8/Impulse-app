@@ -49,7 +49,7 @@ const SocialPage = () => {
     console.log("handleLikePost", postId);
     setIsHandlingLike(true);
     try {
-      await likePost(postId, authToken as string);
+      await likePost(postId);
       // Refetch data to get updated like state
       await refetchData({
         friendsFeed: true,
@@ -66,7 +66,7 @@ const SocialPage = () => {
     console.log("handleUnlikePost", postId);
     setIsHandlingUnlike(true);
     try {
-      await unlikePost(postId, authToken as string);
+      await unlikePost(postId);
       // Refetch data to get updated like state
       await refetchData({
         friendsFeed: true,

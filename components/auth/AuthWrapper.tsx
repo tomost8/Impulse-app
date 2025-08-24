@@ -8,7 +8,7 @@ const AuthWrapper = (WrappedComponent: React.ComponentType<any>) => {
     try {
       const { userId, authToken, loading, authInitialized } = useUserAuth();
 
-      // Show loading screen while auth is initializing
+      // Show loading screen while auth is initializing or if context is not available
       if (loading || !authInitialized) {
         return <LoadingScreen />;
       }

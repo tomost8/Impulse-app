@@ -18,6 +18,7 @@ export default function Index() {
     return () => clearTimeout(timer);
   }, [loading, authInitialized, userId, authToken]);
 
+  // Show loading while auth is initializing or if context is not available
   if (loading || !authInitialized || !shouldRedirect) {
     return <Text>Loading...</Text>;
   }
