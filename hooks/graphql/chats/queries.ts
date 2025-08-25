@@ -104,13 +104,15 @@ export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
     const chatMembers = data?.getUserChats.chat_members || [];
     const success = data?.getUserChats.success;
     const errors = data?.getUserChats.errors;
-    console.log("useGetUserChats:", {
-      success,
-      chatCount: chatMembers.length,
-      userId,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
-    });
+    const chatDetails = chatMembers.map((member: any) => ({
+      chatId: member.chat.id,
+      chatTitle: member.chat.title || (member.chat.type === 'direct' ? 'Direct Chat (other user name not available)' : 'Untitled Group'),
+      chatType: member.chat.type,
+      role: member.role,
+      status: member.status
+    }));
+    const chatsString = chatDetails.map((c: any) => `  {chatId: ${c.chatId}, chatTitle: "${c.chatTitle}", chatType: "${c.chatType}", role: "${c.role}", status: "${c.status}"}`).join('\n');
+    console.log("useGetUserChats: success:", success, "errors:", errors?.length > 0 ? errors : null, "chatCount:", chatMembers.length, "chats:\n" + chatsString);
   }
   return {
     chatMembers: data?.getUserChats.chat_members || [],

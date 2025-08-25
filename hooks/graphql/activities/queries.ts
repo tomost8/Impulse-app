@@ -45,9 +45,7 @@ export const useGetActivitiesByDate = (userId: number, date: string, authToken: 
       success,
       activityCount: activities.length,
       date,
-      userId,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
+      errors: errors?.length > 0 ? errors : null
     });
   }
   return {

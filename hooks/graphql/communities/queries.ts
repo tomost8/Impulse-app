@@ -106,13 +106,22 @@ export function useGetCommunity(id: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITY, {
     variables: { id },
     skip: !shouldFetch,
+    fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetCommunity data", data, error ? 'error:' + error : '');
+    const community = data?.getCommunity?.community;
+    console.log("useGetCommunity:", {
+      "communityId": id,
+      "name": community?.name,
+      "description": community?.description,
+      "hasThumbnail": !!community?.thumbnail,
+      "success": data?.getCommunity?.success,
+      "errors": data?.getCommunity?.errors
+    });
   }
   return {
     community: data?.getCommunity.community || [],
@@ -143,13 +152,26 @@ export function useGetCommunityMembers(communityId: number, shouldFetch: boolean
   const { data, loading, error } = useQuery(GET_COMMUNITY_MEMBERS, {
     variables: { communityId },
     skip: !shouldFetch,
+    fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetCommunityMembers data", data, error ? 'error:' + error : '');
+    const communityMembers = data?.getCommunityMembers.community_members || [];
+    const memberDetails = communityMembers.map((member: any) => ({
+      username: member.user.username,
+      status: member.status,
+      role: member.role
+    }));
+    console.log("useGetCommunityMembers:", {
+      "communityId": communityId,
+      "memberCount": communityMembers.length,
+      "members": memberDetails,
+      "success": data?.getCommunityMembers?.success,
+      "errors": data?.getCommunityMembers?.errors
+    });
   }
   return {
     communityMembers: data?.getCommunityMembers.community_members || [],
@@ -178,13 +200,22 @@ export function useGetCommunityCategories(communityId: number, shouldFetch: bool
   const { data, loading, error } = useQuery(GET_COMMUNITY_CATEGORIES, {
     variables: { communityId },
     skip: !shouldFetch,
+    fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetCommunityCategories data", data, error ? 'error:' + error : '');
+    const communityCategories = data?.getCommunityCategories.community_categories || [];
+    const categoryNames = communityCategories.map((cat: any) => cat.category);
+    console.log("useGetCommunityCategories:", {
+      "communityId": communityId,
+      "categoryCount": communityCategories.length,
+      "categories": categoryNames,
+      "success": data?.getCommunityCategories?.success,
+      "errors": data?.getCommunityCategories?.errors
+    });
   }
   return {
     communityCategories: data?.getCommunityCategories.community_categories || [],
@@ -310,13 +341,14 @@ export function useGetUserCommunities(userId: number, shouldFetch: boolean = tru
     const communityMembers = data?.getUserCommunities.community_members || [];
     const success = data?.getUserCommunities.success;
     const errors = data?.getUserCommunities.errors;
-    console.log("useGetUserCommunities:", {
-      success,
-      communityCount: communityMembers.length,
-      userId,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
-    });
+    const communityDetails = communityMembers.map((member: any) => ({
+      communityId: member.community.id,
+      communityName: member.community.name,
+      status: member.status,
+      role: member.role
+    }));
+    const communitiesString = communityDetails.map((c: any) => `  {communityId: ${c.communityId}, communityName: "${c.communityName}", status: "${c.status}", role: "${c.role}"}`).join('\n');
+    console.log("useGetUserCommunities: success:", success, "errors:", errors?.length > 0 ? errors : null, "communityCount:", communityMembers.length, "communities:\n" + communitiesString);
   }
   return {
     communityMembers: data?.getUserCommunities.community_members || [],

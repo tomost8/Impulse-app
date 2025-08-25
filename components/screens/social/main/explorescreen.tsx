@@ -44,8 +44,6 @@ const ExploreScreen = ({
     return matchesCategory && matchesSearch;
   });
 
-  console.log("communities", communities, "selectedCategory", selectedCategory, "\nfilteredCommunities", filteredCommunities);
-
   return (
     <SafeAreaView style={styles.container}>
       <Header />

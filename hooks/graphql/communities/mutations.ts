@@ -156,7 +156,13 @@ const CREATE_COMMUNITY_MEMBER = gql`
 
 // Required Inputs: community_id, user_id
 export function useCreateCommunityMember() {
-  const [createCommunityMemberMutation] = useMutation(CREATE_COMMUNITY_MEMBER);
+  const [createCommunityMemberMutation] = useMutation(CREATE_COMMUNITY_MEMBER, {
+    update: (cache, { data }) => {
+      // Clear the cache for user communities query to force a fresh fetch
+      cache.evict({ fieldName: 'getUserCommunities' });
+      cache.gc(); // Garbage collect the cache
+    }
+  });
   const createCommunityMember = async (input: any) => {
     try {
       const response = await createCommunityMemberMutation({ 
@@ -186,7 +192,13 @@ const DELETE_COMMUNITY_MEMBER = gql`
 `;
 
 export function useDeleteCommunityMember() {
-  const [deleteCommunityMemberMutation] = useMutation(DELETE_COMMUNITY_MEMBER);
+  const [deleteCommunityMemberMutation] = useMutation(DELETE_COMMUNITY_MEMBER, {
+    update: (cache, { data }) => {
+      // Clear the cache for user communities query to force a fresh fetch
+      cache.evict({ fieldName: 'getUserCommunities' });
+      cache.gc(); // Garbage collect the cache
+    }
+  });
   const deleteCommunityMember = async (userId: number, communityId: number) => {
     try {
       const response = await deleteCommunityMemberMutation({

@@ -61,7 +61,14 @@ export function useGetCommunityAnnouncements(communityId: number, authToken: str
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetCommunityAnnouncements data", data, error ? 'error:' + error : '');
+    const announcements = data?.getCommunityNotifications?.notifications || [];
+    console.log("useGetCommunityAnnouncements:", {
+      "communityId": communityId,
+      "announcementCount": announcements.length,
+      "totalCount": data?.getCommunityNotifications?.totalCount,
+      "success": data?.getCommunityNotifications?.success,
+      "errors": data?.getCommunityNotifications?.errors
+    });
   }
 
   return {

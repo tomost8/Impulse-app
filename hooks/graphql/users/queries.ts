@@ -88,19 +88,7 @@ export function useGetUser(id: number, hasFetched: boolean = true) {
     const user = data?.user.user;
     const success = data?.user.success;
     const errors = data?.user.errors;
-    console.log("useGetUser:", {
-      success,
-      userId: user?.id,
-      name: user ? `${user.first_name} ${user.last_name}` : null,
-      username: user?.username,
-      email: user?.email,
-      primaryGoal: user?.primary_goal,
-      secondaryGoal: user?.secondary_goal,
-      hasProfilePicture: !!user?.profile_picture,
-      timezone: user?.timezone,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
-    });
+    console.log("useGetUser: success:", success, "errors:", errors?.length > 0 ? errors : null, "userId:", user?.id, "name:", `"${user?.first_name} ${user?.last_name}"`, "email:", `"${user?.email}"`, "username:", `"${user?.username}"`, "primaryGoal:", `"${user?.primary_goal}"`, "secondaryGoal:", `"${user?.secondary_goal}"`, "timezone:", `"${user?.timezone}"`, "hasProfilePicture:", !!user?.profile_picture);
   }
   return {
     user: data?.user.user || [],

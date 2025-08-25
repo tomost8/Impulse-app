@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
+import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 import { useGetCommunities, useGetUserCommunities, useGetAllCategories, useGetAllCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
@@ -9,21 +10,19 @@ import ExploreScreen from '@/components/screens/social/main/explorescreen';
 import { debugRenders } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
+import { useDataRefetch } from '@/contexts/DataFetcher';
 import { getLabelByCategory } from '@/utils/goals';
 
 
 const ExplorePage = () => {
-  const { fetching, user } = useDataProvider();
+  const { fetching, user, communities } = useDataProvider();
+  const { refetchData, isRefetching } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries for Loading State
   const communitiesRef = useRef<any[] | null>(null);
   const hasFetchedCommunities = useRef(false);
-  const { communities, fetched: hasNewCommunitiesData } = useGetCommunities(!hasFetchedCommunities.current);
-
-  const userCommunitiesRef = useRef<any[] | null>(null);
-  const hasFetchedUserCommunities = useRef(false);
-  const { communityMembers, fetched: hasNewUserCommunitiesData } = useGetUserCommunities(user.id, !hasFetchedUserCommunities.current && !fetching);
+  const { communities: allCommunities, fetched: hasNewCommunitiesData } = useGetCommunities(!hasFetchedCommunities.current);
 
   const categoriesRef = useRef<any[] | null>(null);
   const hasFetchedCategories = useRef(false);
@@ -34,16 +33,12 @@ const ExplorePage = () => {
   const { communityMembers: allCommunityMembers, fetched: hasNewMembersData } = useGetAllCommunityMembers(!hasFetchedMembers.current);
 
   useEffect(() => {
-    if (!hasNewCommunitiesData && !hasNewUserCommunitiesData && !hasNewCategoriesData && !hasNewMembersData) {
+    if (!hasNewCommunitiesData && !hasNewCategoriesData && !hasNewMembersData) {
       return;
     }
     if (hasNewCommunitiesData) {
-      communitiesRef.current = communities;
+      communitiesRef.current = allCommunities;
       hasFetchedCommunities.current = true;
-    }
-    if (hasNewUserCommunitiesData) {
-      userCommunitiesRef.current = communityMembers;
-      hasFetchedUserCommunities.current = true;
     }
     if (hasNewCategoriesData) {
       categoriesRef.current = categories;
@@ -53,10 +48,10 @@ const ExplorePage = () => {
       membersRef.current = allCommunityMembers;
       hasFetchedMembers.current = true;
     }
-    if (hasFetchedCommunities.current && hasFetchedUserCommunities.current && hasFetchedCategories.current && hasFetchedMembers.current) {
+    if (hasFetchedCommunities.current && hasFetchedCategories.current && hasFetchedMembers.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunitiesData, hasNewUserCommunitiesData, hasNewCategoriesData, hasNewMembersData]);
+  }, [hasNewCommunitiesData, hasNewCategoriesData, hasNewMembersData]);
 
   // Mutations
   const { createCommunityMember } = useCreateCommunityMember();
@@ -71,6 +66,10 @@ const ExplorePage = () => {
       const response = await createCommunityMember(input);
       if (response.success) {
         console.log("Community Member created successfully:", response);
+        // Refetch communities data to update the UI
+        await refetchData({ communities: true });
+        // Force re-render after refetch
+        setRenderCounter(prev => prev + 1);
       } else {
         console.error("Error creating community member:", response);
       }
@@ -80,9 +79,11 @@ const ExplorePage = () => {
       setIsCreatingCommunityMember(false);
     }
   }
+
   // Get communities not in userCommunities and add memberCount
+  // Use fresh communities data from DataProvider instead of local refs
   const joinableCommunities = communitiesRef.current?.filter((community: any) => 
-    !userCommunitiesRef.current?.some((userCommunity: any) => userCommunity.community.id === community.id)
+    !communities.some((userCommunity: any) => userCommunity.community.id === community.id)
   ).map((community: any) => ({
     ...community,
     memberCount: membersRef.current?.filter((member: any) => 
@@ -91,17 +92,10 @@ const ExplorePage = () => {
     ).length || 0
   }));
 
-  // Debug
-  const loading = !hasFetchedCommunities.current || !hasFetchedUserCommunities.current || !hasFetchedCategories.current || !hasFetchedMembers.current || isCreatingCommunityMember;
+  // Debug - only show essential info
+  const loading = !hasFetchedCommunities.current || !hasFetchedCategories.current || !hasFetchedMembers.current || isCreatingCommunityMember || isRefetching;
   if (debugRenders && !loading) {
-    console.log("Rendering ExplorePage\n",
-      "Communities:", communitiesRef.current, "\n",
-      "Categories:", categoriesRef.current, "\n",
-      "Members:", membersRef.current, "\n",
-      "Joinable Communities:", joinableCommunities, "\n",
-      "User:", user, "\n",
-      "Render Counter:", renderCounter, "\n",
-    );
+    console.log("ExplorePage - Joinable communities:", joinableCommunities?.length || 0, "User communities:", communities?.length || 0);
   }
 
   return (

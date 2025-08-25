@@ -63,6 +63,9 @@ interface RefetchOptions {
   friends?: boolean;
   friendsFeed?: boolean;
   communityFeed?: boolean;
+  currentCommunity?: boolean;
+  currentCommunityMembers?: boolean;
+  currentCommunityAnnouncements?: boolean;
   clearCache?: boolean; // Defaults to true for fresh data after mutations
 }
 
@@ -81,7 +84,8 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,
-    setCommunityFeed, setFriendsFeed
+    setCommunityFeed, setFriendsFeed,
+    setCurrentCommunity, setCurrentCommunityMembers, setCurrentCommunityAnnouncements
   } = useDataProvider();
   const client = useApolloClient();
 
@@ -261,13 +265,15 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     hasFetchedCommunityFeed.current = false;
     lastActionRefetchTrigger.current = 0;
     setFetching(true);
+    setCurrentCommunity(null);
+    setCurrentCommunityMembers([]);
+    setCurrentCommunityAnnouncements([]);
   };
 
 
 
   // Flexible refetch function
   const refetchData = async (options: RefetchOptions) => {
-    console.log("Selective data refresh triggered:", options);
     setIsRefetching(true);
     
     // Set refetch options with default clearCache: true
@@ -293,6 +299,9 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (options.friends) hasFetchedFriends.current = false;
     if (options.friendsFeed) hasFetchedFriendsFeed.current = false;
     if (options.communityFeed) hasFetchedCommunityFeed.current = false;
+    if (options.currentCommunity) setCurrentCommunity(null);
+    if (options.currentCommunityMembers) setCurrentCommunityMembers([]);
+    if (options.currentCommunityAnnouncements) setCurrentCommunityAnnouncements([]);
     
     // Set currentDate for activities if needed
     if (options.activities && !currentDate.current) {
@@ -303,8 +312,6 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     // Trigger refetch
     const newTriggerValue = actionRefetchTrigger + 1;
     setActionRefetchTrigger(newTriggerValue);
-    
-    console.log("Selective data refresh completed");
   };
 
 

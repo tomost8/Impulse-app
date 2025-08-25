@@ -21,7 +21,7 @@ const MembersList: React.FC<MemberListProps> = ({
       
       <View style={styles.membersList}>
         {members.map((member, index) => (
-          <View key={member.id + index} style={styles.memberCard}>
+          <View key={`${member.id}-${index}`} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image
                 source={member.profile_picture ? { uri: member.profile_picture } : require("@/assets/images/andrew.png")}

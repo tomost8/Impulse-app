@@ -13,6 +13,10 @@ type DataProviderContextType = {
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
   loginStreak: any; setLoginStreak: (streak: any) => void;
+  // Current community data for community pages
+  currentCommunity: any; setCurrentCommunity: (community: any) => void;
+  currentCommunityMembers: any[]; setCurrentCommunityMembers: (members: any[]) => void;
+  currentCommunityAnnouncements: any[]; setCurrentCommunityAnnouncements: (announcements: any[]) => void;
   debugLog: () => void;
 };
 
@@ -32,6 +36,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
   const [loginStreak, setLoginStreak] = useState<any>(null);
+  // Current community data
+  const [currentCommunity, setCurrentCommunity] = useState<any>(null);
+  const [currentCommunityMembers, setCurrentCommunityMembers] = useState<any[]>([]);
+  const [currentCommunityAnnouncements, setCurrentCommunityAnnouncements] = useState<any[]>([]);
 
   const debugLog = () => {
     console.log("=== Data Provider Debug Log ===",
@@ -42,7 +50,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       "\nFriends:", friends,
       "\nTimezone:", timezone,
       "\nCamera Clickable:", cameraClickable,
-      "\nLogin Streak:", loginStreak
+      "\nLogin Streak:", loginStreak,
+      "\nCurrent Community:", currentCommunity?.id,
+      "\nCurrent Community Members:", currentCommunityMembers.length,
+      "\nCurrent Community Announcements:", currentCommunityAnnouncements.length
     );
   };
 
@@ -58,10 +69,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     timezone, setTimezone,
     cameraClickable, setCameraClickable,
     loginStreak, setLoginStreak,
+    currentCommunity, setCurrentCommunity,
+    currentCommunityMembers, setCurrentCommunityMembers,
+    currentCommunityAnnouncements, setCurrentCommunityAnnouncements,
     debugLog,
   }), [
     fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed,
-    timezone, cameraClickable, loginStreak
+    timezone, cameraClickable, loginStreak, currentCommunity, currentCommunityMembers, currentCommunityAnnouncements
   ]);
 
   return (

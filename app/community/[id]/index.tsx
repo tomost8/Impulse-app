@@ -1,5 +1,7 @@
+import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import {useState, useEffect, useRef} from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,7 +20,7 @@ const CommunityPage = () => {
   const { fetching, user } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Queries for Loading State
+  // Queries with fetch flags for initial load control
   const communityRef = useRef<any | null>(null);
   const hasFetchedCommunity = useRef(false);
   const { community, fetched: hasNewCommunityData } = useGetCommunity(Number(id), !hasFetchedCommunity.current);
@@ -30,6 +32,16 @@ const CommunityPage = () => {
   const announcementsRef = useRef<any[] | null>(null);
   const hasFetchedAnnouncements = useRef(false);
   const { announcements, fetched: hasNewAnnouncementsData } = useGetCommunityAnnouncements(Number(id), authToken as string, !hasFetchedAnnouncements.current);
+
+  // Force re-fetch when returning from edit page
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset fetch flags to force re-fetch when screen comes into focus
+      hasFetchedCommunity.current = false;
+      hasFetchedMembers.current = false;
+      hasFetchedAnnouncements.current = false;
+    }, [])
+  );
 
   useEffect(() => {
     if (!hasNewCommunityData && !hasNewMembersData && !hasNewAnnouncementsData) {
@@ -43,7 +55,13 @@ const CommunityPage = () => {
       let filteredMembers = communityMembers
         .filter((member: any) => member.status === "ACCEPTED")
         .map((member: any) => member.user);
-      membersRef.current = filteredMembers;
+      
+      // Remove duplicates based on user ID
+      const uniqueMembers = filteredMembers.filter((member: any, index: number, self: any[]) => 
+        index === self.findIndex((m: any) => m.id === member.id)
+      );
+      
+      membersRef.current = uniqueMembers;
       hasFetchedMembers.current = true;
     }
     if (hasNewAnnouncementsData) {
@@ -53,20 +71,14 @@ const CommunityPage = () => {
     if (hasFetchedCommunity.current && hasFetchedMembers.current && hasFetchedAnnouncements.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewCommunityData, hasNewMembersData, hasNewAnnouncementsData]);
+  }, [hasNewCommunityData, hasNewMembersData, hasNewAnnouncementsData, community, communityMembers, announcements]);
 
   const isAdmin = communityRef.current?.influencer?.id === user.id;
 
   // Debug
   const loading = fetching || !hasFetchedCommunity.current || !hasFetchedMembers.current || !hasFetchedAnnouncements.current;
   if (debugRenders && !loading) {
-    console.log("Rendering CommunityScreen\n",
-      "Community:", communityRef.current, "\n",
-      "Members:", membersRef.current, "\n",
-      "Announcements:", announcementsRef.current, "\n",
-      "Render Counter:", renderCounter, "\n",
-      "Is Admin:", isAdmin, "\n",
-    );
+    console.log("CommunityScreen - Members:", membersRef.current?.length || 0, "Announcements:", announcementsRef.current?.length || 0, "Is Admin:", isAdmin);
   }
 
   return (

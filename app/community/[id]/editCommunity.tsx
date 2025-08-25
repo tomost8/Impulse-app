@@ -57,63 +57,60 @@ const EditCommunityPage = () => {
  const {deleteCommunityCategory} = useDeleteCommunityCategory();
  const [isUpdatingCommunity, setIsUpdatingCommunity] = useState(false);
  const handleUpdateCommunity = async () => {
-  setIsUpdatingCommunity(true);
-  try {
-    let response_log = "";
-    // Update Community: upload new thumbnail if it exists
-    const hasNewThumbnail = formData.thumbnail && formData.thumbnail !== communityRef.current?.thumbnail;
-    const thumbnail = hasNewThumbnail
-      ? await processAndUploadImage(formData.thumbnail)
-      : null;
-    const input = {
-      name: formData.name || communityRef.current?.name,
-      description: formData.description,
-      code: formData.code,
-      ...(thumbnail && { thumbnail })
-    }
-    response_log += `Input: ${JSON.stringify(input)}\n`;
-    
-    const response = await updateCommunity(Number(id), input);
-    if (response.success) {
-      response_log += `Details successfully updated: ${JSON.stringify(response.community)}\n`;
-    } else {
-      throw new Error("Response.success from updateCommunity was false: " + response.errors);
-    }
-
-    // Update categories: toAdd
-    const toAdd = selectedCategories.filter(category => !categoriesRef.current?.includes(category));  
-    for (const category of toAdd) {
-      const input_category_add = {
-        community_id: Number(id),
-        category: category
+    setIsUpdatingCommunity(true);
+    try {
+      // Update Community: upload new thumbnail if it exists
+      const hasNewThumbnail = formData.thumbnail && formData.thumbnail !== communityRef.current?.thumbnail;
+      const thumbnail = hasNewThumbnail
+        ? await processAndUploadImage(formData.thumbnail)
+        : null;
+      const input = {
+        name: formData.name || communityRef.current?.name,
+        description: formData.description,
+        code: formData.code,
+        ...(thumbnail && { thumbnail })
       }
-      const categoryResponse = await createCommunityCategory(input_category_add);
-      if (categoryResponse.success) {
-        response_log += `Category successfully added: ${category}\n`;
+      
+      const response = await updateCommunity(Number(id), input);
+      if (response.success) {
+        console.log("Community updated:", response.community.name, "- Description:", response.community.description);
       } else {
-        throw new Error("Response.success from createCommunityCategory was false:" + categoryResponse.errors);
+        throw new Error("Response.success from updateCommunity was false: " + response.errors);
       }
-    }
 
-    // Update categories: toDelete
-    const toDelete = categoriesRef.current?.filter(category => !selectedCategories.includes(category)) || [];
-    for (const category of toDelete) {
-      const categoryResponse = await deleteCommunityCategory(category, Number(id));
-      if (categoryResponse.success) {
-        response_log += `Category successfully deleted: ${category}\n`;
-      } else {
-        throw new Error("Response.success from deleteCommunityCategory was false:" + categoryResponse.errors);
+      // Update categories: toAdd
+      const toAdd = selectedCategories.filter(category => !categoriesRef.current?.includes(category));  
+      for (const category of toAdd) {
+        const input_category_add = {
+          community_id: Number(id),
+          category: category
+        }
+        const categoryResponse = await createCommunityCategory(input_category_add);
+        if (categoryResponse.success) {
+          console.log("Category added:", category);
+        } else {
+          throw new Error("Response.success from createCommunityCategory was false:" + categoryResponse.errors);
+        }
       }
+
+      // Update categories: toDelete
+      const toDelete = categoriesRef.current?.filter(category => !selectedCategories.includes(category)) || [];
+      for (const category of toDelete) {
+        const categoryResponse = await deleteCommunityCategory(category, Number(id));
+        if (categoryResponse.success) {
+          console.log("Category deleted:", category);
+        } else {
+          throw new Error("Response.success from deleteCommunityCategory was false:" + categoryResponse.errors);
+        }
+      }
+      
+      router.back();
+    } catch (error) {
+      console.error("Error updating community:", error);
+    } finally {
+      setIsUpdatingCommunity(false);
     }
-    
-    console.log("Community updated successfully:\n", response_log);
-    router.back();
-  } catch (error) {
-    console.error("Error updating community:", error);
-  } finally {
-    setIsUpdatingCommunity(false);
   }
- }
 
   // Form Data
  const [formData, setFormData] = useState({
@@ -143,12 +140,7 @@ const EditCommunityPage = () => {
  // Debug
  const loadingData = !hasFetchedCommunity.current || !hasFetchedCommunityCategories.current || isUpdatingCommunity;
  if (debugRenders && !loadingData) {
-  console.log("Rendering EditCommunityPage. Counter: ", renderCounter,
-    "\nCommunity:", communityRef.current,
-    "\nForm Data:", formData,
-    "\nCategories:", categoriesRef.current,
-    "\nSelected Categories:", selectedCategories
-  );
+  console.log("EditCommunityPage - Community:", communityRef.current?.name, "Categories:", categoriesRef.current?.length || 0);
  }
 
   return (

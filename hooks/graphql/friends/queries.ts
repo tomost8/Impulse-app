@@ -40,13 +40,13 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
     const friendships = data?.getFriendships.friendships || [];
     const success = data?.getFriendships.success;
     const errors = data?.getFriendships.errors;
-    console.log("useGetFriends:", {
-      success,
-      friendCount: friendships.length,
-      userId,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
-    });
+    const friendDetails = friendships.map((friendship: any) => ({
+      username: friendship.friend.username,
+      status: friendship.status,
+      role: friendship.role
+    }));
+    const friendsString = friendDetails.map((f: any) => `  {username: "${f.username}", status: "${f.status}", role: "${f.role}"}`).join('\n');
+    console.log("useGetFriends: success:", success, "errors:", errors?.length > 0 ? errors : null, "friendCount:", friendships.length, "friends:\n" + friendsString);
   }
   return {
     friends: data?.getFriendships.friendships || [],
@@ -97,10 +97,8 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
     console.log("useGetFriendsLeaderboard:", {
       success,
       friendCount: friendships.length,
-      userId,
       sortBy,
-      errors: errors?.length > 0 ? errors : null,
-      hasError: !!error
+      errors: errors?.length > 0 ? errors : null
     });
   }
   return {
