@@ -165,13 +165,8 @@ export function useGetCommunityMembers(communityId: number, shouldFetch: boolean
       status: member.status,
       role: member.role
     }));
-    console.log("useGetCommunityMembers:", {
-      "communityId": communityId,
-      "memberCount": communityMembers.length,
-      "members": memberDetails,
-      "success": data?.getCommunityMembers?.success,
-      "errors": data?.getCommunityMembers?.errors
-    });
+    const membersString = memberDetails.map((m: any) => `  {username: "${m.username}", status: "${m.status}", role: "${m.role}"}`).join('\n');
+    console.log("useGetCommunityMembers: success:", data?.getCommunityMembers?.success, "errors:", data?.getCommunityMembers?.errors, "memberCount:", communityMembers.length, "members:\n" + membersString);
   }
   return {
     communityMembers: data?.getCommunityMembers.community_members || [],
@@ -332,6 +327,7 @@ export function useGetUserCommunities(userId: number, shouldFetch: boolean = tru
   const { data, loading, error } = useQuery(GET_USER_COMMUNITIES, {
     variables: { userId },
     skip: !shouldFetch,
+    fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }

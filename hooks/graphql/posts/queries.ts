@@ -76,9 +76,9 @@ export function useGetFeedCommunities(currentUserId: number, authToken: string, 
 //get friends feed
 const GET_FEED_FRIENDS = gql`
   query($currentUserId: Int!) {
-  friendsFeedPosts(currentUserId: $currentUserId) {
-    success
-    posts {
+    friendsFeedPosts(currentUserId: $currentUserId) {
+      success
+      posts {
         id
         caption
         category
@@ -101,12 +101,12 @@ const GET_FEED_FRIENDS = gql`
         liked
         likeCount
       }
-    errors {
-      field
-      message
+      errors {
+        field
+        message
+      }
     }
   }
-}
 `;
 
 export function useGetFeedFriends(currentUserId: number, authToken: string, shouldFetch: boolean=true) {

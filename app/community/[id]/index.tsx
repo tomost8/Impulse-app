@@ -12,7 +12,7 @@ import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/quer
 // Components
 import CommunityMainScreen from '@/components/screens/social/main/communitymainscreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugSocialPage } from '@/debug/utils';
 
 const CommunityPage = () => {
   const { id } = useLocalSearchParams(); // communityId
@@ -40,6 +40,7 @@ const CommunityPage = () => {
       hasFetchedCommunity.current = false;
       hasFetchedMembers.current = false;
       hasFetchedAnnouncements.current = false;
+      console.log("🔄 Refreshing data - Community page focused");
     }, [])
   );
 
@@ -77,8 +78,8 @@ const CommunityPage = () => {
 
   // Debug
   const loading = fetching || !hasFetchedCommunity.current || !hasFetchedMembers.current || !hasFetchedAnnouncements.current;
-  if (debugRenders && !loading) {
-    console.log("CommunityScreen - Members:", membersRef.current?.length || 0, "Announcements:", announcementsRef.current?.length || 0, "Is Admin:", isAdmin);
+  if (debugSocialPage && !loading) {
+    console.log("📱 CommunityScreen - Is Admin:", isAdmin, "Members:", membersRef.current?.length || 0, "Announcements:", announcementsRef.current?.length || 0);
   }
 
   return (

@@ -73,7 +73,7 @@ const EditCommunityPage = () => {
       
       const response = await updateCommunity(Number(id), input);
       if (response.success) {
-        console.log("Community updated:", response.community.name, "- Description:", response.community.description);
+        console.log("Community updated:", input.name, "- Description:", input.description, "- Has new thumbnail:", !!thumbnail);
       } else {
         throw new Error("Response.success from updateCommunity was false: " + response.errors);
       }

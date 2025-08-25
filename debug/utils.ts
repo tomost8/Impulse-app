@@ -9,7 +9,9 @@ export const debugRenders = true;
 // Main pages from bottom tabs
 export const debugHomePage = false && debugRenders;
 export const debugChatsPage = false && debugRenders;
-export const debugSocialPage = false && debugRenders;
+export const debugSocialPage = true && debugRenders;
 export const debugAccountPage = false && debugRenders;
+// Community pages
+export const debugCommunityPage = true && debugRenders;
 
 export const debugEditProfile = false;

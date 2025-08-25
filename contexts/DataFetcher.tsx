@@ -469,7 +469,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       setFetching(false);
       setIsRefetching(false); // Reset refetching state when complete
       
-      console.log("User Data Loaded Successfully");
+      console.log("✅ User Data Loaded Successfully");
     }
   }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
 

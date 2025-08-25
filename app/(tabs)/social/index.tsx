@@ -1,4 +1,5 @@
-import {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
@@ -21,6 +22,32 @@ const SocialPage = () => {
     communityFeed: communityFeedFromContext
   } = useDataProvider();
   const { refetchData, isRefetching } = useDataRefetch();
+
+  // Track if we've refreshed on this focus to prevent infinite loops
+  const hasRefreshedOnFocus = useRef(false);
+  const lastFocusTime = useRef(0);
+  const isManualRefreshing = useRef(false);
+
+  // Refresh communities data when navigating to this page
+  useFocusEffect(
+    React.useCallback(() => {
+      const now = Date.now();
+      // Only refresh if we haven't already on this focus or if it's been more than 5 seconds
+      if (!hasRefreshedOnFocus.current || (now - lastFocusTime.current > 5000)) {
+        hasRefreshedOnFocus.current = true;
+        lastFocusTime.current = now;
+        console.log("🔄 Refreshing data - Social page focused");
+        refetchData({ communities: true, communityFeed: true, friendsFeed: true });
+      }
+    }, []) // Remove refetchData from dependencies
+  );
+
+  // Reset the flag when the component unmounts or loses focus
+  useEffect(() => {
+    return () => {
+      hasRefreshedOnFocus.current = false;
+    };
+  }, []);
 
   // Pull-to-refresh functionality: refetchData will refresh feeds
   // Auth-related refreshes (login/signup) are handled automatically by DataFetcher
@@ -75,7 +102,7 @@ const SocialPage = () => {
   const handlingLike = isHandlingLike || isHandlingUnlike;
   const loading = handlingLike || isRefetching;
   if (debugSocialPage && !loading) {
-    console.log(`Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}`);
+    console.log(`📱 Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}`);
   }
 
     return (
@@ -86,10 +113,17 @@ const SocialPage = () => {
       communityFeed={communityFeed}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
-      onRefresh={() => refetchData({
-        friendsFeed: true,
-        communityFeed: true,
-      })}
+      onRefresh={() => {
+        console.log("🔄 Refreshing data - Social page manual refresh");
+        // Add a small delay to prevent race conditions
+        setTimeout(() => {
+          refetchData({
+            communities: true,
+            friendsFeed: true,
+            communityFeed: true,
+          });
+        }, 100);
+      }}
       isRefreshing={isRefetching}
       //updatePostLikeState={updatePostLikeState}
     />
