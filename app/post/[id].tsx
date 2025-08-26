@@ -10,32 +10,26 @@ import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/po
 // Components
 import PostScreen from '@/components/screens/social/post';
 // Debug
-import { pageDisplay, debugRenders } from '@/debug/utils';
+import { debugRenders } from '@/debug/utils';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
-import { useDataRefetch } from '@/contexts/DataFetcher';
 
 const PostPage = () => {
   const { id, isLiked } = useLocalSearchParams(); // postId
-  const { authToken } = useAuth();
-  const { refetchData, isRefetching } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
-  const [refetchTrigger, setRefetchTrigger] = useState(0);
   
-  // Local like state management
-  const [localLikedState, setLocalLikedState] = useState<boolean | null>(null);
-  const [localLikeCount, setLocalLikeCount] = useState<number | null>(null);
-  
-  // Use ref to track if we've initialized to prevent multiple initializations
+  // Use refs to track user's like actions (persistent across refetches)
+  const userLikeAction = useRef<boolean | null>(null);
+  const userLikeCount = useRef<number | null>(null);
   const hasInitialized = useRef(false);
 
-  // Initialize local state from URL parameter only once
+  // Initialize user like action from URL parameter only once
   useEffect(() => {
-    if (!hasInitialized.current && localLikedState === null) {
-      setLocalLikedState(isLiked === 'true');
+    if (!hasInitialized.current) {
+      userLikeAction.current = isLiked === 'true';
       hasInitialized.current = true;
     }
-  }, [isLiked, localLikedState]);
+  }, [isLiked]);
 
   // Queries with fetch flags for initial load control
   const postRef = useRef<any | null>(null);
@@ -49,10 +43,8 @@ const PostPage = () => {
   // Force re-fetch when returning to this page
   useFocusEffect(
     React.useCallback(() => {
-      // Reset fetch flags to force re-fetch when screen comes into focus
       hasFetchedPost.current = false;
       hasFetchedComments.current = false;
-      setRefetchTrigger(prev => prev + 1);
       console.log("🔄 Fetching data - PostPage navigated to");
     }, [])
   );
@@ -62,16 +54,16 @@ const PostPage = () => {
       return;
     }
     if (hasNewPostData) {
-      // Update local like count from server only if it's different
-      if (post?.likeCount !== null && post?.likeCount !== undefined && localLikeCount !== post.likeCount) {
-        setLocalLikeCount(post.likeCount);
+      // Update persistent like count from server only if we don't have a user-modified count
+      if (post?.likeCount !== null && post?.likeCount !== undefined && userLikeCount.current === null) {
+        userLikeCount.current = post.likeCount;
       }
       
       postRef.current = {
         ...post,
-        // Use local like state if available, otherwise fall back to server or URL parameter
-        liked: localLikedState !== null ? localLikedState : (post?.liked !== null ? post.liked : (isLiked === 'true')),
-        likeCount: localLikeCount !== null ? localLikeCount : post?.likeCount
+        // Use user's like action if available, otherwise fall back to server or URL parameter
+        liked: userLikeAction.current !== null ? userLikeAction.current : (post?.liked !== null ? post.liked : (isLiked === 'true')),
+        likeCount: userLikeCount.current !== null ? userLikeCount.current : post?.likeCount
       };
       hasFetchedPost.current = true;
     }
@@ -82,67 +74,57 @@ const PostPage = () => {
     if (hasFetchedPost.current && hasFetchedComments.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewPostData, hasNewCommentsData, isLiked, post, comments, refetchTrigger, localLikedState, localLikeCount]);
+  }, [hasNewPostData, hasNewCommentsData, post, comments, isLiked]);
 
   // Add like/unlike mutations
   const { likePost } = useLikePost();
   const { unlikePost } = useUnlikePost();
-  const [isHandlingLike, setIsHandlingLike] = useState(false);
-  const [isHandlingUnlike, setIsHandlingUnlike] = useState(false);
 
   // Add like/unlike handlers
   const handleLikePost = async () => {
-    setIsHandlingLike(true);
     try {
       await likePost(Number(id));
-      // Batch optimistic updates to reduce re-renders
-      setLocalLikedState(true);
-      setLocalLikeCount(prev => (prev || 0) + 1);
+      // Update persistent user action and like count immediately for UI feedback
+      userLikeAction.current = true;
+      userLikeCount.current = (userLikeCount.current || 0) + 1;
+      if (postRef.current) {
+        postRef.current.liked = true;
+        postRef.current.likeCount = userLikeCount.current;
+        setRenderCounter(prev => prev + 1);
+      }
       // Reset fetch flags and trigger refetch after a delay
       setTimeout(() => {
         hasFetchedPost.current = false;
-        setRefetchTrigger(prev => prev + 1);
       }, 100);
     } catch (error) {
       console.error("Error liking post:", error);
-      // Revert optimistic update on error
-      setLocalLikedState(false);
-      setLocalLikeCount(prev => Math.max(0, (prev || 0) - 1));
-    } finally {
-      setIsHandlingLike(false);
     }
   }
 
   const handleUnlikePost = async () => {
-    setIsHandlingUnlike(true);
     try {
       await unlikePost(Number(id));
-      // Batch optimistic updates to reduce re-renders
-      setLocalLikedState(false);
-      setLocalLikeCount(prev => Math.max(0, (prev || 0) - 1));
+      // Update persistent user action and like count immediately for UI feedback
+      userLikeAction.current = false;
+      userLikeCount.current = Math.max(0, (userLikeCount.current || 0) - 1);
+      if (postRef.current) {
+        postRef.current.liked = false;
+        postRef.current.likeCount = userLikeCount.current;
+        setRenderCounter(prev => prev + 1);
+      }
       // Reset fetch flags and trigger refetch after a delay
       setTimeout(() => {
         hasFetchedPost.current = false;
-        setRefetchTrigger(prev => prev + 1);
       }, 100);
     } catch (error) {
       console.error("Error unliking post:", error);
-      // Revert optimistic update on error
-      setLocalLikedState(true);
-      setLocalLikeCount(prev => (prev || 0) + 1);
-    } finally {
-      setIsHandlingUnlike(false);
     }
   }
 
   // Add comment mutation
   const { createComment } = useCreateComment();
-  const [isHandlingCreateComment, setIsHandlingCreateComment] = useState(false);
-  const [replyingToCommentId, setReplyingToCommentId] = useState<number | null>(null);
-  const [replyText, setReplyText] = useState('');
 
   const handleCreateComment = async (content: string, parentCommentId?: number) => {
-    setIsHandlingCreateComment(true);
     try {
       const input = {
         post_id: Number(id),
@@ -154,17 +136,10 @@ const PostPage = () => {
       // Reset fetch flags and trigger refetch after a delay
       setTimeout(() => {
         hasFetchedComments.current = false;
-        setRefetchTrigger(prev => prev + 1);
+        setRenderCounter(prev => prev + 1);
       }, 100);
-      // Clear input and hide reply field on success
-      if (parentCommentId) {
-        setReplyText('');
-        setReplyingToCommentId(null);
-      }
     } catch (error) {
       console.error("Error creating comment:", error);
-    } finally {
-      setIsHandlingCreateComment(false);
     }
   }
 
