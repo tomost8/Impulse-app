@@ -207,7 +207,9 @@ export function useDeleteCommunityMember() {
           communityId: communityId
         }
       });
-      return response.data.deleteCommunityMember;
+      const result = response.data.deleteCommunityMember;
+      console.log(`useDeleteCommunityMember: {"userId": ${userId}, "communityId": ${communityId}, "success": ${result.success}, "errors": ${result.errors ? JSON.stringify(result.errors) : 'null'}}`);
+      return result;
     } catch (error) {
       console.error('Delete Community Member failed:', error);
       throw error;

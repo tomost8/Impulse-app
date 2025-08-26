@@ -7,7 +7,7 @@ import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations'
 // Components
 import ExploreScreen from '@/components/screens/social/main/explorescreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugExplorePage } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useDataRefetch } from '@/contexts/DataFetcher';
@@ -80,8 +80,7 @@ const ExplorePage = () => {
     }
   }
 
-  // Get communities not in userCommunities and add memberCount
-  // Use fresh communities data from DataProvider instead of local refs
+  // Get communities not in userCommunities and add memberCount and categoryCount
   const joinableCommunities = communitiesRef.current?.filter((community: any) => 
     !communities.some((userCommunity: any) => userCommunity.community.id === community.id)
   ).map((community: any) => ({
@@ -89,13 +88,19 @@ const ExplorePage = () => {
     memberCount: membersRef.current?.filter((member: any) => 
       member.community_id === community.id && 
       member.status === 'ACCEPTED'
+    ).length || 0,
+    categoryCount: categoriesRef.current?.filter((category: any) => 
+      category.community_id === community.id
     ).length || 0
   }));
 
-  // Debug - only show essential info
+  // Debug
   const loading = !hasFetchedCommunities.current || !hasFetchedCategories.current || !hasFetchedMembers.current || isCreatingCommunityMember || isRefetching;
-  if (debugRenders && !loading) {
-    console.log("ExplorePage - Joinable communities:", joinableCommunities?.length || 0, "User communities:", communities?.length || 0);
+  if (debugExplorePage && !loading) {
+    const joinableDetails = joinableCommunities?.map((community: any) => 
+      `  ID: ${community.id}, Name: ${community.name}, Members: ${community.memberCount}, Categories: ${community.categoryCount}`
+    ).join('\n') || '';
+    console.log(`📱 Rendering ExplorePage - Joinable Communities: ${joinableCommunities?.length || 0}, User Communities: ${communities?.length || 0}\n${joinableDetails}`);
   }
 
   return (

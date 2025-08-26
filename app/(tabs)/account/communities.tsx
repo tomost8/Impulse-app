@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useDataRefetch } from '@/contexts/DataFetcher';
 import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations';
+// Debug
+import { debugUserCommunitiesPage } from '@/debug/utils';
 
 const CommunitiesPage = () => {
   const { authToken } = useAuth();
@@ -38,14 +40,19 @@ const handleLeaveCommunity = async (communityId: number) => {
   }
 }
 
-  const acceptedCommunities = communities.filter((community: any) => community.status === 'ACCEPTED').map((community: any) => community.community);
+  const acceptedCommunities = communities.filter((community: any) => community.status === 'ACCEPTED').map((community: any) => ({
+    ...community.community,
+    role: community.role
+  }));
   
-  // Debug logging to see communities data
-  console.log("CommunitiesPage - Current communities:", communities);
-  console.log("CommunitiesPage - Accepted communities:", acceptedCommunities);
-  console.log("CommunitiesPage - Render counter:", renderCounter);
-  
+  // Debug
   const loading = fetching || isLeavingCommunity || isRefetching;
+  if (debugUserCommunitiesPage && !loading) {
+    const communityDetails = communities.map((member: any) => 
+      `  ID: ${member.community.id}, Name: ${member.community.name}, Role: ${member.role}, Status: ${member.status}`
+    ).join('\n');
+    console.log(`📱 Rendering CommunitiesPage - Communities: ${communities.length}\n${communityDetails}`);
+  }
 
   return (
     <CommunityScreen

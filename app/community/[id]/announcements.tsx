@@ -4,16 +4,18 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // Components
 import AnnouncementScreen from '@/components/screens/social/communities/announcementscreen';
 // Debug
-import { pageDisplay, debugRenders } from '@/debug/utils';
+import { debugAnnouncementsPage } from '@/debug/utils';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 import { useLocalSearchParams } from 'expo-router';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useGetCommunity } from '@/hooks/graphql/communities/queries';
 
 const AnnouncementsPage = () => {
  const { id } = useLocalSearchParams(); // communityId
-   const { authToken } = useAuth();
+ const { authToken } = useAuth();
+ const { user } = useDataProvider();
  const [renderCounter, setRenderCounter] = useState(0);
 
  // Queries
@@ -46,19 +48,24 @@ const AnnouncementsPage = () => {
 
  // Debug
  const loading = !hasFetchedCommunity.current || !hasFetchedAnnouncements.current;
- if (debugRenders && !loading) {
-  console.log("Rendering AnnouncementsScreen\n",
-    "Community:", communityRef.current, "\n",
-    "Announcements:", announcementsRef.current, "\n",
-    "Render Counter:", renderCounter, "\n",
-  );
+ if (debugAnnouncementsPage && !loading) {
+  const community = communityRef.current;
+  const announcements = announcementsRef.current || [];
+  const isAdmin = community?.influencer?.id === user?.id;
+  const announcementDetails = announcements.map((announcement: any) => 
+    `  ID: ${announcement.id}, Title: ${announcement.title}, Content: ${announcement.content?.substring(0, 50)}${announcement.content?.length > 50 ? '...' : ''}`
+  ).join('\n');
+  console.log(`📱 Rendering AnnouncementsPage - Community ID: ${id}, Name: ${community?.name}, Is Admin: ${isAdmin}, Announcements: ${announcements.length}\n${announcementDetails}`);
  }
 
 
- return (
+  const isAdmin = communityRef.current?.influencer?.id === user?.id;
+
+  return (
    <AnnouncementScreen 
     communityName={communityRef.current?.name}
-    announcements={announcementsRef.current || []} 
+    announcements={announcementsRef.current || []}
+    isAdmin={isAdmin}
    />
  );
 };

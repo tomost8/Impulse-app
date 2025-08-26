@@ -19,6 +19,7 @@ interface Member {
   name: string;
   username: string;
   profile_picture: any;
+  role?: string;
 }
 
 interface EditMembersScreenProps {
@@ -96,7 +97,7 @@ const EditMembersScreen = (props: EditMembersScreenProps) => {
           <View key={member.id} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image 
-                source={member.profile_picture}
+                source={member.profile_picture ? { uri: member.profile_picture } : require("@/assets/images/imgUser.jpg")}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
@@ -104,12 +105,14 @@ const EditMembersScreen = (props: EditMembersScreenProps) => {
                 <Text style={styles.username}>{member.username}</Text>
               </View>
             </View>
-            <TouchableOpacity 
-              style={styles.removeButton}
-              onPress={() => handleRemoveClick(member.id)}
-            >
-              <Text style={styles.removeText}>Remove</Text>
-            </TouchableOpacity>
+            {member.role !== 'ADMIN' && (
+              <TouchableOpacity 
+                style={styles.removeButton}
+                onPress={() => handleRemoveClick(member.id)}
+              >
+                <Text style={styles.removeText}>Remove</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>

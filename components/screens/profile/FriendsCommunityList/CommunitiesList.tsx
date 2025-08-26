@@ -96,10 +96,11 @@ const CommunitiesList = (props: CommunityProps) => {
               <View style={styles.communityInfo}>
                 <Text style={styles.communityName}>{community.name}</Text>
                 <TouchableOpacity
-                  style={styles.leaveButton}
-                  onPress={() => handleLeaveCommunity(community.id)}
+                  style={[styles.leaveButton, community.role === 'ADMIN' && styles.leaveButtonDisabled]}
+                  onPress={() => community.role !== 'ADMIN' && handleLeaveCommunity(community.id)}
+                  disabled={community.role === 'ADMIN'}
                 >
-                  <Text style={styles.leaveButtonText}>Leave</Text>
+                  <Text style={[styles.leaveButtonText, community.role === 'ADMIN' && styles.leaveButtonTextDisabled]}>Leave</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -205,11 +206,17 @@ const styles = StyleSheet.create({
     paddingVertical: s(8),
     borderRadius: s(100),
   },
+  leaveButtonDisabled: {
+    backgroundColor: '#E1E1E1',
+  },
   leaveButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
     fontFamily: 'Open Sans',
     fontWeight: '700',
+  },
+  leaveButtonTextDisabled: {
+    color: '#979797',
   },
 });
 

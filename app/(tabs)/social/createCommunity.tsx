@@ -9,7 +9,7 @@ import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/
 // Components
 import CreateCommunityScreen from '@/components/screens/social/main/createcommunityscreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugCreateCommunityPage } from '@/debug/utils';
 
 
 const CreateCommunityPage = () => {
@@ -96,11 +96,9 @@ const CreateCommunityPage = () => {
 
   // Debug
   const loadingData = fetching || isCreatingCommunity;
-  if (debugRenders && !loadingData) {
-    console.log("Rendering CreateCommunityPage",
-      "\nForm Data:", formData,
-      "\nSelected Categories:", selectedCategories
-    );
+  if (debugCreateCommunityPage && !loadingData) {
+    const categoryList = selectedCategories.length > 0 ? selectedCategories.join(', ') : 'None';
+    console.log(`📱 Rendering CreateCommunityPage\n  Form Data: ${JSON.stringify(formData)}\n  Selected Categories: ${categoryList}`);
   }
 
   return <CreateCommunityScreen

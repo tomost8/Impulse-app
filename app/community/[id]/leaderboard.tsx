@@ -6,7 +6,7 @@ import { useGetCommunityLeaderboard } from '@/hooks/graphql/communities/queries'
 // Components
 import LeaderboardScreen from '@/components/screens/social/communities/leaderboardscreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugCommunityLeaderboardPage } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const LeaderboardPage = () => { 
@@ -41,12 +41,12 @@ const LeaderboardPage = () => {
   }, [hasNewCommunityLeaderboardData]);
 
   const loading = !hasFetchedCommunityLeaderboard.current;
-  if (debugRenders && !loading) {
-    console.log('Rendering LeaderboardsPage\n',
-      'Community Leaderboard:', communityLeaderboardRef.current, '\n',
-      'Selected Period:', selectedPeriod, '\n',
-      'Render Counter:', renderCounter, '\n',
-    );
+  if (debugCommunityLeaderboardPage && !loading) {
+    const leaderboard = communityLeaderboardRef.current || [];
+    const memberDetails = leaderboard.map((member: any) => 
+      `  ID: ${member.id}, Username: ${member.username}, Points: ${member.point?.points || 0}, Weekly: ${member.point?.weekly_points || 0}, Monthly: ${member.point?.monthly_points || 0}`
+    ).join('\n');
+    console.log(`📱 Rendering CommunityLeaderboardPage - Sort By: ${selectedPeriod}, Members: ${leaderboard.length}\n${memberDetails}`);
   }
   return (
     <LeaderboardScreen 

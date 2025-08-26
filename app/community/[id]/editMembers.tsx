@@ -7,7 +7,7 @@ import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations'
 // Components
 import EditMembersScreen from '@/components/screens/social/communities/editmembersscreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugEditCommunityMembersPage } from '@/debug/utils';
 
 const EditMembersPage = () => {
  const { id } = useLocalSearchParams();
@@ -25,7 +25,11 @@ const EditMembersPage = () => {
    if (hasNewMembersData) {
      let filteredMembers = communityMembers
        .filter((member: any) => member.status === "ACCEPTED")
-       .map((member: any) => member.user);
+       .map((member: any) => ({
+         ...member.user,
+         role: member.role,
+         status: member.status
+       }));
      membersRef.current = filteredMembers;
      hasFetchedMembers.current = true;
    }
@@ -42,7 +46,9 @@ const EditMembersPage = () => {
     try {
       const response = await deleteCommunityMember(memberId, Number(id));
       if (response.success) {
-        console.log("Member successfully removed:", response);
+        console.log("🔄 Fetching data - Member removed, updating list");
+        // Reset fetch flag to refetch updated member list
+        hasFetchedMembers.current = false;
       } else {
         throw new Error("Response from deleteCommunityMember was not successful: " + response.errors);
       }
@@ -55,13 +61,15 @@ const EditMembersPage = () => {
 
   // Debug
   const loadingData = !hasFetchedMembers.current || isDeletingMember;
-  if (debugRenders && !loadingData) {
-    console.log("Rendering EditMembersPage. Counter: ", renderCounter,
-      "\nMembers:", membersRef.current,
-    );
+  if (debugEditCommunityMembersPage && !loadingData) {
+    const members = membersRef.current || [];
+    const memberDetails = members.map((member: any) => 
+      `  ID: ${member.id}, Name: ${member.first_name} ${member.last_name}, Username: ${member.username}, Role: ${member.role}, Status: ${member.status}`
+    ).join('\n');
+    console.log(`📱 Rendering EditMembersPage - Members: ${members.length}\n${memberDetails}`);
   }
 
- return (
+  return (
    <EditMembersScreen 
     loading={loadingData}
     members={membersRef.current || []} 

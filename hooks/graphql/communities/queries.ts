@@ -35,7 +35,11 @@ export function useGetCommunities(shouldFetch: boolean = true) {
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetCommunities data", data, error ? 'error:' + error : '');
+    const communities = data?.getAllCommunities?.communities || [];
+    const communityDetails = communities.map((community: any) => 
+      `  {communityId: ${community.id}, communityName: "${community.name}", code: "${community.code || 'null'}", influencerName: "${community.influencer?.first_name} ${community.influencer?.last_name}"}`
+    ).join('\n');
+    console.log(`useGetCommunities: {"success": ${data?.getAllCommunities?.success}, "errors": ${data?.getAllCommunities?.errors ? JSON.stringify(data.getAllCommunities.errors) : 'null'}, "communityCount": ${communities.length}}\n${communityDetails}`);
   }
   return {
     communities: data?.getAllCommunities.communities || [],
@@ -70,7 +74,20 @@ export function useGetAllCategories(shouldFetch: boolean = true) {
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetAllCategories data", data, error ? 'error:' + error : '');
+    const categories = data?.getAllCategories?.community_categories || [];
+    // Group by category name
+    const categoriesByName = categories.reduce((acc: any, category: any) => {
+      if (!acc[category.category]) {
+        acc[category.category] = [];
+      }
+      acc[category.category].push(category.community_id);
+      return acc;
+    }, {});
+    
+    const categoryDetails = Object.entries(categoriesByName).map(([categoryName, communityIds]: [string, any]) => 
+      `  "${categoryName}": ${communityIds.join(',')}`
+    ).join('\n');
+    console.log(`useGetAllCategories: {"success": ${data?.getAllCategories?.success}, "errors": ${data?.getAllCategories?.errors ? JSON.stringify(data.getAllCategories.errors) : 'null'}, "categoryCount": ${categories.length}}\n${categoryDetails}`);
   }
   return {
     categories: data?.getAllCategories.community_categories || [],
@@ -246,7 +263,11 @@ export function useGetAllCommunityMembers(shouldFetch: boolean = true) {
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetAllCommunityMembers data", data, error ? 'error:' + error : '');
+    const members = data?.getAllCommunityMembers?.community_members || [];
+    const memberDetails = members.map((member: any) => 
+      `  {communityId: ${member.community_id}, userId: ${member.user_id}, status: "${member.status}"}`
+    ).join('\n');
+    console.log(`useGetAllCommunityMembers: {"success": ${data?.getAllCommunityMembers?.success}, "errors": ${data?.getAllCommunityMembers?.errors ? JSON.stringify(data.getAllCommunityMembers.errors) : 'null'}, "memberCount": ${members.length}}\n${memberDetails}`);
   }
   return {
     communityMembers: data?.getAllCommunityMembers.community_members || [],

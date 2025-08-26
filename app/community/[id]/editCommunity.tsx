@@ -10,7 +10,7 @@ import { useUpdateCommunity, useCreateCommunityCategory, useDeleteCommunityCateg
 // Components
 import EditCommunityScreen from '@/components/screens/social/communities/editcommunityscreen';
 // Debug
-import { debugRenders } from '@/debug/utils';
+import { debugEditCommunityPage } from '@/debug/utils';
 
 const EditCommunityPage = () => {
  const { id } = useLocalSearchParams(); // communityId 
@@ -139,8 +139,11 @@ const EditCommunityPage = () => {
 
  // Debug
  const loadingData = !hasFetchedCommunity.current || !hasFetchedCommunityCategories.current || isUpdatingCommunity;
- if (debugRenders && !loadingData) {
-  console.log("EditCommunityPage - Community:", communityRef.current?.name, "Categories:", categoriesRef.current?.length || 0);
+ if (debugEditCommunityPage && !loadingData) {
+  const community = communityRef.current;
+  const categories = categoriesRef.current || [];
+  const categoryList = categories.length > 0 ? categories.join(', ') : 'None';
+  console.log(`📱 Rendering EditCommunityPage - ID: ${id}, Name: ${community?.name}, Description: ${community?.description}, Code: ${community?.code}, Categories: ${categories.length}\n  Categories: ${categoryList}`);
  }
 
   return (

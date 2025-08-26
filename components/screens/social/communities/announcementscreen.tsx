@@ -18,10 +18,12 @@ import { router } from 'expo-router';
 interface AnnouncementScreenProps {
   communityName?: string;
   announcements?: any[];
+  isAdmin?: boolean;
 }
 
 const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
-  communityName = "Community Name"
+  communityName = "Community Name",
+  isAdmin = false
 }) => {
   const [announcement, setAnnouncement] = useState('');
 
@@ -60,31 +62,33 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
           <View style={styles.messagesContainer} />
 
           {/* Input Container with KeyboardAvoidingView */}
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-            style={styles.keyboardAvoidView}
-          >
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                value={announcement}
-                onChangeText={setAnnouncement}
-                placeholder="Make announcement..."
-                placeholderTextColor="#979797"
-                multiline
-              />
-              <TouchableOpacity 
-                style={styles.sendButton}
-                onPress={handleSend}
-              >
-                <Image 
-                  source={require("@/assets/icons/Sent.png")}
-                  style={styles.sendIcon}
+          {isAdmin && (
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+              style={styles.keyboardAvoidView}
+            >
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  value={announcement}
+                  onChangeText={setAnnouncement}
+                  placeholder="Make announcement..."
+                  placeholderTextColor="#979797"
+                  multiline
                 />
-              </TouchableOpacity>
-            </View>
-          </KeyboardAvoidingView>
+                <TouchableOpacity 
+                  style={styles.sendButton}
+                  onPress={handleSend}
+                >
+                  <Image 
+                    source={require("@/assets/icons/Sent.png")}
+                    style={styles.sendIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          )}
         </View>
       </TouchableWithoutFeedback>
     </View>
