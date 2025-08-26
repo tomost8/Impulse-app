@@ -17,6 +17,9 @@ type DataProviderContextType = {
   currentCommunity: any; setCurrentCommunity: (community: any) => void;
   currentCommunityMembers: any[]; setCurrentCommunityMembers: (members: any[]) => void;
   currentCommunityAnnouncements: any[]; setCurrentCommunityAnnouncements: (announcements: any[]) => void;
+  // Current post data for post pages
+  currentPost: any; setCurrentPost: (post: any) => void;
+  currentPostComments: any[]; setCurrentPostComments: (comments: any[]) => void;
   debugLog: () => void;
 };
 
@@ -40,6 +43,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentCommunity, setCurrentCommunity] = useState<any>(null);
   const [currentCommunityMembers, setCurrentCommunityMembers] = useState<any[]>([]);
   const [currentCommunityAnnouncements, setCurrentCommunityAnnouncements] = useState<any[]>([]);
+  // Current post data
+  const [currentPost, setCurrentPost] = useState<any>(null);
+  const [currentPostComments, setCurrentPostComments] = useState<any[]>([]);
 
   const debugLog = () => {
     console.log("=== Data Provider Debug Log ===",
@@ -53,7 +59,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       "\nLogin Streak:", loginStreak,
       "\nCurrent Community:", currentCommunity?.id,
       "\nCurrent Community Members:", currentCommunityMembers.length,
-      "\nCurrent Community Announcements:", currentCommunityAnnouncements.length
+      "\nCurrent Community Announcements:", currentCommunityAnnouncements.length,
+      "\nCurrent Post:", currentPost?.id,
+      "\nCurrent Post Comments:", currentPostComments.length
     );
   };
 
@@ -72,10 +80,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     currentCommunity, setCurrentCommunity,
     currentCommunityMembers, setCurrentCommunityMembers,
     currentCommunityAnnouncements, setCurrentCommunityAnnouncements,
+    currentPost, setCurrentPost,
+    currentPostComments, setCurrentPostComments,
     debugLog,
   }), [
     fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed,
-    timezone, cameraClickable, loginStreak, currentCommunity, currentCommunityMembers, currentCommunityAnnouncements
+    timezone, cameraClickable, loginStreak, currentCommunity, currentCommunityMembers, currentCommunityAnnouncements,
+    currentPost, currentPostComments
   ]);
 
   return (

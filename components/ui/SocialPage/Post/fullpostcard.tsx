@@ -21,12 +21,9 @@ interface FullPostCardProps {
 
 const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike }) => {
   const handleLike = () => {
-    console.log("post", post);
     if (post?.liked) {
-      console.log("unliking post");
       onUnlike?.();
     } else {
-      console.log("liking post");
       onLike?.();
     }
   };

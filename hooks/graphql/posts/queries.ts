@@ -178,13 +178,23 @@ export function useGetPost(id: number, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_POST, {
     skip: !shouldFetch,
     variables: { id },
+    fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetPost data", data, error ? 'error:' + error : '');
+    const post = data?.post.post;
+    const success = data?.post.success;
+    const errors = data?.post.errors;
+    console.log("useGetPost:", {
+      success,
+      postId: post?.id,
+      liked: post?.liked,
+      likeCount: post?.likeCount,
+      errors: errors?.length > 0 ? errors : null,
+    });
   }
   return {
     post: data?.post.post || null,
@@ -219,13 +229,20 @@ export function useGetPostComments(postId: number, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_POST_COMMENTS, {
     skip: !shouldFetch,
     variables: { postId },
+    fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetPostComments data", data, error ? 'error:' + error : '');
+    const comments = data?.postComments.comments || [];
+    const success = data?.postComments.success;
+    const errors = data?.postComments.errors;
+    const commentDetails = comments.map((comment: any) => 
+      `  {id: ${comment.id}, content: "${comment.content?.substring(0, 20)}...", replies: ${comment.replies?.length || 0}}`
+    ).join('\n') || '  No comments';
+    console.log(`useGetPostComments: {"commentCount": ${comments.length}, "errors": ${errors?.length > 0 ? JSON.stringify(errors) : 'null'}, "postId": ${postId}, "success": ${success}}\nComment Details:\n${commentDetails}`);
   }
   return {
     comments: data?.postComments.comments || [],
