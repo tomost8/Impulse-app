@@ -7,34 +7,15 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 import RemoveFriendPopup from './FriendRemoveModal';
 
-function Header() {
-  return (
-    <View style={styles.headerBackground}>
-      <SafeAreaView>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Friends</Text>
-        </View>
-      </SafeAreaView>
-    </View>
-  );
-}
+
 
 interface FriendProps {
   loading: boolean;
@@ -71,7 +52,10 @@ const FriendsList = (props: FriendProps) => {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header 
+        title="Friends"
+        onBackPress={() => router.back()}
+      />
       <View style={styles.content}>
         <View style={styles.searchContainer}>
           <Image

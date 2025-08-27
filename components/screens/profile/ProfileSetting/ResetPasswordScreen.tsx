@@ -7,33 +7,14 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 
-function Header() {
-  return (
-    <View style={styles.headerBackground}>
-      <SafeAreaView>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Reset Password</Text>
-        </View>
-      </SafeAreaView>
-    </View>
-  );
-}
+
 
 function PasswordInput({ 
   placeholder, 
@@ -101,7 +82,10 @@ const ResetPasswordScreen = ({ loading, errorMessage, handleResetPassword }: Res
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header 
+        title="Reset Password"
+        onBackPress={() => router.back()}
+      />
       <Text>{error}</Text>
       <View style={styles.content}>
         <PasswordInput

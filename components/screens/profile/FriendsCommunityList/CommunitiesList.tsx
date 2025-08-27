@@ -7,34 +7,15 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 import LeaveCommunityPopup from './CommunityLeaveModal';
 
-function Header() {
-  return (
-    <View style={styles.headerBackground}>
-      <SafeAreaView>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Communities</Text>
-        </View>
-      </SafeAreaView>
-    </View>
-  );
-}
+
 
 interface CommunityProps {
   loading: boolean;
@@ -69,7 +50,10 @@ const CommunitiesList = (props: CommunityProps) => {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header 
+        title="Communities"
+        onBackPress={() => router.back()}
+      />
       <View style={styles.content}>
         <View style={styles.searchContainer}>
           <Image

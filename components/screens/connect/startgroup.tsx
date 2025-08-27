@@ -6,7 +6,6 @@ import {
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -14,6 +13,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import Header from "@/components/ui/common/headers/Header";
 
 interface StartGroupScreenProps {
   loading: boolean;
@@ -79,23 +79,10 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>Start Group</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Start Group"
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView style={styles.scrollView}>
         <KeyboardAvoidingView 

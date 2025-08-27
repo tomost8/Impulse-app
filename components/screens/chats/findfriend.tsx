@@ -6,12 +6,12 @@ import {
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   ScrollView,
   Platform,
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import Header from "@/components/ui/common/headers/Header";
 
 interface Friend {
   id: string;
@@ -57,23 +57,10 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>Add Friends</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Add Friends"
+        onBackPress={() => router.back()}
+      />
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>

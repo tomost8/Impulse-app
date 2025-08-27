@@ -3,7 +3,6 @@ import {
   View, 
   Text, 
   StyleSheet, 
-  SafeAreaView, 
   TouchableOpacity, 
   Image,
   ScrollView,
@@ -11,6 +10,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import Header from "@/components/ui/common/headers/Header";
 
 interface CommunityListProps {
   loading: boolean;
@@ -28,23 +28,11 @@ const CommunityList = (props: CommunityListProps) => {
 
   return (
     <View style={styles.container}>
+      <Header 
+        title="Communities"
+        onBackPress={() => router.back()}
+      />
       <ScrollView style={styles.scrollView}>
-        <View style={styles.headerExtension}>
-          <SafeAreaView>
-            <View style={styles.headerRow}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Image 
-                  source={require("@/assets/icons/backArrow.png")}
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
-              <Text style={styles.headerTitle}>Communities</Text>
-            </View>
-          </SafeAreaView>
-        </View>
 
         {/* Communities List */}
         {props.communities.map((community) => (

@@ -6,34 +6,15 @@ import {
   TouchableOpacity,
   Text,
   Linking,
-  SafeAreaView,
   Image,
   Platform,
   StatusBar,
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 
-function Header() {
-  return (
-    <View style={styles.headerBackground}>
-      <SafeAreaView>
-        <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => router.back()}
-          >
-            <Image
-              source={require("@/assets/icons/backArrow.png")}
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Give Feedback</Text>
-        </View>
-      </SafeAreaView>
-    </View>
-  );
-}
+
 
 const FeedbackScreen = () => {
   const handleFeedbackForm = () => {
@@ -42,7 +23,10 @@ const FeedbackScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header />
+      <Header 
+        title="Give Feedback"
+        onBackPress={() => router.back()}
+      />
       <ScrollView style={styles.content}>
         <Text style={styles.heading}>We want to hear from you!</Text>
         <Text style={styles.description}>

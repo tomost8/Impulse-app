@@ -5,12 +5,12 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from 'react-native';
 import { s } from "react-native-size-matters";
 import { router } from 'expo-router';
+import Header from "@/components/ui/common/headers/Header";
 import AddActivities from './AddActivities';
 import CompleteActivities from './CompleteActivities';
 import CustomNotifications from './CustomNotifications';
@@ -26,23 +26,10 @@ const FeatureGuide = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerContainer}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton} 
-              onPress={() => router.back()}
-            >
-              <Image
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Feature Guide</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Feature Guide"
+        onBackPress={() => router.back()}
+      />
 
       {/* Activity Cards Container */}
       <View style={styles.cardsContainer}>

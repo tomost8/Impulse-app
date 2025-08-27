@@ -12,6 +12,7 @@ type ActivityCardProps = {
   status: string;
   description: string;
   timezone: string;
+  isOwnProfile?: boolean;
 };
 
 const ActivityCard: React.FC<ActivityCardProps> = ({
@@ -22,6 +23,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   status,
   description,
   timezone,
+  isOwnProfile,
 }) => {
   const router = useRouter();
 
@@ -55,11 +57,11 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       </View>
 
       {/* Status */}
-      <Text style={styles.status}>{status}</Text>
+      <Text style={styles.status}>{status.toLowerCase() === 'pending' ? 'In Progress' : status}</Text>
     </View>
   );
 
-  return status.toLowerCase() === "pending" ? (
+  return (status.toLowerCase() === "pending" && isOwnProfile) ? (
     <Pressable onPress={handlePress}>{CardContent}</Pressable>
   ) : (
     CardContent

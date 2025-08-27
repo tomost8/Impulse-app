@@ -5,13 +5,13 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
+import Header from "@/components/ui/common/headers/Header";
 
 function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }) {
   // Get memory entry for each date
@@ -62,22 +62,10 @@ export default function Memories({ loading, memories }: MemoriesProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Memories</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Memories"
+        onBackPress={() => router.back()}
+      />
 
       <Calendar
         current={INITIAL_DATE}

@@ -7,6 +7,7 @@ import {
 import ActivityCard from '@/components/ui/common/activityCards/ActivityCard';
 
 interface DailyGoal {
+  id: number;
   category: string;
   scheduledDatetime: string;
   duration: number;
@@ -17,9 +18,10 @@ interface DailyGoal {
 interface DailyGoalsProps {
   goals: DailyGoal[];
   timezone: string; // User's timezone
+  isOwnProfile?: boolean;
 }
 
-const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, timezone }) => {
+const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, timezone, isOwnProfile }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Daily Goals</Text>
@@ -27,12 +29,14 @@ const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, timezone }) => {
         {goals.map((goal, index) => (
           <ActivityCard
             key={index}
+            id={goal.id}
             category={goal.category}
             scheduledDatetime={goal.scheduledDatetime}
             duration={goal.duration}
             status={goal.status}
             description={goal.description}
             timezone={timezone}
+            isOwnProfile={isOwnProfile}
           />
         ))}
       </View>

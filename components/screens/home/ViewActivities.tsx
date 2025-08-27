@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from "react-native";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
-import GoalsHeader from "../../ui/DailyGoalsViewAll/GoalsHeader";
+import Header from "@/components/ui/common/headers/Header";
 import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
 import React, { useState } from "react";
 import { router } from "expo-router";
@@ -73,11 +73,10 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.headerBackground}>
-            <SafeAreaView>
-              <GoalsHeader onBackPress={() => router.back()} />
-            </SafeAreaView>
-          </View>
+          <Header 
+            title="View All"
+            onBackPress={() => router.back()}
+          />
 
           {/* Section Title - "Goals for the Day" */}
           <Text style={styles.sectionTitle}>Goals for the Day</Text>
@@ -116,10 +115,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  headerBackground: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-  },
+
   keyboardView: {
     flex: 1,
     justifyContent: 'space-between', // This will push content to top and bottom

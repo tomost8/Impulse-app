@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Linking,
-  SafeAreaView,
   TextInput,
   ActivityIndicator,
   Platform,
@@ -15,6 +14,7 @@ import {
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 import AccountChangedConfirmation from '../popups/AccountChangedConfirmation';
 
 interface SupportScreenProps {
@@ -46,22 +46,10 @@ const SupportScreen = ({ handleUpdateUser, loading }: SupportScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton} 
-              onPress={() => router.back()}
-            >
-              <Image
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Support and Account Deletion</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Support and Account Deletion"
+        onBackPress={() => router.back()}
+      />
       <View style={styles.emailSection}>
         <View style={styles.emailContainer}>
           <Image 

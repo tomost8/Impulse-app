@@ -6,13 +6,13 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
 import { s } from "react-native-size-matters";
+import Header from "@/components/ui/common/headers/Header";
 
 interface ProfileScreenProps {  
   user: any;
@@ -44,22 +44,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) =>
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Profile</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Profile"
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView>
         <View style={styles.profileContainer}>

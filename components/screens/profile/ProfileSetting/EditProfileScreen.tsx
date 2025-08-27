@@ -8,7 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
@@ -20,6 +19,7 @@ import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { pickImage } from "@/utils/imageProcessing";
 import { router } from "expo-router";
 import { s } from "react-native-size-matters";
+import Header from "@/components/ui/common/headers/Header";
 
 interface ProfileScreenProps {
   formData: any;
@@ -37,22 +37,10 @@ const ProfileScreen = ({ formData, handleFormDataChange, handleFormSubmit, isSub
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Edit Profile</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Edit Profile"
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView>
         <View style={styles.content}>

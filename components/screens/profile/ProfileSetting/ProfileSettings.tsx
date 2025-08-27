@@ -6,13 +6,13 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
   Platform,
   StatusBar,
 } from "react-native";
 import { useAuth } from '@/contexts/AuthContext';
 import { router } from "expo-router";
 import { s } from "react-native-size-matters";
+import Header from "@/components/ui/common/headers/Header";
 
 function SettingsItem({ 
   title, 
@@ -109,22 +109,10 @@ function ProfileSettings({ isDoubleCameraEnabled, onToggleDoubleCamera, loading 
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Settings</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Settings"
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView style={styles.content}>
         <View style={styles.settingsContainer}>

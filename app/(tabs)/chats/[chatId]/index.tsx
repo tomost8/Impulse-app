@@ -310,7 +310,7 @@ function ChatScreen({
         
         {chat?.type === 'direct' && (
           <TouchableOpacity 
-            onPress={() => router.push(`/chats/${chatId}/${partner?.id}`)}
+            onPress={() => router.push(`/user/${partner?.id}`)}
             style={styles.avatarContainer}
           >
             <Image source={{ uri: partner?.profile_picture }} style={styles.avatar} />

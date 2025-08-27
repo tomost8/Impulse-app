@@ -6,7 +6,6 @@ import {
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -15,6 +14,7 @@ import {
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
+import Header from "@/components/ui/common/headers/Header";
 
 interface CreateCommunityScreenProps {
   loading: boolean;
@@ -59,23 +59,10 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Top Bar */}
-          <View style={styles.topBar}>
-            <SafeAreaView style={styles.safeArea}>
-              <View style={styles.topBarContent}>
-                <TouchableOpacity 
-                  style={styles.backButton}
-                  onPress={() => router.back()}
-                >
-                  <Image 
-                    source={require("@/assets/icons/backArrow.png")}
-                    style={styles.backIcon}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.pageTitle}>Create Community</Text>
-              </View>
-            </SafeAreaView>
-          </View>
+          <Header 
+            title="Create Community"
+            onBackPress={() => router.back()}
+          />
 
           {/* Profile Image Section */}
           <TouchableOpacity 

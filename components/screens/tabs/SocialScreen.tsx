@@ -5,7 +5,7 @@ import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList"
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
 import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
 import { router } from "expo-router";
-const exploreIcon = require("@/assets/icons/explore.png");
+const searchIcon = require("@/assets/icons/search.png");
 
 // Persistent tab state across component re-mounts
 const savedTabRef = { current: 'friends' as 'friends' | 'communities' };
@@ -75,7 +75,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         <View style={styles.header}>
           <Text style={styles.headerText}>Feed</Text>
           <TouchableOpacity onPress={() => router.push('/social/explore')}>
-            <Image source={exploreIcon} style={styles.exploreIcon} />
+            <Image source={searchIcon} style={styles.exploreIcon} />
           </TouchableOpacity>
         </View>
         {/* Tab Selector */}

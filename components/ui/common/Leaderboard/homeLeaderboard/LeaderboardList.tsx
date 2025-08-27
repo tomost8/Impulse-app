@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     paddingTop: 5, // Adds slight spacing at the top
     paddingBottom: 32, // Ensures spacing at the bottom
     paddingHorizontal: 22, // Matches Figma
-    marginTop: 18, // Helps connect it visually to the podium
+    marginTop: 0, // Removed spacing to connect directly to podium
   },
 });
 

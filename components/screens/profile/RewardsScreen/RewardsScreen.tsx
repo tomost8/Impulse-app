@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { View, SafeAreaView, StyleSheet, ScrollView, TouchableOpacity, Text, Image, Platform, StatusBar} from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Image, Platform, StatusBar} from "react-native";
 import { s } from "react-native-size-matters";
 import { useRouter } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 import PointsDisplay from "./PointsDisplay";
 import RewardItem from "./RewardItem";
 import RedeemRewardPopup from "../popups/RedeemRewardPopup";
@@ -34,22 +35,10 @@ const RewardsScreen: React.FC<RewardsScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Redeem</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Redeem"
+        onBackPress={() => router.back()}
+      />
     <ScrollView style={styles.scrollView}>
       <View style={styles.content}>
         <PointsDisplay points={userPoints} />

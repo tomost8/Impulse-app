@@ -67,7 +67,7 @@ const GroupInfoScreen = (props: GroupInfoScreenProps) => {
               <View key={member.id} style={styles.memberCard}>
                 <View style={styles.memberInfo}>
                   <Image 
-                    source={member.profile_picture}
+                    source={{ uri: member.profile_picture }}
                     style={styles.profileImage}
                   />
                   <View style={styles.textContainer}>

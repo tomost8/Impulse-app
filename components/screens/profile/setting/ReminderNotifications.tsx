@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
   Modal,
   KeyboardAvoidingView,
   Platform,
@@ -17,6 +16,7 @@ import {
 } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+import Header from "@/components/ui/common/headers/Header";
 import Info2 from '@/components/screens/profile/setting/info2';
 import Info3 from '@/components/screens/profile/setting/info3';
 import Info4 from '@/components/screens/profile/setting/info4';
@@ -168,22 +168,10 @@ function ReminderNotifications({ onSave }: ReminderNotificationsProps): JSX.Elem
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerBackground}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Reminders and Notifications</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Reminders and Notifications"
+        onBackPress={() => router.back()}
+      />
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}

@@ -5,12 +5,12 @@ import {
   Image, 
   TouchableOpacity, 
   StyleSheet, 
-  SafeAreaView,
   ScrollView,
   Platform,
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
+import Header from "@/components/ui/common/headers/Header";
 
 interface Request {
   id: string;
@@ -60,34 +60,10 @@ const RequestsScreen = (props: RequestsScreenProps) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <View style={styles.headerLeft}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Image 
-                  source={require("@/assets/icons/backArrow.png")}
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
-              <Text style={styles.title}>Requests</Text>
-            </View>
-            <TouchableOpacity 
-              style={styles.addButton}
-              onPress={handleAddFriend}
-            >
-              <Image 
-                source={require("@/assets/icons/addFriend.png")}
-                style={styles.addIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Requests"
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView style={styles.content}>
         {/* Friend Requests Section */}

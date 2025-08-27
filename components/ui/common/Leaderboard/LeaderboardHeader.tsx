@@ -23,8 +23,8 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ onBackPress, sele
             <View style={styles.leftContainer}>
               <TouchableOpacity onPress={onBackPress} style={styles.backButton}>
                 <Image source={backArrow} style={styles.backIcon} />
+                <Text style={styles.title}>Leaderboard</Text>
               </TouchableOpacity>
-              <Text style={styles.title}>Leaderboard</Text>
             </View>
             <View style={styles.selectorContainer}>
               <LeaderboardSelector selectedPeriod={selectedPeriod} setSelectedPeriod={setSelectedPeriod} />
@@ -56,13 +56,15 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   backButton: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 14, // Adds touchable area
-    marginRight: 4, // ✅ Space between icon and title
   },
   backIcon: {
     width: 10,
     height: 17,
     tintColor: "#242020",
+    marginRight: 12, // Space between icon and title
   },
   title: {
     fontSize: 16,

@@ -6,7 +6,6 @@ import {
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   ScrollView,
   Platform,
   StatusBar,
@@ -14,6 +13,7 @@ import {
 import { router } from 'expo-router';
 import JoinSuccessPopup from './joinsuccesspopup';
 import PasswordPopup from './passwordpopup';
+import Header from "@/components/ui/common/headers/Header";
 
 interface Group {
   id: string;
@@ -76,23 +76,10 @@ const JoinGroupScreen = (props: JoinGroupScreenProps) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>Join Group</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Join Group"
+        onBackPress={() => router.back()}
+      />
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>

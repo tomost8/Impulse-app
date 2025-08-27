@@ -6,12 +6,12 @@ import {
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   ScrollView,
   Keyboard
 } from 'react-native';
 import { router } from 'expo-router';
 import InviteSentPopup from './invitesentpopup';
+import Header from "@/components/ui/common/headers/Header";
 
 interface Friend {
   id: string;
@@ -82,23 +82,10 @@ const InviteToGroupScreen = (props: InviteToGroupProps) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <SafeAreaView>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>Invite Friends</Text>
-          </View>
-        </SafeAreaView>
-      </View>
+      <Header 
+        title="Invite Friends"
+        onBackPress={() => router.back()}
+      />
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
