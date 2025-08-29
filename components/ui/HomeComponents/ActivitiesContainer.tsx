@@ -32,6 +32,7 @@ const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
             status={activity.status}
             description={activity.description}
             timezone={timezone}
+            isOwnProfile={true}
           />
         ))
       ) : (
