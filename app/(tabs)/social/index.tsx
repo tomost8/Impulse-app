@@ -16,7 +16,8 @@ const SocialPage = () => {
   const { 
     communities: communitiesFromContext,
     friendsFeed: friendsFeedFromContext, 
-    communityFeed: communityFeedFromContext
+    communityFeed: communityFeedFromContext,
+    userPosts: userPostsFromContext
   } = useDataProvider();
   const { refetchData, isRefetching } = useDataRefetch();
 
@@ -26,7 +27,7 @@ const SocialPage = () => {
       console.log("🔄 Fetching data - SocialPage navigated to");
       // Small delay to prevent GraphQL race conditions
       setTimeout(() => {
-        refetchData({ communities: true, communityFeed: true, friendsFeed: true });
+        refetchData({ communities: true, communityFeed: true, friendsFeed: true, userPosts: true });
       }, 100);
     }, [])
   );
@@ -35,6 +36,7 @@ const SocialPage = () => {
   const communityMembers = communitiesFromContext || [];
   const friendsFeed = friendsFeedFromContext || [];
   const communityFeed = communityFeedFromContext || [];
+  const userPosts = userPostsFromContext || [];
 
   // Mutations
   const { likePost } = useLikePost();
@@ -83,6 +85,7 @@ const SocialPage = () => {
         communities: true,
         friendsFeed: true,
         communityFeed: true,
+        userPosts: true,
       });
     }, 100);
   };
@@ -100,10 +103,11 @@ const SocialPage = () => {
       communityMembers={communityMembers}
       friendsFeed={friendsFeed}
       communityFeed={communityFeed}
+      userPosts={userPosts}
       handleLikePost={handleLikePost}
       handleUnlikePost={handleUnlikePost}
       onRefresh={handleRefresh}
-      isRefreshing={isRefetching}
+      isRefetching={isRefetching}
     />
   );
 }

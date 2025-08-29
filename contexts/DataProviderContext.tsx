@@ -10,6 +10,7 @@ type DataProviderContextType = {
   friends: any[]; setFriends: (friends: any[]) => void;
   friendsFeed: any[]; setFriendsFeed: (friendsFeed: any[]) => void;
   communityFeed: any[]; setCommunityFeed: (communityFeed: any[]) => void;
+  userPosts: any[]; setUserPosts: (posts: any[]) => void;
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
   loginStreak: any; setLoginStreak: (streak: any) => void;
@@ -35,6 +36,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [friends, setFriends] = useState<any[]>([]);
   const [friendsFeed, setFriendsFeed] = useState<any[]>([]);
   const [communityFeed, setCommunityFeed] = useState<any[]>([]);
+  const [userPosts, setUserPosts] = useState<any[]>([]);
   // Specific Data
   const [timezone, setTimezone] = useState<string>('');
   const [cameraClickable, setCameraClickable] = useState<boolean>(false);
@@ -54,6 +56,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       "\nActivities:", activities,
       "\nCommunities:", communities,
       "\nFriends:", friends,
+      "\nUser Posts:", userPosts.length,
       "\nTimezone:", timezone,
       "\nCamera Clickable:", cameraClickable,
       "\nLogin Streak:", loginStreak,
@@ -74,6 +77,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     friends, setFriends,
     friendsFeed, setFriendsFeed,
     communityFeed, setCommunityFeed,
+    userPosts, setUserPosts,
     timezone, setTimezone,
     cameraClickable, setCameraClickable,
     loginStreak, setLoginStreak,
@@ -84,7 +88,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     currentPostComments, setCurrentPostComments,
     debugLog,
   }), [
-    fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed,
+    fetching, user, activities, communities, chats, friends, friendsFeed, communityFeed, userPosts,
     timezone, cameraClickable, loginStreak, currentCommunity, currentCommunityMembers, currentCommunityAnnouncements,
     currentPost, currentPostComments
   ]);

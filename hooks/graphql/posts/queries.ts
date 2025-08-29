@@ -336,6 +336,17 @@ const GET_POSTS_BY_USER_ID = gql`
         caption
         created_at
         mediaUrls
+        author {
+          id
+          profile_picture
+          username
+          first_name
+          last_name
+        }
+        category
+        commentCount
+        liked
+        likeCount
       }
       errors {
         field
@@ -350,13 +361,26 @@ export function useGetPostsByUserId(userId: number, shouldFetch: boolean=true,
   const { data, loading, error } = useQuery(GET_POSTS_BY_USER_ID, {
     skip: !shouldFetch,
     variables: { userId, skip, take },
+    //fetchPolicy: 'network-only', // Always fetch from network, never use cache
     onError: (error) => {
       console.error('GraphQL Error:', error);
     }
   });
-  const fetched = !loading;
+  const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetPostsByUserId data", data, error ? 'error:' + error : '');
+    const posts = data?.postsByUserId.posts || [];
+    const success = data?.postsByUserId.success;
+    const errors = data?.postsByUserId.errors;
+    console.log("useGetPostsByUserId:", {
+      success,
+      postCount: posts.length,
+      userId,
+      shouldFetch,
+      errors: errors?.length > 0 ? errors : null,
+      firstPostId: posts[0]?.id || 'none',
+      lastPostId: posts[posts.length - 1]?.id || 'none',
+      timestamp: new Date().toISOString(),
+    });
   }
   return {
     posts: data?.postsByUserId.posts || [],

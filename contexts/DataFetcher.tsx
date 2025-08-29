@@ -15,7 +15,7 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 import { useGetFeedCommunities } from '@/hooks/graphql/posts/queries';
 import { useGetFeedFriends } from '@/hooks/graphql/posts/queries';
-import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
+import { useGetPost, useGetPostComments, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 
 /*
  * USAGE EXAMPLES:
@@ -65,6 +65,7 @@ interface RefetchOptions {
   friends?: boolean;
   friendsFeed?: boolean;
   communityFeed?: boolean;
+  userPosts?: boolean;
   currentCommunity?: boolean;
   currentCommunityMembers?: boolean;
   currentCommunityAnnouncements?: boolean;
@@ -88,7 +89,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,
-    setCommunityFeed, setFriendsFeed,
+    setCommunityFeed, setFriendsFeed, setUserPosts,
     setCurrentCommunity, setCurrentCommunityMembers, setCurrentCommunityAnnouncements,
     setCurrentPost, setCurrentPostComments
   } = useDataProvider();
@@ -239,6 +240,26 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     shouldFetchCommunityFeed
   );
 
+  // User Posts Query
+  // Refs
+  const userPostsRef = useRef<any[] | null>(null);
+  const hasFetchedUserPosts = useRef(false);
+  
+  // Conditions
+  const hasValidUserAndAuthForUserPosts = Boolean(userId && authToken);
+  const shouldFetchUserPostsInitially = !hasFetchedUserPosts.current && hasValidUserAndAuthForUserPosts;
+  const shouldRefetchUserPosts = Boolean(actionRefetchTrigger > 0 && 
+    actionRefetchTrigger !== lastActionRefetchTrigger.current && 
+    currentRefetchOptions.current.userPosts);
+  const shouldFetchUserPosts = shouldFetchUserPostsInitially || shouldRefetchUserPosts;
+  
+  const { posts: userPosts, fetched: hasNewUserPostsData } = useGetPostsByUserId(
+    userId || 0, 
+    shouldFetchUserPosts && Boolean(userId),
+    0,    // skip
+    100   // take - get more posts to ensure we have enough from last 24h
+  );
+
   // Current Post Query
   // Refs
   const currentPostRef = useRef<any | null>(null);
@@ -303,6 +324,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     hasFetchedFriends.current = false;
     hasFetchedFriendsFeed.current = false;
     hasFetchedCommunityFeed.current = false;
+    hasFetchedUserPosts.current = false;
     hasFetchedCurrentPost.current = false;
     hasFetchedCurrentPostComments.current = false;
     lastActionRefetchTrigger.current = 0;
@@ -343,6 +365,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (options.friends) hasFetchedFriends.current = false;
     if (options.friendsFeed) hasFetchedFriendsFeed.current = false;
     if (options.communityFeed) hasFetchedCommunityFeed.current = false;
+    if (options.userPosts) hasFetchedUserPosts.current = false;
     if (options.currentCommunity) setCurrentCommunity(null);
     if (options.currentCommunityMembers) setCurrentCommunityMembers([]);
     if (options.currentCommunityAnnouncements) setCurrentCommunityAnnouncements([]);
@@ -405,6 +428,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       friendsRef.current = null;
       friendsFeedRef.current = null;
       communityFeedRef.current = null;
+      userPostsRef.current = null;
       resetFetchFlags();
       setUserDataComplete(false);
       lastUserDataCheck.current = null;
@@ -519,6 +543,11 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedCommunityFeed.current = true;
       setCommunityFeed(communityFeed);
     }
+    if (hasNewUserPostsData) {
+      userPostsRef.current = userPosts;
+      hasFetchedUserPosts.current = true;
+      setUserPosts(userPosts);
+    }
     if (hasNewCurrentPostData) {
       currentPostRef.current = currentPost;
       hasFetchedCurrentPost.current = true;
@@ -529,13 +558,14 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedCurrentPostComments.current = true;
       setCurrentPostComments(currentPostComments);
     }
-    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
+    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current && hasFetchedUserPosts.current) {
       setFetching(false);
       setIsRefetching(false); // Reset refetching state when complete
       
       console.log("✅ User Data Loaded Successfully");
+    } else {
     }
-  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
+  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, hasNewUserPostsData, loginEventTrigger, actionRefetchTrigger]);
 
   // Track when queries are executed to prevent multiple executions
   useEffect(() => {
@@ -579,6 +609,12 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       lastActionRefetchTrigger.current = actionRefetchTrigger;
     }
   }, [hasNewCommunityFeedData, actionRefetchTrigger]);
+
+  useEffect(() => {
+    if (hasNewUserPostsData && actionRefetchTrigger > 0) {
+      lastActionRefetchTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewUserPostsData, actionRefetchTrigger]);
 
 
   // Cleanup effect to clear intervals when component unmounts

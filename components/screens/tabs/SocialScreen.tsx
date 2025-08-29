@@ -15,10 +15,11 @@ interface SocialScreenProps {
   communityMembers: any[];
   friendsFeed: any[];
   communityFeed: any[];
+  userPosts: any[];
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
   onRefresh?: () => void;
-  isRefreshing?: boolean;
+  isRefetching?: boolean;
 }
 
 const SocialScreen: React.FC<SocialScreenProps> = ({
@@ -26,10 +27,11 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
   communityMembers,
   friendsFeed,
   communityFeed,
+  userPosts,
   handleLikePost,
   handleUnlikePost,
   onRefresh,
-  isRefreshing = false,
+  isRefetching = false,
 }) => {
   if (loading) {
     return <Text>Loading...</Text>;
@@ -66,6 +68,25 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
       ...post,
       community: community
     };
+  });
+
+  // Filter user posts to only include those from the last 24 hours
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  
+  const recentUserPosts = userPosts.filter((post: any) => {
+    const postDate = new Date(post.created_at);
+    return postDate >= twentyFourHoursAgo;
+  });
+
+  // Combine friends feed with recent user posts
+  const combinedFriendsFeed = [...friendsFeed, ...recentUserPosts];
+  
+  // Sort by creation date (newest first)
+  combinedFriendsFeed.sort((a: any, b: any) => {
+    const dateA = new Date(a.created_at);
+    const dateB = new Date(b.created_at);
+    return dateB.getTime() - dateA.getTime();
   });
 
   return (
@@ -110,7 +131,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
             <View style={styles.feedSection}>
               <Feed 
                 currentTab={selectedTab}
-                posts={selectedTab === 'friends' ? friendsFeed : enrichedCommunityFeed}
+                posts={selectedTab === 'friends' ? combinedFriendsFeed : enrichedCommunityFeed}
                 handleLikePost={handleLikePost}
                 handleUnlikePost={handleUnlikePost}
               />
@@ -121,7 +142,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing}
+            refreshing={isRefetching}
             onRefresh={onRefresh}
             colors={['#DE728D']} // Android
             tintColor="#DE728D" // iOS
