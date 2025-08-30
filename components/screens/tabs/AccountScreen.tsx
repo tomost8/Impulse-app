@@ -106,14 +106,14 @@ function AccountProfile({
           </TouchableOpacity>
         </View>
 
-        {/* Bio Section */}
-        <Bio 
+        {/* Bio Section - Temporarily Renoved */}
+        {/* <Bio 
           bioText={user.bio}
           primaryActivity={getLabelByCategory(user.primary_goal)}
           secondaryActivity={getLabelByCategory(user.secondary_goal)}
           gender={user.gender}
           timezone={user.timezone}
-        />
+        /> */}
 
         {/* Memories Button */}
         <TouchableOpacity

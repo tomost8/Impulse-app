@@ -96,7 +96,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         <View style={styles.header}>
           <Text style={styles.headerText}>Feed</Text>
           <TouchableOpacity onPress={() => router.push('/social/explore')}>
-            <Image source={searchIcon} style={styles.exploreIcon} />
+            <Image source={searchIcon} style={styles.exploreIcon} tintColor="#000000" />
           </TouchableOpacity>
         </View>
         {/* Tab Selector */}
@@ -186,13 +186,14 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 65, // Add padding at bottom to ensure visibility (matches home page)
   },
   communityListSection: {
     paddingTop: 12,
   },
   filterSection: {
     marginTop: -20,
-    marginBottom: -12,
+    marginBottom: 0,
   },
   feedSection: {
     flex: 1,

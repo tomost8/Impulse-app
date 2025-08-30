@@ -24,12 +24,14 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
         </TouchableOpacity>
       </View>
       
-      <LeaderboardPodium podiumData={podiumUsers} />
-      
-      {/* Leaderboard List (Ranks 4+) */}
-      {listUsers.length > 0 && (
-        <LeaderboardList users={listUsers} />
-      )}
+      <View style={styles.leaderboardContent}>
+        <LeaderboardPodium podiumData={podiumUsers} />
+        
+        {/* Leaderboard List (Ranks 4+) */}
+        {listUsers.length > 0 && (
+          <LeaderboardList users={listUsers} />
+        )}
+      </View>
     </View>
   );
 };
@@ -38,6 +40,10 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     marginBottom: 10, // ✅ Ensures spacing from bottom navigation
+  },
+  leaderboardContent: {
+    alignItems: "center",
+    width: "100%",
   },
   header: {
     flexDirection: "row",

@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     borderRadius: 32, // Matches Figma
     borderTopLeftRadius: 0,  // Ensure sharp top-left corner
     borderTopRightRadius: 0, // Ensure sharp top-right corner
-    paddingTop: 5, // Adds slight spacing at the top
+    paddingTop: 0, // No top padding to eliminate gap
     paddingBottom: 32, // Ensures spacing at the bottom
     paddingHorizontal: 22, // Matches Figma
     marginTop: 0, // Removed spacing to connect directly to podium

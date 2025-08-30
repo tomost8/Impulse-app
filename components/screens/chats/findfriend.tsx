@@ -35,10 +35,14 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
   
   const [searchQuery, setSearchQuery] = useState('');
 
-  // need to maybe change filters to show based on if empty or not
+  // Filter users based on search query
   const filteredUsers = props.users.filter(user => 
     user.username?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Determine what to display based on search state
+  const showPendingRequests = searchQuery === '';
+  const showFilteredUsers = searchQuery !== '';
 
   // idk if we need this function, only gets called on search bar submit i think
   const handleSearch = () => {
@@ -80,8 +84,8 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Pending Requests Section */}
-        {props.sentRequests && props.sentRequests.length > 0 && (
+        {/* Pending Requests Section - Only show when search is empty */}
+        {showPendingRequests && props.sentRequests && props.sentRequests.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
             {props.sentRequests.map((friend) => (
@@ -110,30 +114,36 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
           </View>
         )}
 
-        {/* Add Friends Section */}
-        <View style={styles.section}>
-          {filteredUsers.map((friend) => (
-            <View key={friend.id} style={styles.friendCard}>
-              <View style={styles.friendInfo}>
-                <Image 
-                  source={{ uri: friend.profile_picture }}
-                  style={styles.profileImage}
-                />
-                <View style={styles.textContainer}>
-                  <Text style={styles.name}>{friend.first_name}</Text>
-                  <Text style={styles.username}>{friend.username}</Text>
+        {/* Add Friends Section - Only show when searching */}
+        {showFilteredUsers && (
+          <View style={styles.section}>
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((friend) => (
+                <View key={friend.id} style={styles.friendCard}>
+                  <View style={styles.friendInfo}>
+                    <Image 
+                      source={{ uri: friend.profile_picture }}
+                      style={styles.profileImage}
+                    />
+                    <View style={styles.textContainer}>
+                      <Text style={styles.name}>{friend.first_name}</Text>
+                      <Text style={styles.username}>{friend.username}</Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity 
+                    style={[styles.addButton, props.loading && styles.disabledButton]}
+                    onPress={() => handleAddFriend(friend.id)}
+                    disabled={props.loading}
+                  >
+                    <Text style={[styles.addButtonText, props.loading && styles.disabledText]}>Add Friend</Text>
+                  </TouchableOpacity>
                 </View>
-              </View>
-              <TouchableOpacity 
-                style={[styles.addButton, props.loading && styles.disabledButton]}
-                onPress={() => handleAddFriend(friend.id)}
-                disabled={props.loading}
-              >
-                <Text style={[styles.addButtonText, props.loading && styles.disabledText]}>Add Friend</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
+              ))
+            ) : (
+              <Text style={styles.noResultsText}>No users found matching "{searchQuery}"</Text>
+            )}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -268,6 +278,13 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.5,
+  },
+  noResultsText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#979797',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 
