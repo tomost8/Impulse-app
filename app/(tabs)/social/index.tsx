@@ -36,7 +36,40 @@ const SocialPage = () => {
   const communityMembers = communitiesFromContext || [];
   const friendsFeed = friendsFeedFromContext || [];
   const communityFeed = communityFeedFromContext || [];
-  const userPosts = userPostsFromContext || [];
+  
+  // Filter user posts to only show posts from the last 24 hours and remove duplicates by category and time
+  const userPosts = (userPostsFromContext || [])
+    .filter((post: any) => {
+      const postDate = new Date(post.created_at);
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      return postDate > twentyFourHoursAgo;
+    })
+    .filter((post: any, index: number, self: any[]) => {
+      // Remove duplicates by category and creation time (within 5 minutes)
+      const postDate = new Date(post.created_at);
+      const fiveMinutesAgo = new Date(postDate.getTime() - 5 * 60 * 1000);
+      const fiveMinutesLater = new Date(postDate.getTime() + 5 * 60 * 1000);
+      
+      const similarPosts = self.filter(p => 
+        p.category === post.category &&
+        new Date(p.created_at) >= fiveMinutesAgo &&
+        new Date(p.created_at) <= fiveMinutesLater
+      );
+      
+      if (similarPosts.length === 1) {
+        // Only one post for this category in this time window, keep it
+        return true;
+      }
+      
+      // Multiple posts for same category in same time window - keep the first one (earliest)
+      const earliestPost = similarPosts.reduce((earliest, current) => 
+        new Date(current.created_at) < new Date(earliest.created_at) ? current : earliest
+      );
+      
+      return post.id === earliestPost.id;
+    });
+  
+
 
   // Mutations
   const { likePost } = useLikePost();
@@ -94,7 +127,7 @@ const SocialPage = () => {
   const handlingLike = isHandlingLike || isHandlingUnlike;
   const loading = handlingLike || isRefetching;
   if (debugSocialPage && !loading) {
-    console.log(`📱 Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}`);
+    console.log(`📱 Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}, User Posts (24h): ${userPosts.length}`);
   }
 
   return (

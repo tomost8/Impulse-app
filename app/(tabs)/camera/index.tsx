@@ -31,7 +31,7 @@ export default function CameraScreen() {
   useEffect(() => {
     context.setPictureTaken(false);
     context.setCategory(category as string);
-  }, [category]);
+  }, [category, id]);
 
   // Camera permissions
   if (!permission) {

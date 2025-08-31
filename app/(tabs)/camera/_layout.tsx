@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router';
-import React, { createContext, useState, useEffect, useRef, useContext } from 'react';
+import React, { createContext, useState, useEffect, useRef, useContext, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -49,7 +49,7 @@ function CameraHeader() {
       <Text style={headerStyles.text}>{getLabelByCategory(header.category)}</Text>
       {/* Retake Button or Flash Button*/}
       {header.pictureTaken ? (
-        <TouchableOpacity onPress={() => {
+                      <TouchableOpacity onPress={() => {
           router.back();
           header.setId(0);
           header.setCategory('');
@@ -75,18 +75,34 @@ function CameraHeader() {
 
 export default function CameraLayout() {
   const { id: activityId, category: activityCategory } = useLocalSearchParams();
-  const [id, setId] = useState(Number(activityId));
-  const [category, setCategory] = useState(activityCategory as string);
   const [pictureTaken, setPictureTaken] = useState(false);
   const [flash, setFlash] = useState(false);
+  const [internalId, setInternalId] = useState(activityId ? Number(activityId) : 0);
+  const [internalCategory, setInternalCategory] = useState(activityCategory as string || '');
+
+  // useMemo ensures context values are always updated when parameters change
+  const contextValues = useMemo(() => {
+    const newId = activityId ? Number(activityId) : internalId;
+    const newCategory = activityCategory as string || internalCategory;
+    
+    return {
+      id: newId,
+      category: newCategory,
+      pictureTaken,
+      flash,
+      setId: (id: number) => {
+        setInternalId(id);
+      },
+      setCategory: (category: string) => {
+        setInternalCategory(category);
+      },
+      setPictureTaken,
+      setFlash,
+    };
+  }, [activityId, activityCategory, internalId, internalCategory, pictureTaken, flash]);
 
   return (
-    <CameraHeaderContext.Provider value={{
-      id, setId,
-      category, setCategory,
-      pictureTaken, setPictureTaken,
-      flash, setFlash,
-    }}>
+    <CameraHeaderContext.Provider value={contextValues}>
       <Stack
         screenOptions={{
           headerShown: true,
@@ -95,15 +111,10 @@ export default function CameraLayout() {
       >
         <Stack.Screen 
           name="index" 
-          options={{
-            // Options specific to the index page can be set here
-          }}
+          key={`${activityId}-${activityCategory}`}
         />
         <Stack.Screen 
           name="displayPicture" 
-          options={{
-            // Options specific to the display picture page can be set here
-          }}
         />
       </Stack>
     </CameraHeaderContext.Provider>

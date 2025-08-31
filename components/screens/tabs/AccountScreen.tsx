@@ -35,10 +35,17 @@ function AccountProfile({
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.headerExtension}>
-          <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          alwaysBounceVertical={false}
+          scrollEventThrottle={16}
+          decelerationRate="normal"
+        >
+          <View style={styles.headerExtension}>
             <View style={styles.headerRow}>
               <Text style={styles.headerTitle}>My Account</Text>
               <TouchableOpacity 
@@ -51,98 +58,100 @@ function AccountProfile({
                 />
               </TouchableOpacity>
             </View>
-          </SafeAreaView>
-        </View>
-
-        {/* Custom Header Section */}
-        <View style={styles.headerContainer}>
-          {/* Crescent Background */}
-          <View style={styles.crescentContainer}>
-            <View style={styles.crescent} />
           </View>
 
-          {/* Profile Section */}
-          <View style={styles.profileSection}>
-            <Image
-              source={{ uri: user.profile_picture }}
-              style={styles.profileImage}
-            />
-            <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
-            <Text style={styles.username}>@{user.username}</Text>
-          </View>
-        </View>
+          {/* Custom Header Section */}
+          <View style={styles.headerContainer}>
+            {/* Crescent Background */}
+            <View style={styles.crescentContainer}>
+              <View style={styles.crescent} />
+            </View>
 
-        {/* Points Section */}
-        <View style={styles.pointsContainer}>
-          <View style={styles.pointsHeader}>
-            <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
-              <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+            {/* Profile Section */}
+            <View style={styles.profileSection}>
+              <Image
+                source={{ uri: user.profile_picture }}
+                style={styles.profileImage}
+              />
+              <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
+              <Text style={styles.username}>@{user.username}</Text>
+            </View>
+          </View>
+
+          {/* Points Section */}
+          <View style={styles.pointsContainer}>
+            <View style={styles.pointsHeader}>
+              <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
+                <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+              </TouchableOpacity>
+              <Text style={styles.pointsValue}>{user.point?.spending_points} / 7.5k pts</Text>
+            </View>
+            <View style={styles.progressContainer}>
+              <View 
+                style={[
+                  styles.progressBar,
+                  { width: `${Math.min((user.point?.spending_points || 0) / 7500 * 100, 100)}%` }
+                ]} 
+              />
+            </View>
+            <TouchableOpacity onPress={() => router.push('/account/redeems')}>
+              <Text style={styles.redeem}>Redeem</Text>
             </TouchableOpacity>
-            <Text style={styles.pointsValue}>{user.point?.spending_points} / 7.5k pts</Text>
           </View>
-          <View style={styles.progressContainer}>
-            <View 
-              style={[
-                styles.progressBar,
-                { width: `${Math.min((user.point?.spending_points || 0) / 7500 * 100, 100)}%` }
-              ]} 
-            />
+
+          {/* Stats Section */}
+          <View style={styles.statsContainer}>
+            <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
+              <Text style={styles.statNumber}>{numCommunities}</Text>
+              <Text style={styles.statLabel}>Communities</Text>
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
+              <Text style={styles.statNumber}>{numFriends}</Text>
+              <Text style={styles.statLabel}>Friends</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => router.push('/account/redeems')}>
-            <Text style={styles.redeem}>Redeem</Text>
+
+          {/* Bio Section - Temporarily Renoved */}
+          {/* <Bio 
+            bioText={user.bio}
+            primaryActivity={getLabelByCategory(user.primary_goal)}
+            secondaryActivity={getLabelByCategory(user.secondary_goal)}
+            gender={user.gender}
+            timezone={user.timezone}
+          /> */}
+
+          {/* Memories Button */}
+          <TouchableOpacity
+            onPress={() => router.push('/account/memories')}
+            style={styles.memoriesButton}
+          >
+            <Text style={styles.memoriesButtonText}>View All Memories</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
 
-        {/* Stats Section */}
-        <View style={styles.statsContainer}>
-          <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
-            <Text style={styles.statNumber}>{numCommunities}</Text>
-            <Text style={styles.statLabel}>Communities</Text>
-          </TouchableOpacity>
-          <View style={styles.divider} />
-          <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
-            <Text style={styles.statNumber}>{numFriends}</Text>
-            <Text style={styles.statLabel}>Friends</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Bio Section - Temporarily Renoved */}
-        {/* <Bio 
-          bioText={user.bio}
-          primaryActivity={getLabelByCategory(user.primary_goal)}
-          secondaryActivity={getLabelByCategory(user.secondary_goal)}
-          gender={user.gender}
-          timezone={user.timezone}
-        /> */}
-
-        {/* Memories Button */}
-        <TouchableOpacity
-          onPress={() => router.push('/account/memories')}
-          style={styles.memoriesButton}
-        >
-          <Text style={styles.memoriesButtonText}>View All Memories</Text>
-        </TouchableOpacity>
-      </ScrollView>
-
-      {/* Points Guide Modal */}
-      <PointEarningGuide
-        visible={pointsModalVisible}
-        onClose={() => setPointsModalVisible(false)}
-      />
-    </View>
+        {/* Points Guide Modal */}
+        <PointEarningGuide
+          visible={pointsModalVisible}
+          onClose={() => setPointsModalVisible(false)}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#E0EDFD',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
   },
   scrollView: {
     flex: 1,

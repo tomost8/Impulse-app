@@ -29,7 +29,10 @@ const HomePage = () => {
     !hasFetchedFriends.current && !fetching && !!user?.id
   ); 
 
-  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity;
+  // Check if activities data is available
+  const hasActivitiesData = activities !== null && activities !== undefined;
+  
+  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity || !hasActivitiesData;
 
   useEffect(() => {
     if (!hasNewLeaderboardData) {
@@ -100,13 +103,16 @@ const HomePage = () => {
     }
   };
 
-  if (debugHomePage && !loading) {
-    const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
-      id: item.id,
-      username: item.username,
-      weekly_points: item.point?.weekly_points || 0
-    })) || [];
-    console.log(`Rendering HomePage - Activities: ${activities.length} | Leaderboard:`, leaderboardDetails);
+  if (debugHomePage) {
+    console.log(`HomePage Loading States - hasFetchedFriends: ${hasFetchedFriends.current}, fetching: ${fetching}, isCreatingActivity: ${isCreatingActivity}, hasActivitiesData: ${hasActivitiesData}, loading: ${loading}`);
+    if (!loading) {
+      const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
+        id: item.id,
+        username: item.username,
+        weekly_points: item.point?.weekly_points || 0
+      })) || [];
+      console.log(`Rendering HomePage - Activities: ${activities.length} | Leaderboard:`, leaderboardDetails);
+    }
   }
 
   return (

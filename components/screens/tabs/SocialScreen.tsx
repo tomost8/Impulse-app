@@ -70,17 +70,8 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
     };
   });
 
-  // Filter user posts to only include those from the last 24 hours
-  const now = new Date();
-  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  
-  const recentUserPosts = userPosts.filter((post: any) => {
-    const postDate = new Date(post.created_at);
-    return postDate >= twentyFourHoursAgo;
-  });
-
-  // Combine friends feed with recent user posts
-  const combinedFriendsFeed = [...friendsFeed, ...recentUserPosts];
+  // Combine friends feed with user posts (already filtered to last 24h in index)
+  const combinedFriendsFeed = [...friendsFeed, ...userPosts];
   
   // Sort by creation date (newest first)
   combinedFriendsFeed.sort((a: any, b: any) => {

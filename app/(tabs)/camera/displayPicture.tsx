@@ -71,6 +71,7 @@ const DisplayPicturePage = () => {
       };
       console.log("input", input);
       const response = await createPost(input, authToken as string);
+      console.log("createPost response:", response);
       if (response.success) {
         console.log("Post created successfully:", response.post);
         // Refetch relevant data after successful post creation
@@ -80,7 +81,8 @@ const DisplayPicturePage = () => {
           communityFeed: true,   // Show new post in community feed
         });
       } else {
-        throw new Error("createPost response.success false:" + response.errors);
+        console.error("Create post failed - Response:", response);
+        throw new Error("createPost response.success false: " + JSON.stringify(response.errors));
       }
     } catch (error) {
       console.error("Error creating post:", error);
@@ -109,7 +111,6 @@ const DisplayPicturePage = () => {
   const handleSelectActivity = (activityId: string, category: string) => {
     context?.setId(Number(activityId));
     context?.setCategory(category);
-    console.log("Selected Activity:", activityId, category);
   };
 
   useEffect(() => {

@@ -35,57 +35,63 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.headerExtension}>
-          <SafeAreaView>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          alwaysBounceVertical={false}
+          scrollEventThrottle={16}
+          decelerationRate="normal"
+        >
+          <View style={styles.headerExtension}>
             <TopSection name={name} />
-          </SafeAreaView>
-        </View>
+          </View>
 
-        <View style={styles.quoteSection}>
-          <QuoteofDay />
-        </View>
-        
-        <View style={styles.section}>
-          <DailyGoals 
-            activities={activities} 
-            timezone={timezone}
-          />
-        </View>
+          <View style={styles.quoteSection}>
+            <QuoteofDay />
+          </View>
+          
+          <View style={styles.section}>
+            <DailyGoals 
+              activities={activities} 
+              timezone={timezone}
+            />
+          </View>
 
-        {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
-        <View style={styles.leaderboardWrapper}>
-          <LeaderboardFull 
-            users={friendsLeaderboard}
-            isUsersLoading={loading}
-          />
-        </View>
-      </ScrollView>
+          {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
+          <View style={styles.leaderboardWrapper}>
+            <LeaderboardFull 
+              users={friendsLeaderboard}
+              isUsersLoading={loading}
+            />
+          </View>
+        </ScrollView>
 
-      <DailyAddPopup  
-        isVisible={showDailyAddPopup}
-        onClose={() => setShowDailyAddPopup(false)}
-        onConfirm={onConfirm}
-      />
-    </View>
+        <DailyAddPopup  
+          isVisible={showDailyAddPopup}
+          onClose={() => setShowDailyAddPopup(false)}
+          onConfirm={onConfirm}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#E0EDFD',
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
-    paddingTop: Platform.OS === 'android' ? 10 : 0, // Add some padding for Android header
   },
   scrollView: {
     flex: 1,
