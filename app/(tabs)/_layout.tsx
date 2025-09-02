@@ -81,7 +81,12 @@ function TabLayout() {
           name="home"
           options={{
             title: 'Home',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <Image 
+                source={require('@/assets/icons/navHome.png')} 
+                style={{ width: 28, height: 28, tintColor: color }}
+              />
+            ),
           }}
           listeners={{
             tabPress: (e) => {
@@ -94,7 +99,12 @@ function TabLayout() {
           name="chats"
           options={{
             title: 'Chat',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <Image 
+                source={require('@/assets/icons/navChat.png')} 
+                style={{ width: 28, height: 28, tintColor: color }}
+              />
+            ),
           }}
           listeners={{
             tabPress: (e) => {
@@ -127,7 +137,7 @@ function TabLayout() {
             title: 'Social',
             tabBarIcon: ({ color }) => (
               <Image 
-                source={require('@/assets/icons/people-icon.png')} 
+                source={require('@/assets/icons/navCommunities.png')} 
                 style={{ width: 28, height: 28, tintColor: color }}
               />
             ),
@@ -143,7 +153,12 @@ function TabLayout() {
           name="account"
           options={{
             title: 'Account',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+            tabBarIcon: ({ color }) => (
+              <Image 
+                source={require('@/assets/icons/navProfile.png')} 
+                style={{ width: 28, height: 28, tintColor: color }}
+              />
+            ),
           }}
           listeners={{
             tabPress: (e) => {

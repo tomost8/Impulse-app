@@ -18,23 +18,23 @@ interface JoinCommunityProps {
 const pageContent = [
   {
     description: 'Navigate to the Social Feed page in the Navigation Bar.',
-    image: require("@/assets/images/walkthrough3a.png"),
+    image: require("@/assets/images/walkthrough/walkthrough3a.png"),
   },
   {
     description: 'Click on the compass icon in the top right to go to "Discover Communities".',
-    image: require("@/assets/images/walkthrough3b.png"),
+    image: require("@/assets/images/walkthrough/walkthrough3b.png"),
   },
   {
     description: 'Explore Impulse\'s communities and click "Join Community".',
-    image: require("@/assets/images/walkthrough3c.png"),
+    image: require("@/assets/images/walkthrough/walkthrough3c.png"),
   },
   {
     description: 'You can also join a community through a Community Profile.',
-    image: require("@/assets/images/walkthrough3d.png"),
+    image: require("@/assets/images/walkthrough/walkthrough3d.png"),
   },
   {
     description: 'View your list of joined communities in your Account page.',
-    image: require("@/assets/images/walkthrough3e.png"),
+    image: require("@/assets/images/walkthrough/walkthrough3e.png"),
   },
 ];
 
@@ -67,7 +67,7 @@ const JoinCommunity = ({ visible, onClose }: JoinCommunityProps) => {
             <Text style={styles.title}>Join a Community</Text>
             <TouchableOpacity onPress={onClose}>
               <Image
-                source={require("@/assets/icons/close.png")}
+                source={require("@/assets/icons/walkthrough/close.png")}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
@@ -86,7 +86,7 @@ const JoinCommunity = ({ visible, onClose }: JoinCommunityProps) => {
               disabled={currentPage === 1}
             >
               <Image
-                source={require("@/assets/icons/Back.png")}
+                source={require("@/assets/icons/walkthrough/Back.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === 1 && styles.disabledIcon
@@ -106,7 +106,7 @@ const JoinCommunity = ({ visible, onClose }: JoinCommunityProps) => {
               disabled={currentPage === totalPages}
             >
               <Image
-                source={require("@/assets/icons/Forward.png")}
+                source={require("@/assets/icons/walkthrough/Forward.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === totalPages && styles.disabledIcon

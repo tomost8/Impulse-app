@@ -92,7 +92,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, error, onClose, tryL
               onPress={() => setRememberMe(!rememberMe)}
             >
               <View style={styles.checkbox}>
-                {rememberMe && <Text style={styles.checkmark}>✕</Text>}
+                {rememberMe && <Text style={styles.checkmark}>✓</Text>}
               </View>
               <Text style={styles.rememberText}>Remember Me</Text>
             </TouchableOpacity>

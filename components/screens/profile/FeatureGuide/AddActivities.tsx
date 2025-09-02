@@ -19,23 +19,23 @@ interface AddActivitiesProps {
 const pageContent = [
   {
     description: 'Look for the "Daily Goals" section on the Homepage and click "Add Daily Goal".',
-    image: require("@/assets/images/walkthrough1a.png"),
+    image: require("@/assets/images/walkthrough/walkthrough1a.png"),
   },
   {
     description: 'Select a goal category to track.',
-    image: require("@/assets/images/walkthrough1b.png"),
+    image: require("@/assets/images/walkthrough/walkthrough1b.png"),
   },
   {
     description: 'Fill out your preferred start time, activity duration, and description for the activity you want to track (optional).',
-    image: require("@/assets/images/walkthrough1c.png"),
+    image: require("@/assets/images/walkthrough/walkthrough1c.png"),
   },
   {
     description: 'Click "Add to Schedule" to confirm your new activity and add it to your Goals for the Day.',
-    image: require("@/assets/images/walkthrough1d.png"),
+    image: require("@/assets/images/walkthrough/walkthrough1d.png"),
   },
   {
     description: 'You can find all of your daily goals by clicking "View All" and navigating to the "Goals for the Day" page.',
-    image: require("@/assets/images/walkthrough1e.png"),
+    image: require("@/assets/images/walkthrough/walkthrough1e.png"),
   },
 ];
 
@@ -68,7 +68,7 @@ const AddActivities = ({ visible, onClose }: AddActivitiesProps) => {
             <Text style={styles.title}>Add an Activity</Text>
             <TouchableOpacity onPress={onClose}>
               <Image
-                source={require("@/assets/icons/close.png")}
+                source={require("@/assets/icons/walkthrough/close.png")}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
@@ -87,7 +87,7 @@ const AddActivities = ({ visible, onClose }: AddActivitiesProps) => {
               disabled={currentPage === 1}
             >
               <Image
-                source={require("@/assets/icons/Back.png")}
+                source={require("@/assets/icons/walkthrough/Back.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === 1 && styles.disabledIcon
@@ -107,7 +107,7 @@ const AddActivities = ({ visible, onClose }: AddActivitiesProps) => {
               disabled={currentPage === totalPages}
             >
               <Image
-                source={require("@/assets/icons/Forward.png")}
+                source={require("@/assets/icons/walkthrough/Forward.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === totalPages && styles.disabledIcon

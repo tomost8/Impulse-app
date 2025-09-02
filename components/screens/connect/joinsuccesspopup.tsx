@@ -27,7 +27,7 @@ const JoinSuccessPopup: React.FC<JoinSuccessPopupProps> = ({
         <View style={styles.popup}>
           <View style={styles.iconContainer}>
             <Image 
-              source={require("@/assets/icons/group.png")}
+              source={require("@/assets/images/group.png")}
               style={styles.icon}
             />
           </View>

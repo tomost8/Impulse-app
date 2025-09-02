@@ -18,23 +18,23 @@ interface CompleteActivitiesProps {
 const pageContent = [
   {
     description: 'Click on the camera or your daily goals.',
-    image: require("@/assets/images/walkthrough2a.png"),
+    image: require("@/assets/images/walkthrough/walkthrough2a.png"),
   },
   {
     description: 'Snap a picture with your camera.',
-    image: require("@/assets/images/walkthrough2b.png"),
+    image: require("@/assets/images/walkthrough/walkthrough2b.png"),
   },
   {
     description: 'Click "Select Daily Goal" to use the picture for a goal.',
-    image: require("@/assets/images/walkthrough2c.png"),
+    image: require("@/assets/images/walkthrough/walkthrough2c.png"),
   },
   {
     description: 'Select the goal that you want to track with your photo.',
-    image: require("@/assets/images/walkthrough2d.png"),
+    image: require("@/assets/images/walkthrough/walkthrough2d.png"),
   },
   {
     description: 'Click "Send" to save or Post to your Social Feeds.',
-    image: require("@/assets/images/walkthrough2e.png"),
+    image: require("@/assets/images/walkthrough/walkthrough2e.png"),
   },
 ];
 
@@ -67,7 +67,7 @@ const CompleteActivities = ({ visible, onClose }: CompleteActivitiesProps) => {
             <Text style={styles.title}>Complete an Activity</Text>
             <TouchableOpacity onPress={onClose}>
               <Image
-                source={require("@/assets/icons/close.png")}
+                source={require("@/assets/icons/walkthrough/close.png")}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
@@ -86,7 +86,7 @@ const CompleteActivities = ({ visible, onClose }: CompleteActivitiesProps) => {
               disabled={currentPage === 1}
             >
               <Image
-                source={require("@/assets/icons/Back.png")}
+                source={require("@/assets/icons/walkthrough/Back.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === 1 && styles.disabledIcon
@@ -106,7 +106,7 @@ const CompleteActivities = ({ visible, onClose }: CompleteActivitiesProps) => {
               disabled={currentPage === totalPages}
             >
               <Image
-                source={require("@/assets/icons/Forward.png")}
+                source={require("@/assets/icons/walkthrough/Forward.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === totalPages && styles.disabledIcon

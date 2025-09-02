@@ -18,19 +18,19 @@ interface CustomNotificationsProps {
 const pageContent = [
   {
     description: 'Navigate to your Account page and click on "Settings"',
-    image: require("@/assets/images/walkthrough4a.png"),
+    image: require("@/assets/images/walkthrough/walkthrough4a.png"),
   },
   {
     description: 'Click on "Reminders and Notifications"',
-    image: require("@/assets/images/walkthrough4b.png"),
+    image: require("@/assets/images/walkthrough/walkthrough4b.png"),
   },
   {
     description: 'Customize the time, activity, and message of your notifications.',
-    image: require("@/assets/images/walkthrough4c.png"),
+    image: require("@/assets/images/walkthrough/walkthrough4c.png"),
   },
   {
     description: 'Click "Save" to save your settings',
-    image: require("@/assets/images/walkthrough4d.png"),
+    image: require("@/assets/images/walkthrough/walkthrough4d.png"),
   },
 ];
 
@@ -63,7 +63,7 @@ const CustomNotifications = ({ visible, onClose }: CustomNotificationsProps) => 
             <Text style={styles.title}>Custom Notifications</Text>
             <TouchableOpacity onPress={onClose}>
               <Image
-                source={require("@/assets/icons/close.png")}
+                source={require("@/assets/icons/walkthrough/close.png")}
                 style={styles.closeIcon}
               />
             </TouchableOpacity>
@@ -82,7 +82,7 @@ const CustomNotifications = ({ visible, onClose }: CustomNotificationsProps) => 
               disabled={currentPage === 1}
             >
               <Image
-                source={require("@/assets/icons/Back.png")}
+                source={require("@/assets/icons/walkthrough/Back.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === 1 && styles.disabledIcon
@@ -102,7 +102,7 @@ const CustomNotifications = ({ visible, onClose }: CustomNotificationsProps) => 
               disabled={currentPage === totalPages}
             >
               <Image
-                source={require("@/assets/icons/Forward.png")}
+                source={require("@/assets/icons/walkthrough/Forward.png")}
                 style={[
                   styles.navigationIcon,
                   currentPage === totalPages && styles.disabledIcon

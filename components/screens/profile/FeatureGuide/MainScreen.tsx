@@ -40,7 +40,7 @@ const FeatureGuide = () => {
         >
           <View style={styles.iconContainer}>
             <Image
-              source={require("@/assets/icons/addActivity.png")}
+              source={require("@/assets/icons/walkthrough/addActivity.png")}
               style={styles.icon}
             />
           </View>
@@ -54,7 +54,7 @@ const FeatureGuide = () => {
         >
           <View style={styles.iconContainer}>
             <Image
-              source={require("@/assets/icons/completeActivity.png")}
+              source={require("@/assets/icons/walkthrough/completeActivity.png")}
               style={styles.icon}
             />
           </View>
@@ -68,7 +68,7 @@ const FeatureGuide = () => {
         >
           <View style={styles.iconContainer}>
             <Image
-              source={require("@/assets/icons/joinCommunity.png")}
+              source={require("@/assets/icons/walkthrough/joinCommunity.png")}
               style={styles.icon}
             />
           </View>
@@ -82,7 +82,7 @@ const FeatureGuide = () => {
         >
           <View style={styles.iconContainer}>
             <Image
-              source={require("@/assets/icons/customNotifications.png")}
+              source={require("@/assets/icons/walkthrough/customNotifications.png")}
               style={styles.icon}
             />
           </View>
