@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
+import LoadingScreen from "@/components/ui/common/loading";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
 import Header from "@/components/ui/common/headers/Header";
@@ -25,7 +26,7 @@ interface FriendProps {
 
 const FriendsList = (props: FriendProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   const [searchText, setSearchText] = useState("");

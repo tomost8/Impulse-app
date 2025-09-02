@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
@@ -25,7 +26,7 @@ interface FriendViewScreenProps {
 
 const FriendViewScreen = (props: FriendViewScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   console.log(`📱 Rendering FriendViewScreen - Friend: ${props.friend?.first_name} ${props.friend?.last_name} (${props.friend?.username}), Age: ${props.friend?.age || 'N/A'}, Gender: ${props.friend?.gender || 'N/A'}, Primary Goal: ${props.friend?.primary_goal || 'N/A'}, Secondary Goal: ${props.friend?.secondary_goal || 'N/A'}, Points: ${props.friend?.point?.points || 0}, Weekly Points: ${props.friend?.point?.weekly_points || 0}, Monthly Points: ${props.friend?.point?.monthly_points || 0}, Streak: ${props.friend?.login_streak?.streak_count || 0}, Status: ${props.friend?.status || 'N/A'}, Timezone: ${props.friend?.timezone || 'N/A'}, Communities: ${props.communityCount || 0}, Activities: ${props.activities?.length || 0}`);
   // Sample data
@@ -71,7 +72,15 @@ const FriendViewScreen = (props: FriendViewScreenProps) => {
         title="Partner Insights"
         onBackPress={() => router.back()}
       />
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
+        alwaysBounceVertical={false}
+        scrollEventThrottle={16}
+        decelerationRate="normal"
+      >
 
         {/* Custom Header Section */}
         <View style={styles.headerContainer}>
@@ -124,12 +133,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
   headerRow: {
     flexDirection: 'row',
@@ -207,6 +215,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   goalsSection: {
     marginBottom: 16, // Add space before points bar

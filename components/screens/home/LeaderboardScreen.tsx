@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
+import LoadingScreen from "@/components/ui/common/loading";
 import LeaderboardHeader from "../../ui/common/Leaderboard/LeaderboardHeader";
 import LeaderboardPodium from "../../ui/common/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "../../ui/common/Leaderboard/LeaderboardList";
@@ -20,7 +21,7 @@ interface LeaderboardScreenProps {
 const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLeaderboard, friendsLeaderboard, selectedPeriod, setSelectedPeriod }) => {
     const [activeTab, setActiveTab] = useState<"Friends" | "All Users">("Friends");
     if (isLoading) {
-        return <Text>Loading...</Text>;
+        return <LoadingScreen />;
     }
   
     return (

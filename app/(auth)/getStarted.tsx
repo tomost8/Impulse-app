@@ -3,8 +3,6 @@ import { router } from 'expo-router';
 // GraphQL hooks
 import { useFirebaseAuth } from '@/hooks/graphql/auth';
 // Components
-import { StyleSheet } from 'react-native';
-import type { AppTheme } from '../theme/theme';
 
 import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
 // Services

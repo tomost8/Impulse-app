@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar
 } from 'react-native';
+import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import ConnectPopup from '@/components/screens/connect/connectpopup';
 
@@ -30,7 +31,7 @@ interface ChatScreenProps {
 
 const ChatScreen = (props: ChatScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   
   const [visible, setVisible] = useState(false);

@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import Header from "@/components/ui/common/headers/Header";
 
@@ -36,7 +37,7 @@ interface RequestsScreenProps {
 
 const RequestsScreen = (props: RequestsScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   // Friend Requests

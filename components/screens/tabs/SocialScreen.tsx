@@ -4,6 +4,7 @@ import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
 import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
 import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
 import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
+import LoadingScreen from "@/components/ui/common/loading";
 import { router } from "expo-router";
 const searchIcon = require("@/assets/icons/search.png");
 
@@ -34,7 +35,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
   isRefetching = false,
 }) => {
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   
   // Use persistent ref to maintain tab state across re-mounts

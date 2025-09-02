@@ -9,6 +9,7 @@ import {
   Keyboard,
   StatusBar,
 } from "react-native";
+import LoadingScreen from "@/components/ui/common/loading";
 import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
 import Header from "@/components/ui/common/headers/Header";
 import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
@@ -35,7 +36,7 @@ interface ViewGoalsScreenProps {
   
 const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);

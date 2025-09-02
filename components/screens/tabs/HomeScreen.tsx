@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Image, Platform, StatusBar } from "react-native";
+import LoadingScreen from "@/components/ui/common/loading";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
 import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
@@ -25,7 +26,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   handleAddGoals,
 }) => {
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   const [showDailyAddPopup, setShowDailyAddPopup] = useState(activities.length === 0);
 

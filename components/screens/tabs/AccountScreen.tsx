@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar,
 } from "react-native";
+import LoadingScreen from "@/components/ui/common/loading";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
 import Bio from '@/components/ui/userprofile/bio';
@@ -29,7 +30,7 @@ function AccountProfile({
   numFriends
 }: AccountProfileProps): JSX.Element {
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   const [pointsModalVisible, setPointsModalVisible] = useState(false);

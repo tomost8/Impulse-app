@@ -2,6 +2,7 @@ import { Redirect } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Text } from 'react-native';
 import { useEffect, useState } from 'react';
+import LoadingScreen from '@/components/ui/common/loading';
 
 export default function Index() {
   const { loading, userId, authToken, authInitialized } = useAuth();
@@ -20,7 +21,7 @@ export default function Index() {
 
   // Show loading while auth is initializing or if context is not available
   if (loading || !authInitialized || !shouldRedirect) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   if (userId && authToken) {

@@ -3,8 +3,6 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Platform } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { CameraHeaderContext } from './_layout';
-import { useTheme } from 'react-native-paper';
-import type { AppTheme } from '../../theme/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useDataProvider } from '@/contexts/DataProviderContext';
@@ -39,30 +37,6 @@ export default function CameraScreen() {
     if (isSwitchingCamera) {
       // When facing changes, give the camera a moment to settle, then reset the state
       const timer = setTimeout(() => {
-        console.log('Camera facing changed, resetting switching state');
-        setIsSwitchingCamera(false);
-        setIsCameraReady(true);
-      }, 1000); // 1 second delay to allow camera to settle
-      
-      return () => clearTimeout(timer);
-    }
-  }, [facing, isSwitchingCamera]);
-
-  // Debug effect to log camera state changes
-  useEffect(() => {
-    console.log('Camera state changed:', {
-      facing,
-      isCameraReady,
-      isSwitchingCamera
-    });
-  }, [facing, isCameraReady, isSwitchingCamera]);
-
-  // Effect to handle camera facing changes and reset switching state
-  useEffect(() => {
-    if (isSwitchingCamera) {
-      // When facing changes, give the camera a moment to settle, then reset the state
-      const timer = setTimeout(() => {
-        console.log('Camera facing changed, resetting switching state');
         setIsSwitchingCamera(false);
         setIsCameraReady(true);
       }, 1000); // 1 second delay to allow camera to settle
@@ -91,21 +65,16 @@ export default function CameraScreen() {
 
   function toggleCameraFacing() {
     if (isSwitchingCamera) {
-      console.log('Camera switch already in progress, ignoring request');
       return;
     }
     
-    console.log('Switching camera from', facing, 'to', (facing === 'back' ? 'front (selfie)' : 'back (environment)'));
-    console.log('Before switch - State:', { isCameraReady, isSwitchingCamera });
     setIsSwitchingCamera(true);
     setIsCameraReady(false);
     setFacing(current => (current === 'back' ? 'front' : 'back'));
-    console.log('After switch - State:', { isCameraReady: false, isSwitchingCamera: true });
   }
 
   async function takePicture() {
     if (isSwitchingCamera || !isCameraReady) {
-      console.log('Camera not ready, cannot take picture. State:', { isSwitchingCamera, isCameraReady });
       return;
     }
 
@@ -132,12 +101,13 @@ export default function CameraScreen() {
           base64: false
         });
         if (!processedFirstPhoto) return;
-        console.log('processedFirstPhoto', processedFirstPhoto);
 
         if (!isDoubleCamera) {
           // Single camera
           const frontPhoto = facing === 'front' ? processedFirstPhoto.uri : null;
           const backPhoto = facing === 'back' ? processedFirstPhoto.uri : null;
+          
+
           
           router.push({
             pathname: '/camera/displayPicture',
@@ -159,7 +129,6 @@ export default function CameraScreen() {
             const checkReady = () => {
               if (isCameraReady) {
                 setTimeout(() => {
-                  console.log('Camera switched and ready');
                   resolve(true);
                 }, 500);
               } else {
@@ -179,7 +148,7 @@ export default function CameraScreen() {
 
           // Process second photo (and flip if selfie camera)
           const imageContext = ImageManipulator.manipulate(secondPhoto.uri);
-          if (facing === 'front') {
+          if (secondCameraDirection === 'front') {
             imageContext.flip(FlipType.Horizontal);
           }
           const renderedImage = await imageContext.renderAsync();
@@ -189,7 +158,6 @@ export default function CameraScreen() {
             base64: false
           });
           if (!processedSecondPhoto) return;
-          console.log('processedSecondPhoto', processedSecondPhoto);
 
           const firstPhotoIsFront = firstCameraDirection === 'front';
           const frontPhoto = firstPhotoIsFront ? processedFirstPhoto.uri : processedSecondPhoto.uri;
@@ -202,7 +170,6 @@ export default function CameraScreen() {
             const checkReady = () => {
               if (isCameraReady) {
                 setTimeout(() => {
-                  console.log('Camera switched and ready');
                   resolve(true);
                 }, 500);
               } else {
@@ -229,11 +196,8 @@ export default function CameraScreen() {
   }
 
   const handleCameraReady = () => {
-    console.log('Camera ready callback fired for', facing, 'camera');
-    console.log('Previous state:', { isCameraReady, isSwitchingCamera });
     setIsCameraReady(true);
     setIsSwitchingCamera(false);
-    console.log('New state:', { isCameraReady: true, isSwitchingCamera: false });
   };
 
   return (

@@ -10,6 +10,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import Header from "@/components/ui/common/headers/Header";
 
@@ -30,7 +31,7 @@ interface FindFriendScreenProps {
 
 const FindFriendScreen = (props: FindFriendScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   } 
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,27 +90,30 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
             {props.sentRequests.map((friend) => (
-              <View key={friend.id} style={styles.friendCard}>
-                <View style={styles.friendInfo}>
-                  <Image 
-                    source={{ uri: friend.profile_picture }}
-                    style={styles.profileImage}
-                  />
-                  <View style={styles.textContainer}>
-                    <Text style={styles.name}>{friend.first_name}</Text>
-                    <Text style={styles.username}>{friend.username}</Text>
-                  </View>
+                              <View key={friend.id} style={styles.friendCard}>
+                  <TouchableOpacity 
+                    style={styles.friendInfo}
+                    onPress={() => router.push(`/user/${friend.id}`)}
+                  >
+                    <Image 
+                      source={{ uri: friend.profile_picture }}
+                      style={styles.profileImage}
+                    />
+                    <View style={styles.textContainer}>
+                      <Text style={styles.name}>{friend.first_name}</Text>
+                      <Text style={styles.username}>{friend.username}</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    onPress={() => handleCancel(friend.id)}
+                    disabled={props.loading}
+                  >
+                    <Image 
+                      source={require("@/assets/icons/cancel.png")}
+                      style={[styles.cancelIcon, props.loading && styles.disabledIcon]}
+                    />
+                  </TouchableOpacity>
                 </View>
-                <TouchableOpacity 
-                  onPress={() => handleCancel(friend.id)}
-                  disabled={props.loading}
-                >
-                  <Image 
-                    source={require("@/assets/icons/cancel.png")}
-                    style={[styles.cancelIcon, props.loading && styles.disabledIcon]}
-                  />
-                </TouchableOpacity>
-              </View>
             ))}
           </View>
         )}
@@ -120,7 +124,10 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
             {filteredUsers.length > 0 ? (
               filteredUsers.map((friend) => (
                 <View key={friend.id} style={styles.friendCard}>
-                  <View style={styles.friendInfo}>
+                  <TouchableOpacity 
+                    style={styles.friendInfo}
+                    onPress={() => router.push(`/user/${friend.id}`)}
+                  >
                     <Image 
                       source={{ uri: friend.profile_picture }}
                       style={styles.profileImage}
@@ -129,7 +136,7 @@ const FindFriendScreen = (props: FindFriendScreenProps) => {
                       <Text style={styles.name}>{friend.first_name}</Text>
                       <Text style={styles.username}>{friend.username}</Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                   <TouchableOpacity 
                     style={[styles.addButton, props.loading && styles.disabledButton]}
                     onPress={() => handleAddFriend(friend.id)}

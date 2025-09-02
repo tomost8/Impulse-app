@@ -11,6 +11,7 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
+import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import PointsBar from '@/components/ui/userprofile/pointsbar';
 import Bio from '@/components/ui/userprofile/bio';
@@ -30,7 +31,7 @@ interface NonFriendViewScreenProps {
 
 const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   const [showAcceptedPopup, setShowAcceptedPopup] = useState(false);
   const [isRequestSent, setIsRequestSent] = useState(props.isPendingRequest && props.pendingRole === 'sender');
@@ -65,22 +66,28 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={true}
+        alwaysBounceVertical={false}
+        scrollEventThrottle={16}
+        decelerationRate="normal"
+      >
         <View style={styles.headerExtension}>
-          <SafeAreaView>
-            <View style={styles.headerRow}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Image 
-                  source={require("@/assets/icons/backArrow.png")}
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
-              <Text style={styles.headerTitle}>Partner Insights</Text>
-            </View>
-          </SafeAreaView>
+          <View style={styles.headerRow}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Image 
+                source={require("@/assets/icons/backArrow.png")}
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Partner Insights</Text>
+          </View>
         </View>
 
         {/* Custom Header Section */}
@@ -171,12 +178,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
   headerRow: {
     flexDirection: 'row',
@@ -254,6 +260,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 120, // Add padding to account for the absolute positioned button
   },
   buttonContainer: {
     position: 'absolute',
