@@ -86,3 +86,31 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+# Project Setup
+
+make .env file:  
+API_ENV=aws # aws | local  
+API_AWS_URL=http://18.191.234.29:3000/graphql  
+API_LOCAL_URL=http://localhost:3000/graphql 
+
+npm install  
+npm run start
+
+## Test Account
+email: test@test.com  
+password: test1234
+
+## Basic Git Commands
+
+git add .  
+git commit -m "commit message"  
+git push origin branch_name  
+
+git pull origin branch_name
+
+git merge branch_name  
+git switch branch_name  
+
+git stash  
+git stash pop  

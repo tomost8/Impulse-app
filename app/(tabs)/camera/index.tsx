@@ -23,6 +23,7 @@ export default function CameraScreen() {
   const [facing, setFacing] = useState<CameraType>('back');
   const cameraRef = useRef<CameraView>(null);
   const [isCameraReady, setIsCameraReady] = useState(true);
+  const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
 
   // 前置摄像头的预览图片 (Front camera preview image)
   //const [frontCameraImage, setFrontCameraImage] = useState<string | null>(null);
@@ -32,6 +33,43 @@ export default function CameraScreen() {
     context.setPictureTaken(false);
     context.setCategory(category as string);
   }, [category, id]);
+
+  // Effect to handle camera facing changes and reset switching state
+  useEffect(() => {
+    if (isSwitchingCamera) {
+      // When facing changes, give the camera a moment to settle, then reset the state
+      const timer = setTimeout(() => {
+        console.log('Camera facing changed, resetting switching state');
+        setIsSwitchingCamera(false);
+        setIsCameraReady(true);
+      }, 1000); // 1 second delay to allow camera to settle
+      
+      return () => clearTimeout(timer);
+    }
+  }, [facing, isSwitchingCamera]);
+
+  // Debug effect to log camera state changes
+  useEffect(() => {
+    console.log('Camera state changed:', {
+      facing,
+      isCameraReady,
+      isSwitchingCamera
+    });
+  }, [facing, isCameraReady, isSwitchingCamera]);
+
+  // Effect to handle camera facing changes and reset switching state
+  useEffect(() => {
+    if (isSwitchingCamera) {
+      // When facing changes, give the camera a moment to settle, then reset the state
+      const timer = setTimeout(() => {
+        console.log('Camera facing changed, resetting switching state');
+        setIsSwitchingCamera(false);
+        setIsCameraReady(true);
+      }, 1000); // 1 second delay to allow camera to settle
+      
+      return () => clearTimeout(timer);
+    }
+  }, [facing, isSwitchingCamera]);
 
   // Camera permissions
   if (!permission) {
@@ -52,11 +90,25 @@ export default function CameraScreen() {
   }
 
   function toggleCameraFacing() {
+    if (isSwitchingCamera) {
+      console.log('Camera switch already in progress, ignoring request');
+      return;
+    }
+    
     console.log('Switching camera from', facing, 'to', (facing === 'back' ? 'front (selfie)' : 'back (environment)'));
+    console.log('Before switch - State:', { isCameraReady, isSwitchingCamera });
+    setIsSwitchingCamera(true);
+    setIsCameraReady(false);
     setFacing(current => (current === 'back' ? 'front' : 'back'));
+    console.log('After switch - State:', { isCameraReady: false, isSwitchingCamera: true });
   }
 
   async function takePicture() {
+    if (isSwitchingCamera || !isCameraReady) {
+      console.log('Camera not ready, cannot take picture. State:', { isSwitchingCamera, isCameraReady });
+      return;
+    }
+
     const isDoubleCamera = !fetching && user?.is_double_cam;
     if (cameraRef.current) {
       try {
@@ -100,7 +152,7 @@ export default function CameraScreen() {
           // Double camera
           const firstCameraDirection = facing;
           const secondCameraDirection = firstCameraDirection === 'front' ? 'back' : 'front';
-          setIsCameraReady(false);
+          setIsSwitchingCamera(true); // Set switching state
           setFacing(secondCameraDirection);
           // Wait for camera to be ready after switching
           await new Promise(resolve => {
@@ -143,7 +195,7 @@ export default function CameraScreen() {
           const frontPhoto = firstPhotoIsFront ? processedFirstPhoto.uri : processedSecondPhoto.uri;
           const backPhoto = firstPhotoIsFront ? processedSecondPhoto.uri : processedFirstPhoto.uri;
 
-          setIsCameraReady(false);
+          setIsSwitchingCamera(true); // Set switching state
           setFacing(firstCameraDirection);
           // Switch back and ensure camera is ready
           await new Promise(resolve => {
@@ -176,6 +228,14 @@ export default function CameraScreen() {
     }
   }
 
+  const handleCameraReady = () => {
+    console.log('Camera ready callback fired for', facing, 'camera');
+    console.log('Previous state:', { isCameraReady, isSwitchingCamera });
+    setIsCameraReady(true);
+    setIsSwitchingCamera(false);
+    console.log('New state:', { isCameraReady: true, isSwitchingCamera: false });
+  };
+
   return (
     <View style={styles.container}>
       <CameraView 
@@ -183,8 +243,17 @@ export default function CameraScreen() {
         style={styles.camera} 
         facing={facing} 
         flash={context.flash ? 'on' : 'off'}
-        onCameraReady={() => setIsCameraReady(true)}
+        onCameraReady={handleCameraReady}
       >
+        {/* Loading overlay when switching cameras */}
+        {isSwitchingCamera && (
+          <View style={styles.loadingOverlay}>
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Switching camera...</Text>
+            </View>
+          </View>
+        )}
+        
         {/* 左上角前置摄像头预览 (Front camera preview in top-left corner) */}
         {/*
         {frontCameraImage && (
@@ -199,12 +268,20 @@ export default function CameraScreen() {
       <View style={styles.controlsContainer}>
         <View style={styles.emptySpace} />
         {/* Camera Button */}
-        <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+        <TouchableOpacity 
+          style={[styles.captureButton, (!isCameraReady || isSwitchingCamera) && styles.captureButtonDisabled]} 
+          onPress={takePicture}
+          disabled={!isCameraReady || isSwitchingCamera}
+        >
           <View style={styles.captureButtonInner} />
         </TouchableOpacity>
         {/* Flip Button */}
-        <TouchableOpacity style={styles.flipButton} onPress={toggleCameraFacing}>
-          <Ionicons name="camera-reverse" size={24} color="white" />
+        <TouchableOpacity 
+          style={[styles.flipButton, isSwitchingCamera && styles.flipButtonDisabled]} 
+          onPress={toggleCameraFacing}
+          disabled={isSwitchingCamera}
+        >
+          <Ionicons name="camera-reverse" size={24} color={isSwitchingCamera ? "#666" : "white"} />
         </TouchableOpacity>
       </View>
     </View>
@@ -285,6 +362,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#000',
   },
+  captureButtonDisabled: {
+    opacity: 0.5,
+  },
   flipButton: {
     width: 44,
     height: 44,
@@ -292,5 +372,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  flipButtonDisabled: {
+    opacity: 0.5,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  loadingContainer: {
+    backgroundColor: '#000',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  loadingText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
