@@ -1,7 +1,7 @@
 import {useState, useEffect, useRef} from 'react';
 import { router } from 'expo-router';
 import AuthWrapper from '@/contexts/AuthWrapper';
-import { processAndUploadImage } from '@/utils/imageProcessing';
+import { uploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
@@ -23,7 +23,7 @@ const CreateGroupPage = () => {
     setIsCreatingGroup(true);
     let response_log = "";
     try {
-      const profile_pic = await processAndUploadImage(formData.profile_pic);
+      const profile_pic = await uploadImage(formData.profile_pic, 'groups');
       const input = {
         type: "group",
         creator_id: user.id,

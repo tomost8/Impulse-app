@@ -16,7 +16,6 @@ interface SocialScreenProps {
   communityMembers: any[];
   friendsFeed: any[];
   communityFeed: any[];
-  userPosts: any[];
   handleLikePost: (postId: number) => Promise<void>;
   handleUnlikePost: (postId: number) => Promise<void>;
   onRefresh?: () => void;
@@ -28,7 +27,6 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
   communityMembers,
   friendsFeed,
   communityFeed,
-  userPosts,
   handleLikePost,
   handleUnlikePost,
   onRefresh,
@@ -71,11 +69,8 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
     };
   });
 
-  // Combine friends feed with user posts (already filtered to last 24h in index)
-  const combinedFriendsFeed = [...friendsFeed, ...userPosts];
-  
-  // Sort by creation date (newest first)
-  combinedFriendsFeed.sort((a: any, b: any) => {
+  // Sort friends feed by creation date (newest first)
+  const sortedFriendsFeed = [...friendsFeed].sort((a: any, b: any) => {
     const dateA = new Date(a.created_at);
     const dateB = new Date(b.created_at);
     return dateB.getTime() - dateA.getTime();
@@ -123,7 +118,7 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
             <View style={styles.feedSection}>
               <Feed 
                 currentTab={selectedTab}
-                posts={selectedTab === 'friends' ? combinedFriendsFeed : enrichedCommunityFeed}
+                posts={selectedTab === 'friends' ? sortedFriendsFeed : enrichedCommunityFeed}
                 handleLikePost={handleLikePost}
                 handleUnlikePost={handleUnlikePost}
               />

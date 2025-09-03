@@ -3,7 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
-import { processAndUploadImage } from '@/utils/imageProcessing';
+import { uploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useGetCommunity, useGetCommunityCategories } from '@/hooks/graphql/communities/queries';
 import { useUpdateCommunity, useCreateCommunityCategory, useDeleteCommunityCategory } from '@/hooks/graphql/communities/mutations';
@@ -62,7 +62,7 @@ const EditCommunityPage = () => {
       // Update Community: upload new thumbnail if it exists
       const hasNewThumbnail = formData.thumbnail && formData.thumbnail !== communityRef.current?.thumbnail;
       const thumbnail = hasNewThumbnail
-        ? await processAndUploadImage(formData.thumbnail)
+        ? await uploadImage(formData.thumbnail, 'communities')
         : null;
       const input = {
         name: formData.name || communityRef.current?.name,

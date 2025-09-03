@@ -13,7 +13,7 @@ import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from "@/contexts/DataProviderContext";
 import { useDataRefetch } from '@/contexts/DataFetcher';
-import { processAndUploadImage } from '@/utils/imageProcessing';
+import { uploadImage } from '@/utils/imageProcessing';
 
 const DisplayPicturePage = () => {
   const context = useContext(CameraHeaderContext);
@@ -59,7 +59,7 @@ const DisplayPicturePage = () => {
           target_id: parseInt(targetId, 10),
         };
       });
-      const downloadURLs = await Promise.all(imageSources.map(processAndUploadImage));
+      const downloadURLs = await Promise.all(imageSources.map(source => uploadImage(source, 'posts')));
       const input = {
         authorId: user?.id,
         activityId: context?.id,

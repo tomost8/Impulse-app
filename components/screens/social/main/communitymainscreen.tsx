@@ -12,13 +12,19 @@ interface CommunityMainScreenProps {
   members: any[];
   announcements: any[];
   isAdmin: boolean;
+  isMember: boolean;
+  onJoinCommunity: () => void;
+  isJoining: boolean;
 }
 
 const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
   community,
   members,
   announcements,
-  isAdmin
+  isAdmin,
+  isMember,
+  onJoinCommunity,
+  isJoining
 }) => {
   const handleLeaderboardPress = () => {
     // Handle leaderboard navigation
@@ -67,6 +73,9 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
           memberCount={members?.length || 0}
           communityId={community?.id}
           isAdmin={isAdmin}
+          isMember={isMember}
+          onJoinCommunity={onJoinCommunity}
+          isJoining={isJoining}
         />
         <About
           description={community?.description}

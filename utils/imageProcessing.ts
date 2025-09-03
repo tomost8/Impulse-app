@@ -1,4 +1,3 @@
-import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import storage from '@react-native-firebase/storage';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
@@ -16,7 +15,7 @@ export const pickImage = async (
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'], // Updated to use modern array syntax
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
@@ -38,7 +37,7 @@ interface PhotoInput {
   uri: string;
 }
 
-export async function processAndUploadImage(photo: PhotoInput | string): Promise<string> {
+export async function uploadImage(photo: PhotoInput | string, folder: string = 'unclassified'): Promise<string> {
   // Return early if the photo is the default profile picture
   if (photo === DEFAULT_PROFILE_PICTURE) {
     return DEFAULT_PROFILE_PICTURE;
@@ -46,23 +45,10 @@ export async function processAndUploadImage(photo: PhotoInput | string): Promise
 
   try {
     const sourceUri = typeof photo === 'string' ? photo : photo.uri;
-    
-    // Compress the image
-    const manipulatedImage = await ImageManipulator.manipulateAsync(
-      sourceUri,
-      [], // No transformations needed
-      {
-        compress: 0.5,
-        format: ImageManipulator.SaveFormat.JPEG,
-      }
-    );
-
-    // Convert URI to Blob
-    const response = await fetch(manipulatedImage.uri);
+    const response = await fetch(sourceUri);
     const blob = await response.blob();
 
-    // Create a unique filename
-    const filename = `posts/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
+    const filename = `images/${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.jpg`;
     const storageRef = storage().ref(filename);
 
     // Upload to Firebase Storage
@@ -73,7 +59,7 @@ export async function processAndUploadImage(photo: PhotoInput | string): Promise
     
     return downloadURL;
   } catch (error) {
-    console.error('Error processing and uploading image:', error);
+    console.error('Error uploading image:', error);
     throw error;
   }
 } 

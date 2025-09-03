@@ -1,6 +1,6 @@
 import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
-import { processAndUploadImage } from '@/utils/imageProcessing';
+import { uploadImage } from '@/utils/imageProcessing';
 import { router } from 'expo-router';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
@@ -30,7 +30,7 @@ const CreateCommunityPage = () => {
     let communityId = null;
     try {
       const thumbnail = formData.thumbnail 
-        ? await processAndUploadImage(formData.thumbnail)
+        ? await uploadImage(formData.thumbnail, 'communities')
         : null;
       const input = {
         influencer_id: user.id,
