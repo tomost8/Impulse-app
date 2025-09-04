@@ -62,7 +62,7 @@ const EditCommunityPage = () => {
       // Update Community: upload new thumbnail if it exists
       const hasNewThumbnail = formData.thumbnail && formData.thumbnail !== communityRef.current?.thumbnail;
       const thumbnail = hasNewThumbnail
-        ? await uploadImage(formData.thumbnail, 'communities')
+        ? await uploadImage(formData.thumbnail, 'community_thumbnails')
         : null;
       const input = {
         name: formData.name || communityRef.current?.name,

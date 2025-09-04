@@ -30,7 +30,7 @@ const CreateCommunityPage = () => {
     let communityId = null;
     try {
       const thumbnail = formData.thumbnail 
-        ? await uploadImage(formData.thumbnail, 'communities')
+        ? await uploadImage(formData.thumbnail, 'community_thumbnails')
         : null;
       const input = {
         influencer_id: user.id,

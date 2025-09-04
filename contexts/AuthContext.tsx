@@ -81,8 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const refreshBuffer = 5 * 60 * 1000; // 5 minutes
       const timeUntilRefresh = expirationTime - currentTime - refreshBuffer;
       
-      console.log('🔐 Token expires at:', new Date(expirationTime).toLocaleString());
-      console.log('🔐 Scheduling refresh in:', Math.round(timeUntilRefresh / 1000 / 60), 'minutes');
+      console.log('🔐 Token expires at:', new Date(expirationTime).toLocaleString(), '| Scheduling refresh in:', Math.round(timeUntilRefresh / 1000 / 60), 'minutes');
       
       if (timeUntilRefresh > 0) {
         // Schedule refresh for the future
@@ -145,7 +144,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Get fresh token from Firebase and schedule refresh
             const freshToken = await getIdToken(user, false);
             if (freshToken && freshToken !== authToken) {
-              console.log('🔐 Firebase auth state changed, updating token');
+              console.log('🔐 Firebase auth state changed, updating token:\ntoken:', freshToken.substring(0, 10) + "..." + freshToken.substring(freshToken.length - 10), "\nuid:", user.uid, "\nemail:", user.email);
               await AsyncStorage.setItem('authToken', freshToken);
               setAuthToken(freshToken);
               currentAuthToken.current = freshToken;

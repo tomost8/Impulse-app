@@ -23,7 +23,7 @@ const CreateGroupPage = () => {
     setIsCreatingGroup(true);
     let response_log = "";
     try {
-      const profile_pic = await uploadImage(formData.profile_pic, 'groups');
+      const profile_pic = await uploadImage(formData.profile_pic, 'group_profile_pics');
       const input = {
         type: "group",
         creator_id: user.id,

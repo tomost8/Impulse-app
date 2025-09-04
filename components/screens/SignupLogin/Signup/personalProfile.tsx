@@ -18,6 +18,7 @@ import { router } from 'expo-router';
 import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 import { useSignup } from '@/contexts/SignupContext';
 import { GENDER_OPTIONS } from '@/utils/userOptions';
+import { pickImage } from '@/utils/imageProcessing';
 
 interface PersonalProfileScreenProps {
   loading: boolean;
@@ -223,6 +224,16 @@ const PersonalProfileScreen = ({ loading, communities }: PersonalProfileScreenPr
                 onSubmitEditing={Keyboard.dismiss}
               />
 
+              {/* Profile Picture Button */}
+              <TouchableOpacity
+                style={styles.profilePictureButton}
+                onPress={() => pickImage(handleInputChange, 'profilePicture')}
+              >
+                <Text style={styles.profilePictureButtonText}>
+                  {signupData.profilePicture ? 'Change Profile Picture' : 'Add Profile Picture (Optional)'}
+                </Text>
+              </TouchableOpacity>
+
               {/* Community Code Input */}
               <TextInput
                 style={styles.input}
@@ -370,6 +381,21 @@ const styles = StyleSheet.create({
     paddingTop: s(12),
     paddingBottom: s(12),
     textAlignVertical: 'top',
+  },
+  profilePictureButton: {
+    height: s(48),
+    borderWidth: 1,
+    borderColor: '#E1E1E1',
+    borderRadius: s(100),
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: s(12),
+  },
+  profilePictureButtonText: {
+    fontSize: s(16),
+    color: '#666666',
+    fontFamily: 'Open Sans',
   },
   dropdownButton: {
     height: s(48),

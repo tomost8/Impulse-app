@@ -10,6 +10,7 @@ interface SignupData {
   gender: string;
   timezone: string;
   bio: string;
+  profilePicture: string;
   code: string;
   communityId: string | null;
   primaryGoalId: number | null;
@@ -34,6 +35,7 @@ export function SignupProvider({ children }: { children: React.ReactNode }) {
     gender: '',
     timezone: '',
     bio: '',
+    profilePicture: '',
     code: '',
     communityId: null,
     primaryGoalId: null,

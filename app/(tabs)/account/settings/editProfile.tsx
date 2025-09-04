@@ -72,7 +72,7 @@ const EditProfilePage = () => {
       // Check if profile_picture is not already uploaded to Firestore
       if (formData.profile_picture && !formData.profile_picture.includes("https://firebasestorage.googleapis.com")) {
         console.log('Uploading profile picture:');
-        const downloadURL = await uploadImage(formData.profile_picture, 'profiles');
+        const downloadURL = await uploadImage(formData.profile_picture, 'profile_pictures');
         formData.profile_picture = downloadURL;
       }
       const input = Object.fromEntries(
