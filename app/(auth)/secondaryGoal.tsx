@@ -55,7 +55,11 @@ export default function SecondaryGoal() {
 
   const handleCreateAccount = async (formData: any) => {
     try {
+      // 1. Create Firebase user
       const userCredential = await createUserWithEmailAndPassword(getAuth(), formData.email as string, formData.password as string);
+      console.log("✅ Firebase User Created:", { uid: userCredential.user.uid, email: userCredential.user.email });
+      
+      // 2. Create backend user using Firebase ID token
       const authToken = await userCredential.user.getIdToken();
       const { data } = await firebaseAuth({
         context: {
@@ -64,11 +68,16 @@ export default function SecondaryGoal() {
           }
         }
       });
+      
       if (data?.firebaseAuth?.success) {
         const userData = data.firebaseAuth.user;
-        console.log("Firebase Auth User Data Created:", userData);
-        await login(authToken, userData.id, false, formData.email as string);
+        console.log("✅ Backend User Created:", {
+          email: userData.email,
+          firebase_uid: userData.firebase_uid,
+          id: userData.id
+        });
 
+        // 3. Update user profile with all data
         const input = {
           first_name: formData.firstName,
           last_name: formData.lastName,
@@ -81,7 +90,7 @@ export default function SecondaryGoal() {
           primary_goal: getCategoryById(Number(formData.primaryGoalId)),
           secondary_goal: getCategoryById(Number(formData.secondaryGoalId)),
         };
-        console.log("Form Data:", formData, "\nInput:", input);
+        
         const { data: updateData } = await updateUser({
           variables: { input },
           context: {
@@ -90,14 +99,22 @@ export default function SecondaryGoal() {
             }
           }
         });
-        console.log("Backend User Data Created:", updateData.updateUser.user, "Redirecting to Home");
+        // Filter out system fields from result
+        const { __typename, email, id, role, status, is_double_cam, ...profileData } = updateData.updateUser.user;
+        console.log("✅ Profile Updated:\n📤 Input:", JSON.stringify(input, null, 2), "\n📥 Result:", JSON.stringify(profileData, null, 2));
         
+        // 4. Handle community membership if applicable
         if (formData.communityId) {
           console.log("Join with Community Code:", formData.code, formData.communityId);
           await handleCreateCommunityMember(userData.id, formData.communityId);
-          console.log("Community Member created successfully:");
+          console.log("Community Member created successfully");
         }
         
+        // 5. Login only after profile is complete
+        await login(authToken, userData.id, false, formData.email as string);
+        console.log("User logged in with complete profile, redirecting to Home");
+        
+        // 6. Navigate to main app
         router.replace('/(tabs)/account/settings/featureGuide');
       } else {
         throw new Error("firebaseAuth failed: firebaseAuth.success is false");

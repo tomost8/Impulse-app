@@ -75,8 +75,8 @@
         "projectId": "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
       },
       "API_ENV": "aws",
-      "API_LOCAL_URL": "http://192.168.68.106:3000/graphql",
-      "API_AWS_URL": "http://18.191.234.29:3000/graphql"
+      "API_AWS_URL": "http://18.191.234.29:3000/graphql",
+      "API_LOCAL_URL": "http://localhost:3000/graphql"
     },
     "owner": "williamwangimpulse"
   }
