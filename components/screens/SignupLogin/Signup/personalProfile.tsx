@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   profilePictureButton: {
     height: s(48),
     borderWidth: 1,
-    borderColor: '#E1E1E1',
+    borderColor: '#DE728D',
     borderRadius: s(100),
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
@@ -393,9 +393,10 @@ const styles = StyleSheet.create({
     marginBottom: s(12),
   },
   profilePictureButtonText: {
-    fontSize: s(16),
-    color: '#666666',
+    fontSize: s(14),
+    color: '#DE728D',
     fontFamily: 'Open Sans',
+    fontWeight: '600',
   },
   dropdownButton: {
     height: s(48),

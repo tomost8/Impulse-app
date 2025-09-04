@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { FlipType, SaveFormat, ImageManipulator } from 'expo-image-manipulator';
 
-// 获取屏幕尺寸 (Get screen dimensions)
+// Get screen dimensions
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export default function CameraScreen() {
@@ -17,44 +17,23 @@ export default function CameraScreen() {
   const context = useContext(CameraHeaderContext);
   if (!context) return null;
 
-  const [permission, requestPermission] = useCameraPermissions();
-  const [facing, setFacing] = useState<CameraType>('back');
-  const cameraRef = useRef<CameraView>(null);
-  const [isCameraReady, setIsCameraReady] = useState(true);
-  const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
-
-  // 前置摄像头的预览图片 (Front camera preview image)
-  //const [frontCameraImage, setFrontCameraImage] = useState<string | null>(null);
-  //const [backCameraImage, setBackCameraImage] = useState<string | null>(null);
-  
+  // Update header context when activity/category changes
   useEffect(() => {
     context.setPictureTaken(false);
     context.setCategory(category as string);
   }, [category, id]);
 
-  // Effect to handle camera facing changes and reset switching state
-  useEffect(() => {
-    if (isSwitchingCamera) {
-      // When facing changes, give the camera a moment to settle, then reset the state
-      const timer = setTimeout(() => {
-        setIsSwitchingCamera(false);
-        setIsCameraReady(true);
-      }, 1000); // 1 second delay to allow camera to settle
-      
-      return () => clearTimeout(timer);
-    }
-  }, [facing, isSwitchingCamera]);
-
   // Camera permissions
+  const [permission, requestPermission] = useCameraPermissions();
   if (!permission) {
     return <View />;
   }
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>Impulse would like permission to use your camera to take photos.</Text>
-        <TouchableOpacity 
-          style={styles.permissionButton} 
+        <Text style={styles.permissionMessage}>Impulse would like permission to use your camera to take photos.</Text>
+        <TouchableOpacity
+          style={styles.permissionButton}
           onPress={requestPermission}
         >
           <Text style={styles.permissionButtonText}>Grant permission</Text>
@@ -63,33 +42,58 @@ export default function CameraScreen() {
     );
   }
 
+  // Camera initially set to back (environment) camera
+  const cameraRef = useRef<CameraView>(null);
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [isCameraReady, setIsCameraReady] = useState(true);
+  const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
+
+  // Camera ready callback
+  const handleCameraReady = () => {
+    setIsCameraReady(true);
+    setIsSwitchingCamera(false);
+  };
+
+  // Toggle between front and back camera
   function toggleCameraFacing() {
     if (isSwitchingCamera) {
       return;
     }
-    
     setIsSwitchingCamera(true);
     setIsCameraReady(false);
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
+  // Handle camera switching state
+  useEffect(() => {
+    if (isSwitchingCamera) {
+      // Wait 1 second to let camera settle
+      const timer = setTimeout(() => {
+        setIsSwitchingCamera(false);
+        setIsCameraReady(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [facing, isSwitchingCamera]);
+
+  // Main camera function: taking pictures
   async function takePicture() {
-    if (isSwitchingCamera || !isCameraReady) {
+    if (!isCameraReady || isSwitchingCamera) {
       return;
     }
 
     const isDoubleCamera = !fetching && user?.is_double_cam;
     if (cameraRef.current) {
       try {
-        // Take first photo
+        // Take first picture
         const firstPhoto = await cameraRef.current.takePictureAsync({
           quality: 1,
           exif: true,
-          skipProcessing: false
+          skipProcessing: true
         });
         if (!firstPhoto) return;
 
-        // Process first photo (and flip if selfie camera)
+        // Process first picture (and flip horizontally if selfie)
         const imageContext = ImageManipulator.manipulate(firstPhoto.uri);
         if (facing === 'front') {
           imageContext.flip(FlipType.Horizontal);
@@ -107,11 +111,9 @@ export default function CameraScreen() {
           const frontPhoto = facing === 'front' ? processedFirstPhoto.uri : null;
           const backPhoto = facing === 'back' ? processedFirstPhoto.uri : null;
           
-
-          
           router.push({
             pathname: '/camera/displayPicture',
-            params: { 
+            params: {
               frontPhoto,
               backPhoto,
               id: id,
@@ -122,9 +124,9 @@ export default function CameraScreen() {
           // Double camera
           const firstCameraDirection = facing;
           const secondCameraDirection = firstCameraDirection === 'front' ? 'back' : 'front';
-          setIsSwitchingCamera(true); // Set switching state
+          // Switch camera and wait for it to be ready
+          setIsSwitchingCamera(true);
           setFacing(secondCameraDirection);
-          // Wait for camera to be ready after switching
           await new Promise(resolve => {
             const checkReady = () => {
               if (isCameraReady) {
@@ -138,15 +140,15 @@ export default function CameraScreen() {
             checkReady();
           });
 
-          // Take second photo
+          // Take second picture
           const secondPhoto = await cameraRef.current.takePictureAsync({
             quality: 1,
             exif: true,
-            skipProcessing: false
+            skipProcessing: true
           });
           if (!secondPhoto) return;
 
-          // Process second photo (and flip if selfie camera)
+          // Process second picture (and flip horizontally if selfie)
           const imageContext = ImageManipulator.manipulate(secondPhoto.uri);
           if (secondCameraDirection === 'front') {
             imageContext.flip(FlipType.Horizontal);
@@ -163,9 +165,9 @@ export default function CameraScreen() {
           const frontPhoto = firstPhotoIsFront ? processedFirstPhoto.uri : processedSecondPhoto.uri;
           const backPhoto = firstPhotoIsFront ? processedSecondPhoto.uri : processedFirstPhoto.uri;
 
-          setIsSwitchingCamera(true); // Set switching state
+          // Switch camera back to original direction and wait for it to be ready
+          setIsSwitchingCamera(true);
           setFacing(firstCameraDirection);
-          // Switch back and ensure camera is ready
           await new Promise(resolve => {
             const checkReady = () => {
               if (isCameraReady) {
@@ -181,7 +183,7 @@ export default function CameraScreen() {
 
           router.push({
             pathname: '/camera/displayPicture',
-            params: { 
+            params: {
               frontPhoto,
               backPhoto,
               id: id,
@@ -195,53 +197,40 @@ export default function CameraScreen() {
     }
   }
 
-  const handleCameraReady = () => {
-    setIsCameraReady(true);
-    setIsSwitchingCamera(false);
-  };
-
   return (
     <View style={styles.container}>
-      <CameraView 
-        ref={cameraRef} 
-        style={styles.camera} 
-        facing={facing} 
+      {/* Camera View */}
+      <CameraView
+        ref={cameraRef}
+        style={styles.camera}
+        facing={facing}
         flash={context.flash ? 'on' : 'off'}
         onCameraReady={handleCameraReady}
       >
         {/* Loading overlay when switching cameras */}
         {isSwitchingCamera && (
-          <View style={styles.loadingOverlay}>
-            <View style={styles.loadingContainer}>
-              <Text style={styles.loadingText}>Switching camera...</Text>
+          <View style={styles.switchingOverlay}>
+            <View style={styles.switchingContainer}>
+              <Text style={styles.switchingText}>Switching camera...</Text>
             </View>
           </View>
         )}
-        
-        {/* 左上角前置摄像头预览 (Front camera preview in top-left corner) */}
-        {/*
-        {frontCameraImage && (
-          <View style={styles.frontPreviewContainer}>
-            <Image source={{ uri: frontCameraImage }} style={styles.frontPreviewImage} />
-          </View>
-        )}
-        */}
       </CameraView>
       
-      {/* Bottom Control Area */}
+      {/* Bottom Controls */}
       <View style={styles.controlsContainer}>
         <View style={styles.emptySpace} />
-        {/* Camera Button */}
-        <TouchableOpacity 
-          style={[styles.captureButton, (!isCameraReady || isSwitchingCamera) && styles.captureButtonDisabled]} 
+        {/* Capture Button */}
+        <TouchableOpacity
+          style={[styles.captureButton, (!isCameraReady || isSwitchingCamera) && styles.captureButtonDisabled]}
           onPress={takePicture}
           disabled={!isCameraReady || isSwitchingCamera}
         >
           <View style={styles.captureButtonInner} />
         </TouchableOpacity>
-        {/* Flip Button */}
-        <TouchableOpacity 
-          style={[styles.flipButton, isSwitchingCamera && styles.flipButtonDisabled]} 
+        {/* Flip Camera Button */}
+        <TouchableOpacity
+          style={[styles.flipButton, isSwitchingCamera && styles.flipButtonDisabled]}
           onPress={toggleCameraFacing}
           disabled={isSwitchingCamera}
         >
@@ -257,7 +246,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000',
   },
-  message: {
+  permissionMessage: {
     textAlign: 'center',
     paddingBottom: 10,
     color: '#fff',
@@ -274,25 +263,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   camera: {
-    flex: 1, // 相机视图占据大部分空间
+    flex: 1,
     width: screenWidth,
-    height: screenHeight - 100, // 为底部控制区域留出空间
+    height: screenHeight - 100, // Leave space for the bottom control area
   },
-  frontPreviewContainer: {
+  switchingOverlay: {
     position: 'absolute',
-    top: Platform.OS === 'android' ? 120 : 20, // Increased Android offset to 120
-    left: 20,
-    width: 100,
-    height: 100,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  switchingContainer: {
+    backgroundColor: '#000',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#fff',
-    overflow: 'hidden',
-    zIndex: 10,
   },
-  frontPreviewImage: {
-    width: '100%',
-    height: '100%',
+  switchingText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   controlsContainer: {
     position: 'absolute',
@@ -339,29 +336,5 @@ const styles = StyleSheet.create({
   },
   flipButtonDisabled: {
     opacity: 0.5,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 100,
-  },
-  loadingContainer: {
-    backgroundColor: '#000',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#fff',
-  },
-  loadingText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
