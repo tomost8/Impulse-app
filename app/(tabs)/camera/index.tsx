@@ -15,16 +15,35 @@ export default function CameraScreen() {
   const { id, category } = useLocalSearchParams();
   const { fetching, user } = useDataProvider();
   const context = useContext(CameraHeaderContext);
-  if (!context) return null;
+  
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>(null);
+  const [facing, setFacing] = useState<CameraType>('back');
+  const [isCameraReady, setIsCameraReady] = useState(true);
+  const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
 
   // Update header context when activity/category changes
   useEffect(() => {
-    context.setPictureTaken(false);
-    context.setCategory(category as string);
-  }, [category, id]);
+    if (context) {
+      context.setPictureTaken(false);
+      context.setCategory(category as string);
+    }
+  }, [category, id, context]);
 
-  // Camera permissions
-  const [permission, requestPermission] = useCameraPermissions();
+  // Handle camera switching state
+  useEffect(() => {
+    if (isSwitchingCamera) {
+      // Wait 1 second to let camera settle
+      const timer = setTimeout(() => {
+        setIsSwitchingCamera(false);
+        setIsCameraReady(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [facing, isSwitchingCamera]);
+
+  // Early returns (must be after all hooks)
+  if (!context) return null;
   if (!permission) {
     return <View />;
   }
@@ -42,12 +61,6 @@ export default function CameraScreen() {
     );
   }
 
-  // Camera initially set to back (environment) camera
-  const cameraRef = useRef<CameraView>(null);
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [isCameraReady, setIsCameraReady] = useState(true);
-  const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
-
   // Camera ready callback
   const handleCameraReady = () => {
     setIsCameraReady(true);
@@ -63,18 +76,6 @@ export default function CameraScreen() {
     setIsCameraReady(false);
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
-
-  // Handle camera switching state
-  useEffect(() => {
-    if (isSwitchingCamera) {
-      // Wait 1 second to let camera settle
-      const timer = setTimeout(() => {
-        setIsSwitchingCamera(false);
-        setIsCameraReady(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [facing, isSwitchingCamera]);
 
   // Main camera function: taking pictures
   async function takePicture() {
