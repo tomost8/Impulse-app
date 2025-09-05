@@ -49,8 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log(`🔐 Auth initialization data:\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}\n  - UID: ${storedUserId}\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`);
         
         if (rememberMeData?.rememberMe && storedToken && storedUserId) {
-          // For now, just use the stored token without checking validity during initialization
-          // This prevents race conditions during app startup
+          // User wants to be remembered - restore auth state
           setAuthToken(storedToken);
           setUserId(Number(storedUserId));
           currentAuthToken.current = storedToken;
@@ -59,6 +58,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           
           // Schedule token refresh based on actual expiration
           scheduleTokenRefresh(storedToken);
+        } else if (storedToken || storedUserId) {
+          // User doesn't want to be remembered but old data exists
+          // Clear Firebase session and stored data to prevent old token refresh
+          console.log('🔐 Clearing old session data (rememberMe = false)');
+          await signOut(getAuth());
+          await AsyncStorage.clear();
         }
         setAuthInitialized(true);
       } catch (error) {
@@ -186,23 +191,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
     try {
-      await Promise.all([
-        AsyncStorage.setItem('authToken', token),
-        AsyncStorage.setItem('userId', id.toString()),
-        AsyncStorage.setItem('rememberMe', JSON.stringify({
-          rememberMe,
-          email: rememberMe ? email : null
-        }))
-      ]);
-      
-      console.log(`🔐 Storing login data:\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+      if (rememberMe) {
+        // Store data for future restoration (keep me logged in)
+        await Promise.all([
+          AsyncStorage.setItem('authToken', token),
+          AsyncStorage.setItem('userId', id.toString()),
+          AsyncStorage.setItem('rememberMe', JSON.stringify({
+            rememberMe,
+            email: email
+          }))
+        ]);
+        console.log(`🔐 Storing login data (keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+      } else {
+        // Don't store data, just set current session (don't keep me logged in)
+        console.log(`🔐 Setting current session (don't keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+      }
       
       setAuthToken(token);
       setUserId(id);
       currentAuthToken.current = token;
       currentUserId.current = id;
     } catch (error) {
-      console.error('Error storing login data:', error);
+      console.error('Error during login:', error);
       throw error;
     }
   };
