@@ -53,22 +53,11 @@ export default function SecondaryGoal() {
     try {
       // 1. Create Firebase user
       const userCredential = await createUserWithEmailAndPassword(getAuth(), formData.email as string, formData.password as string);
-      console.log("✅ Firebase User Created:", { uid: userCredential.user.uid, email: userCredential.user.email });
+      console.log(`✅ Firebase User Created:\n  - Email: ${userCredential.user.email}\n  - Firebase UID: ${userCredential.user.uid}`);
       
-      // 2. Create backend user using Firebase ID token (probably bugged but somehow works)
-      console.log("⏳ Waiting 2 seconds for onAuthStateChanged to (hopefully) update AuthContext token...");
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      if (!authToken) {
-        throw new Error("No auth token available from AuthContext");
-      } else {
-        try {
-          const tokenPayload = JSON.parse(atob(authToken.split('.')[1]));
-          console.log("❓Somehow old token is being logged but backend creation is working❓:\ntoken:", authToken.substring(0, 10) + "..." + authToken.substring(authToken.length - 10), "\nuid:", tokenPayload.uid, "\nemail:", tokenPayload.email, "\nexp:", new Date(tokenPayload.exp * 1000).toLocaleString());
-        } catch (e) {
-          console.error("❌ Could not decode token payload");
-        }
-      }
+      // 2. Get Firebase token directly from user (fixes race condition)
+      const authToken = await userCredential.user.getIdToken();
+      console.log(`🔐 Firebase token obtained:\n  - Token: ${authToken.substring(0, 10)}...${authToken.substring(authToken.length - 10)}\n  - Firebase UID: ${userCredential.user.uid}\n  - Email: ${userCredential.user.email}`);
       
       const { data } = await firebaseAuth({
         context: {
@@ -81,14 +70,7 @@ export default function SecondaryGoal() {
       
       if (data?.firebaseAuth?.success) {
         const userData = data.firebaseAuth.user;
-        console.log("✅ Backend User Created:", 
-          {
-            email: userData.email,
-            firebase_uid: userData.firebase_uid,
-            id: userData.id
-          }, 
-          "\n❓value of authToken is:", authToken.substring(0, 10) + "..." + authToken.substring(authToken.length - 10)
-        );
+        console.log(`✅ Backend User Created:\n  - Email: ${userData.email}\n  - Firebase UID: ${userData.firebase_uid}\n  - UID: ${userData.id}`);
         
         // Check Firebase UID consistency - fail early if they don't match
         const firebaseUID = userCredential.user.uid;
@@ -156,7 +138,7 @@ export default function SecondaryGoal() {
         }
         
         // 6. Login only after profile is complete
-        await login(authToken, userData.id, false, formData.email as string);
+        await login(authToken, userData.id, true, formData.email as string);
         console.log("✅ User logged in successfully, redirecting to feature guide");
         router.replace('/(tabs)/account/settings/featureGuide');
       } else {
