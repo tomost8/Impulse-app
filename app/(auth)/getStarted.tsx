@@ -18,12 +18,14 @@ export default function GetStarted() {
   const { firebaseAuth } = useFirebaseAuth();
   const tryLogin = async (email: string, password: string, rememberMe: boolean, onSuccess?: () => void) => {
     try {
+      // Step 1: Authenticate with firebase, start user session, get token
       const userCredential = await signInWithEmailAndPassword(getAuth(), email, password);
+      console.log(`🔐 Firebase login:\n  - Email: ${email}\n  - Firebase UID: ${userCredential.user.uid}`);
       let authToken = await userCredential.user.getIdToken();
-      console.log("🔐 Login:", { email, userId: userCredential.user.uid });
+      // Step 2: Verify token with backend and retrieves user id
       const response = await firebaseAuth(authToken);
-      
       if (response.success) {
+        // Step 3: Store token + id in AsyncStorage and auth React state
         await login(authToken, response.user.id, rememberMe, email);
         router.replace('/(tabs)/home');
         onSuccess?.();

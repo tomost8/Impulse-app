@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from '@/config/firebaseConfig';
-import { onAuthStateChanged, getIdToken } from '@react-native-firebase/auth';
+import { onAuthStateChanged, getIdToken, signOut } from '@react-native-firebase/auth';
 
 interface AuthContextType {
   authToken: string | null;
@@ -44,8 +44,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           AsyncStorage.getItem('rememberMe'),
           AsyncStorage.getItem('userId'),
         ]);
-
         const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
+
+        console.log(`🔐 Auth initialization data:\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}\n  - UID: ${storedUserId}\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`);
         
         if (rememberMeData?.rememberMe && storedToken && storedUserId) {
           // For now, just use the stored token without checking validity during initialization
@@ -144,7 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Get fresh token from Firebase and schedule refresh
             const freshToken = await getIdToken(user, false);
             if (freshToken && freshToken !== authToken) {
-              console.log('🔐 Firebase auth state changed, updating token:\ntoken:', freshToken.substring(0, 10) + "..." + freshToken.substring(freshToken.length - 10), "\nuid:", user.uid, "\nemail:", user.email);
+              console.log(`🔐 Firebase auth state changed, updating token:\n  - Token: ${freshToken.substring(0, 10)}...${freshToken.substring(freshToken.length - 10)}\n  - Firebase UID: ${user.uid}\n  - Email: ${user.email}`);
               await AsyncStorage.setItem('authToken', freshToken);
               setAuthToken(freshToken);
               currentAuthToken.current = freshToken;
@@ -193,6 +194,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email: rememberMe ? email : null
         }))
       ]);
+      
+      console.log(`🔐 Storing login data:\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+      
       setAuthToken(token);
       setUserId(id);
       currentAuthToken.current = token;
@@ -205,14 +209,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await AsyncStorage.clear(); // Clear all keys from AsyncStorage
+      // Sign out from Firebase
+      await signOut(getAuth());
+      // Clear keys from AsyncStorage
+      await AsyncStorage.clear();
+      // Reset auth React state
       setAuthToken(null);
       setUserId(null);
       currentAuthToken.current = null;
       currentUserId.current = null;
       hasLoadedAuthData.current = false;
+      console.log('🔐 Firebase logout, storage cleared, auth state reset');
     } catch (error) {
-      console.error('Error removing login data:', error);
+      console.error('Error during logout:', error);
       throw error;
     }
   };
