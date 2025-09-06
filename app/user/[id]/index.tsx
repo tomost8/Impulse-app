@@ -7,8 +7,8 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 // Components
-import FriendViewScreen from '@/components/screens/connect/profiles/friendview';
-import NonFriendViewScreen from '@/components/screens/connect/profiles/nonfriendview';
+import FriendViewScreen from '@/components/screens/profiles/FriendScreen';
+import NonFriendViewScreen from '@/components/screens/profiles/NonFriendScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services

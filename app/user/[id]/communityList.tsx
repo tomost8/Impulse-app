@@ -4,7 +4,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // GraphQL hooks
 // Components
-import CommunityList from '@/components/screens/connect/profiles/communitylist';
+import CommunityList from '@/components/features/profile/CommunityList';
 // Debug
 import { debugRenders } from '@/debug/utils';
 import { useLocalSearchParams } from 'expo-router';

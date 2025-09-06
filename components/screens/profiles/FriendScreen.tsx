@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
-import PointsBar from '@/components/ui/userprofile/pointsbar';
-import Bio from '@/components/ui/userprofile/bio';
-import DailyGoals from '@/components/ui/userprofile/dailygoals';
+import PointsBar from '@/components/features/profile/PointsBar';
+import Bio from '@/components/features/profile/Bio';
+import DailyGoals from '@/components/features/profile/DailyGoals';
 import { getLabelByCategory } from '@/utils/goals';
 import Header from "@/components/ui/common/headers/Header";
 

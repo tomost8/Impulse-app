@@ -8,7 +8,7 @@ import {
   Modal,
 } from "react-native";
 
-const PointEarningGuide = ({ visible, onClose }: { visible: boolean, onClose: () => void }) => {
+const PointGuideModal = ({ visible, onClose }: { visible: boolean, onClose: () => void }) => {
   const guideItems = [
     { title: "Primary Goal", points: 100 },
     { title: "Secondary Goal", points: 75 },
@@ -154,4 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PointEarningGuide;
+export default PointGuideModal;

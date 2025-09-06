@@ -45,12 +45,12 @@ function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }
   );
 }
 
-interface MemoriesProps {
+interface MemoriesScreenProps {
   loading: boolean;
   memories: any[];
 }
 
-export default function Memories({ loading, memories }: MemoriesProps) {
+export default function MemoriesScreen({ loading, memories }: MemoriesScreenProps) {
   if (loading) {
     return (
         <Text>Loading...</Text>

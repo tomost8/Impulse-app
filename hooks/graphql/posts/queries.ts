@@ -336,17 +336,7 @@ const GET_POSTS_BY_USER_ID = gql`
         caption
         created_at
         mediaUrls
-        author {
-          id
-          profile_picture
-          username
-          first_name
-          last_name
-        }
         category
-        commentCount
-        liked
-        likeCount
       }
       errors {
         field
@@ -357,7 +347,7 @@ const GET_POSTS_BY_USER_ID = gql`
 `;
 
 export function useGetPostsByUserId(userId: number, shouldFetch: boolean=true,
-  skip: number = 0, take: number = 20) {
+  skip: number = 0, take: number = 100) {
   const { data, loading, error } = useQuery(GET_POSTS_BY_USER_ID, {
     skip: !shouldFetch,
     variables: { userId, skip, take },

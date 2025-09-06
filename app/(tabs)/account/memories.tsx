@@ -1,15 +1,22 @@
-import {useState, useEffect, useRef} from 'react';
-import AuthWrapper from '@/contexts/AuthWrapper';
-// GraphQL hooks
-// Components
-import Memories from '@/components/screens/profile/Memories';
-// Debug
-import { debugRenders } from '@/debug/utils';
-// Services
+// React imports
+import { useState, useEffect, useRef } from 'react';
+
+// Contexts and wrappers
 import { useAuth } from '@/contexts/AuthContext';
+import AuthWrapper from '@/contexts/AuthWrapper';
 import { useDataProvider } from '@/contexts/DataProviderContext';
+
+// GraphQL hooks
 import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
+
+// Utilities
 import { getLocalDay } from '@/utils/timezoneProcessing';
+
+// Components
+import MemoriesScreen from '@/components/screens/account/MemoriesScreen';
+
+// Debug utilities
+import { debugRenders } from '@/debug/utils';
 
 const MemoriesPage = () => {
   const {fetching, user, timezone} = useDataProvider();
@@ -63,7 +70,7 @@ const MemoriesPage = () => {
   }
 
   return (
-    <Memories 
+    <MemoriesScreen 
       loading={loading} 
       memories={memoriesRef.current} 
     />

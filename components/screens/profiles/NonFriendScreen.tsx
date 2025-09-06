@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
-import PointsBar from '@/components/ui/userprofile/pointsbar';
-import Bio from '@/components/ui/userprofile/bio';
+import PointsBar from '@/components/features/profile/PointsBar';
+import Bio from '@/components/features/profile/Bio';
 import FriendRequestSentPopup from './friendrequestsent';
 import { getLabelByCategory } from '@/utils/goals';
 import FriendRequestAccepted from './friendrequestaccepted';

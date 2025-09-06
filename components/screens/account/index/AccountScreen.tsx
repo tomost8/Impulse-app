@@ -1,33 +1,27 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  Image,
-  Platform,
-  StatusBar,
-} from "react-native";
-import LoadingScreen from "@/components/ui/common/loading";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Image } from "react-native";
 import { router } from 'expo-router';
 import { getLabelByCategory } from '@/utils/goals';
-import Bio from '@/components/ui/userprofile/bio';
-import PointEarningGuide from "../profile/popups/PointEarningGuide";
+
+import LoadingScreen from "@/components/ui/common/loading";
+import Bio from '@/components/features/profile/Bio';
+import Memories from '@/components/features/memories/Memories';
+import PointGuideModal from "./PointGuideModal";
 
 interface AccountProfileProps {
   user: any;
   isLoading: boolean;
   numCommunities: number;
   numFriends: number;
+  memories: any[];
 }
 
 function AccountProfile({ 
   user, 
   isLoading,
   numCommunities,
-  numFriends
+  numFriends,
+  memories
 }: AccountProfileProps): JSX.Element {
   if (isLoading) {
     return <LoadingScreen />;
@@ -83,7 +77,7 @@ function AccountProfile({
           <View style={styles.pointsContainer}>
             <View style={styles.pointsHeader}>
               <TouchableOpacity onPress={() => setPointsModalVisible(true)}>
-                <Text style={styles.pointsGuide}>Points Earning Guide</Text>
+                <Text style={styles.pointsGuide}>Point Earning Guide</Text>
               </TouchableOpacity>
               <Text style={styles.pointsValue}>{user.point?.spending_points} / 7.5k pts</Text>
             </View>
@@ -113,7 +107,7 @@ function AccountProfile({
             </TouchableOpacity>
           </View>
 
-          {/* Bio Section - Temporarily Renoved */}
+          {/* Bio Section - Temporarily Removed */}
           {/* <Bio 
             bioText={user.bio}
             primaryActivity={getLabelByCategory(user.primary_goal)}
@@ -122,17 +116,12 @@ function AccountProfile({
             timezone={user.timezone}
           /> */}
 
-          {/* Memories Button */}
-          <TouchableOpacity
-            onPress={() => router.push('/account/memories')}
-            style={styles.memoriesButton}
-          >
-            <Text style={styles.memoriesButtonText}>View All Memories</Text>
-          </TouchableOpacity>
+          {/* Memories Section */}
+          <Memories memories={memories || []} />
         </ScrollView>
 
         {/* Points Guide Modal */}
-        <PointEarningGuide
+        <PointGuideModal
           visible={pointsModalVisible}
           onClose={() => setPointsModalVisible(false)}
         />
@@ -294,22 +283,6 @@ const styles = StyleSheet.create({
     height: 47,
     backgroundColor: '#d9d9d9',
     marginHorizontal: 33,
-  },
-  memoriesButton: {
-    alignSelf: 'center',
-    borderWidth: 1,
-    borderColor: '#de728d',
-    borderRadius: 5,
-    paddingVertical: 6,
-    paddingHorizontal: 20,
-    marginTop: 15,
-    marginBottom: 110,
-  },
-  memoriesButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#010001',
   },
   crescent: {
     position: 'absolute',
