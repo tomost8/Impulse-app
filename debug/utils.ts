@@ -1,4 +1,4 @@
-export const debugQueries = false;
+export const debugQueries = true;
 export const debugRouting = false;
 
 export const debugComponentsOn = false;
@@ -10,7 +10,7 @@ export const debugRenders = true;
 export const debugHomePage = false && debugRenders;
 export const debugChatsPage = false && debugRenders;
 export const debugSocialPage = true && debugRenders; // social/index.tsx
-export const debugAccountPage = true && debugRenders;
+export const debugAccountPage = false && debugRenders;
 // Social + Community pages
 export const debugUserCommunitiesPage = true && debugRenders; // account/communities.tsx
 export const debugExplorePage = true && debugRenders; // social/explore.tsx

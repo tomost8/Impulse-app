@@ -6,9 +6,9 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { useCreatePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import { View, StyleSheet } from "react-native";
-import DisplayPictureScreen from "@/components/screens/camera/SingleLensCamera/displayPictureScreen";
-import SelectUsers from "@/components/screens/camera/SharedPages/selectUsers";
-import SelectGoal from "@/components/screens/camera/SharedPages/selectGoal";
+import DisplayPictureScreen from "@/components/screens/camera/DisplayPictureScreen";
+import SelectUsersModal from "@/components/screens/camera/SelectUsersModal";
+import SelectActivityModal from "@/components/screens/camera/SelectActivityModal";
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from "@/contexts/DataProviderContext";
@@ -184,7 +184,7 @@ const DisplayPicturePage = () => {
         setActivityModalVisible={setActivityModalVisible}
         setUsersModalVisible={setUsersModalVisible}
       />
-      <SelectGoal 
+      <SelectActivityModal 
         isVisible={activityModalVisible}
         loading={fetching}
         activitiesList={activities || []}
@@ -193,7 +193,7 @@ const DisplayPicturePage = () => {
         onNext={handleActivityNext}
         onSelectActivity={handleSelectActivity}
       />
-      <SelectUsers 
+      <SelectUsersModal 
         isVisible={usersModalVisible}
         loading={fetching}
         userId={user?.id}

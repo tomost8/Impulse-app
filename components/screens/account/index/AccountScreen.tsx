@@ -34,6 +34,7 @@ function AccountProfile({
       <View style={styles.container}>
         <ScrollView 
           style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
           showsVerticalScrollIndicator={false}
           bounces={true}
           alwaysBounceVertical={false}
@@ -145,6 +146,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 200, // Add extra space for dropdowns
   },
   headerContainer: {
     position: 'relative',

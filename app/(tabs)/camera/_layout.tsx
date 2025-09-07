@@ -82,6 +82,7 @@ export default function CameraLayout() {
 
   // useMemo ensures context values are always updated when parameters change
   const contextValues = useMemo(() => {
+    // Prioritize URL params if they exist, otherwise use internal state
     const newId = activityId ? Number(activityId) : internalId;
     const newCategory = activityCategory as string || internalCategory;
     

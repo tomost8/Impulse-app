@@ -11,12 +11,12 @@ import {
 import { router } from 'expo-router';
 import { s } from 'react-native-size-matters';
 
-interface MemoriesGridProps {
+interface ImageGridProps {
   memories: any[];
 }
 
-const MemoriesGrid: React.FC<MemoriesGridProps> = ({ memories }) => {
-  //console.log('MemoriesGrid - Received data:', memories);
+const ImageGrid: React.FC<ImageGridProps> = ({ memories }) => {
+  //console.log('ImageGrid - Received data:', memories);
   
   const screenWidth = Dimensions.get('window').width;
   const itemSize = (screenWidth - 48) / 3; // 3 columns with padding
@@ -64,7 +64,6 @@ const MemoriesGrid: React.FC<MemoriesGridProps> = ({ memories }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Your Memories</Text>
       <FlatList
         data={memories}
         renderItem={renderMemoryItem}
@@ -143,4 +142,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MemoriesGrid;
+export default ImageGrid;

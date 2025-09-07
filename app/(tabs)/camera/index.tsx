@@ -26,7 +26,14 @@ export default function CameraScreen() {
   useEffect(() => {
     if (context) {
       context.setPictureTaken(false);
-      context.setCategory(category as string);
+      if (category) {
+        context.setCategory(category as string);
+        context.setId(Number(id));
+      } else {
+        // Reset header when no activity/category is selected (camera button navigation)
+        context.setCategory('');
+        context.setId(0);
+      }
     }
   }, [category, id, context]);
 

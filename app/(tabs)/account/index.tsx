@@ -43,7 +43,9 @@ const AccountPage = () => {
         };
         return `Post ${index + 1}: ${JSON.stringify(processedPost)}`;
       }).join('\n');
-      console.log('Posts data:\n' + processedPostsLog);
+      if (debugAccountPage) {
+        console.log('Posts data:\n' + processedPostsLog);
+      }
       
       hasFetchedMemories.current = true;
       memoriesRef.current = sortedPosts;

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import PostActivityCard from '@/components/ui/common/activityCards/PostActivityCard';
 
-interface SelectGoalProps {
+interface SelectActivityProps {
   loading: boolean;
   isVisible: boolean;
   onClose: () => void;
@@ -21,7 +21,7 @@ interface SelectGoalProps {
   timezone: string;
 }
 
-const SelectGoal = ({ isVisible, onClose, onNext, activitiesList, timezone, loading, onSelectActivity }: SelectGoalProps) => {
+const SelectActivity = ({ isVisible, onClose, onNext, activitiesList, timezone, loading, onSelectActivity }: SelectActivityProps) => {
   if (loading) {
     return (
       <Text>Loading...</Text>
@@ -192,4 +192,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectGoal;
+export default SelectActivity;

@@ -1,189 +1,213 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { router } from 'expo-router';
-import MemoriesGrid from './MemoriesGrid';
+import { Ionicons } from '@expo/vector-icons';
+import { goals } from '@/utils/goals';
+
+import ImageGrid from './ImageGrid';
 
 interface MemoriesProps {
   memories: any[];
 }
 
 const Memories: React.FC<MemoriesProps> = ({ memories }) => {
-  const [filterBy, setFilterBy] = useState<'all' | 'month' | 'category'>('all');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<{year: number, month: number}>({
     year: new Date().getFullYear(),
     month: new Date().getMonth()
   });
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState<boolean>(false);
+  const [showMonthDropdown, setShowMonthDropdown] = useState<boolean>(false);
 
-  // Filter memories based on current filter
   const getFilteredMemories = () => {
     if (!memories) return [];
-    
     let filtered = memories;
-    
-    if (filterBy === 'month') {
-      filtered = filtered.filter((post: any) => {
-        const postDate = new Date(post.created_at);
-        return postDate.getMonth() === selectedMonth.month && postDate.getFullYear() === selectedMonth.year;
-      });
-    } else if (filterBy === 'category' && selectedCategory) {
-      filtered = filtered.filter((post: any) => post.category === selectedCategory);
+    // Month filter
+    filtered = filtered.filter((post: any) => {
+      const postDate = new Date(post.created_at);
+      return postDate.getMonth() === selectedMonth.month && postDate.getFullYear() === selectedMonth.year;
+    });
+    // Category filter
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((post: any) => selectedCategories.includes(post.category));
     }
-    
     return filtered;
   };
 
   return (
-    <View style={styles.container}>
-      {/* View All Memories Button */}
-      <TouchableOpacity
-        onPress={() => router.push('/account/memories')}
-        style={styles.memoriesButton}
-      >
-        <Text style={styles.memoriesButtonText}>View All Memories</Text>
-      </TouchableOpacity>
-
+    <TouchableOpacity 
+      style={styles.container}
+      activeOpacity={1}
+      onPress={() => {
+        setShowMonthDropdown(false);
+        setShowCategoryDropdown(false);
+      }}
+    >
       {/* Filter Buttons */}
       <View style={styles.filterContainer}>
-        <TouchableOpacity
-          onPress={() => setFilterBy('all')}
-          style={[
-            styles.filterButton,
-            filterBy === 'all' && styles.filterButtonActive
-          ]}
-        >
-          <Text style={[
-            styles.filterButtonText,
-            filterBy === 'all' && styles.filterButtonTextActive
-          ]}>
-            All
-          </Text>
-        </TouchableOpacity>
+        {/* Month Filter Button */}
+        <View style={styles.monthButtonWrapper}>
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation();
+              setShowMonthDropdown(!showMonthDropdown);
+            }}
+            style={[
+              styles.monthButton,
+              showMonthDropdown && styles.monthButtonActive
+            ]}
+          >
+            <Text style={[
+              styles.monthButtonText,
+              showMonthDropdown && styles.monthButtonTextActive
+            ]}>
+              {new Date(selectedMonth.year, selectedMonth.month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </Text>
+          </TouchableOpacity>
+        </View>
         
-        <TouchableOpacity
-          onPress={() => setFilterBy('month')}
-          style={[
-            styles.filterButton,
-            filterBy === 'month' && styles.filterButtonActive
-          ]}
-        >
-          <Text style={[
-            styles.filterButtonText,
-            filterBy === 'month' && styles.filterButtonTextActive
-          ]}>
-            By Month
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          onPress={() => setFilterBy('category')}
-          style={[
-            styles.filterButton,
-            filterBy === 'category' && styles.filterButtonActive
-          ]}
-        >
-          <Text style={[
-            styles.filterButtonText,
-            filterBy === 'category' && styles.filterButtonTextActive
-          ]}>
-            By Category
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.rightButtonsContainer}>
+          {/* Monthly Memories Button */}
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation();
+              router.push('/account/memories');
+            }}
+            style={styles.iconButton}
+          >
+            <Ionicons name="calendar-outline" size={20} color="#666" />
+          </TouchableOpacity>
+          
+          {/* Category Filter Button */}
+          <View style={styles.filterButtonWrapper}>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                setShowCategoryDropdown(!showCategoryDropdown);
+              }}
+              style={[
+                styles.iconButton,
+                showCategoryDropdown && styles.iconButtonActive
+              ]}
+            >
+              <Ionicons 
+                name="filter-outline" 
+                size={20} 
+                color={showCategoryDropdown ? '#DE728D' : '#666'} 
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
-      {/* Month Selection (only show when month filter is active) */}
-      {filterBy === 'month' && (
-        <View style={styles.monthContainer}>
-          <Text style={styles.monthLabel}>Select Month:</Text>
-          <View style={styles.monthButtons}>
-            {/* Year Selection */}
-            <View style={styles.yearContainer}>
-              <Text style={styles.yearLabel}>Year:</Text>
-              <View style={styles.yearButtons}>
-                {[selectedMonth.year - 1, selectedMonth.year, selectedMonth.year + 1].map((year) => (
-                  <TouchableOpacity
-                    key={year}
-                    onPress={() => setSelectedMonth({...selectedMonth, year})}
-                    style={[
-                      styles.yearButton,
-                      selectedMonth.year === year && styles.yearButtonActive
-                    ]}
-                  >
-                    <Text style={[
-                      styles.yearButtonText,
-                      selectedMonth.year === year && styles.yearButtonTextActive
-                    ]}>
-                      {year}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+      {/* Image Grid */}
+      <ImageGrid memories={getFilteredMemories()} />
+      
+      {/* Month Dropdown - rendered at top level */}
+      {showMonthDropdown && (
+        <View style={styles.monthDropdownContainer}>
+          <TouchableOpacity 
+            style={styles.monthDropdown}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            {/* Year Navigation */}
+            <View style={styles.yearNavigation}>
+              <TouchableOpacity
+                onPress={() => setSelectedMonth({...selectedMonth, year: selectedMonth.year - 1})}
+                style={styles.yearArrowButton}
+              >
+                <Ionicons name="chevron-back" size={16} color="#666" />
+              </TouchableOpacity>
+              
+              <Text style={styles.yearText}>{selectedMonth.year}</Text>
+              
+              <TouchableOpacity
+                onPress={() => setSelectedMonth({...selectedMonth, year: selectedMonth.year + 1})}
+                style={styles.yearArrowButton}
+              >
+                <Ionicons name="chevron-forward" size={16} color="#666" />
+              </TouchableOpacity>
             </View>
             
-            {/* Month Selection */}
-            <View style={styles.monthButtonsContainer}>
-              <Text style={styles.monthLabel}>Month:</Text>
-              <View style={styles.monthButtonsGrid}>
-                {[
-                  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                ].map((month, index) => (
-                  <TouchableOpacity
-                    key={month}
-                    onPress={() => setSelectedMonth({...selectedMonth, month: index})}
-                    style={[
-                      styles.monthButton,
-                      selectedMonth.month === index && styles.monthButtonActive
-                    ]}
-                  >
-                    <Text style={[
-                      styles.monthButtonText,
-                      selectedMonth.month === index && styles.monthButtonTextActive
-                    ]}>
-                      {month}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+            {/* Month Grid */}
+            <View style={styles.monthGrid}>
+              {[
+                'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+              ].map((month, index) => (
+                <TouchableOpacity
+                  key={month}
+                  onPress={() => {
+                    setSelectedMonth({year: selectedMonth.year, month: index});
+                    setShowMonthDropdown(false);
+                  }}
+                  style={[
+                    styles.monthGridButton,
+                    selectedMonth.month === index && styles.monthGridButtonActive
+                  ]}
+                >
+                  <Text style={[
+                    styles.monthGridButtonText,
+                    selectedMonth.month === index && styles.monthGridButtonTextActive
+                  ]}>
+                    {month}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
-          </View>
+          </TouchableOpacity>
         </View>
       )}
-
-      {/* Category Selection (only show when category filter is active) */}
-      {filterBy === 'category' && (
-        <View style={styles.categoryContainer}>
-          <Text style={styles.categoryLabel}>Select Category:</Text>
-          <View style={styles.categoryButtons}>
-            {['STUDYING_WORKING', 'FOOD', 'WELLNESS', 'EXERCISE', 'SOCIAL'].map((category) => (
-              <TouchableOpacity
-                key={category}
-                onPress={() => setSelectedCategory(category)}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category && styles.categoryButtonActive
-                ]}
-              >
-                <Text style={[
-                  styles.categoryButtonText,
-                  selectedCategory === category && styles.categoryButtonTextActive
-                ]}>
-                  {category.replace('_', ' ')}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+      
+      {/* Category Dropdown - rendered at top level */}
+      {showCategoryDropdown && (
+        <View style={styles.categoryDropdownContainer}>
+          <TouchableOpacity 
+            style={styles.categoryDropdown}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <Text style={styles.categoryDropdownTitle}>Filter by Category</Text>
+            <View style={styles.categoryDropdownButtons}>
+              {goals.map((goal) => (
+                <TouchableOpacity
+                  key={goal.category}
+                  onPress={() => {
+                    if (selectedCategories.includes(goal.category)) {
+                      setSelectedCategories(selectedCategories.filter(cat => cat !== goal.category));
+                    } else {
+                      setSelectedCategories([...selectedCategories, goal.category]);
+                    }
+                  }}
+                  style={[
+                    styles.categoryDropdownButton,
+                    selectedCategories.includes(goal.category) && styles.categoryDropdownButtonActive
+                  ]}
+                >
+                  <View style={styles.categoryButtonContent}>
+                    <Image 
+                      source={goal.categoryIcon as any} 
+                      style={[
+                        styles.categoryIcon,
+                        selectedCategories.includes(goal.category) && styles.categoryIconActive
+                      ]}
+                      resizeMode="contain"
+                    />
+                    <Text style={[
+                      styles.categoryDropdownButtonText,
+                      selectedCategories.includes(goal.category) && styles.categoryDropdownButtonTextActive
+                    ]}>
+                      {goal.label}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
         </View>
       )}
-
-      {/* Memories Grid */}
-      <MemoriesGrid memories={getFilteredMemories()} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -191,36 +215,35 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 16,
   },
-  memoriesButton: {
-    backgroundColor: '#DE728D',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 25,
-    alignSelf: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  memoriesButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    textAlign: 'center',
-  },
   filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     marginVertical: 12,
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  filterButton: {
+  rightButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  iconButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconButtonActive: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#DE728D',
+  },
+  monthButtonWrapper: {
+    position: 'relative',
+    zIndex: 100,
+  },
+  monthButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
@@ -228,92 +251,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
-  filterButtonActive: {
-    backgroundColor: '#DE728D',
-    borderColor: '#DE728D',
-  },
-  filterButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#666',
-  },
-  filterButtonTextActive: {
-    color: '#fff',
-  },
-  monthContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  monthLabel: {
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginBottom: 8,
-  },
-  monthButtons: {
-    gap: 12,
-  },
-  yearContainer: {
-    marginBottom: 8,
-  },
-  yearLabel: {
-    fontSize: 12,
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#666',
-    marginBottom: 6,
-  },
-  yearButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  yearButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  yearButtonActive: {
-    backgroundColor: '#DE728D',
-    borderColor: '#DE728D',
-  },
-  yearButtonText: {
-    fontSize: 11,
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#666',
-  },
-  yearButtonTextActive: {
-    color: '#fff',
-  },
-  monthButtonsContainer: {
-    marginTop: 8,
-  },
-  monthButtonsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  monthButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 14,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    minWidth: 40,
-    alignItems: 'center',
-  },
   monthButtonActive: {
     backgroundColor: '#DE728D',
     borderColor: '#DE728D',
   },
   monthButtonText: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'Poppins',
     fontWeight: '500',
     color: '#666',
@@ -321,41 +264,148 @@ const styles = StyleSheet.create({
   monthButtonTextActive: {
     color: '#fff',
   },
-  categoryContainer: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
+  filterButtonWrapper: {
+    position: 'relative',
+    zIndex: 100,
   },
-  categoryLabel: {
+  // Month dropdown styles
+  monthDropdownContainer: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    zIndex: 200,
+  },
+  monthDropdown: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    width: 250,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 15,
+  },
+  yearNavigation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    gap: 16,
+  },
+  yearArrowButton: {
+    padding: 4,
+    borderRadius: 4,
+    backgroundColor: '#f0f0f0',
+  },
+  yearText: {
     fontSize: 14,
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#242020',
-    marginBottom: 8,
+    minWidth: 60,
+    textAlign: 'center',
   },
-  categoryButtons: {
+  monthGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 4,
+    justifyContent: 'space-between',
   },
-  categoryButton: {
-    paddingHorizontal: 12,
+  monthGridButton: {
+    paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 14,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    width: '22%',
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  monthGridButtonActive: {
+    backgroundColor: '#DE728D',
+    borderColor: '#DE728D',
+  },
+  monthGridButtonText: {
+    fontSize: 10,
+    fontFamily: 'Poppins',
+    fontWeight: '500',
+    color: '#666',
+    textAlign: 'center',
+  },
+  monthGridButtonTextActive: {
+    color: '#fff',
+  },
+  // Category dropdown styles
+  categoryDropdownContainer: {
+    position: 'absolute',
+    top: 60,
+    right: 16,
+    zIndex: 200,
+  },
+  categoryDropdown: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 180,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 15,
+  },
+  categoryDropdownTitle: {
+    fontSize: 12,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  categoryDropdownButtons: {
+    gap: 4,
+  },
+  categoryDropdownButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
     backgroundColor: '#f0f0f0',
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
-  categoryButtonActive: {
+  categoryButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#DE728D',
+  },
+  categoryIconActive: {
+    tintColor: '#fff',
+  },
+  categoryDropdownButtonActive: {
     backgroundColor: '#DE728D',
     borderColor: '#DE728D',
   },
-  categoryButtonText: {
+  categoryDropdownButtonText: {
     fontSize: 11,
     fontFamily: 'Poppins',
     fontWeight: '500',
     color: '#666',
+    flex: 1,
   },
-  categoryButtonTextActive: {
+  categoryDropdownButtonTextActive: {
     color: '#fff',
   },
 });
