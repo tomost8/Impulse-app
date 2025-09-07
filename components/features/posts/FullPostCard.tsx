@@ -1,7 +1,7 @@
 //import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import Header from './header';
-import Content from './content';
+import PostHeader from './PostHeader';
+import PostContent from './PostContent';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 
 interface FullPostCardProps {
@@ -38,12 +38,12 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
         </View>
       )}
       
-      <Header 
+      <PostHeader 
         username={post.username}
         timeAgo={post.timeAgo}
         profileImage={post.profileImage}
       />
-      <Content 
+      <PostContent 
         caption={post.caption}
         imageUrls={post.images}
       />

@@ -9,7 +9,7 @@ interface ReplyToCommentProps {
   timestamp: string;
 }
 
-const ReplyToComment: React.FC<ReplyToCommentProps> = ({
+const CommentReply: React.FC<ReplyToCommentProps> = ({
   username,
   profileImage,
   content,
@@ -79,4 +79,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ReplyToComment;
+export default CommentReply;

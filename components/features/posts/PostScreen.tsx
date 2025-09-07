@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import FullPostCard from '@/components/ui/SocialPage/Post/fullpostcard';
-import CommentInput from '@/components/ui/SocialPage/Post/CommentInput';
-import CommentSection from '@/components/ui/SocialPage/Post/CommentSection';
-import Reply from '@/components/ui/SocialPage/Post/reply';
+import FullPostCard from '@/components/features/posts/FullPostCard';
+import CommentInput from '@/components/features/posts/CommentInput';
+import CommentSection from '@/components/features/posts/CommentSection';
+import ReplyContext from '@/components/features/posts/ReplyContext';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
 
 interface PostScreenProps {
@@ -98,7 +98,7 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
       >
         {/* Reply Section (if active) */}
         {showReply && selectedComment && (
-          <Reply
+          <ReplyContext
             profileImage={selectedComment.user.profile_picture}
             username={selectedComment.user.username}
             timestamp={getTimeAgo(selectedComment.created_at)}

@@ -8,7 +8,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
 import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
-import PostScreen from '@/components/screens/social/post';
+import PostScreen from '@/components/features/posts/PostScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services

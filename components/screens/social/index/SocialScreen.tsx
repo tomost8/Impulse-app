@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
-import TabSelector from "@/components/ui/SocialPage/FeedPage/TabSelector";
-import ListWithProfiles from "@/components/ui/SocialPage/FeedPage/CommunityList";
-import Filter from "@/components/ui/SocialPage/FeedPage/CommunityFilter";
-import Feed from "@/components/ui/SocialPage/FeedPage/Feed";
+import TabSelector from "./TabSelector";
+import ListWithProfiles from "./CommunityList";
+import Filter from "./CommunityFilter";
+import Feed from "@/components/features/feeds/Feed";
 import LoadingScreen from "@/components/ui/common/loading";
 import { router } from "expo-router";
 const searchIcon = require("@/assets/icons/search.png");

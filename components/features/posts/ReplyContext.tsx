@@ -9,7 +9,7 @@ interface ReplyProps {
   onClose?: () => void;
 }
 
-const Reply: React.FC<ReplyProps> = ({
+const ReplyContext: React.FC<ReplyProps> = ({
   profileImage,
   username,
   timestamp,
@@ -115,4 +115,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Reply;
+export default ReplyContext;

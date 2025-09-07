@@ -1,7 +1,6 @@
 //import React from "react";
 import { FlatList, View, StyleSheet } from "react-native";
 import PostCard from "./PostCard";
-import FullPostCard from "../Post/fullpostcard";
 
 interface FeedProps {
   currentTab: 'friends' | 'communities';

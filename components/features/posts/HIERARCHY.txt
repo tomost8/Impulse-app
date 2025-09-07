@@ -1,0 +1,16 @@
+Posts Component Hierarchy
+==============================
+
+Entry Point:
+app/post/[id].tsx
+└── PostScreen.tsx
+
+Component Hierarchy:
+PostScreen
+├── FullPostCard
+│   ├── PostHeader
+│   └── PostContent
+├── CommentSection
+│   └── CommentReply
+├── CommentInput
+└── ReplyContext

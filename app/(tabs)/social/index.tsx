@@ -4,7 +4,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
-import SocialScreen from '@/components/screens/tabs/SocialScreen';
+import SocialScreen from '@/components/screens/social/index/SocialScreen';
 // Debug
 import { debugSocialPage } from '@/debug/utils';
 // Services

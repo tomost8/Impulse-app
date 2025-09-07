@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
-import ReplyToComment from './replytocomment';
+import CommentReply from './CommentReply';
 
 interface Comment {
   id: number;
@@ -53,7 +53,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
           {/* Replies */}
           {comment.replies?.map((reply) => (
-            <ReplyToComment
+            <CommentReply
               key={reply.id}
               username={reply.user.username}
               profileImage={reply.user.profile_picture}
