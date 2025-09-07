@@ -14,12 +14,14 @@ interface FullPostCardProps {
     liked?: boolean;
     likeCount?: number;
     commentCount?: number;
+    category?: string;
   };
   onLike?: () => void;
   onUnlike?: () => void;
+  formattedDate?: string | null;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike }) => {
+const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike, formattedDate }) => {
   const handleLike = () => {
     if (post?.liked) {
       onUnlike?.();
@@ -29,6 +31,13 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
   };
   return (
     <View style={styles.container}>
+      {/* Date Section */}
+      {formattedDate && (
+        <View style={styles.dateSection}>
+          <Text style={styles.dateText}>{formattedDate}</Text>
+        </View>
+      )}
+      
       <Header 
         username={post.username}
         timeAgo={post.timeAgo}
@@ -67,6 +76,13 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
             <Text style={styles.count}>{post.commentCount} comment{post.commentCount === 1 ? '' : 's'}</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Category */}
+        {post.category && (
+          <View style={styles.categoryGroup}>
+            <Text style={styles.categoryText}>{post.category}</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -80,13 +96,14 @@ const styles = StyleSheet.create({
   interactionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    gap: 32,
   },
   interactionGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
   },
   interactionButton: {
     flexDirection: 'row',
@@ -102,6 +119,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     color: '#242020',
+  },
+  dateSection: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E1E1E1',
+  },
+  dateText: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    textAlign: 'center',
+  },
+  categoryGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  categoryText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#666666',
+    fontWeight: '500',
   },
 });
 

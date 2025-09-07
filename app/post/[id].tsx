@@ -13,10 +13,14 @@ import PostScreen from '@/components/screens/social/post';
 import { debugRenders } from '@/debug/utils';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
+import { useDataProvider } from '@/contexts/DataProviderContext';
+// Utilities
+import { getLocalDay } from '@/utils/timezoneProcessing';
 
 const PostPage = () => {
   const { id, isLiked } = useLocalSearchParams(); // postId
   const [renderCounter, setRenderCounter] = useState(0);
+  const { timezone } = useDataProvider();
   
   // Use refs to track user's like actions (persistent across refetches)
   const userLikeAction = useRef<boolean | null>(null);
@@ -149,6 +153,9 @@ const PostPage = () => {
     console.log(`📱 Rendering PostPage - ID: ${id}, Caption: "${postRef.current?.caption?.substring(0, 30)}...", Comments: ${commentsRef.current?.length || 0}, Liked: ${postRef.current?.liked}, LikeCount: ${postRef.current?.likeCount}`);
   }
 
+  // Format the post date for display
+  const formattedDate = postRef.current?.created_at ? getLocalDay(postRef.current.created_at, timezone) : null;
+
   return (
     <PostScreen
       loading={loading}
@@ -157,6 +164,7 @@ const PostPage = () => {
       createComment={handleCreateComment}
       onLike={handleLikePost}
       onUnlike={handleUnlikePost}
+      formattedDate={formattedDate}
     />
   );
 }

@@ -1,17 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Platform, StatusBar, SafeAreaView } from 'react-native';
+
+import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import Header from "@/components/ui/common/headers/Header";
+import LoadingScreen from "@/components/ui/common/loading";
+import { goals } from '@/utils/goals';
 
 function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }) {
   // Get memory entry for each date
@@ -28,19 +23,19 @@ function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }
 
   return (
     <TouchableOpacity 
-      style={dayStyles.dayContainer}
+      style={styles.dayContainer}
       onPress={handleDayPress}
       disabled={!memoryForDate}
     >
       {hasImage ? (
         <Image 
           source={{ uri: memoryForDate.mediaUrls[0] }} 
-          style={dayStyles.dayImage} 
+          style={styles.dayMemoryImage} 
         />
       ) : (
-        <View style={dayStyles.noImage} />
+        <View style={styles.dayPlaceholder} />
       )}
-      <Text style={dayStyles.dayText}>{date.day}</Text>
+      <Text style={styles.dayText}>{date.day}</Text>
     </TouchableOpacity>
   );
 }
@@ -51,22 +46,82 @@ interface MemoriesScreenProps {
 }
 
 export default function MemoriesScreen({ loading, memories }: MemoriesScreenProps) {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState<boolean>(false);
+
+  // Filter by category first, then keep only one post per day
+  const dailyMemories = useMemo(() => {
+    if (!memories || memories.length === 0) return [];
+    
+    // Apply category filter first
+    let filteredPosts = memories;
+    if (selectedCategories.length > 0) {
+      filteredPosts = memories.filter((post: any) => selectedCategories.includes(post.category));
+    }
+
+    // Filter to keep only one post per day from the category-filtered results
+    const uniqueDailyPosts = filteredPosts.reduce((acc: any[], post: any) => {
+      const existingPost = acc.find(p => p.date === post.date);
+      if (!existingPost) {
+        acc.push(post);
+      }
+      return acc;
+    }, [])
+    .map((post: any) => ({
+      id: post.id,
+      date: post.date,
+      mediaUrls: post.mediaUrls,
+      caption: post.caption,
+      category: post.category
+    }));
+
+    return uniqueDailyPosts;
+  }, [memories, selectedCategories]);
+
   if (loading) {
-    return (
-        <Text>Loading...</Text>
-    );
+    return <LoadingScreen />;
   }
 
   const currentDate = new Date();
   const INITIAL_DATE = currentDate.toISOString().split('T')[0];
 
   return (
-    <View style={styles.container}>
-      <Header 
-        title="Memories"
-        onBackPress={() => router.back()}
-      />
+    <TouchableOpacity 
+      style={styles.container}
+      activeOpacity={1}
+      onPress={() => setShowCategoryDropdown(false)}
+    >
+      {/* Header */}
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.singleRowHeader}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Image source={require("@/assets/icons/backArrow.png")} style={styles.backIcon} />
+            <Text style={styles.headerTitle}>Memories</Text>
+          </TouchableOpacity>
 
+          {/* Filter Button */}
+          <View style={styles.filterButtonWrapper}>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                setShowCategoryDropdown(!showCategoryDropdown);
+              }}
+              style={[
+                styles.filterButton,
+                showCategoryDropdown && styles.filterButtonActive
+              ]}
+            >
+              <Ionicons 
+                name="filter-outline" 
+                size={20} 
+                color={showCategoryDropdown ? '#DE728D' : '#666'} 
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+
+      {/* Monthly Calendar Memories Display */}
       <Calendar
         current={INITIAL_DATE}
         firstDay={1}
@@ -75,7 +130,7 @@ export default function MemoriesScreen({ loading, memories }: MemoriesScreenProp
         dayComponent={({ date }: any) => (
           <DayComponent 
             date={date}
-            imagesByDate={memories}
+            imagesByDate={dailyMemories}
           />
         )}
         theme={{
@@ -84,20 +139,193 @@ export default function MemoriesScreen({ loading, memories }: MemoriesScreenProp
           dayTextColor: '#1E1E1E',
         }}
       />
-    </View>
+
+      {/* Category Dropdown */}
+      {showCategoryDropdown && (
+        <View style={styles.categoryDropdownContainer}>
+          <TouchableOpacity 
+            style={styles.categoryDropdown}
+            activeOpacity={1}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <Text style={styles.categoryDropdownTitle}>Filter by Category</Text>
+            <View style={styles.categoryDropdownButtons}>
+              {goals.map((goal) => (
+                <TouchableOpacity
+                  key={goal.category}
+                  onPress={() => {
+                    if (selectedCategories.includes(goal.category)) {
+                      setSelectedCategories(selectedCategories.filter(cat => cat !== goal.category));
+                    } else {
+                      setSelectedCategories([...selectedCategories, goal.category]);
+                    }
+                  }}
+                  style={[
+                    styles.categoryDropdownButton,
+                    selectedCategories.includes(goal.category) && styles.categoryDropdownButtonActive
+                  ]}
+                >
+                  <View style={styles.categoryButtonContent}>
+                    <Image 
+                      source={goal.categoryIcon as any} 
+                      style={[
+                        styles.categoryIcon,
+                        selectedCategories.includes(goal.category) && styles.categoryIconActive
+                      ]}
+                      resizeMode="contain"
+                    />
+                    <Text style={[
+                      styles.categoryDropdownButtonText,
+                      selectedCategories.includes(goal.category) && styles.categoryDropdownButtonTextActive
+                    ]}>
+                      {goal.label}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
+    </TouchableOpacity>
   );
 }
 
-const dayStyles = StyleSheet.create({
+const styles = StyleSheet.create({
+  // Main container
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  
+  // Header section
+  safeArea: {
+    backgroundColor: '#E0EDFD',
+  },
+  singleRowHeader: {
+    backgroundColor: '#E0EDFD',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 10 : 0,
+    paddingBottom: 15,
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  backIcon: {
+    width: 10,
+    height: 17,
+    tintColor: '#242020',
+    marginRight: 12,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+  },
+  
+  // Filter button section
+  filterButtonWrapper: {
+    position: 'relative',
+    zIndex: 100,
+  },
+  filterButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterButtonActive: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#DE728D',
+  },
+  
+  // Category dropdown section
+  categoryDropdownContainer: {
+    position: 'absolute',
+    top: 80,
+    right: 16,
+    zIndex: 200,
+  },
+  categoryDropdown: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 12,
+    minWidth: 180,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 15,
+  },
+  categoryDropdownTitle: {
+    fontSize: 12,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: '#242020',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  categoryDropdownButtons: {
+    gap: 4,
+  },
+  categoryDropdownButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: '#f0f0f0',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  categoryButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  categoryIcon: {
+    width: 16,
+    height: 16,
+    tintColor: '#DE728D',
+  },
+  categoryIconActive: {
+    tintColor: '#fff',
+  },
+  categoryDropdownButtonActive: {
+    backgroundColor: '#DE728D',
+    borderColor: '#DE728D',
+  },
+  categoryDropdownButtonText: {
+    fontSize: 11,
+    fontFamily: 'Poppins',
+    fontWeight: '500',
+    color: '#666',
+    flex: 1,
+  },
+  categoryDropdownButtonTextActive: {
+    color: '#fff',
+  },
+  
+  // Calendar day component styles
   dayContainer: {
     width: s(40),
     height: s(50),
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: s(2),
     position: 'relative',
   },
-  dayImage: {
+  dayMemoryImage: {
     width: s(40),
     height: s(50),
     borderRadius: s(6),
@@ -106,7 +334,7 @@ const dayStyles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-  noImage: {
+  dayPlaceholder: {
     width: s(40),
     height: s(50),
     borderRadius: s(6),
@@ -119,51 +347,5 @@ const dayStyles = StyleSheet.create({
     color: '#333',
     fontWeight: 'bold',
     zIndex: 1,
-  },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-  headerBackground: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 16,
-  },
-  backButton: {
-    marginRight: s(12),
-    paddingLeft: 4, 
-  },
-  backIcon: {
-    width: 12,
-    height: 16,
-    tintColor: '#242020',
-    marginLeft: 5,
-    marginRight: 5,
-  },
-  headerTitle: {
-    color: '#242020',
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-  },
-  calendarContainer: {
-    backgroundColor: '#fff',
-    margin: s(15),
-    borderRadius: s(20),
-    paddingVertical: s(10),
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
   },
 });

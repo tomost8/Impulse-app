@@ -14,9 +14,10 @@ interface PostScreenProps {
   createComment: (comment: string, parentCommentId?: number) => void;
   onLike: () => void;
   onUnlike: () => void;
+  formattedDate?: string | null;
 }
 
-const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike }: PostScreenProps) => {
+const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, formattedDate }: PostScreenProps) => {
   if (loading) {
     return (
       <View style={styles.container}>
@@ -65,17 +66,23 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike }
         </View>
 
         {/* Full Post Card */}
-        <FullPostCard post={{
-          username: post.author.username,
-          timeAgo: getTimeAgo(post.created_at),
-          profileImage: post.author.profile_picture,
-          caption: post.caption,
-          images: post.mediaUrls,
-          liked: post.liked,
-          likeCount: post.likeCount,
-          commentCount: comments.reduce((total, comment) => 
-            total + 1 + (comment.replies?.length || 0), 0)
-        }} onLike={onLike} onUnlike={onUnlike} />
+        <FullPostCard 
+          post={{
+            username: post.author.username,
+            timeAgo: getTimeAgo(post.created_at),
+            profileImage: post.author.profile_picture,
+            caption: post.caption,
+            images: post.mediaUrls,
+            liked: post.liked,
+            likeCount: post.likeCount,
+            commentCount: comments.reduce((total, comment) => 
+              total + 1 + (comment.replies?.length || 0), 0),
+            category: post.category
+          }} 
+          onLike={onLike} 
+          onUnlike={onUnlike}
+          formattedDate={formattedDate}
+        />
 
         {/* Comments Section */}
         <CommentSection

@@ -33,46 +33,42 @@ const MemoriesPage = () => {
     if (hasNewMemoriesData) {
       console.log('hasNewMemoriesData', posts);
       // Format the dates for each memory using existing getLocalDay
-      const formattedPosts = posts.map((post: any) => ({
+      const postsWithLocalDates = posts.map((post: any) => ({
         ...post,
         date: getLocalDay(post.created_at, timezone)
       }));
-
-      // Filter to keep only one post per day
-      const uniqueDailyPosts = formattedPosts.reduce((acc: any[], post: any) => {
-        // Check if we already have a post for this date
-        const existingPost = acc.find(p => p.date === post.date);
-        if (!existingPost) {
-          acc.push(post);
-        }
-        return acc;
-      }, [])
-      .map((post: any) => ({
-        id: post.id,
-        date: post.date,
-        mediaUrls: post.mediaUrls
-      }));
       
       hasFetchedMemories.current = true;
-      memoriesRef.current = uniqueDailyPosts;
+      memoriesRef.current = postsWithLocalDates;
     }
     if (hasFetchedMemories.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewMemoriesData]);
+  }, [hasNewMemoriesData, timezone]);
 
   const loading = !hasFetchedMemories.current;
   if (debugRenders && !loading) {
+    const postsLog = memoriesRef.current?.map((post: any, index: number) => {
+      const processedPost = {
+        id: post.id,
+        caption: post.caption,
+        date: post.date,
+        mediaUrlsLength: post.mediaUrls?.length || 0,
+        category: post.category
+      };
+      return `Post ${index + 1}: ${JSON.stringify(processedPost)}`;
+    }).join('\n');
+    
     console.log('MemoriesPage\n',
       "Render Counter:", renderCounter, "\n",
-      "Memories:", memoriesRef.current, "\n",
+      "Posts data:\n" + postsLog, "\n",
     );
   }
 
   return (
     <MemoriesScreen 
       loading={loading} 
-      memories={memoriesRef.current} 
+      memories={memoriesRef.current}
     />
   );
 };
