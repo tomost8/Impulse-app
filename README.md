@@ -98,6 +98,69 @@ eas build --platform ios
 eas build --platform android
 ```
 
+## Git Workflow
+
+### Branching Strategy
+- `main` - Production-ready code
+- `feature-development` - Integration branch for features
+- `individual-feature-name` - Individual feature branches
+
+### Development Process
+**IMPORTANT: Always start by switching to the right branch and pulling latest changes**
+
+**Note**: Replace `[branch-name]` with the actual branch you're working on.
+
+1. Switch to the branch you're working on and pull latest:
+   ```bash
+   git checkout [branch-name]
+   git pull origin [branch-name]
+   ```
+cl
+2. Make your changes and commit:
+   ```bash
+   git add .
+   git commit -m "your commit message"
+   git push origin [branch-name]
+   ```
+
+### Basic Workflow Git Commands
+```bash
+# See all available branches
+git branch -a
+
+# Switch branches
+git checkout branch-name
+
+# Pull latest changes
+git pull origin branch-name
+
+# Stage and commit changes
+git add .
+git commit -m "your message"
+
+# Push to remote
+git push origin branch-name
+```
+
+### Other Git Commands
+```bash
+# See what files you've changed
+git status
+
+# See what changes you made
+git diff
+
+# Undo changes to a specific file (if you mess up)
+git checkout -- filename.tsx
+
+# Create and switch to new branch
+git checkout -b feature/new-feature
+
+# Stash changes temporarily
+git stash
+git stash pop
+```
+
 ## Additional Resources
 
 - [Expo Documentation](https://docs.expo.dev/)
