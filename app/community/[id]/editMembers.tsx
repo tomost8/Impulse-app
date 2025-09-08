@@ -5,7 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useGetCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useDeleteCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
-import EditMembersScreen from '@/components/screens/social/communities/editmembersscreen';
+import EditMembersScreen from '@/components/screens/communities/EditMembersScreen';
 // Debug
 import { debugEditCommunityMembersPage } from '@/debug/utils';
 

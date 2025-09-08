@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 // Components
-import AnnouncementScreen from '@/components/screens/social/communities/announcementscreen';
+import AnnouncementScreen from '@/components/screens/communities/AnnouncementScreen';
 // Debug
 import { debugAnnouncementsPage } from '@/debug/utils';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';

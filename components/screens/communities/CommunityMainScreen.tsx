@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text } from 'react-native';
-import TopBar from '@/components/ui/SocialPage/Communities/home/topbar';
-import Header from '@/components/ui/SocialPage/Communities/home/header';
-import About from '@/components/ui/SocialPage/Communities/home/about';
-import Announcement from '@/components/ui/SocialPage/Communities/home/announcement';
-import MembersList from '@/components/ui/SocialPage/Communities/home/memberslist';
+import TopBar from '@/components/features/communities/TopBar';
+import Header from '@/components/features/communities/CommunityHeader';
+import About from '@/components/features/communities/About';
+import Announcement from '@/components/features/communities/Announcement';
+import MembersList from '@/components/features/communities/MembersList';
 import { router } from 'expo-router';
 
 interface CommunityMainScreenProps {

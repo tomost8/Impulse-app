@@ -7,7 +7,7 @@ import { useDataProvider } from '@/contexts/DataProviderContext';
 // GraphQL hooks
 import { useCreateCommunity, useCreateCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
-import CreateCommunityScreen from '@/components/screens/social/main/createcommunityscreen';
+import CreateCommunityScreen from '@/components/screens/communities/CreateCommunityScreen';
 // Debug
 import { debugCreateCommunityPage } from '@/debug/utils';
 

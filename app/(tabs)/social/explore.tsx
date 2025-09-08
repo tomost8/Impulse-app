@@ -5,7 +5,7 @@ import { useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 import { useGetCommunities, useGetUserCommunities, useGetAllCategories, useGetAllCommunityMembers } from '@/hooks/graphql/communities/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
-import ExploreScreen from '@/components/screens/social/main/explorescreen';
+import ExploreScreen from '@/components/screens/social/explore/ExploreScreen';
 // Debug
 import { debugExplorePage } from '@/debug/utils';
 // Services

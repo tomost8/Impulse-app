@@ -5,7 +5,7 @@ import {
   SearchBar, 
   CategoriesBar,
   CommunityCard 
-} from '@/components/ui/SocialPage/Explore';
+} from './index';
 import { getLabelByCategory } from '@/utils/goals';
 
 interface ExploreScreenProps {

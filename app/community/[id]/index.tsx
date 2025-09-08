@@ -12,7 +12,7 @@ import { useGetCommunity, useGetCommunityMembers } from '@/hooks/graphql/communi
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 // Components
-import CommunityMainScreen from '@/components/screens/social/main/communitymainscreen';
+import CommunityMainScreen from '@/components/screens/communities/CommunityMainScreen';
 // Debug
 import { debugCommunityPage } from '@/debug/utils';
 

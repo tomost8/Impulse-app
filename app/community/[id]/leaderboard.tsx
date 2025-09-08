@@ -4,7 +4,7 @@ import { useLocalSearchParams } from 'expo-router';
 // GraphQL hooks
 import { useGetCommunityLeaderboard } from '@/hooks/graphql/communities/queries';
 // Components
-import LeaderboardScreen from '@/components/screens/social/communities/leaderboardscreen';
+import LeaderboardScreen from '@/components/screens/communities/LeaderboardScreen';
 // Debug
 import { debugCommunityLeaderboardPage } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';

@@ -8,7 +8,7 @@ import { uploadImage } from '@/utils/imageProcessing';
 import { useGetCommunity, useGetCommunityCategories } from '@/hooks/graphql/communities/queries';
 import { useUpdateCommunity, useCreateCommunityCategory, useDeleteCommunityCategory } from '@/hooks/graphql/communities/mutations';
 // Components
-import EditCommunityScreen from '@/components/screens/social/communities/editcommunityscreen';
+import EditCommunityScreen from '@/components/screens/communities/EditCommunityScreen';
 // Debug
 import { debugEditCommunityPage } from '@/debug/utils';
 

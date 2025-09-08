@@ -12,7 +12,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
-import RemoveUserPopup from './removeuserpopup';
+import RemoveUserPopup from '@/components/features/communities/RemoveUserPopup';
 
 interface Member {
   id: string;
