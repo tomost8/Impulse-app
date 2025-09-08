@@ -1,5 +1,6 @@
 // React imports
 import { useState, useEffect, useRef } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 
 // Contexts and wrappers
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,6 +22,8 @@ import { debugRenders } from '@/debug/utils';
 const MemoriesPage = () => {
   const {fetching, user, timezone} = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
+  const { initialDate, categories } = useLocalSearchParams<{ initialDate?: string; categories?: string }>();
+  const initialSelectedCategories = (categories || '').split(',').filter(Boolean);
 
   const memoriesRef = useRef<any | null>(null); 
   const hasFetchedMemories = useRef(false);
@@ -69,6 +72,8 @@ const MemoriesPage = () => {
     <MemoriesScreen 
       loading={loading} 
       memories={memoriesRef.current}
+      initialDate={initialDate}
+      initialSelectedCategories={initialSelectedCategories}
     />
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { s } from 'react-native-size-matters';
+import { useMemoriesNav } from '@/contexts/MemoriesContext';
 
 interface ImageGridProps {
   memories: any[];
@@ -21,9 +22,14 @@ const ImageGrid: React.FC<ImageGridProps> = ({ memories }) => {
   const screenWidth = Dimensions.get('window').width;
   const itemSize = (screenWidth - 48) / 3; // 3 columns with padding
 
-  const renderMemoryItem = ({ item }: { item: any }) => {
+  const { setSession } = useMemoriesNav();
+  const ids = useMemo(() => memories.map(m => m.id), [memories]);
+
+  const renderMemoryItem = ({ item, index }: { item: any; index: number }) => {
     const handlePress = () => {
       if (item.id) {
+        // Set navigation session for prev/next POST navigation
+        setSession({ ids, index });
         router.push(`/post/${item.id}`);
       }
     };
@@ -32,7 +38,7 @@ const ImageGrid: React.FC<ImageGridProps> = ({ memories }) => {
 
     return (
       <TouchableOpacity
-        style={[styles.memoryItem, { width: itemSize, height: itemSize }]}
+        style={[styles.memoryItem, { width: itemSize, height: itemSize * 1.4 }]}
         onPress={handlePress}
         activeOpacity={0.8}
       >

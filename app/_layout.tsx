@@ -11,6 +11,7 @@ import '@react-native-firebase/app';
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataProviderContext';
 import { DataFetcher } from '../contexts/DataFetcher';
+import { MemoriesProvider } from '../contexts/MemoriesContext';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
@@ -24,27 +25,29 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <DataProvider>
-          <DataFetcher>
-            <View style={styles.container}>
-              {/* Debug component - remove in production */}
-              {debugComponentsOn && <TokenTestButton />}
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="community/[id]" options={{ headerShown: false }} />
-                <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
-                <Stack.Screen name="post/[id]" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
-              </Stack>
-              <StatusBar style="auto" />
-            </View>
-          </DataFetcher>
-        </DataProvider>
-      </AuthProvider>
-    </ApolloProvider>
+    <MemoriesProvider>
+      <ApolloProvider client={client}>
+        <AuthProvider>
+          <DataProvider>
+            <DataFetcher>
+              <View style={styles.container}>
+                {/* Debug component - remove in production */}
+                {debugComponentsOn && <TokenTestButton />}
+                <Stack>
+                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                  <Stack.Screen name="community/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="post/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="+not-found" />
+                </Stack>
+                <StatusBar style="auto" />
+              </View>
+            </DataFetcher>
+          </DataProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </MemoriesProvider>
   );
 }
 

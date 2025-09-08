@@ -43,10 +43,12 @@ function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }
 interface MemoriesScreenProps {
   loading: boolean;
   memories: any[];
+  initialDate?: string;                 // 'YYYY-MM-DD' (e.g., '2025-08-01')
+  initialSelectedCategories?: string[]; // optional
 }
 
-export default function MemoriesScreen({ loading, memories }: MemoriesScreenProps) {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+export default function MemoriesScreen({ loading, memories, initialDate, initialSelectedCategories }: MemoriesScreenProps) {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialSelectedCategories || []);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState<boolean>(false);
 
   // Filter by category first, then keep only one post per day
@@ -83,7 +85,8 @@ export default function MemoriesScreen({ loading, memories }: MemoriesScreenProp
   }
 
   const currentDate = new Date();
-  const INITIAL_DATE = currentDate.toISOString().split('T')[0];
+  const fallbackToday = new Date().toISOString().split('T')[0];
+  const INITIAL_DATE = initialDate || fallbackToday;
 
   return (
     <TouchableOpacity 
@@ -112,7 +115,7 @@ export default function MemoriesScreen({ loading, memories }: MemoriesScreenProp
               ]}
             >
               <Ionicons 
-                name="filter-outline" 
+                name="options-outline" 
                 size={20} 
                 color={showCategoryDropdown ? '#DE728D' : '#666'} 
               />

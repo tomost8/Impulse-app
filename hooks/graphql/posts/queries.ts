@@ -378,3 +378,80 @@ export function useGetPostsByUserId(userId: number, shouldFetch: boolean=true,
     error: error?.message || null
   };
 }
+
+
+// 1) Posts by Month
+export const GET_MY_POSTS_BY_MONTH = gql`
+  query MyPostsByMonth($currentUserId: Int!, $filter: MonthFilterInput!, $skip: Int, $take: Int) {
+    myPostsByMonth(currentUserId: $currentUserId, filter: $filter, skip: $skip, take: $take) {
+      success
+      posts {
+        id
+        caption
+        mediaUrls
+        category
+        created_at
+        likeCount
+        commentCount
+      }
+      errors { field message }
+    }
+  }
+`;
+
+export function useMyPostsByMonth(currentUserId: number, filter: { year: number; month: number; categories?: string[] }, skip=0, take=30, shouldFetch=true) {
+  const { data, loading, error, fetchMore, refetch } = useQuery(GET_MY_POSTS_BY_MONTH, {
+    skip: !shouldFetch,
+    variables: { currentUserId, filter, skip, take },
+    fetchPolicy: 'network-only',
+  });
+
+  const posts = data?.myPostsByMonth?.posts ?? [];
+  return { posts, loading, error, fetchMore, refetch };
+}
+
+// 2) Month Calendar
+export const GET_MY_MONTH_CALENDAR = gql`
+  query MyMonthCalendar($currentUserId: Int!, $filter: MonthFilterInput!) {
+    myMonthCalendar(currentUserId: $currentUserId, filter: $filter) {
+      success
+      days {
+        date
+        count
+        firstPost { id mediaUrls category created_at }
+      }
+      errors { field message }
+    }
+  }
+`;
+
+export function useMyMonthCalendar(currentUserId: number, filter: { year: number; month: number; categories?: string[] }, shouldFetch=true) {
+  const { data, loading, error, refetch } = useQuery(GET_MY_MONTH_CALENDAR, {
+    skip: !shouldFetch,
+    variables: { currentUserId, filter },
+    fetchPolicy: 'network-only',
+  });
+  const days = data?.myMonthCalendar?.days ?? [];
+  return { days, loading, error, refetch };
+}
+
+// 3) Posts by Day
+export const GET_MY_POSTS_BY_DAY = gql`
+  query MyPostsByDay($currentUserId: Int!, $date: Date!, $categories: [String!]) {
+    myPostsByDay(currentUserId: $currentUserId, date: $date, categories: $categories) {
+      success
+      posts { id mediaUrls caption category created_at likeCount commentCount }
+      errors { field message }
+    }
+  }
+`;
+
+export function useMyPostsByDay(currentUserId: number, dateISO: string, categories?: string[], shouldFetch=true) {
+  const { data, loading, error, refetch } = useQuery(GET_MY_POSTS_BY_DAY, {
+    skip: !shouldFetch,
+    variables: { currentUserId, date: dateISO, categories },
+    fetchPolicy: 'network-only',
+  });
+  const posts = data?.myPostsByDay?.posts ?? [];
+  return { posts, loading, error, refetch };
+}
