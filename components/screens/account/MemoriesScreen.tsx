@@ -15,7 +15,7 @@ function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }
 
   const handleDayPress = () => {
     if (memoryForDate?.id) {
-      router.push(`/post/${memoryForDate.id}`);
+      router.push(`/memories/${memoryForDate.id}`);
     } else {
       console.log('No memory for date:', date);
     }

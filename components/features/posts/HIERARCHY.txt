@@ -3,10 +3,10 @@ Posts Component Hierarchy
 
 Entry Point:
 app/post/[id].tsx
-└── PostScreen.tsx
+└── StoryScreen.tsx (moved to components/features/memories/)
 
 Component Hierarchy:
-PostScreen
+StoryScreen
 ├── FullPostCard
 │   ├── PostHeader
 │   └── PostContent

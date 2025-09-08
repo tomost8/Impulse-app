@@ -39,6 +39,7 @@ export default function RootLayout() {
                   <Stack.Screen name="community/[id]" options={{ headerShown: false }} />
                   <Stack.Screen name="user/[id]" options={{ headerShown: false }} />
                   <Stack.Screen name="post/[id]" options={{ headerShown: false }} />
+                  <Stack.Screen name="memories/[id]" options={{ headerShown: false }} />
                   <Stack.Screen name="+not-found" />
                 </Stack>
                 <StatusBar style="auto" />

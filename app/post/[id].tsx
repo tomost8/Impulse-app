@@ -16,10 +16,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // Utilities
 import { getLocalDay, getFormattedDate } from '@/utils/timezoneProcessing';
-import { useMemoriesNav } from '@/contexts/MemoriesContext';
 
 const PostPage = () => {
-  console.log("👋🏻 Welcome to Post Page ---------------------------");
   const { id, isLiked } = useLocalSearchParams(); // postId
   const [renderCounter, setRenderCounter] = useState(0);
   const { timezone } = useDataProvider();
@@ -28,13 +26,6 @@ const PostPage = () => {
   const userLikeAction = useRef<boolean | null>(null);
   const userLikeCount = useRef<number | null>(null);
   const hasInitialized = useRef(false);
-  const { session, setIndex } = useMemoriesNav();
-
-  useEffect(() => {
-    if (!session?.ids?.length) return;
-    const idx = session.ids.indexOf(Number(id));
-    if (idx >= 0) setIndex(idx);
-  }, [session?.ids?.join(','), id]);
 
   // Initialize user like action from URL parameter only once
   useEffect(() => {
