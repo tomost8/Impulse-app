@@ -29,42 +29,6 @@ const FriendViewScreen = (props: FriendViewScreenProps) => {
     return <LoadingScreen />;
   }
   console.log(`📱 Rendering FriendViewScreen - Friend: ${props.friend?.first_name} ${props.friend?.last_name} (${props.friend?.username}), Age: ${props.friend?.age || 'N/A'}, Gender: ${props.friend?.gender || 'N/A'}, Primary Goal: ${props.friend?.primary_goal || 'N/A'}, Secondary Goal: ${props.friend?.secondary_goal || 'N/A'}, Points: ${props.friend?.point?.points || 0}, Weekly Points: ${props.friend?.point?.weekly_points || 0}, Monthly Points: ${props.friend?.point?.monthly_points || 0}, Streak: ${props.friend?.login_streak?.streak_count || 0}, Status: ${props.friend?.status || 'N/A'}, Timezone: ${props.friend?.timezone || 'N/A'}, Communities: ${props.communityCount || 0}, Activities: ${props.activities?.length || 0}`);
-  // Sample data
-  const friend = {
-    name: 'First Name Last Name',
-    username: '@username',
-    profileImage: require('@/assets/images/andrew.png'),
-    points: 400,
-    communities: 15,
-    bioText: 'Lorem ipsum dolor sit amet consectetur. Elit nisi amet semper arcu. Magna suspendisse purus sed posuere tincidunt blandit nibh ornare nunc. Venenatis id quam gravida nisi. Morbi tincidunt convallis enim tristique mus. Tempus vitae morbi ut.',
-    primaryActivity: 'Working Out',
-    secondaryActivity: 'Rise & Shine',
-    gender: 'Female',
-    timezone: 'GMT +5',
-    dailyGoals: [
-      {
-        category: 'RISE_AND_SHINE',
-        scheduledDatetime: '2024-02-20T14:00:00Z',
-        duration: 60,
-        status: 'In progress',
-        description: 'Activity Description: text text text text',
-      },
-      {
-        category: 'RISE_AND_SHINE',
-        scheduledDatetime: '2024-02-20T14:00:00Z',
-        duration: 60,
-        status: 'In progress',
-        description: 'Activity Description: text text text text',
-      },
-      {
-        category: 'RISE_AND_SHINE',
-        scheduledDatetime: '2024-02-20T14:00:00Z',
-        duration: 60,
-        status: 'In progress',
-        description: 'Activity Description: text text text text',
-      },
-    ]
-  };
 
   return (
     <View style={styles.container}>

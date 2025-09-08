@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import FullPostCard from '@/components/features/posts/FullPostCard';
 import CommentInput from '@/components/features/posts/CommentInput';
 import CommentSection from '@/components/features/posts/CommentSection';
 import ReplyContext from '@/components/features/posts/ReplyContext';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
+import LoadingScreen from '@/components/ui/common/loading';
 
 interface PostScreenProps {
   post: any;
@@ -19,16 +21,13 @@ interface PostScreenProps {
 
 const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, formattedDate }: PostScreenProps) => {
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   const params = useLocalSearchParams();
   const [showReply, setShowReply] = useState(false);
   const [selectedComment, setSelectedComment] = useState<any>(null);
+  const insets = useSafeAreaInsets();
 
   const handleReply = (commentId: string) => {
     const comment = comments.find(c => c.id.toString() === commentId);
@@ -47,23 +46,27 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.headerBackground}>
-          <SafeAreaView>
-            <View style={styles.headerContent}>
-              <TouchableOpacity 
-                style={styles.backButton}
-                onPress={() => router.back()}
-              >
-                <Image 
-                  source={require("@/assets/icons/backArrow.png")}
-                  style={styles.backIcon}
-                />
-              </TouchableOpacity>
-              <Text style={styles.headerTitle}>Post</Text>
+      {/* Top Safe Area - Blue */}
+      <View style={[styles.topSafeArea, { height: insets.top }]} />
+      
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.contentContainer}>
+          <ScrollView style={styles.scrollView}>
+            {/* Header Extension */}
+            <View style={styles.headerExtension}>
+              <View style={styles.headerContent}>
+                <TouchableOpacity 
+                  style={styles.backButton}
+                  onPress={() => router.back()}
+                >
+                  <Image 
+                    source={require("@/assets/icons/backArrow.png")}
+                    style={styles.backIcon}
+                  />
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>Post</Text>
+              </View>
             </View>
-          </SafeAreaView>
-        </View>
 
         {/* Full Post Card */}
         <FullPostCard 
@@ -84,38 +87,43 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
           formattedDate={formattedDate}
         />
 
-        {/* Comments Section */}
-        <CommentSection
-          comments={comments}
-          onReply={handleReply}
-        />
-      </ScrollView>
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-        style={styles.bottomContainer}
-      >
-        {/* Reply Section (if active) */}
-        {showReply && selectedComment && (
-          <ReplyContext
-            profileImage={selectedComment.user.profile_picture}
-            username={selectedComment.user.username}
-            timestamp={getTimeAgo(selectedComment.created_at)}
-            comment={selectedComment.content}
-            onClose={() => {
-              setShowReply(false);
-              setSelectedComment(null);
-            }}
+          {/* Comments Section */}
+          <CommentSection
+            comments={comments}
+            onReply={handleReply}
           />
-        )}
+        </ScrollView>
 
-        {/* Comment Input */}
-        <CommentInput 
-          onSubmit={handleCommentSubmit}
-          placeholder={showReply ? `Reply to @${selectedComment?.username}...` : "Type comment..."}
-        />
-      </KeyboardAvoidingView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          style={styles.bottomContainer}
+        >
+          {/* Reply Section (if active) */}
+          {showReply && selectedComment && (
+            <ReplyContext
+              profileImage={selectedComment.user.profile_picture}
+              username={selectedComment.user.username}
+              timestamp={getTimeAgo(selectedComment.created_at)}
+              comment={selectedComment.content}
+              onClose={() => {
+                setShowReply(false);
+                setSelectedComment(null);
+              }}
+            />
+          )}
+
+          {/* Comment Input */}
+          <CommentInput 
+            onSubmit={handleCommentSubmit}
+            placeholder={showReply ? `Reply to @${selectedComment?.username}...` : "Type comment..."}
+          />
+          
+          {/* Bottom Safe Area - White (inside KeyboardAvoidingView) */}
+          <View style={[styles.bottomSafeArea, { height: insets.bottom }]} />
+        </KeyboardAvoidingView>
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -124,19 +132,34 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  topSafeArea: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+  },
+  bottomSafeArea: {
+    backgroundColor: '#FFFFFF',
+    width: '100%',
+  },
+  safeArea: {
+    flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   },
   scrollView: {
     flex: 1,
   },
+  headerExtension: {
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+  },
   bottomContainer: {
+    backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: '#FFFFFF',
-    marginBottom: 16,
-  },
-  headerBackground: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
+    paddingBottom: 8,
   },
   headerContent: {
     flexDirection: 'row',

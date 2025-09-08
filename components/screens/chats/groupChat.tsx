@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { s } from "react-native-size-matters";
 import { router, useLocalSearchParams } from 'expo-router';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 const GroupChat = () => {
   const { chatId } = useLocalSearchParams();
@@ -39,7 +40,7 @@ const GroupChat = () => {
               onPress={() => router.push(`/chats/${chatId}/groupInfo`)}
             >
               <Image
-                source={require("@/assets/images/andrew.png")}
+                source={{ uri: DEFAULT_PROFILE_PICTURE }}
                 style={styles.groupImage}
               />
               <Text style={styles.name}>Running Club</Text>

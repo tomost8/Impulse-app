@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 interface AboutProps {
   description: string;
@@ -12,7 +13,7 @@ const About: React.FC<AboutProps> = ({
   description = "",
   founderName = "Founder Name",
   founderBio = "Lorem ipsum dolor sit amet consectetur. Bibendum vestibulum purus sed gravida aenean. At amet.",
-  founderImage = require("@/assets/images/andrew.png"),
+  founderImage = DEFAULT_PROFILE_PICTURE,
 }) => {
   return (
     <View style={styles.container}>

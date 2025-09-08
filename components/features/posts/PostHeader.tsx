@@ -1,29 +1,106 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Alert, Linking } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
+import * as MediaLibrary from 'expo-media-library';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 interface HeaderProps {
   username?: string;
-  timeAgo?: string;
   profileImage?: string;
+  imageUrls?: string[];
+  mainImageIndex?: number;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
-  username = "Username",
-  timeAgo = "18 minutes ago",
-  profileImage
+  username = "",
+  profileImage,
+  imageUrls = [],
+  mainImageIndex = 0
 }) => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  const saveImageToGallery = async () => {
+    try {
+      setIsSaving(true);
+      const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
+      if (status === 'granted') {
+        // Permission granted, save image
+        setSaveMessage('Saving...');
+        await MediaLibrary.saveToLibraryAsync(imageUrls[mainImageIndex]);
+        setSaveMessage('Saved!');
+        setTimeout(() => setSaveMessage(''), 1000);
+      } else if (canAskAgain === false) {
+        // Permission permanently denied, show alert to go to settings
+        Alert.alert(
+          'Permission Required',
+          'To save images to your gallery, please enable photo library access in your device settings.',
+          [
+            { 
+              text: 'Cancel', 
+              style: 'cancel',
+              onPress: () => {
+                setSaveMessage('Permission denied');
+                setTimeout(() => setSaveMessage(''), 1500);
+              }
+            },
+            { 
+              text: 'Open Settings', 
+              onPress: () => {
+                Linking.openSettings();
+                //setSaveMessage('Check settings and try again');
+                //setTimeout(() => setSaveMessage(''), 1000);
+              }
+            }
+          ]
+        );
+      } else {
+        // Permission denied but can ask again - android only pretty much, need to test
+        setSaveMessage('Permission denied');
+        setTimeout(() => setSaveMessage(''), 1000);
+      }
+    } catch (error) {
+      console.error('Error saving image:', error);
+      setSaveMessage('Save failed');
+      setTimeout(() => setSaveMessage(''), 1000);
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
         <View style={styles.profileContainer}>
           <Image 
-            source={profileImage ? { uri: profileImage } : require("@/assets/images/andrew.png")}
+            source={profileImage ? { uri: profileImage } : { uri: DEFAULT_PROFILE_PICTURE }}
             style={styles.profilePicture}
           />
         </View>
         <Text style={styles.username}>{username}</Text>
       </View>
-      <Text style={styles.timeAgo}>{timeAgo}</Text>
+      <View style={styles.saveContainer}>
+        {saveMessage ? (
+          <Text style={styles.saveMessage} numberOfLines={1}>{saveMessage}</Text>
+        ) : null}
+        <TouchableOpacity 
+          style={[
+            styles.saveButton,
+            (!imageUrls || imageUrls.length === 0) && styles.disabledButton
+          ]}
+          onPress={saveImageToGallery}
+          disabled={isSaving || !imageUrls || imageUrls.length === 0}
+        >
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#DE728D" />
+          ) : (
+            <MaterialCommunityIcons
+              name="download-outline"
+              size={20}
+              color={(!imageUrls || imageUrls.length === 0) ? "#CCCCCC" : "#666666"}
+            />
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -64,10 +141,21 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '600',
   },
-  timeAgo: {
-    fontSize: 12,
+  saveContainer: {
+    alignItems: 'flex-end',
+  },
+  saveButton: {
+    padding: 4,
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  saveMessage: {
+    fontSize: 10,
     fontFamily: 'Open Sans',
-    color: '#979797',
+    color: '#DE728D',
+    textAlign: 'right',
+    marginBottom: 2,
   },
 });
 

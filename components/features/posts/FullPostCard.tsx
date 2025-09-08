@@ -1,8 +1,9 @@
-//import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import PostHeader from './PostHeader';
 import PostContent from './PostContent';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
+import { getLabelByCategory, getIconByCategory } from '@/utils/goals';
 
 interface FullPostCardProps {
   post?: {
@@ -22,11 +23,29 @@ interface FullPostCardProps {
 }
 
 const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike, formattedDate }) => {
+  const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [isSwapping, setIsSwapping] = useState(false);
+
   const handleLike = () => {
     if (post?.liked) {
       onUnlike?.();
     } else {
       onLike?.();
+    }
+  };
+
+  const handleImageSwap = async () => {
+    if (post.images && post.images.length > 1 && !isSwapping) {
+      setIsSwapping(true);
+      
+      // Small delay to prevent spam clicking
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      setMainImageIndex(prev => prev === 0 ? 1 : 0);
+      
+      // Wait for crossfade animation to complete
+      await new Promise(resolve => setTimeout(resolve, 200));
+      setIsSwapping(false);
     }
   };
   return (
@@ -40,47 +59,48 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
       
       <PostHeader 
         username={post.username}
-        timeAgo={post.timeAgo}
         profileImage={post.profileImage}
+        imageUrls={post.images}
+        mainImageIndex={mainImageIndex}
       />
       <PostContent 
         caption={post.caption}
         imageUrls={post.images}
+        mainImageIndex={mainImageIndex}
+        onImageSwap={handleImageSwap}
+        isSwapping={isSwapping}
       />
       <View style={styles.interactionContainer}>
-        <View style={styles.interactionGroup}>
+        <View style={styles.leftInteractions}>
           <TouchableOpacity 
             style={styles.interactionButton}
             onPress={handleLike}
           >
-            {/* <Image 
-              source={require("@/assets/icons/heart.png")}
-              style={styles.icon}
-            /> */}
             <MaterialCommunityIcons
               name={post?.liked ? "heart" : "heart-outline"}
               size={20}
-              color={post?.liked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
-              style={styles.icon}
+              color={post?.liked ? "#FF0000" : "#000"}
             />
-            <Text style={styles.count}>{post.likeCount} like{post.likeCount === 1 ? '' : 's'}</Text>
+            <Text style={styles.count}>{post.likeCount}</Text>
           </TouchableOpacity>
-        </View>
 
-        <View style={styles.interactionGroup}>
           <TouchableOpacity style={styles.interactionButton}>
             <Image 
               source={require("@/assets/icons/commenticon.png")}
               style={styles.icon}
             />
-            <Text style={styles.count}>{post.commentCount} comment{post.commentCount === 1 ? '' : 's'}</Text>
+            <Text style={styles.count}>{post.commentCount}</Text>
           </TouchableOpacity>
         </View>
 
         {/* Category */}
-        {post.category && (
+        {post.category && getIconByCategory(post.category) && (
           <View style={styles.categoryGroup}>
-            <Text style={styles.categoryText}>{post.category}</Text>
+            <Image 
+              source={getIconByCategory(post.category)!}
+              style={styles.categoryIcon}
+            />
+            <Text style={styles.categoryText}>{getLabelByCategory(post.category)}</Text>
           </View>
         )}
       </View>
@@ -100,10 +120,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  interactionGroup: {
+  leftInteractions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 20,
   },
   interactionButton: {
     flexDirection: 'row',
@@ -124,24 +144,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E1E1E1',
   },
   dateText: {
     fontSize: 16,
     fontFamily: 'Poppins',
     fontWeight: '600',
-    color: '#242020',
+    color: '#DE728D',
     textAlign: 'center',
   },
   categoryGroup: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
+  },
+  categoryIcon: {
+    width: 16,
+    height: 16,
+    resizeMode: 'contain',
   },
   categoryText: {
     fontSize: 14,
     fontFamily: 'Open Sans',
-    color: '#666666',
+    color: '#DE728D',
     fontWeight: '500',
   },
 });

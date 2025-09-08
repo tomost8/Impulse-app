@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
+import { DEFAULT_COMMUNITY_THUMBNAIL } from '@/utils/userOptions';
 
 interface HeaderProps {
   name: string;
@@ -34,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={thumbnail ? { uri: thumbnail } : require("@/assets/images/communityprofile.png")}
+        source={thumbnail ? { uri: thumbnail } : { uri: DEFAULT_COMMUNITY_THUMBNAIL }}
         style={styles.coverImage}
       />
       

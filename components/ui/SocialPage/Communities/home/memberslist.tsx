@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 interface Member {
   id: string;
   name: string;
@@ -24,7 +25,7 @@ const MembersList: React.FC<MemberListProps> = ({
           <View key={`${member.id}-${index}`} style={styles.memberCard}>
             <View style={styles.memberInfo}>
               <Image
-                source={member.profile_picture ? { uri: member.profile_picture } : require("@/assets/images/andrew.png")}
+                source={member.profile_picture ? { uri: member.profile_picture } : { uri: DEFAULT_PROFILE_PICTURE }}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>

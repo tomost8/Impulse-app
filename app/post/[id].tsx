@@ -15,7 +15,7 @@ import { debugRenders } from '@/debug/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // Utilities
-import { getLocalDay } from '@/utils/timezoneProcessing';
+import { getLocalDay, getFormattedDate } from '@/utils/timezoneProcessing';
 
 const PostPage = () => {
   const { id, isLiked } = useLocalSearchParams(); // postId
@@ -154,7 +154,7 @@ const PostPage = () => {
   }
 
   // Format the post date for display
-  const formattedDate = postRef.current?.created_at ? getLocalDay(postRef.current.created_at, timezone) : null;
+  const formattedDate = postRef.current?.created_at ? getFormattedDate(postRef.current.created_at, timezone) : null;
 
   return (
     <PostScreen

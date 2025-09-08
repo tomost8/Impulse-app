@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar, Dimensions, ActivityIndicator } from 'react-native';
 
 interface PostContentProps {
   imageUrls?: string[];
   caption?: string;
   isSinglePost?: boolean;
+  mainImageIndex?: number;
+  onImageSwap?: () => void;
+  isSwapping?: boolean;
 }
 
 const CORNER_THRESHOLD = 100; // Distance from corner to trigger snap
 const SMALL_IMAGE_SIZE = { width: 118, height: 160 }; // ~1/5 of main image
 const PADDING = 10;
 
-const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSinglePost = false }) => {
-  const [mainImageIndex, setMainImageIndex] = useState(0);
+const PostContent: React.FC<PostContentProps> = ({ 
+  imageUrls, 
+  caption, 
+  isSinglePost = false, 
+  mainImageIndex = 0, 
+  onImageSwap,
+  isSwapping = false
+}) => {
   const [position] = useState(new Animated.ValueXY({ x: PADDING, y: PADDING }));
   const [corner, setCorner] = useState<'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'>('topLeft');
+  const [foregroundOpacity] = useState(new Animated.Value(0));
 
   const hasCaption = caption && caption.trim().length > 0;
 
-  const handleImageSwap = () => {
-    // Toggle mainImageIndex between 0 and 1 to swap images
-    setMainImageIndex(prev => prev === 0 ? 1 : 0);
-  };
+  // Smooth crossfade animation when mainImageIndex changes
+  useEffect(() => {
+    Animated.timing(foregroundOpacity, {
+      toValue: mainImageIndex === 1 ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [mainImageIndex, foregroundOpacity]);
 
   const pan = PanResponder.create({
     onStartShouldSetPanResponder: () => !isSinglePost,
@@ -59,11 +73,34 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
     <View style={[styles.container, !hasCaption && styles.containerNoCaption]}>
       {/* Main Image Container */}
       <View style={styles.imageContainer}>
+        {/* Background image (always rendered) */}
         <Image
-          source={{ uri: imageUrls[mainImageIndex] }}
-          style={styles.image}
+          source={{ uri: imageUrls[0] }}
+          style={[styles.image, styles.backgroundImage]}
           resizeMode="cover"
         />
+        
+        {/* Foreground image (overlay) */}
+        {imageUrls.length > 1 && (
+          <Animated.Image
+            source={{ uri: imageUrls[1] }}
+            style={[
+              styles.image,
+              styles.foregroundImage,
+              {
+                opacity: foregroundOpacity,
+              }
+            ]}
+            resizeMode="cover"
+          />
+        )}
+        
+        {/* Loading overlay when swapping */}
+        {isSwapping && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          </View>
+        )}
 
         {/* Small Image - Only show for double camera posts */}
         {!isSinglePost && imageUrls.length > 1 && (
@@ -74,7 +111,7 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
             ]}
             {...pan.panHandlers}
           >
-            <TouchableOpacity onPress={handleImageSwap}>
+            <TouchableOpacity onPress={onImageSwap} disabled={isSwapping}>
               <Image
                 source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
                 style={styles.smallImage}
@@ -109,6 +146,27 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
+    borderRadius: 5,
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  foregroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 5,
   },
   singleImage: {

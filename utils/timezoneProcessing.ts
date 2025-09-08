@@ -67,6 +67,13 @@ export const getLocalDay = (utcTimestamp: string, timezone: string) => {
     .format('YYYY-MM-DD');
 };
 
+// Returns "Month Date, Year" format (e.g., "January 1, 2025")
+export const getFormattedDate = (utcTimestamp: string, timezone: string) => {
+  return moment.utc(utcTimestamp)
+    .tz(timezone)
+    .format('MMMM D, YYYY');
+};
+
 export const getTimeAgo = (utcTimestamp: string) => {
   return moment.utc(utcTimestamp).fromNow();
 };

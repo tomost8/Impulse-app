@@ -15,6 +15,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
+import { DEFAULT_COMMUNITY_THUMBNAIL } from '@/utils/userOptions';
 
 interface EditCommunityScreenProps {
   loading: boolean;
@@ -93,7 +94,7 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
             onPress={handleImagePick}
           >
             <Image
-              source={props.formData.thumbnail ? { uri: props.formData.thumbnail } : require("@/assets/images/communityprofile.png")}
+              source={props.formData.thumbnail ? { uri: props.formData.thumbnail } : { uri: DEFAULT_COMMUNITY_THUMBNAIL }}
               style={styles.profileImage}
             />
           </TouchableOpacity>

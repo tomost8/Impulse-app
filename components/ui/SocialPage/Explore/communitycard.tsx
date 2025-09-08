@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
+import { DEFAULT_COMMUNITY_THUMBNAIL } from '@/utils/userOptions';
 
 interface CommunityCardProps {
   id: string;
@@ -33,7 +34,7 @@ const CommunityCard: React.FC<CommunityCardProps> = ({
       activeOpacity={0.7}
     >
       <Image
-        source={image ? { uri: image } : require("@/assets/images/communityprofile.png")}
+        source={image ? { uri: image } : { uri: DEFAULT_COMMUNITY_THUMBNAIL }}
         style={styles.image}
         resizeMode="cover"
       />

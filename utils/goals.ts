@@ -2,8 +2,8 @@ interface Goal {
   id: number;
   label: string;
   category: string;
-  icon: string;
-  categoryIcon: string;
+  icon: any;
+  categoryIcon: any;
 }
 
 const goals: Goal[] = [
@@ -30,12 +30,12 @@ const getLabelByCategory = (category: string): string  => {
   return goal ? goal.label : 'No Goal Selected';
 };
 
-const getIconByCategory = (category: string | null): string | null => {
+const getIconByCategory = (category: string | null): any => {
   const goal = goals.find(goal => goal.category === category);
   return goal ? goal.icon : null;
 };
 
-const getCategoryIconByCategory = (category: string | null): string | null => {
+const getCategoryIconByCategory = (category: string | null): any => {
   const goal = goals.find(goal => goal.category === category);
   return goal ? goal.categoryIcon : null;
 };

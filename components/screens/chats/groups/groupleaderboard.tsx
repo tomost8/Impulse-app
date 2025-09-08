@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import LeaderboardTabs from '@/components/ui/common/Leaderboard/LeaderboardTabs';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 
 interface LeaderboardUser {
   id: string;
@@ -28,24 +29,24 @@ const GroupLeaderboardScreen = () => {
 
   // Updated sample data structure to match GraphQL schema
   const leaderboardData: LeaderboardUser[] = [
-    { id: '1', rank: 1, name: 'Pedro', points: { points: 3645 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '2', rank: 2, name: 'Andrew', points: { points: 3496 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '3', rank: 3, name: 'Freida', points: { points: 3178 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '4', rank: 4, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '5', rank: 5, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '6', rank: 6, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '7', rank: 7, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '8', rank: 8, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '9', rank: 9, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
-    { id: '10', rank: 10, name: 'Rodrigo', points: { points: 800 }, profileImage: require('@/assets/images/andrew.png') },
+    { id: '1', rank: 1, name: 'Pedro', points: { points: 3645 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '2', rank: 2, name: 'Andrew', points: { points: 3496 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '3', rank: 3, name: 'Freida', points: { points: 3178 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '4', rank: 4, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '5', rank: 5, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '6', rank: 6, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '7', rank: 7, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '8', rank: 8, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '9', rank: 9, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
+    { id: '10', rank: 10, name: 'Rodrigo', points: { points: 800 }, profileImage: DEFAULT_PROFILE_PICTURE },
   ];
+
+  const topThree = leaderboardData.slice(0, 3);
+  const remainingUsers = leaderboardData.slice(3, 10);
 
   const handleBack = () => {
     router.back();
   };
-
-  const topThree = leaderboardData.slice(0, 3);
-  const remainingUsers = leaderboardData.slice(3, 10);
 
   return (
     <SafeAreaView style={styles.container}>
