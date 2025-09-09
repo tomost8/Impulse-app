@@ -77,3 +77,9 @@ export const getFormattedDate = (utcTimestamp: string, timezone: string) => {
 export const getTimeAgo = (utcTimestamp: string) => {
   return moment.utc(utcTimestamp).fromNow();
 };
+
+// Format date for chat messages (e.g., "1/15/2025 2:30 PM")
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};

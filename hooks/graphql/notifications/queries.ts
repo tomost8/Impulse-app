@@ -62,13 +62,24 @@ export function useGetCommunityAnnouncements(communityId: number, authToken: str
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
     const announcements = data?.getCommunityNotifications?.notifications || [];
-    console.log("useGetCommunityAnnouncements:", {
-      "communityId": communityId,
-      "announcementCount": announcements.length,
-      "totalCount": data?.getCommunityNotifications?.totalCount,
-      "success": data?.getCommunityNotifications?.success,
-      "errors": data?.getCommunityNotifications?.errors
-    });
+    
+    // Log detailed announcement data
+    let announcementDetails = "";
+    if (announcements.length > 0) {
+      announcements.forEach((announcement: any, index: number) => {
+        announcementDetails += `\n  - Announcement ${index + 1}: ${JSON.stringify({
+          id: announcement.id,
+          title: announcement.title,
+          content: announcement.content,
+          created_at: announcement.created_at,
+          type: announcement.type,
+          sender_id: announcement.sender?.id,
+          sender_username: announcement.sender?.username,
+          sender_profile_picture: !!announcement.sender?.profile_picture
+        })}`;
+      });
+    }
+    console.log(`useGetCommunityAnnouncements - Community ID: ${communityId}, Count: ${announcements.length}, Total: ${data?.getCommunityNotifications?.totalCount}, Success: ${data?.getCommunityNotifications?.success}${announcementDetails}`);
   }
 
   return {

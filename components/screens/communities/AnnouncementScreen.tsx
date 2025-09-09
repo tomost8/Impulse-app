@@ -12,29 +12,66 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
+  Alert,
+  ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
+import { formatDate } from '@/utils/timezoneProcessing';
 
 interface AnnouncementScreenProps {
   communityName?: string;
   announcements?: any[];
   isAdmin?: boolean;
+  communityId?: number;
+  currentUserId?: number;
+  onSendAnnouncement?: (content: string) => Promise<{ success: boolean; error?: any }>;
 }
 
 const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
   communityName = "Community Name",
-  isAdmin = false
+  announcements = [],
+  isAdmin = false,
+  communityId = 1,
+  currentUserId = 0,
+  onSendAnnouncement
 }) => {
   const [announcement, setAnnouncement] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleSend = () => {
-    console.log('Sending announcement:', announcement);
-    setAnnouncement('');
+  const handleSend = async () => {
+    if (!announcement.trim()) {
+      Alert.alert('Error', 'Please enter an announcement message');
+      return;
+    }
+
+    if (!onSendAnnouncement) {
+      Alert.alert('Error', 'Send function not available');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await onSendAnnouncement(announcement);
+      
+      if (result.success) {
+        Alert.alert('Success', 'Announcement sent successfully! All community members will receive push notifications immediately.');
+        setAnnouncement('');
+      } else {
+        Alert.alert('Error', 'Failed to send announcement. Please try again.');
+      }
+    } catch (error) {
+      console.error('Failed to send announcement:', error);
+      Alert.alert('Error', 'Failed to send announcement. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+
 
   return (
     <View style={styles.container}>
@@ -59,7 +96,70 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
           </View>
 
           {/* Messages Container */}
-          <View style={styles.messagesContainer} />
+          <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
+            {announcements.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>No announcements yet</Text>
+                <Text style={styles.emptyStateSubtext}>
+                  {isAdmin ? 'Create the first announcement for your community' : 'Check back later for community updates'}
+                </Text>
+              </View>
+            ) : (
+              announcements.map((announcement) => {
+                const isCurrentUser = announcement.sender?.id === currentUserId;
+                return (
+                  <View key={announcement.id} style={[
+                    styles.messageBubble,
+                    isCurrentUser ? styles.messageBubbleRight : styles.messageBubbleLeft
+                  ]}>
+                    {!isCurrentUser && (
+                      <Image 
+                        source={
+                          announcement.sender?.profile_picture 
+                            ? { uri: announcement.sender.profile_picture }
+                            : require("@/assets/images/profilepicturecircle.png")
+                        }
+                        style={styles.profilePicture}
+                      />
+                    )}
+                    <View style={[
+                      styles.messageContainer,
+                      isCurrentUser ? styles.messageContainerRight : styles.messageContainerLeft
+                    ]}>
+                      {!isCurrentUser && (
+                        <Text style={styles.senderName}>
+                          {announcement.sender?.username || 'Unknown User'}
+                        </Text>
+                      )}
+                      <View style={[
+                        styles.messageContent,
+                        isCurrentUser ? styles.messageContentRight : styles.messageContentLeft
+                      ]}>
+                        <Text style={[
+                          styles.messageText,
+                          isCurrentUser ? styles.messageTextRight : styles.messageTextLeft
+                        ]}>{announcement.content}</Text>
+                        <Text style={[
+                          styles.messageTime,
+                          isCurrentUser ? styles.messageTimeRight : styles.messageTimeLeft
+                        ]}>{formatDate(announcement.created_at)}</Text>
+                      </View>
+                    </View>
+                    {isCurrentUser && (
+                      <Image 
+                        source={
+                          announcement.sender?.profile_picture 
+                            ? { uri: announcement.sender.profile_picture }
+                            : require("@/assets/images/profilepicturecircle.png")
+                        }
+                        style={styles.profilePicture}
+                      />
+                    )}
+                  </View>
+                );
+              })
+            )}
+          </ScrollView>
 
           {/* Input Container with KeyboardAvoidingView */}
           {isAdmin && (
@@ -78,12 +178,13 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
                   multiline
                 />
                 <TouchableOpacity 
-                  style={styles.sendButton}
+                  style={[styles.sendButton, isLoading && styles.sendButtonDisabled]}
                   onPress={handleSend}
+                  disabled={isLoading}
                 >
                   <Image 
                     source={require("@/assets/icons/Sent.png")}
-                    style={styles.sendIcon}
+                    style={[styles.sendIcon, isLoading && styles.sendIconDisabled]}
                   />
                 </TouchableOpacity>
               </View>
@@ -134,6 +235,103 @@ const styles = StyleSheet.create({
   messagesContainer: {
     flex: 1,
   },
+  messagesContent: {
+    padding: 16,
+    paddingBottom: 20,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    fontFamily: 'Poppins',
+    color: '#666666',
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    color: '#999999',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  messageBubble: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    alignItems: 'flex-start',
+  },
+  messageBubbleLeft: {
+    justifyContent: 'flex-start',
+  },
+  messageBubbleRight: {
+    justifyContent: 'flex-end',
+  },
+  profilePicture: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#E0EDFD',
+  },
+  messageContainer: {
+    flex: 1,
+  },
+  messageContainerLeft: {
+    marginLeft: 12,
+  },
+  messageContainerRight: {
+    marginRight: 12,
+    alignItems: 'flex-end',
+  },
+  senderName: {
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    color: '#242020',
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  messageContent: {
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    maxWidth: '85%',
+    position: 'relative',
+  },
+  messageContentLeft: {
+    backgroundColor: '#E0EDFD',
+    borderTopLeftRadius: 4,
+  },
+  messageContentRight: {
+    backgroundColor: '#E0EDFD',
+    borderTopRightRadius: 4,
+  },
+  messageText: {
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    lineHeight: 20,
+    marginBottom: 4,
+  },
+  messageTextLeft: {
+    color: '#333333',
+  },
+  messageTextRight: {
+    color: '#333333',
+  },
+  messageTime: {
+    fontSize: 11,
+    fontFamily: 'Open Sans',
+    textAlign: 'right',
+  },
+  messageTimeLeft: {
+    color: '#999999',
+  },
+  messageTimeRight: {
+    color: '#999999',
+  },
   keyboardAvoidView: {
     width: '100%',
   },
@@ -173,6 +371,12 @@ const styles = StyleSheet.create({
     height: 20,
     resizeMode: 'contain',
     tintColor: '#FFFFFF',
+  },
+  sendButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+  },
+  sendIconDisabled: {
+    tintColor: '#999999',
   },
 });
 

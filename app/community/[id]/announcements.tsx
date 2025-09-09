@@ -6,6 +6,7 @@ import AnnouncementScreen from '@/components/screens/communities/AnnouncementScr
 // Debug
 import { debugAnnouncementsPage } from '@/debug/utils';
 import { useGetCommunityAnnouncements } from '@/hooks/graphql/notifications/queries';
+import { useSendCommunityNotification } from '@/hooks/graphql/notifications/mutations';
 import { useLocalSearchParams } from 'expo-router';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
@@ -27,6 +28,9 @@ const AnnouncementsPage = () => {
  const hasFetchedAnnouncements = useRef(false);
  const { announcements, fetched: hasNewAnnouncementsData } = useGetCommunityAnnouncements(Number(id), authToken as string, !hasFetchedAnnouncements.current);
 
+ // Mutation for sending announcements
+ const { sendCommunityNotification } = useSendCommunityNotification();
+
  useEffect(() => {
   if (!hasNewCommunityData && !hasNewAnnouncementsData) {
     return;
@@ -44,20 +48,47 @@ const AnnouncementsPage = () => {
   }
  }, [hasNewCommunityData, hasNewAnnouncementsData]);
 
+
  // Mutation for announcement
 
  // Debug
  const loading = !hasFetchedCommunity.current || !hasFetchedAnnouncements.current;
  if (debugAnnouncementsPage && !loading) {
   const community = communityRef.current;
-  const announcements = announcementsRef.current || [];
   const isAdmin = community?.influencer?.id === user?.id;
-  const announcementDetails = announcements.map((announcement: any) => 
-    `  ID: ${announcement.id}, Title: ${announcement.title}, Content: ${announcement.content?.substring(0, 50)}${announcement.content?.length > 50 ? '...' : ''}`
-  ).join('\n');
-  console.log(`📱 Rendering AnnouncementsPage - Community ID: ${id}, Name: ${community?.name}, Is Admin: ${isAdmin}, Announcements: ${announcements.length}\n${announcementDetails}`);
+  // Announcement data
+  const announcements = announcementsRef.current || [];
+  let announcementDetails = "";
+  if (announcements.length > 0) {
+    announcements.forEach((announcement: any, index: number) => {
+      announcementDetails += `\n  - Announcement ${index + 1}: ${JSON.stringify({
+        id: announcement.id,
+        content: announcement.content,
+        created_at: announcement.created_at,
+        sender_id: announcement.sender?.id,
+        sender_username: announcement.sender?.username,
+        sender_profile_picture: !!announcement.sender?.profile_picture
+      })}`;
+    });
+  }
+  console.log(`📱 Rendering AnnouncementsPage - Community ID: ${id}, Name: ${community?.name}, Is Admin: ${isAdmin}, Announcements: ${announcements.length}${announcementDetails}`);
  }
 
+ // Handle sending announcements
+ const handleSendAnnouncement = async (content: string) => {
+  try {
+    await sendCommunityNotification({
+      title: "Community Announcement",
+      content: content.trim(),
+      type: "COMMUNITY_NOTICE"
+    }, Number(id), authToken as string);
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to send announcement:', error);
+    return { success: false, error: error };
+  }
+ };
 
   const isAdmin = communityRef.current?.influencer?.id === user?.id;
 
@@ -66,6 +97,9 @@ const AnnouncementsPage = () => {
     communityName={communityRef.current?.name}
     announcements={announcementsRef.current || []}
     isAdmin={isAdmin}
+    communityId={Number(id)}
+    currentUserId={user?.id}
+    onSendAnnouncement={handleSendAnnouncement}
    />
  );
 };
