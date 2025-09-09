@@ -1,10 +1,6 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Image, TouchableOpacity, Text } from 'react-native';
-import TopBar from '@/components/features/communities/TopBar';
-import Header from '@/components/features/communities/CommunityHeader';
-import About from '@/components/features/communities/About';
-import Announcement from '@/components/features/communities/Announcement';
-import MembersList from '@/components/features/communities/MembersList';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { CommunityHeader, CommunityProfile, About, Announcement, MembersList } from '@/components/features/communities';
 import { router } from 'expo-router';
 
 interface CommunityMainScreenProps {
@@ -44,30 +40,8 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerContent}>
-            <TouchableOpacity 
-              style={styles.backButton}
-              onPress={() => router.back()}
-            >
-              <Image 
-                source={require("@/assets/icons/backArrow.png")}
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Community</Text>
-            <TouchableOpacity 
-              style={styles.leaderboardButton}
-              onPress={handleLeaderboardPress}
-            >
-              <Image 
-                source={require("@/assets/icons/leaderboard.png")}
-                style={styles.leaderboardIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Header
+        <CommunityHeader onLeaderboardPress={handleLeaderboardPress} />
+        <CommunityProfile
           thumbnail={community?.thumbnail}
           name={community?.name || "Community Name"}
           memberCount={members?.length || 0}
@@ -104,43 +78,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  headerContainer: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: 45, // Add padding for status bar
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between', // This will space out the elements
-  },
-  backButton: {
-    padding: 5, // Smaller hit area
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backIcon: {
-    width: 12,
-    height: 16,
-    tintColor: '#242020',
-  },
-  headerTitle: {
-    flex: 1, // This will push the leaderboard icon to the right
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginLeft: 12,
-  },
-  leaderboardButton: {
-    padding: 5, // Smaller hit area
-  },
-  leaderboardIcon: {
-    width: 24,
-    height: 24,
-    tintColor: '#DE728D',
   },
 });
 

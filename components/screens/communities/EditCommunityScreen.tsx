@@ -1,17 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  TextInput,
-  StyleSheet, 
-  SafeAreaView,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
@@ -38,7 +26,7 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
   const handleImagePick = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'], // Updated to use modern array syntax
+        mediaTypes: ['images'],
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,
@@ -67,7 +55,7 @@ const EditCommunityScreen = (props: EditCommunityScreenProps) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {/* Top Bar */}
+          {/* Header */}
           <View style={styles.topBar}>
             <SafeAreaView>
               <View style={styles.topBarContent}>

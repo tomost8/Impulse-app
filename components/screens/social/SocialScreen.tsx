@@ -1,9 +1,6 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
-import TabSelector from "./TabSelector";
-import ListWithProfiles from "./CommunityList";
-import Filter from "./CommunityFilter";
-import Feed from "@/components/features/feeds/Feed";
+import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
+import { TabSelector, CommunityList, CommunityFilter, Feed } from "@/components/features/social";
 import LoadingScreen from "@/components/ui/common/loading";
 import { router } from "expo-router";
 const searchIcon = require("@/assets/icons/search.png");
@@ -101,13 +98,13 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
               <>
                 {/* Community List Section */}
                 <View style={styles.communityListSection}>
-                  <ListWithProfiles 
+                  <CommunityList 
                     communities={joinedCommunities} 
                   />
                 </View>
                 {/* Community Filter Section */}
                 <View style={styles.filterSection}>
-                  <Filter 
+                  <CommunityFilter 
                     communities={joinedCommunities} 
                     handleFilterChange={handleFilterChange} 
                   />

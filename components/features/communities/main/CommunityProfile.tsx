@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { DEFAULT_COMMUNITY_THUMBNAIL } from '@/utils/userOptions';
 
-interface HeaderProps {
+interface CommunityProfileProps {
   name: string;
   memberCount: number;
   thumbnail: string;
@@ -14,7 +14,7 @@ interface HeaderProps {
   isJoining: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const CommunityProfile: React.FC<CommunityProfileProps> = ({
   name = "Community Name",
   memberCount = 25,
   thumbnail,
@@ -131,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Header;
+export default CommunityProfile;

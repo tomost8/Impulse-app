@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, SafeAreaView, ScrollView, Text, Platform, StatusBar} from 'react-native';
-import { 
-  Header, 
-  SearchBar, 
-  CategoriesBar,
-  CommunityCard 
-} from './index';
+import { View, StyleSheet, SafeAreaView, ScrollView, Platform, StatusBar} from 'react-native';
+import { ExploreHeader, SearchBar, CategoriesBar, CommunityCard } from '@/components/features/social';
+import LoadingScreen from '@/components/ui/common/loading';
 import { getLabelByCategory } from '@/utils/goals';
 
 interface ExploreScreenProps {
@@ -20,7 +16,7 @@ const ExploreScreen = ({
   loading, communities, categoryList, memberList, handleJoinCommunity 
 }: ExploreScreenProps) => {
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   // Filtering
@@ -46,7 +42,7 @@ const ExploreScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header />
+      <ExploreHeader />
       <ScrollView 
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}

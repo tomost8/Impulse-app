@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { 
   View, 
-  Text, 
   Image, 
   TouchableOpacity, 
   TextInput,
   StyleSheet, 
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
   StatusBar,
   Alert,
-  ScrollView,
 } from 'react-native';
+import { AnnouncementMessageList } from '@/components/features/communities';
+import Header from '@/components/ui/common/headers/Header';
 import { router } from 'expo-router';
-import { formatDate } from '@/utils/timezoneProcessing';
 
 interface AnnouncementScreenProps {
   communityName?: string;
@@ -37,10 +35,6 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
 }) => {
   const [announcement, setAnnouncement] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleBack = () => {
-    router.back();
-  };
 
   const handleSend = async () => {
     if (!announcement.trim()) {
@@ -71,95 +65,21 @@ const AnnouncementScreen: React.FC<AnnouncementScreenProps> = ({
     }
   };
 
-
-
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           {/* Header */}
-          <View style={styles.header}>
-            <SafeAreaView>
-              <View style={styles.headerContent}>
-                <TouchableOpacity 
-                  style={styles.backButton}
-                  onPress={handleBack}
-                >
-                  <Image 
-                    source={require("@/assets/icons/backArrow.png")}
-                    style={styles.backIcon}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.title}>{communityName}</Text>
-              </View>
-            </SafeAreaView>
-          </View>
+          <Header 
+            title={communityName}
+            onBackPress={() => router.back()}
+          />
 
-          {/* Messages Container */}
-          <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-            {announcements.length === 0 ? (
-              <View style={styles.emptyState}>
-                <Text style={styles.emptyStateText}>No announcements yet</Text>
-                <Text style={styles.emptyStateSubtext}>
-                  {isAdmin ? 'Create the first announcement for your community' : 'Check back later for community updates'}
-                </Text>
-              </View>
-            ) : (
-              announcements.map((announcement) => {
-                const isCurrentUser = announcement.sender?.id === currentUserId;
-                return (
-                  <View key={announcement.id} style={[
-                    styles.messageBubble,
-                    isCurrentUser ? styles.messageBubbleRight : styles.messageBubbleLeft
-                  ]}>
-                    {!isCurrentUser && (
-                      <Image 
-                        source={
-                          announcement.sender?.profile_picture 
-                            ? { uri: announcement.sender.profile_picture }
-                            : require("@/assets/images/profilepicturecircle.png")
-                        }
-                        style={styles.profilePicture}
-                      />
-                    )}
-                    <View style={[
-                      styles.messageContainer,
-                      isCurrentUser ? styles.messageContainerRight : styles.messageContainerLeft
-                    ]}>
-                      {!isCurrentUser && (
-                        <Text style={styles.senderName}>
-                          {announcement.sender?.username || 'Unknown User'}
-                        </Text>
-                      )}
-                      <View style={[
-                        styles.messageContent,
-                        isCurrentUser ? styles.messageContentRight : styles.messageContentLeft
-                      ]}>
-                        <Text style={[
-                          styles.messageText,
-                          isCurrentUser ? styles.messageTextRight : styles.messageTextLeft
-                        ]}>{announcement.content}</Text>
-                        <Text style={[
-                          styles.messageTime,
-                          isCurrentUser ? styles.messageTimeRight : styles.messageTimeLeft
-                        ]}>{formatDate(announcement.created_at)}</Text>
-                      </View>
-                    </View>
-                    {isCurrentUser && (
-                      <Image 
-                        source={
-                          announcement.sender?.profile_picture 
-                            ? { uri: announcement.sender.profile_picture }
-                            : require("@/assets/images/profilepicturecircle.png")
-                        }
-                        style={styles.profilePicture}
-                      />
-                    )}
-                  </View>
-                );
-              })
-            )}
-          </ScrollView>
+          {/* Announcement Message List */}
+          <AnnouncementMessageList 
+            announcements={announcements}
+            currentUserId={currentUserId}
+          />
 
           {/* Input Container with KeyboardAvoidingView */}
           {isAdmin && (
@@ -204,133 +124,6 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     flex: 1,
-  },
-  header: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 16,
-  },
-  backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    width: 18,
-    height: 18,
-    resizeMode: 'contain',
-    tintColor: '#242020',
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    color: '#242020',
-    marginLeft: 6,
-    fontWeight: '600',
-  },
-  messagesContainer: {
-    flex: 1,
-  },
-  messagesContent: {
-    padding: 16,
-    paddingBottom: 20,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  emptyStateText: {
-    fontSize: 18,
-    fontFamily: 'Poppins',
-    color: '#666666',
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  emptyStateSubtext: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#999999',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  messageBubble: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    paddingHorizontal: 16,
-    alignItems: 'flex-start',
-  },
-  messageBubbleLeft: {
-    justifyContent: 'flex-start',
-  },
-  messageBubbleRight: {
-    justifyContent: 'flex-end',
-  },
-  profilePicture: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#E0EDFD',
-  },
-  messageContainer: {
-    flex: 1,
-  },
-  messageContainerLeft: {
-    marginLeft: 12,
-  },
-  messageContainerRight: {
-    marginRight: 12,
-    alignItems: 'flex-end',
-  },
-  senderName: {
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    color: '#242020',
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  messageContent: {
-    borderRadius: 18,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    maxWidth: '85%',
-    position: 'relative',
-  },
-  messageContentLeft: {
-    backgroundColor: '#E0EDFD',
-    borderTopLeftRadius: 4,
-  },
-  messageContentRight: {
-    backgroundColor: '#E0EDFD',
-    borderTopRightRadius: 4,
-  },
-  messageText: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-  messageTextLeft: {
-    color: '#333333',
-  },
-  messageTextRight: {
-    color: '#333333',
-  },
-  messageTime: {
-    fontSize: 11,
-    fontFamily: 'Open Sans',
-    textAlign: 'right',
-  },
-  messageTimeLeft: {
-    color: '#999999',
-  },
-  messageTimeRight: {
-    color: '#999999',
   },
   keyboardAvoidView: {
     width: '100%',

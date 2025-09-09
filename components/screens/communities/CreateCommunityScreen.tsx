@@ -1,16 +1,5 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  TextInput,
-  StyleSheet, 
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar
-} from 'react-native';
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, ScrollView, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
 import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { goals } from '@/utils/goals';
@@ -35,7 +24,7 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
   const handleImagePick = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'], // Updated to use modern array syntax
+        mediaTypes: ['images'], 
         allowsEditing: true,
         aspect: [1, 1],
         quality: 1,

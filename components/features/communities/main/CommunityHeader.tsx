@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-interface TopBarProps {
+interface CommunityHeaderProps {
   onLeaderboardPress?: () => void;
 }
 
-const TopBar: React.FC<TopBarProps> = ({ onLeaderboardPress }) => {
+const CommunityHeader: React.FC<CommunityHeaderProps> = ({ onLeaderboardPress }) => {
+  const insets = useSafeAreaInsets();
+  
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}
@@ -34,12 +37,13 @@ const TopBar: React.FC<TopBarProps> = ({ onLeaderboardPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 65,
-    backgroundColor: '#E0EDFD',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    width: "100%",
+    backgroundColor: "#E0EDFD",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
+    paddingBottom: 15,
   },
   backButton: {
     padding: 8,
@@ -61,4 +65,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TopBar;
+export default CommunityHeader;
