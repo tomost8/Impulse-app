@@ -5,7 +5,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 import { useGetChat, useGetChatMembers, useGetGroupLeaderboard } from '@/hooks/graphql/chats/queries';
 import { useDeleteChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
-import GroupInfoScreen from '@/components/screens/chats/groups/groupinfo';
+import ChatInfoScreen from '@/components/screens/chats/ChatInfoScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 
@@ -85,7 +85,7 @@ const GroupInfoPage = (props: any) => {
     );
   }
 
-  return <GroupInfoScreen 
+  return <ChatInfoScreen 
     loading={loading}
     title={chatRef.current?.title || ''}
     members={chatMembersRef.current || []}

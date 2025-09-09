@@ -3,7 +3,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
-import AddDailyGoalsScreen from '@/components/screens/home/AddActivities';
+import AddDailyGoalsScreen from '@/components/screens/home/AddActivitiesScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 import { router } from 'expo-router';

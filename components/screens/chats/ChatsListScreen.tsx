@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
-import ConnectPopup from '@/components/screens/connect/connectpopup';
+import { ConnectPopup } from '@/components/features/chats';
 
 interface ChatMessage {
   id: string;
@@ -23,13 +23,13 @@ interface ChatMessage {
   time: string;
 }
 
-interface ChatScreenProps {
+interface ChatsListScreenProps {
   loading: boolean;
   chats: ChatMessage[];
   requestCount: number;
 }
 
-const ChatScreen = (props: ChatScreenProps) => {
+const ChatsListScreen = (props: ChatsListScreenProps) => {
   if (props.loading) {
     return <LoadingScreen />;
   }
@@ -213,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatScreen;
+export default ChatsListScreen;

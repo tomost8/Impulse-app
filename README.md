@@ -20,9 +20,10 @@ Impulse-app/
 │   ├── community/               # Screens for individual communities
 │   ├── user/                    # Screens for individual user profiles
 │   └── post/                    # Screens for individual posts
-├── components/                  # Reusable UI components (kind of a mess right now)
-│   ├── screens/                 # Screen-specific components
-│   └── ui/                      # Common (smaller?) UI components
+├── components/                  # Reusable UI components
+│   ├── screens/                 # Full-screen components for each page in routing
+│   ├── features/                # Feature-specific components
+│   └── ui/                      # UI components (being migrated)
 ├── contexts/                    # React Context providers
 │   ├── AuthContext.tsx          # User authentication state
 │   ├── DataProviderContext.tsx  # Global data management

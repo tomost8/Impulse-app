@@ -10,7 +10,7 @@ import {
   Keyboard
 } from 'react-native';
 import { router } from 'expo-router';
-import InviteSentPopup from './invitesentpopup';
+import { InviteSentPopup } from '@/components/features/chats';
 import Header from "@/components/ui/common/headers/Header";
 
 interface Friend {
@@ -21,14 +21,14 @@ interface Friend {
   isInvited: boolean;
 }
 
-interface InviteToGroupProps {
+interface InviteToChatProps {
   loading: boolean;
   friends: Friend[];
   members: any[];
   handleInvite: (friendId: number) => void;
 }
 
-const InviteToGroupScreen = (props: InviteToGroupProps) => {
+const InviteToChatScreen = (props: InviteToChatProps) => {
   if (props.loading) {
     return (
       <Text>Loading...</Text>
@@ -256,4 +256,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default InviteToGroupScreen;
+export default InviteToChatScreen;

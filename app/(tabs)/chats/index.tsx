@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 // GraphQL hooks
 
 // Components
-import ChatScreen from '@/components/screens/tabs/ChatsScreen';
+import ChatsListScreen from '@/components/screens/chats/ChatsListScreen';
 // Debug
 import { pageDisplay, debugChatsPage } from '@/debug/utils';
 // Services
@@ -217,7 +217,7 @@ const ChatPage = () => {
   }
 
   if (pageDisplay) {
-    return <ChatScreen 
+    return <ChatsListScreen 
       loading={loading}
       chats={chatInfo}
       requestCount={requestCount}

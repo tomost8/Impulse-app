@@ -15,7 +15,7 @@ import { router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import Header from "@/components/ui/common/headers/Header";
 
-interface StartGroupScreenProps {
+interface CreateChatScreenProps {
   loading: boolean;
   formData: {
     name: string;
@@ -29,7 +29,7 @@ interface StartGroupScreenProps {
   handleCreateGroup: () => void;
 }
 
-const StartGroupScreen = (props: StartGroupScreenProps) => {
+const CreateChatScreen = (props: CreateChatScreenProps) => {
   if (props.loading) {
     return (
       <Text>Loading...</Text>
@@ -84,7 +84,7 @@ const StartGroupScreen = (props: StartGroupScreenProps) => {
         onBackPress={() => router.back()}
       />
 
-      <ScrollView style={styles.scrollView}>
+      <ScrollView>
         <KeyboardAvoidingView 
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoidingView}
@@ -312,4 +312,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StartGroupScreen;
+export default CreateChatScreen;

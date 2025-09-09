@@ -6,7 +6,7 @@ import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useGetChatMembers } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
-import InviteToGroupScreen from '@/components/screens/chats/groups/invitetogroup';
+import InviteToChatScreen from '@/components/screens/chats/InviteToChatScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
@@ -77,7 +77,7 @@ const GroupInvitePage = (props: any) => {
     );
   }
 
-  return <InviteToGroupScreen 
+  return <InviteToChatScreen 
     loading={loading} 
     friends={acceptedFriends}
     members={chatMembersRef.current || []}

@@ -5,7 +5,7 @@ import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
 import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
 import { useRouter } from 'expo-router';
 // Components
-import HomeScreen from '@/components/screens/tabs/HomeScreen';
+import HomeScreen from '@/components/screens/home/HomeScreen';
 // Debug
 import { debugHomePage } from '@/debug/utils';
 // Services

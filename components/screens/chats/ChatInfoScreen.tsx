@@ -11,7 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
-import LeavePopup from './leavepopup';
+import { LeavePopup } from '@/components/features/chats';
 import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
 
@@ -23,7 +23,7 @@ interface Member {
   profile_picture: any;
 }
 
-interface GroupInfoScreenProps {
+interface ChatInfoScreenProps {
   loading: boolean;
   title: string;
   members: Member[];
@@ -31,7 +31,7 @@ interface GroupInfoScreenProps {
   handleLeave: () => void;
 }
 
-const GroupInfoScreen = (props: GroupInfoScreenProps) => {
+const ChatInfoScreen = (props: ChatInfoScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
@@ -331,4 +331,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GroupInfoScreen;
+export default ChatInfoScreen;

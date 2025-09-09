@@ -5,7 +5,7 @@ import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
   import { useDeleteChatMember } from '@/hooks/graphql/chats/mutations';
 import { useUpdateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
-import RequestsScreen from '@/components/screens/chats/requestsScreen';
+import RequestsScreen from '@/components/screens/chats/RequestsScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services

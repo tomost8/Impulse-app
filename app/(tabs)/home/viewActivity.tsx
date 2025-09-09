@@ -3,7 +3,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useUpdateActivity } from '@/hooks/graphql/activities/mutations';
 // Components
-import ViewGoalsScreen from '@/components/screens/home/ViewActivities';
+import ViewGoalsScreen from '@/components/screens/home/ViewActivitiesScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services

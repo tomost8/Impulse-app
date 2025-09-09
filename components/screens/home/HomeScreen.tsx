@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity, Image, Platform, StatusBar } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 
 import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section

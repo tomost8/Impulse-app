@@ -11,8 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
-import JoinSuccessPopup from './joinsuccesspopup';
-import PasswordPopup from './passwordpopup';
+import { JoinSuccessPopup, PasswordPopup } from '@/components/features/chats';
 import Header from "@/components/ui/common/headers/Header";
 
 interface Group {
@@ -22,13 +21,13 @@ interface Group {
   password?: string;
 }
 
-interface JoinGroupScreenProps {
+interface JoinChatScreenProps {
   loading: boolean;
   groups: Group[];
   handleJoinGroup: (id: string) => void;
 }
 
-const JoinGroupScreen = (props: JoinGroupScreenProps) => {
+const JoinChatScreen = (props: JoinChatScreenProps) => {
   if (props.loading) {
     return <Text>Loading...</Text>;
   }
@@ -233,4 +232,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default JoinGroupScreen;
+export default JoinChatScreen;

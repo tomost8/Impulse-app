@@ -5,7 +5,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
 // Components
-import JoinGroupScreen from '@/components/screens/connect/joingroup';
+import JoinChatScreen from '@/components/screens/chats/JoinChatScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 
@@ -85,7 +85,7 @@ const JoinGroupPage = (props: any) => {
   }
 
   return (
-    <JoinGroupScreen 
+    <JoinChatScreen 
       loading={loading}
       groups={joinableGroups || []}
       handleJoinGroup={handleJoinGroup}

@@ -5,7 +5,7 @@ import { useGetAllUsers } from '@/hooks/graphql/users/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import { useSendFriendRequest, useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
-import FindFriendScreen from '@/components/screens/chats/findfriend';
+import AddFriendsScreen from '@/components/screens/chats/AddFriendsScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
@@ -90,7 +90,7 @@ const AddFriendsPage = () => {
 
 
   return (
-    <FindFriendScreen 
+    <AddFriendsScreen 
       loading={loading}
       users={nonFriends || []}
       handleSendFriendRequest={handleSendFriendRequest}

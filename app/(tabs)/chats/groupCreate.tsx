@@ -5,7 +5,7 @@ import { uploadImage } from '@/utils/imageProcessing';
 // GraphQL hooks
 import { useCreateGroup } from '@/hooks/graphql/chats/mutations';
 // Components
-import StartGroupScreen from '@/components/screens/connect/startgroup';
+import CreateChatScreen from '@/components/screens/chats/CreateChatScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
@@ -76,7 +76,7 @@ const CreateGroupPage = () => {
   }
 
   return (
-    <StartGroupScreen 
+    <CreateChatScreen 
       loading={isCreatingGroup}
       formData={formData}
       handleFormDataChange={handleFormDataChange}

@@ -21,7 +21,7 @@ interface Friend {
   profile_picture: any;
 }
 
-interface FindFriendScreenProps {
+interface AddFriendsScreenProps {
   loading: boolean;
   users: Friend[];
   sentRequests: Friend[];
@@ -29,7 +29,7 @@ interface FindFriendScreenProps {
   handleCancelSentRequest: (friendId: number) => void;
 }
 
-const FindFriendScreen = (props: FindFriendScreenProps) => {
+const AddFriendsScreen = (props: AddFriendsScreenProps) => {
   if (props.loading) {
     return <LoadingScreen />;
   } 
@@ -295,4 +295,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FindFriendScreen;
+export default AddFriendsScreen;
