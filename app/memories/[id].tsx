@@ -6,16 +6,14 @@ import {useState, useEffect, useRef} from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetPost, useGetPostComments } from '@/hooks/graphql/posts/queries';
-import { useCreateComment, useLikePost, useUnlikePost } from '@/hooks/graphql/posts/mutations';
 // Components
 import StoryScreen from '@/components/features/memories/StoryScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
-import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 // Utilities
-import { getLocalDay, getFormattedDate } from '@/utils/timezoneProcessing';
+import { getFormattedDate, convertUtcToLocal, } from '@/utils/timezoneProcessing';
 import { useMemoriesNav } from '@/contexts/MemoriesContext';
 
 const MemoryPage = () => {
@@ -89,73 +87,6 @@ const MemoryPage = () => {
     }
   }, [hasNewPostData, hasNewCommentsData, post, comments, isLiked]);
 
-  // Add like/unlike mutations
-  const { likePost } = useLikePost();
-  const { unlikePost } = useUnlikePost();
-
-  // Add like/unlike handlers
-  const handleLikePost = async () => {
-    try {
-      await likePost(Number(id));
-      // Update persistent user action and like count immediately for UI feedback
-      userLikeAction.current = true;
-      userLikeCount.current = (userLikeCount.current || 0) + 1;
-      if (postRef.current) {
-        postRef.current.liked = true;
-        postRef.current.likeCount = userLikeCount.current;
-        setRenderCounter(prev => prev + 1);
-      }
-      // Reset fetch flags and trigger refetch after a delay
-      setTimeout(() => {
-        hasFetchedPost.current = false;
-      }, 100);
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  }
-
-  const handleUnlikePost = async () => {
-    try {
-      await unlikePost(Number(id));
-      // Update persistent user action and like count immediately for UI feedback
-      userLikeAction.current = false;
-      userLikeCount.current = Math.max(0, (userLikeCount.current || 0) - 1);
-      if (postRef.current) {
-        postRef.current.liked = false;
-        postRef.current.likeCount = userLikeCount.current;
-        setRenderCounter(prev => prev + 1);
-      }
-      // Reset fetch flags and trigger refetch after a delay
-      setTimeout(() => {
-        hasFetchedPost.current = false;
-      }, 100);
-    } catch (error) {
-      console.error("Error unliking post:", error);
-    }
-  }
-
-  // Add comment mutation
-  const { createComment } = useCreateComment();
-
-  const handleCreateComment = async (content: string, parentCommentId?: number) => {
-    try {
-      const input = {
-        post_id: Number(id),
-        content: content,
-        parent_comment_id: parentCommentId || null
-      }
-      const response = await createComment(input);
-      console.log("Response:", response);
-      // Reset fetch flags and trigger refetch after a delay
-      setTimeout(() => {
-        hasFetchedComments.current = false;
-        setRenderCounter(prev => prev + 1);
-      }, 100);
-    } catch (error) {
-      console.error("Error creating comment:", error);
-    }
-  }
-
   // Debug
   const loading = !hasFetchedPost.current || !hasFetchedComments.current;
   if (debugRenders && !loading) {
@@ -164,16 +95,14 @@ const MemoryPage = () => {
 
   // Format the post date for display
   const formattedDate = postRef.current?.created_at ? getFormattedDate(postRef.current.created_at, timezone) : null;
+  const formattedTime = postRef.current?.created_at ? convertUtcToLocal(postRef.current.created_at, timezone) : null;
 
   return (
     <StoryScreen
       loading={loading}
       post={postRef.current}
-      comments={commentsRef.current || []}
-      createComment={handleCreateComment}
-      onLike={handleLikePost}
-      onUnlike={handleUnlikePost}
       formattedDate={formattedDate}
+      formattedTime={formattedTime}
     />
   );
 }

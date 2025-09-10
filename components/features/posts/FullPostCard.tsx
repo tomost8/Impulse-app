@@ -6,6 +6,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIc
 import { getLabelByCategory, getIconByCategory } from '@/utils/goals';
 
 interface FullPostCardProps {
+  isStory?: boolean;
   post?: {
     username?: string;
     timeAgo?: string;
@@ -22,9 +23,10 @@ interface FullPostCardProps {
   formattedDate?: string | null;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike, formattedDate }) => {
+const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, formattedDate }) => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isSwapping, setIsSwapping] = useState(false);
+  const [isStoryVisible, setIsStoryVisible] = useState(isStory || false);
 
   const handleLike = () => {
     if (post?.liked) {
@@ -56,13 +58,13 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
           <Text style={styles.dateText}>{formattedDate}</Text>
         </View>
       )}
-      
-      <PostHeader 
+      {!isStoryVisible && <PostHeader 
         username={post.username}
         profileImage={post.profileImage}
         imageUrls={post.images}
         mainImageIndex={mainImageIndex}
-      />
+      />}
+
       <PostContent 
         caption={post.caption}
         imageUrls={post.images}
@@ -70,7 +72,8 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
         onImageSwap={handleImageSwap}
         isSwapping={isSwapping}
       />
-      <View style={styles.interactionContainer}>
+
+      {!isStoryVisible && <View style={styles.interactionContainer}>
         <View style={styles.leftInteractions}>
           <TouchableOpacity 
             style={styles.interactionButton}
@@ -84,14 +87,14 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
             <Text style={styles.count}>{post.likeCount}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.interactionButton}>
-            <Image 
-              source={require("@/assets/icons/commenticon.png")}
-              style={styles.icon}
-            />
-            <Text style={styles.count}>{post.commentCount}</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.interactionButton}>
+              <Image 
+                source={require("@/assets/icons/commenticon.png")}
+                style={styles.icon}
+              />
+              <Text style={styles.count}>{post.commentCount}</Text>
+            </TouchableOpacity>
+          </View>
 
         {/* Category */}
         {post.category && getIconByCategory(post.category) && (
@@ -103,7 +106,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ post = {}, onLike, onUnlike
             <Text style={styles.categoryText}>{getLabelByCategory(post.category)}</Text>
           </View>
         )}
-      </View>
+      </View>}
     </View>
   );
 };

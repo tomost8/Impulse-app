@@ -1,57 +1,54 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar, Alert } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useLocalSearchParams, router } from 'expo-router';
+import { router } from 'expo-router';
 import FullPostCard from '@/components/features/posts/FullPostCard';
-import CommentInput from '@/components/features/posts/CommentInput';
-import CommentSection from '@/components/features/posts/CommentSection';
-import ReplyContext from '@/components/features/posts/ReplyContext';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
 import LoadingScreen from '@/components/ui/common/loading';
-import { useMemoriesNav } from '@/contexts/MemoriesContext';
-import { saveImageToCameraRoll, formatMonthDayYear } from '@/utils/memories';
+import { saveImageToCameraRoll, } from '@/utils/memories';
+import StoryProgressBar from './progressBar';
 
 interface StoryScreenProps {
   post: any;
-  comments: any[];
   loading: boolean;
-  createComment: (comment: string, parentCommentId?: number) => void;
-  onLike: () => void;
-  onUnlike: () => void;
   formattedDate?: string | null;
+  formattedTime?: string | null;
 }
 
-const StoryScreen = ({ post, comments, loading, createComment, onLike, onUnlike, formattedDate }: StoryScreenProps) => {
-  if (loading) return <LoadingScreen />;
 
+
+const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScreenProps) => {
+  if (loading) return <LoadingScreen />;
+  
   const insets = useSafeAreaInsets();
-  const { getPrevId, getNextId } = useMemoriesNav();
-  const prevId = getPrevId();
-  const nextId = getNextId();
+  if (!post) return null;
 
   // Track which side (0/1) is visible for double-sided picture
   const [side, setSide] = useState(0);
   const images: string[] = post?.mediaUrls || [];
-  const visibleUrl = images[side] ?? images[0];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleUrl, setVisibleUrl] = useState(images[0] ?? null);
 
-  // Missing state added back
-  const [showReply, setShowReply] = useState(false);
-  const [selectedComment, setSelectedComment] = useState<any>(null);
+  useEffect(() => {
+    if (currentIndex >= 0 && currentIndex < images.length) {
+      setVisibleUrl(images[currentIndex]);
+    } else {
+      router.back();
+    }
+  }, [currentIndex, images]);
 
-  // Missing handlers added back
-  const handleReply = (commentId: string) => {
-    const comment = comments.find((c) => c.id.toString() === commentId);
-    if (comment) {
-      setSelectedComment(comment);
-      setShowReply(true);
+  const handleNext = () => {
+    if (currentIndex < images.length - 1) {
+      setCurrentIndex((i) => i + 1);
+    } else {
+    router.back();
     }
   };
 
-  const handleCommentSubmit = (comment: string) => {
-    createComment(comment, selectedComment?.id);
-    // Reset reply UI
-    setShowReply(false);
-    setSelectedComment(null);
+  const handlePrev = () => {
+    if (currentIndex >= 0) {
+      setCurrentIndex((i) => i - 1);
+    }
   };
 
   const onSave = async () => {
@@ -82,67 +79,67 @@ const StoryScreen = ({ post, comments, loading, createComment, onLike, onUnlike,
                 </TouchableOpacity>
               </View>
             </View>
-
-            {/* Double sided toggle (simple) */}
-            {images.length > 1 && (
-              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 6 }}>
-                <TouchableOpacity onPress={() => setSide(0)}>
-                  <View style={{ width: 10, height: 10, borderRadius: 5, margin: 4, backgroundColor: side === 0 ? '#DE728D' : '#ccc' }} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSide(1)}>
-                  <View style={{ width: 10, height: 10, borderRadius: 5, margin: 4, backgroundColor: side === 1 ? '#DE728D' : '#ccc' }} />
-                </TouchableOpacity>
-              </View>
-            )}
+            
+            <View>
+              <StoryProgressBar currentIndex={currentIndex} total={images.length} />
+              {formattedDate && (
+                <View style={{backgroundColor: '#FFFFFF', paddingHorizontal: 16, paddingVertical: 12, }}>
+                  <Text style={{ fontSize: 16, fontFamily: 'Poppins',fontWeight: '600',color: '#DE728D',textAlign: 'left',}}>{formattedDate}</Text>
+                  <Text style={{ fontSize: 12, fontFamily: 'Poppins',fontWeight: '600',color: '#DE728D',textAlign: 'left',}}>{formattedTime}</Text>
+                </View>
+              )}
+            </View>
 
             <FullPostCard
+              isStory={true}
               post={{
-                username: post.author.username,
                 timeAgo: getTimeAgo(post.created_at),
-                profileImage: post.author.profile_picture,
-                caption: post.caption,
                 images: [visibleUrl], // ensure the shown image matches the toggle
-                liked: post.liked,
-                likeCount: post.likeCount,
-                commentCount: comments.reduce((t, c) => t + 1 + (c.replies?.length || 0), 0),
                 category: post.category
               }}
-              onLike={onLike}
-              onUnlike={onUnlike}
-              formattedDate={formattedDate}
             />
 
-            <CommentSection comments={comments} onReply={handleReply} />
+            <TouchableOpacity
+              onPress={() => {
+                if (!post?.id) {
+                Alert.alert('Error', 'Post ID is missing!');
+                return;
+                }
+                router.push({ pathname: '/post/[id]', params: { id: String(post.id) } });
+              }}
+              style={[styles.postButton, styles.postButtonActive]}
+            >
+              <Text style={[
+                styles.postButtonText,
+                styles.postButtonTextActive
+              ]}>
+                {"View Post"}
+              </Text>
+            </TouchableOpacity>
+
+            <View
+              pointerEvents="box-none"
+              style={StyleSheet.absoluteFill}
+            >
+              <View
+                style={{ position: 'absolute',left: 0,right: 0,top: insets.top + 80,bottom: insets.bottom + 120,flexDirection: 'row', }}
+                pointerEvents="box-none"
+              >
+                <TouchableOpacity
+                  onPress={handlePrev}
+                  activeOpacity={1}
+                  style={{ flex: 1 }}
+                />
+                <TouchableOpacity
+                  onPress={handleNext}
+                  activeOpacity={1}
+                  style={{ flex: 1 }}
+                />
+              </View>
+            </View>
+
           </ScrollView>
 
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-            style={styles.bottomContainer}
-          >
-            {/* Reply Section (if active) */}
-            {showReply && selectedComment && (
-              <ReplyContext
-                profileImage={selectedComment.user?.profile_picture}
-                username={selectedComment.user?.username}
-                timestamp={getTimeAgo(selectedComment.created_at)}
-                comment={selectedComment.content}
-                onClose={() => {
-                  setShowReply(false);
-                  setSelectedComment(null);
-                }}
-              />
-            )}
-
-            {/* Comment Input */}
-            <CommentInput
-              onSubmit={handleCommentSubmit}
-              placeholder={showReply ? `Reply to @${selectedComment?.user?.username}...` : "Type comment..."}
-            />
-
-            {/* Bottom Safe Area - White (inside KeyboardAvoidingView) */}
-            <View style={[styles.bottomSafeArea, { height: insets.bottom }]} />
-          </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
     </View>
@@ -162,6 +159,10 @@ const styles = StyleSheet.create({
   backButton: { marginRight: 8 },
   backIcon: { width: 10, height: 15, tintColor: '#242020', marginLeft: 6, marginRight: 6 },
   headerTitle: { color: '#242020', fontSize: 16, fontFamily: 'Poppins', fontWeight: '600' },
+  postButton: { alignSelf: 'flex-end', marginRight: 24, marginVertical: 8, borderRadius: 20, borderWidth: 1, alignItems: 'center', },
+  postButtonActive: { backgroundColor: '#DE728D', borderColor: '#DE728D' },
+  postButtonText: { fontSize: 12, fontFamily: 'Poppins', fontWeight: '500', paddingVertical: 8, paddingHorizontal:16, color: '#666' },
+  postButtonTextActive: { color: '#fff' },
 });
 
 export default StoryScreen;
