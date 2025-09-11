@@ -4,6 +4,7 @@ import PostHeader from './PostHeader';
 import PostContent from './PostContent';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 import { getLabelByCategory, getIconByCategory } from '@/utils/goals';
+import { router } from 'expo-router';
 
 interface FullPostCardProps {
   isStory?: boolean;
@@ -21,12 +22,16 @@ interface FullPostCardProps {
   onLike?: () => void;
   onUnlike?: () => void;
   formattedDate?: string | null;
+  formattedTime?: string | null;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, formattedDate }) => {
+const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, formattedDate, formattedTime, onNext, onPrev }) => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [isSwapping, setIsSwapping] = useState(false);
   const [isStoryVisible, setIsStoryVisible] = useState(isStory || false);
+  const styles = useStyles(isStoryVisible);
 
   const handleLike = () => {
     if (post?.liked) {
@@ -51,8 +56,14 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
     <View style={styles.container}>
       {/* Date Section */}
       {formattedDate && (
-        <View style={styles.dateSection}>
-          <Text style={styles.dateText}>{formattedDate}</Text>
+        <View style={styles.headerContent}>
+          <View style={styles.dateSection}>
+            <Text style={styles.dateText}>{formattedDate}</Text>
+            {isStoryVisible && <Text style={styles.timeText}>{`${post.category} • ${formattedTime}`}</Text>}
+          </View>
+          {isStoryVisible && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+            <MaterialCommunityIcons name="close-thick" size={20} color="white" />
+          </TouchableOpacity>}
         </View>
       )}
       {!isStoryVisible && <PostHeader 
@@ -67,6 +78,9 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
         mainImageIndex={mainImageIndex}
         onImageSwap={handleImageSwap}
         isSwapping={isSwapping}
+        isStoryVisible={isStoryVisible}
+        onNext={onNext}
+        onPrev={onPrev}
       />
 
       {!isStoryVisible && <View style={styles.interactionContainer}>
@@ -83,14 +97,14 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
             <Text style={styles.count}>{post.likeCount}</Text>
           </TouchableOpacity>
 
-            <TouchableOpacity style={styles.interactionButton}>
-              <Image 
-                source={require("@/assets/icons/commenticon.png")}
-                style={styles.icon}
-              />
-              <Text style={styles.count}>{post.commentCount}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.interactionButton}>
+            <Image 
+              source={require("@/assets/icons/commenticon.png")}
+              style={styles.icon}
+            />
+            <Text style={styles.count}>{post.commentCount}</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Category */}
         {post.category && getIconByCategory(post.category) && (
@@ -106,67 +120,83 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  interactionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  leftInteractions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-  },
-  interactionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  icon: {
-    width: 20,
-    height: 20,
-    resizeMode: 'contain',
-  },
-  count: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#242020',
-  },
-  dateSection: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  dateText: {
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#DE728D',
-    textAlign: 'center',
-  },
-  categoryGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  categoryIcon: {
-    width: 16,
-    height: 16,
-    resizeMode: 'contain',
-  },
-  categoryText: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#DE728D',
-    fontWeight: '500',
-  },
-});
+const useStyles = (isStoryVisible: boolean) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: isStoryVisible ? "#000000" : "#FFFFFF",
+    },
+    interactionContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+    },
+    leftInteractions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 20,
+    },
+    interactionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    icon: {
+      width: 20,
+      height: 20,
+      resizeMode: 'contain',
+    },
+    count: {
+      fontSize: 14,
+      fontFamily: 'Open Sans',
+      color: '#242020',
+    },
+    headerContent: { 
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: isStoryVisible? 'space-between' : 'center',
+      backgroundColor: isStoryVisible? '#000' : '#FFFFFF',
+      paddingVertical: 8,
+    },
+    dateSection: {
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    dateText: {
+      fontSize: 16,
+      fontFamily: 'Poppins',
+      fontWeight: '600',
+      color: isStoryVisible ? '"#fff' : '#DE728D',
+      textAlign: isStoryVisible ? 'left' : 'center',
+    },
+    timeText: { 
+      fontSize: 12,
+      fontFamily: "Poppins",
+      fontWeight: "500",
+      color: "#fff",
+      marginTop: 2,
+    },
+    closeButton: {
+      marginRight: 24
+    },
+    categoryGroup: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+    },
+    categoryIcon: {
+      width: 16,
+      height: 16,
+      resizeMode: 'contain',
+    },
+    categoryText: {
+      fontSize: 14,
+      fontFamily: 'Open Sans',
+      color: '#DE728D',
+      fontWeight: '500',
+    },
+  });
 
 export default FullPostCard;

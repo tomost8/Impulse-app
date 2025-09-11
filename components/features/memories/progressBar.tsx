@@ -26,7 +26,6 @@ export default function StoryProgressBar({ currentIndex, total }: Props) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginHorizontal: 8,
     marginTop: 8,
   },
   track: {
