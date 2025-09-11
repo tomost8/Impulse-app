@@ -18,6 +18,7 @@ interface StoryScreenProps {
 
 
 const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
+  console.log("💠 StoryScreen posts:", posts);
   if (loading) return <LoadingScreen />;
   const { timezone} = useDataProvider();
 
@@ -26,6 +27,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
 
   // Track which side (0/1) is visible for double-sided picture
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
   const images: string[] = posts[currentIndex]?.mediaUrls || [];
   const formattedDate = getFormattedDate(posts[0].created_at, timezone);
   const [formattedTime, setFormattedTime] = useState(convertUtcToLocal(posts[currentIndex].created_at, timezone));
@@ -42,6 +44,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
   const handleNext = () => {
     if (currentIndex < posts.length - 1) {
       setCurrentIndex((i) => i + 1);
+      setMainImageIndex(0);
     } else {
     router.back();
     }
@@ -50,6 +53,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
+      setMainImageIndex(0);
     }
   };
 
@@ -70,6 +74,8 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
                 images: posts[currentIndex].mediaUrls, // ensure the shown image matches the toggle
                 category: posts[currentIndex].category
               }}
+              mainImageIndex={mainImageIndex}
+              onChangeMainImageIndex={setMainImageIndex}
               formattedDate={formattedDate}
               formattedTime={formattedTime}
               onNext={handleNext}

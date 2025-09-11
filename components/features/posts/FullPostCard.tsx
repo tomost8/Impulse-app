@@ -19,6 +19,8 @@ interface FullPostCardProps {
     commentCount?: number;
     category?: string;
   };
+  mainImageIndex?: number;
+  onChangeMainImageIndex: (index: number) => void;
   onLike?: () => void;
   onUnlike?: () => void;
   formattedDate?: string | null;
@@ -27,8 +29,7 @@ interface FullPostCardProps {
   onPrev?: () => void;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, formattedDate, formattedTime, onNext, onPrev }) => {
-  const [mainImageIndex, setMainImageIndex] = useState(0);
+const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, mainImageIndex, onChangeMainImageIndex, formattedDate, formattedTime, onNext, onPrev }) => {
   const [isSwapping, setIsSwapping] = useState(false);
   const [isStoryVisible, setIsStoryVisible] = useState(isStory || false);
   const styles = useStyles(isStoryVisible);
@@ -48,7 +49,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
       // Small delay to prevent spam clicking
       await new Promise(resolve => setTimeout(resolve, 100));
       
-      setMainImageIndex(prev => prev === 0 ? 1 : 0);
+      onChangeMainImageIndex(mainImageIndex === 0 ? 1 : 0);
       
       // Wait for crossfade animation to complete
       await new Promise(resolve => setTimeout(resolve, 200));
