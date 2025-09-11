@@ -5,40 +5,42 @@ import { router } from 'expo-router';
 import FullPostCard from '@/components/features/posts/FullPostCard';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
 import LoadingScreen from '@/components/ui/common/loading';
-import { saveImageToCameraRoll, } from '@/utils/memories';
+import { getFormattedDate, convertUtcToLocal } from '@/utils/timezoneProcessing';
 import StoryProgressBar from './progressBar';
+import { useDataProvider } from '@/contexts/DataProviderContext';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 interface StoryScreenProps {
-  post: any;
+  posts: any[];
   loading: boolean;
-  formattedDate?: string | null;
-  formattedTime?: string | null;
 }
 
 
 
-const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScreenProps) => {
+const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
   if (loading) return <LoadingScreen />;
-  
+  const { timezone} = useDataProvider();
+
   const insets = useSafeAreaInsets();
-  if (!post) return null;
+  if (!posts) return null;
 
   // Track which side (0/1) is visible for double-sided picture
-  const [side, setSide] = useState(0);
-  const images: string[] = post?.mediaUrls || [];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleUrl, setVisibleUrl] = useState(images[0] ?? null);
+  const images: string[] = posts[currentIndex]?.mediaUrls || [];
+  const formattedDate = getFormattedDate(posts[0].created_at, timezone);
+  const [formattedTime, setFormattedTime] = useState(convertUtcToLocal(posts[currentIndex].created_at, timezone));
+  console.log("formattedDate:", formattedDate, "formattedTime:", formattedTime);
 
   useEffect(() => {
-    if (currentIndex >= 0 && currentIndex < images.length) {
-      setVisibleUrl(images[currentIndex]);
+    if (currentIndex >= 0 && currentIndex < posts.length) {
+      setFormattedTime(convertUtcToLocal(posts[currentIndex].created_at, timezone));
     } else {
       router.back();
     }
   }, [currentIndex, images]);
 
   const handleNext = () => {
-    if (currentIndex < images.length - 1) {
+    if (currentIndex < posts.length - 1) {
       setCurrentIndex((i) => i + 1);
     } else {
     router.back();
@@ -46,17 +48,8 @@ const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScree
   };
 
   const handlePrev = () => {
-    if (currentIndex >= 0) {
+    if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
-    }
-  };
-
-  const onSave = async () => {
-    try {
-      await saveImageToCameraRoll(visibleUrl);
-      Alert.alert('Saved', 'Image saved to camera roll');
-    } catch (e: any) {
-      Alert.alert('Error', e?.message || 'Could not save image');
     }
   };
 
@@ -66,48 +59,32 @@ const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScree
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.contentContainer}>
           <ScrollView style={styles.scrollView}>
-            <View style={styles.headerExtension}>
-              <View style={styles.headerContent}>
-                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-                  <Image source={require("@/assets/icons/backArrow.png")} style={styles.backIcon} />
-                </TouchableOpacity>
-
-                <Text style={styles.headerTitle}>Story</Text>
-
-                <TouchableOpacity onPress={onSave} style={{ marginLeft: 'auto' }}>
-                  <Text style={{ color: '#DE728D', fontWeight: '700' }}>Save</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-            
-            <View>
-              <StoryProgressBar currentIndex={currentIndex} total={images.length} />
-              {formattedDate && (
-                <View style={{backgroundColor: '#FFFFFF', paddingHorizontal: 16, paddingVertical: 12, }}>
-                  <Text style={{ fontSize: 16, fontFamily: 'Poppins',fontWeight: '600',color: '#DE728D',textAlign: 'left',}}>{formattedDate}</Text>
-                  <Text style={{ fontSize: 12, fontFamily: 'Poppins',fontWeight: '600',color: '#DE728D',textAlign: 'left',}}>{formattedTime}</Text>
-                </View>
-              )}
+            <View style={styles.storyHeaderContainer}>
+              <StoryProgressBar currentIndex={currentIndex} total={posts.length} />
             </View>
 
             <FullPostCard
               isStory={true}
               post={{
-                timeAgo: getTimeAgo(post.created_at),
-                images: [visibleUrl], // ensure the shown image matches the toggle
-                category: post.category
+                timeAgo: getTimeAgo(posts[currentIndex].created_at),
+                images: posts[currentIndex].mediaUrls, // ensure the shown image matches the toggle
+                category: posts[currentIndex].category
               }}
+              formattedDate={formattedDate}
+              formattedTime={formattedTime}
+              onNext={handleNext}
+              onPrev={handlePrev}
             />
 
             <TouchableOpacity
               onPress={() => {
-                if (!post?.id) {
+                if (!posts[currentIndex]?.id) {
                 Alert.alert('Error', 'Post ID is missing!');
                 return;
                 }
-                router.push({ pathname: '/post/[id]', params: { id: String(post.id) } });
+                router.push({ pathname: '/post/[id]', params: { id: String(posts[currentIndex].id) } });
               }}
-              style={[styles.postButton, styles.postButtonActive]}
+              style={[styles.postButton,]}
             >
               <Text style={[
                 styles.postButtonText,
@@ -116,30 +93,7 @@ const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScree
                 {"View Post"}
               </Text>
             </TouchableOpacity>
-
-            <View
-              pointerEvents="box-none"
-              style={StyleSheet.absoluteFill}
-            >
-              <View
-                style={{ position: 'absolute',left: 0,right: 0,top: insets.top + 80,bottom: insets.bottom + 120,flexDirection: 'row', }}
-                pointerEvents="box-none"
-              >
-                <TouchableOpacity
-                  onPress={handlePrev}
-                  activeOpacity={1}
-                  style={{ flex: 1 }}
-                />
-                <TouchableOpacity
-                  onPress={handleNext}
-                  activeOpacity={1}
-                  style={{ flex: 1 }}
-                />
-              </View>
-            </View>
-
           </ScrollView>
-
         </View>
       </SafeAreaView>
     </View>
@@ -147,21 +101,15 @@ const StoryScreen = ({ post, loading, formattedDate, formattedTime }: StoryScree
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  container: { flex: 1, backgroundColor: '#000000' },
+  storyHeaderContainer: { backgroundColor: "#000", paddingTop: 12, },
   topSafeArea: { backgroundColor: '#E0EDFD', width: '100%' },
-  bottomSafeArea: { backgroundColor: '#FFFFFF', width: '100%' },
   safeArea: { flex: 1 },
-  contentContainer: { flex: 1, backgroundColor: '#FFFFFF' },
+  contentContainer: { flex: 1, backgroundColor: '#000000' },
   scrollView: { flex: 1 },
-  headerExtension: { backgroundColor: '#E0EDFD', width: '100%' },
-  bottomContainer: { backgroundColor: '#FFFFFF', borderTopWidth: 1, borderTopColor: '#FFFFFF', paddingBottom: 8 },
-  headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 10, paddingBottom: 16 },
-  backButton: { marginRight: 8 },
-  backIcon: { width: 10, height: 15, tintColor: '#242020', marginLeft: 6, marginRight: 6 },
   headerTitle: { color: '#242020', fontSize: 16, fontFamily: 'Poppins', fontWeight: '600' },
-  postButton: { alignSelf: 'flex-end', marginRight: 24, marginVertical: 8, borderRadius: 20, borderWidth: 1, alignItems: 'center', },
-  postButtonActive: { backgroundColor: '#DE728D', borderColor: '#DE728D' },
-  postButtonText: { fontSize: 12, fontFamily: 'Poppins', fontWeight: '500', paddingVertical: 8, paddingHorizontal:16, color: '#666' },
+  postButton: { alignSelf: 'flex-end', marginRight: 16, marginVertical: 12, borderRadius: 20, borderWidth: 1, alignItems: 'center', borderColor: '#E0EDFD',},
+  postButtonText: { fontSize: 12, fontFamily: 'Poppins', fontWeight: '500', paddingVertical: 4, paddingHorizontal:12, color: '#666' },
   postButtonTextActive: { color: '#fff' },
 });
 

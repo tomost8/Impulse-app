@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar, Dimensions, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, Platform, StatusBar, Dimensions, ActivityIndicator, GestureResponderEvent } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface PostContentProps {
   imageUrls?: string[];
@@ -8,6 +9,9 @@ interface PostContentProps {
   mainImageIndex?: number;
   onImageSwap?: () => void;
   isSwapping?: boolean;
+  isStoryVisible?: boolean;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 const CORNER_THRESHOLD = 100; // Distance from corner to trigger snap
@@ -20,11 +24,15 @@ const PostContent: React.FC<PostContentProps> = ({
   isSinglePost = false, 
   mainImageIndex = 0, 
   onImageSwap,
-  isSwapping = false
+  isSwapping = false,
+  isStoryVisible = false,
+  onNext,
+  onPrev,
 }) => {
   const [position] = useState(new Animated.ValueXY({ x: PADDING, y: PADDING }));
   const [corner, setCorner] = useState<'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'>('topLeft');
   const [foregroundOpacity] = useState(new Animated.Value(0));
+  const insets = useSafeAreaInsets();
 
   const hasCaption = caption && caption.trim().length > 0;
 
@@ -67,60 +75,76 @@ const PostContent: React.FC<PostContentProps> = ({
     },
   });
 
+  const handleNavigationPress = (event: GestureResponderEvent) => {
+    const screenWidth = Dimensions.get('window').width;
+    const tapPositionX = event.nativeEvent.locationX;
+
+    if (isStoryVisible && tapPositionX < screenWidth / 2) {
+      onPrev?.(); // Tap on the left side
+    } else {
+      onNext?.(); // Tap on the right side
+    }
+  };
+
   if (!imageUrls || imageUrls.length === 0) return null;
 
   return (
     <View style={[styles.container, !hasCaption && styles.containerNoCaption]}>
       {/* Main Image Container */}
-      <View style={styles.imageContainer}>
-        {/* Background image (always rendered) */}
-        <Image
-          source={{ uri: imageUrls[0] }}
-          style={[styles.image, styles.backgroundImage]}
-          resizeMode="cover"
-        />
-        
-        {/* Foreground image (overlay) */}
-        {imageUrls.length > 1 && (
-          <Animated.Image
-            source={{ uri: imageUrls[1] }}
-            style={[
-              styles.image,
-              styles.foregroundImage,
-              {
-                opacity: foregroundOpacity,
-              }
-            ]}
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={handleNavigationPress} // This function handles both next and prev
+      >
+        <View style={styles.imageContainer}>
+          {/* Background image (always rendered) */}
+          <Image
+            source={{ uri: imageUrls[0] }}
+            style={[styles.image, styles.backgroundImage]}
             resizeMode="cover"
           />
-        )}
-        
-        {/* Loading overlay when swapping */}
-        {isSwapping && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          </View>
-        )}
 
-        {/* Small Image - Only show for double camera posts */}
-        {!isSinglePost && imageUrls.length > 1 && (
-          <Animated.View
-            style={[
-              styles.smallImageContainer,
-              { transform: position.getTranslateTransform() }
-            ]}
-            {...pan.panHandlers}
-          >
-            <TouchableOpacity onPress={onImageSwap} disabled={isSwapping}>
-              <Image
-                source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
-                style={styles.smallImage}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        )}
-      </View>
+          {/* Foreground image (overlay) */}
+          {imageUrls.length > 1 && (
+            <Animated.Image
+              source={{ uri: imageUrls[1] }}
+              style={[
+                styles.image,
+                styles.foregroundImage,
+                {
+                  opacity: foregroundOpacity,
+                }
+              ]}
+              resizeMode="cover"
+            />
+          )}
+          
+          {/* Loading overlay when swapping */}
+          {isSwapping && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            </View>
+          )}
+
+          {/* Small Image - Only show for double camera posts */}
+          {!isSinglePost && imageUrls.length > 1 && (
+            <Animated.View
+              style={[
+                styles.smallImageContainer,
+                { transform: position.getTranslateTransform() }
+              ]}
+              {...pan.panHandlers}
+            >
+              <TouchableOpacity onPress={onImageSwap} disabled={isSwapping}>
+                <Image
+                  source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
+                  style={styles.smallImage}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+        </View>
+      </TouchableOpacity>
 
       {hasCaption && (
         <Text style={styles.caption}>{caption}</Text>
@@ -132,7 +156,7 @@ const PostContent: React.FC<PostContentProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    paddingTop: 0,
     gap: 8,
   },
   containerNoCaption: {
