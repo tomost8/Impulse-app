@@ -39,13 +39,10 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
   const handleImageSwap = async () => {
     if (post.images && post.images.length > 1 && !isSwapping) {
       setIsSwapping(true);
-      
       // Small delay to prevent spam clicking
       await new Promise(resolve => setTimeout(resolve, 100));
-      
       setMainImageIndex(prev => prev === 0 ? 1 : 0);
-      
-      // Wait for crossfade animation to complete
+      // Small delay to wait for crossfade animation to complete
       await new Promise(resolve => setTimeout(resolve, 200));
       setIsSwapping(false);
     }
@@ -62,7 +59,6 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
         username={post.username}
         profileImage={post.profileImage}
         imageUrls={post.images}
-        mainImageIndex={mainImageIndex}
       />}
 
       <PostContent 

@@ -8,14 +8,12 @@ interface HeaderProps {
   username?: string;
   profileImage?: string;
   imageUrls?: string[];
-  mainImageIndex?: number;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   username = "",
   profileImage,
-  imageUrls = [],
-  mainImageIndex = 0
+  imageUrls = []
 }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -25,11 +23,18 @@ const Header: React.FC<HeaderProps> = ({
       setIsSaving(true);
       const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
       if (status === 'granted') {
-        // Permission granted, save image
-        setSaveMessage('Saving...');
-        await MediaLibrary.saveToLibraryAsync(imageUrls[mainImageIndex]);
-        setSaveMessage('Saved!');
-        setTimeout(() => setSaveMessage(''), 1000);
+        //setSaveMessage('Saving all images...');
+        for (let i = 0; i < imageUrls.length; i++) {
+          try {
+            await MediaLibrary.saveToLibraryAsync(imageUrls[i]);
+            setSaveMessage(`Saving ${i + 1}/${imageUrls.length}...`);
+          } catch (imageError) {
+            console.error(`Error saving image ${i + 1}:`, imageError);
+          }
+        }
+        
+        setSaveMessage('All images saved!');
+        setTimeout(() => setSaveMessage(''), 1500);
       } else if (canAskAgain === false) {
         // Permission permanently denied, show alert to go to settings
         Alert.alert(
@@ -60,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({
         setTimeout(() => setSaveMessage(''), 1000);
       }
     } catch (error) {
-      console.error('Error saving image:', error);
+      console.error('Error saving images:', error);
       setSaveMessage('Save failed');
       setTimeout(() => setSaveMessage(''), 1000);
     } finally {
