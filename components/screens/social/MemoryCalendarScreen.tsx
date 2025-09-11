@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Platform, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Platform, StatusBar, SafeAreaView } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 import { Calendar } from 'react-native-calendars';
@@ -7,57 +7,8 @@ import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import LoadingScreen from "@/components/ui/common/loading";
 import { goals } from '@/utils/goals';
+import { DayComponent } from '@/components/features/posts';
 
-function DayComponent({ date, imagesByDate }: { date: any; imagesByDate: any[] }) {
-  const [imageLoading, setImageLoading] = useState(true);
-  
-  // Get memory entry for each date
-  const memoryForDate = imagesByDate.find((memory: any) => memory.date === date.dateString);
-  const hasImage = memoryForDate && memoryForDate.mediaUrls.length > 0;
-
-  const handleDayPress = () => {
-    if (memoryForDate?.id) {
-      router.push(`/memories/${memoryForDate.id}`);
-    } else {
-      console.log('No memory for date:', date);
-    }
-  };
-
-  return (
-    <TouchableOpacity 
-      style={styles.dayContainer}
-      onPress={handleDayPress}
-      disabled={!memoryForDate}
-    >
-      {hasImage ? (
-        <View style={styles.imageContainer}>
-          <Image 
-            source={{ uri: memoryForDate.mediaUrls[0] }} 
-            style={styles.dayMemoryImage}
-            onLoadStart={() => setImageLoading(true)}
-            onLoadEnd={() => setImageLoading(false)}
-            onError={() => setImageLoading(false)}
-          />
-          
-          {/* Loading indicator for calendar image */}
-          {imageLoading && (
-            <View style={styles.calendarLoadingOverlay}>
-              <ActivityIndicator size="small" color="#DE728D" />
-            </View>
-          )}
-          
-          {/* Day number text centered over the image */}
-          <Text style={styles.dayText}>{date.day}</Text>
-        </View>
-      ) : (
-        <>
-          <View style={styles.dayPlaceholder} />
-          <Text style={styles.dayText}>{date.day}</Text>
-        </>
-      )}
-    </TouchableOpacity>
-  );
-}
 
 interface MemoriesScreenProps {
   loading: boolean;
@@ -66,7 +17,7 @@ interface MemoriesScreenProps {
   initialSelectedCategories?: string[]; // optional
 }
 
-export default function MemoriesScreen({ loading, memories, initialDate, initialSelectedCategories }: MemoriesScreenProps) {
+export default function MemoryCalendarScreen({ loading, memories, initialDate, initialSelectedCategories }: MemoriesScreenProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>(initialSelectedCategories || []);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState<boolean>(false);
 
@@ -339,53 +290,4 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   
-  // Calendar day component styles
-  dayContainer: {
-    width: s(40),
-    height: s(50),
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  imageContainer: {
-    position: 'relative',
-    width: s(40),
-    height: s(50),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayMemoryImage: {
-    width: s(40),
-    height: s(50),
-    borderRadius: s(6),
-    resizeMode: 'cover',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  calendarLoadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(240, 240, 240, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: s(6),
-  },
-  dayPlaceholder: {
-    width: s(40),
-    height: s(50),
-    borderRadius: s(6),
-    backgroundColor: '#f0f0f0',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
-  dayText: {
-    color: '#333',
-    fontWeight: 'bold',
-    zIndex: 1,
-  },
 });

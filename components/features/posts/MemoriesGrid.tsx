@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, ActivityIndicator, FlatList, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { goals } from '@/utils/goals';
-import ImageGrid from './ImageGrid';
+import PostGridItem from './core/PostImageThumbnail';
+import { useMemoriesNav } from '@/contexts/MemoriesContext';
 import dayjs from 'dayjs';
 import { Calendar } from 'react-native-calendars';
+import { s } from 'react-native-size-matters';
 
 interface MemoriesProps {
   // Expect full user's posts; we filter client-side by month and categories.
@@ -13,7 +15,7 @@ interface MemoriesProps {
   memories: any[];
 }
 
-const Memories: React.FC<MemoriesProps> = ({ memories }) => {
+const MemoriesGrid: React.FC<MemoriesProps> = ({ memories }) => {
   const [mode, setMode] = useState<'grid' | 'calendar'>('grid');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<{year: number, month: number}>({
@@ -98,6 +100,31 @@ const Memories: React.FC<MemoriesProps> = ({ memories }) => {
 
   const INITIAL_DATE = dayjs(new Date(selectedMonth.year, selectedMonth.month, 1)).format('YYYY-MM-DD');
 
+  // Grid layout logic
+  const screenWidth = Dimensions.get('window').width;
+  const itemSize = (screenWidth - 48) / 3; // 3 columns with padding
+
+  const { setSession } = useMemoriesNav();
+  const ids = useMemo(() => filtered.map(m => m.id), [filtered]);
+
+  const renderPostGridItem = ({ item, index }: { item: any; index: number }) => {
+    const handlePress = () => {
+      if (item.id) {
+        // Set navigation session for prev/next POST navigation
+        setSession({ ids, index });
+        router.push(`/post/${item.id}`);
+      }
+    };
+
+    return (
+      <PostGridItem
+        item={item}
+        itemSize={itemSize}
+        onPress={handlePress}
+      />
+    );
+  };
+
   return (
     <TouchableOpacity 
       style={styles.container}
@@ -167,7 +194,26 @@ const Memories: React.FC<MemoriesProps> = ({ memories }) => {
         </View>
       </View>
       
-      <ImageGrid memories={filtered} />
+      {/* Grid Layout */}
+      {!filtered || filtered.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No memories yet</Text>
+          <Text style={styles.emptySubtext}>Start posting to see your memories here!</Text>
+        </View>
+      ) : (
+        <View style={styles.gridContainer}>
+          <FlatList
+            data={filtered}
+            renderItem={renderPostGridItem}
+            numColumns={3}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.gridContentContainer}
+            columnWrapperStyle={styles.row}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
 
       {/* Month Dropdown - rendered at top level */}
       {showMonthDropdown && (
@@ -393,6 +439,38 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // Grid layout styles
+  gridContainer: {
+    marginVertical: s(16),
+  },
+  gridContentContainer: {
+    paddingHorizontal: s(16),
+    paddingBottom: s(110), // Add bottom spacing for scroll view
+  },
+  row: {
+    justifyContent: 'flex-start',
+    marginBottom: s(8),
+    gap: s(8),
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    paddingVertical: s(40),
+    paddingHorizontal: s(16),
+  },
+  emptyText: {
+    fontSize: s(16),
+    fontFamily: 'Poppins',
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: s(8),
+  },
+  emptySubtext: {
+    fontSize: s(14),
+    fontFamily: 'Poppins',
+    color: '#999',
+    textAlign: 'center',
+  },
 });
 
-export default Memories;
+export default MemoriesGrid;

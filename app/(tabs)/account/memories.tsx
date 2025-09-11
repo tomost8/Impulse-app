@@ -14,7 +14,7 @@ import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 import { getLocalDay } from '@/utils/timezoneProcessing';
 
 // Components
-import MemoriesScreen from '@/components/screens/account/MemoriesScreen';
+import MemoryCalendarScreen from '@/components/screens/social/MemoryCalendarScreen';
 
 // Debug utilities
 import { debugRenders } from '@/debug/utils';
@@ -69,7 +69,7 @@ const MemoriesPage = () => {
   }
 
   return (
-    <MemoriesScreen 
+    <MemoryCalendarScreen 
       loading={loading} 
       memories={memoriesRef.current}
       initialDate={initialDate}

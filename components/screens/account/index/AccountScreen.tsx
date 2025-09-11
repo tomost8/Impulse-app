@@ -5,7 +5,7 @@ import { getLabelByCategory } from '@/utils/goals';
 
 import LoadingScreen from "@/components/ui/common/loading";
 import Bio from '@/components/features/profile/Bio';
-import Memories from '@/components/features/memories/Memories';
+import { MemoriesGrid } from '@/components/features/posts';
 import PointGuideModal from "./PointGuideModal";
 
 interface AccountProfileProps {
@@ -118,7 +118,7 @@ function AccountProfile({
           /> */}
 
           {/* Memories Section */}
-          <Memories memories={memories || []} />
+          <MemoriesGrid memories={memories || []} />
         </ScrollView>
 
         {/* Points Guide Modal */}

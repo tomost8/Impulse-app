@@ -7,7 +7,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetPostsFromSameDayAsPost } from '@/hooks/graphql/posts/queries';
 // Components
-import StoryScreen from '@/components/features/memories/StoryScreen';
+import MemoryStoryScreen from '@/components/screens/social/MemoryStoryScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 import { useMemoriesNav } from '@/contexts/MemoriesContext';
@@ -71,7 +71,7 @@ const MemoryPage = () => {
   }
 
   return (
-    <StoryScreen
+    <MemoryStoryScreen
       loading={loading}
       posts={postsOfDay}
     />

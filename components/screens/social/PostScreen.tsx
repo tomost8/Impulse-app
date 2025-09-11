@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
-import FullPostCard from '@/components/features/posts/FullPostCard';
-import CommentInput from '@/components/features/posts/CommentInput';
-import CommentSection from '@/components/features/posts/CommentSection';
-import ReplyContext from '@/components/features/posts/ReplyContext';
+import { FullPostCard, CommentInput, CommentSection, ReplyContext } from '@/components/features/posts';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
 import LoadingScreen from '@/components/ui/common/loading';
 
@@ -27,6 +24,7 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
   const params = useLocalSearchParams();
   const [showReply, setShowReply] = useState(false);
   const [selectedComment, setSelectedComment] = useState<any>(null);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
   const insets = useSafeAreaInsets();
 
   const handleReply = (commentId: string) => {
@@ -82,6 +80,8 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
               total + 1 + (comment.replies?.length || 0), 0),
             category: post.category
           }} 
+          mainImageIndex={mainImageIndex}
+          onChangeMainImageIndex={setMainImageIndex}
           onLike={onLike} 
           onUnlike={onUnlike}
           formattedDate={formattedDate}

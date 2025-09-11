@@ -1,12 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Dimensions, ActivityIndicator } from 'react-native';
-import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { s } from 'react-native-size-matters';
-import { useMemoriesNav } from '@/contexts/MemoriesContext';
-
-interface ImageGridProps {
-  memories: any[];
-}
 
 interface PostGridItemProps {
   item: any;
@@ -78,77 +72,7 @@ const PostGridItem: React.FC<PostGridItemProps> = ({ item, itemSize, onPress }) 
   );
 };
 
-const ImageGrid: React.FC<ImageGridProps> = ({ memories }) => {
-  const screenWidth = Dimensions.get('window').width;
-  const itemSize = (screenWidth - 48) / 3; // 3 columns with padding
-
-  const { setSession } = useMemoriesNav();
-  const ids = useMemo(() => memories.map(m => m.id), [memories]);
-
-  const renderPostGridItem = ({ item, index }: { item: any; index: number }) => {
-    const handlePress = () => {
-      if (item.id) {
-        // Set navigation session for prev/next POST navigation
-        setSession({ ids, index });
-        router.push(`/post/${item.id}`);
-      }
-    };
-
-    return (
-      <PostGridItem
-        item={item}
-        itemSize={itemSize}
-        onPress={handlePress}
-      />
-    );
-  };
-
-  if (!memories || memories.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No memories yet</Text>
-        <Text style={styles.emptySubtext}>Start posting to see your memories here!</Text>
-      </View>
-    );
-  }
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={memories}
-        renderItem={renderPostGridItem}
-        numColumns={3}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.gridContainer}
-        columnWrapperStyle={styles.row}
-        showsVerticalScrollIndicator={false}
-        scrollEnabled={false}
-      />
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: s(16),
-  },
-  title: {
-    fontSize: s(18),
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginBottom: s(12),
-    paddingHorizontal: s(16),
-  },
-  gridContainer: {
-    paddingHorizontal: s(16),
-    paddingBottom: s(110), // Add bottom spacing for scroll view
-  },
-  row: {
-    justifyContent: 'flex-start',
-    marginBottom: s(8),
-    gap: s(8),
-  },
   memoryItem: {
     borderRadius: s(8),
     overflow: 'hidden',
@@ -220,24 +144,6 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
-  emptyContainer: {
-    alignItems: 'center',
-    paddingVertical: s(40),
-    paddingHorizontal: s(16),
-  },
-  emptyText: {
-    fontSize: s(16),
-    fontFamily: 'Poppins',
-    fontWeight: '500',
-    color: '#666',
-    marginBottom: s(8),
-  },
-  emptySubtext: {
-    fontSize: s(14),
-    fontFamily: 'Poppins',
-    color: '#999',
-    textAlign: 'center',
-  },
 });
 
-export default ImageGrid;
+export default PostGridItem;

@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import FullPostCard from '@/components/features/posts/FullPostCard';
+import { FullPostCard } from '@/components/features/posts';
 import { getTimeAgo } from '@/utils/timezoneProcessing';
 import LoadingScreen from '@/components/ui/common/loading';
 import { getFormattedDate, convertUtcToLocal } from '@/utils/timezoneProcessing';
-import StoryProgressBar from './progressBar';
+import { ProgressBar as StoryProgressBar } from '@/components/features/posts';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
@@ -34,7 +34,7 @@ const StoryLoadingScreen = () => {
   );
 };
 
-const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
+const MemoryStoryScreen = ({ posts, loading }: StoryScreenProps) => {
   if (loading) return <StoryLoadingScreen />;
   const { timezone} = useDataProvider();
 
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StoryScreen;
+export default MemoryStoryScreen;
