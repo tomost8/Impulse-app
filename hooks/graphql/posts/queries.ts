@@ -399,7 +399,6 @@ const GET_POSTS_FROM_SAME_DAY = gql`
 `;
 
 export function useGetPostsFromSameDayAsPost(postId: number) {
-  console.log('postID: ', postId)
   const { data, loading, error, refetch } = useQuery(GET_POSTS_FROM_SAME_DAY, {
     variables: { postId },
     skip: !postId, // Don't run if no postId is provided
@@ -410,6 +409,25 @@ export function useGetPostsFromSameDayAsPost(postId: number) {
   });
 
   const posts = data?.postsFromSameDayAsPost?.posts ?? [];
+  const fetched = !loading;
+  
+  if (debugQueries && fetched) {
+    const success = data?.postsFromSameDayAsPost?.success;
+    const errors = data?.postsFromSameDayAsPost?.errors;
+    
+    let logMessage = `useGetPostsFromSameDayAsPost: {"errors": ${errors?.length > 0 ? JSON.stringify(errors) : null}, "postCount": ${posts.length}, "postId": ${postId}, "success": ${success}}`;
+    
+    if (posts.length > 0) {
+      logMessage += "\n - Posts:";
+      posts.forEach((post: any, index: number) => {
+        const date = new Date(post.created_at).toISOString();
+        const mediaCount = post.mediaUrls?.length || 0;
+        logMessage += `\n   ${index + 1}. ID: ${post.id}, Caption: "${post.caption?.substring(0, 30)}...", Category: ${post.category}, Date: ${date}, Media Count: ${mediaCount}`;
+      });
+    }
+    
+    console.log(logMessage);
+  }
 
   return { posts, loading, error, refetch };
 }

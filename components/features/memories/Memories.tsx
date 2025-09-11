@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { goals } from '@/utils/goals';
@@ -77,7 +77,8 @@ const Memories: React.FC<MemoriesProps> = ({ memories }) => {
   }, [storyDate, monthFiltered, selectedCategories]);
 
   const [storyIndex, setStoryIndex] = useState(0);
-  const closeStory = () => { setStoryDate(null); setStoryIndex(0); };
+  const [storyImageLoading, setStoryImageLoading] = useState(true);
+  const closeStory = () => { setStoryDate(null); setStoryIndex(0); setStoryImageLoading(true); };
 
   const onDayPress = (day: any) => {
     const dateStr = day.dateString; // 'YYYY-MM-DD'
@@ -273,7 +274,23 @@ const Memories: React.FC<MemoriesProps> = ({ memories }) => {
         <View style={{ flex: 1, backgroundColor: 'black' }}>
           {dayPosts[storyIndex] && (
             <>
-              <Image source={{ uri: dayPosts[storyIndex].mediaUrls?.[0] }} style={{ width: '100%', height: '100%', resizeMode: 'contain' }} />
+              <View style={{ position: 'relative', width: '100%', height: '100%' }}>
+                <Image 
+                  source={{ uri: dayPosts[storyIndex].mediaUrls?.[0] }} 
+                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                  onLoadStart={() => setStoryImageLoading(true)}
+                  onLoadEnd={() => setStoryImageLoading(false)}
+                  onError={() => setStoryImageLoading(false)}
+                />
+                
+                {/* Loading indicator for story modal image */}
+                {storyImageLoading && (
+                  <View style={styles.storyModalLoadingOverlay}>
+                    <ActivityIndicator size="large" color="#FFFFFF" />
+                  </View>
+                )}
+              </View>
+              
               <View style={{ position: 'absolute', top: 40, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={{ color: 'white' }}>
                   {dayPosts[storyIndex].category} • {dayjs(dayPosts[storyIndex].created_at).format('h:mm A')}
@@ -364,6 +381,18 @@ const styles = StyleSheet.create({
   calDayImage: { width: 40, height: 50, borderRadius: 6, position: 'absolute', top: 0, left: 0, resizeMode: 'cover' },
   calDayPlaceholder: { width: 40, height: 50, borderRadius: 6, backgroundColor: '#f0f0f0', position: 'absolute', top: 0, left: 0 },
   calDayText: { color: '#333', fontWeight: 'bold', zIndex: 1 },
+  
+  // Story modal loading styles
+  storyModalLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default Memories;

@@ -4,7 +4,7 @@
     "slug": "Impulse-app",
           "version": "1.0.0",
       "orientation": "portrait",
-      "icon": "./assets/images/icAppLogo.png",
+      "icon": "./assets/icons/appLogoIcon.png",
       "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,

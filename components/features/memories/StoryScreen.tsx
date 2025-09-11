@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import FullPostCard from '@/components/features/posts/FullPostCard';
@@ -17,8 +17,25 @@ interface StoryScreenProps {
 
 
 
+// Custom loading component for story view
+const StoryLoadingScreen = () => {
+  const insets = useSafeAreaInsets();
+  
+  return (
+    <View style={styles.container}>
+      <View style={[styles.topSafeArea, { height: insets.top }]} />
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+          <Text style={styles.loadingText}>Loading memories...</Text>
+        </View>
+      </SafeAreaView>
+    </View>
+  );
+};
+
 const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
-  if (loading) return <LoadingScreen />;
+  if (loading) return <StoryLoadingScreen />;
   const { timezone} = useDataProvider();
 
   const insets = useSafeAreaInsets();
@@ -26,10 +43,10 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
 
   // Track which side (0/1) is visible for double-sided picture
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mainImageIndex, setMainImageIndex] = useState(0);
   const images: string[] = posts[currentIndex]?.mediaUrls || [];
   const formattedDate = getFormattedDate(posts[0].created_at, timezone);
   const [formattedTime, setFormattedTime] = useState(convertUtcToLocal(posts[currentIndex].created_at, timezone));
-  console.log("formattedDate:", formattedDate, "formattedTime:", formattedTime);
 
   useEffect(() => {
     if (currentIndex >= 0 && currentIndex < posts.length) {
@@ -42,6 +59,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
   const handleNext = () => {
     if (currentIndex < posts.length - 1) {
       setCurrentIndex((i) => i + 1);
+      setMainImageIndex(0);
     } else {
     router.back();
     }
@@ -50,6 +68,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
+      setMainImageIndex(0);
     }
   };
 
@@ -70,6 +89,8 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
                 images: posts[currentIndex].mediaUrls, // ensure the shown image matches the toggle
                 category: posts[currentIndex].category
               }}
+              mainImageIndex={mainImageIndex}
+              onChangeMainImageIndex={setMainImageIndex}
               formattedDate={formattedDate}
               formattedTime={formattedTime}
               onNext={handleNext}
@@ -103,7 +124,7 @@ const StoryScreen = ({ posts, loading }: StoryScreenProps) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
   storyHeaderContainer: { backgroundColor: "#000", paddingTop: 12, },
-  topSafeArea: { backgroundColor: '#E0EDFD', width: '100%' },
+  topSafeArea: { backgroundColor: '#000000', width: '100%' },
   safeArea: { flex: 1 },
   contentContainer: { flex: 1, backgroundColor: '#000000' },
   scrollView: { flex: 1 },
@@ -111,6 +132,19 @@ const styles = StyleSheet.create({
   postButton: { alignSelf: 'flex-end', marginRight: 16, marginVertical: 12, borderRadius: 20, borderWidth: 1, alignItems: 'center', borderColor: '#E0EDFD',},
   postButtonText: { fontSize: 12, fontFamily: 'Poppins', fontWeight: '500', paddingVertical: 4, paddingHorizontal:12, color: '#666' },
   postButtonTextActive: { color: '#fff' },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins',
+    fontWeight: '500',
+  },
 });
 
 export default StoryScreen;

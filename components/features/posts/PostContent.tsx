@@ -22,7 +22,7 @@ const PostContent: React.FC<PostContentProps> = ({
   imageUrls, 
   caption, 
   isSinglePost = false, 
-  mainImageIndex = 0, 
+  mainImageIndex = 0,
   onImageSwap,
   isSwapping = false,
   isStoryVisible = false,
@@ -32,6 +32,9 @@ const PostContent: React.FC<PostContentProps> = ({
   const [position] = useState(new Animated.ValueXY({ x: PADDING, y: PADDING }));
   const [corner, setCorner] = useState<'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight'>('topLeft');
   const [foregroundOpacity] = useState(new Animated.Value(0));
+  const [backgroundImageLoading, setBackgroundImageLoading] = useState(true);
+  const [foregroundImageLoading, setForegroundImageLoading] = useState(true);
+  const [smallImageLoading, setSmallImageLoading] = useState(true);
   const insets = useSafeAreaInsets();
 
   const hasCaption = caption && caption.trim().length > 0;
@@ -101,7 +104,17 @@ const PostContent: React.FC<PostContentProps> = ({
             source={{ uri: imageUrls[0] }}
             style={[styles.image, styles.backgroundImage]}
             resizeMode="cover"
+            onLoadStart={() => setBackgroundImageLoading(true)}
+            onLoadEnd={() => setBackgroundImageLoading(false)}
+            onError={() => setBackgroundImageLoading(false)}
           />
+
+          {/* Loading indicator for background image */}
+          {backgroundImageLoading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="small" color={isStoryVisible ? "#FFFFFF" : "#DE728D"} />
+            </View>
+          )}
 
           {/* Foreground image (overlay) */}
           {imageUrls.length > 1 && (
@@ -115,7 +128,17 @@ const PostContent: React.FC<PostContentProps> = ({
                 }
               ]}
               resizeMode="cover"
+              onLoadStart={() => setForegroundImageLoading(true)}
+              onLoadEnd={() => setForegroundImageLoading(false)}
+              onError={() => setForegroundImageLoading(false)}
             />
+          )}
+
+          {/* Loading indicator for foreground image */}
+          {imageUrls.length > 1 && foregroundImageLoading && (
+            <View style={styles.foregroundLoadingOverlay}>
+              <ActivityIndicator size="small" color={isStoryVisible ? "#FFFFFF" : "#DE728D"} />
+            </View>
           )}
           
           {/* Loading overlay when swapping */}
@@ -139,7 +162,17 @@ const PostContent: React.FC<PostContentProps> = ({
                   source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
                   style={styles.smallImage}
                   resizeMode="cover"
+                  onLoadStart={() => setSmallImageLoading(true)}
+                  onLoadEnd={() => setSmallImageLoading(false)}
+                  onError={() => setSmallImageLoading(false)}
                 />
+                
+                {/* Loading indicator for small image */}
+                {smallImageLoading && (
+                  <View style={styles.smallLoadingOverlay}>
+                    <ActivityIndicator size="small" color="#DE728D" />
+                  </View>
+                )}
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -189,6 +222,28 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  foregroundLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  smallLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(240, 240, 240, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,

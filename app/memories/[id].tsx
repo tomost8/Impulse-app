@@ -31,9 +31,7 @@ type Post = {
 };
 
 const MemoryPage = () => {
-  console.log("👋🏻 Welcome to Memory Page ---------------------------");
   const { id } = useLocalSearchParams(); // postId
-  console.log("🆔 MemoryPage id param:", id);
   const hasFetchedPost = useRef(false);
   
   const { posts: postsOfDay, loading } = useGetPostsFromSameDayAsPost(Number(id));
@@ -51,7 +49,6 @@ const MemoryPage = () => {
     if (!postsOfDay || postsOfDay.length === 0) return;
 
     const idx = postsOfDay.findIndex((p: Post) => Number(p.id) === Number(id));
-    console.log("🔍 Found post index in postsOfDay:", idx);
     if (idx >= 0) {
       setIndex(idx);
       postRef.current = postsOfDay[idx]; // ✅ assign to ref
@@ -68,7 +65,9 @@ const MemoryPage = () => {
 
   // Debug
   if (debugRenders && !loading) {
-    console.log(`📱 Rendering MemoryPage - ID: ${id}, Caption: "${postRef.current?.caption?.substring(0, 30)}...", Liked: ${postRef.current?.liked}, LikeCount: ${postRef.current?.likeCount}`);
+    const currentPost = postsOfDay?.find((p: Post) => Number(p.id) === Number(id));
+    const date = currentPost?.created_at ? new Date(currentPost.created_at).toISOString() : 'No date';
+    console.log(`📱 Rendering MemoryPage - ID: ${id}, Date: ${date}, Posts Count: ${postsOfDay?.length || 0}`);
   }
 
   return (

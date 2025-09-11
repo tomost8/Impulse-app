@@ -19,6 +19,8 @@ interface FullPostCardProps {
     commentCount?: number;
     category?: string;
   };
+  mainImageIndex?: number;
+  onChangeMainImageIndex: (index: number) => void;
   onLike?: () => void;
   onUnlike?: () => void;
   formattedDate?: string | null;
@@ -27,8 +29,7 @@ interface FullPostCardProps {
   onPrev?: () => void;
 }
 
-const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, formattedDate, formattedTime, onNext, onPrev }) => {
-  const [mainImageIndex, setMainImageIndex] = useState(0);
+const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, mainImageIndex, onChangeMainImageIndex, formattedDate, formattedTime, onNext, onPrev }) => {
   const [isSwapping, setIsSwapping] = useState(false);
   const [isStoryVisible, setIsStoryVisible] = useState(isStory || false);
   const styles = useStyles(isStoryVisible);
@@ -46,8 +47,10 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
       setIsSwapping(true);
       // Small delay to prevent spam clicking
       await new Promise(resolve => setTimeout(resolve, 100));
-      setMainImageIndex(prev => prev === 0 ? 1 : 0);
-      // Small delay to wait for crossfade animation to complete
+      
+      onChangeMainImageIndex(mainImageIndex === 0 ? 1 : 0);
+      
+      // Wait for crossfade animation to complete
       await new Promise(resolve => setTimeout(resolve, 200));
       setIsSwapping(false);
     }
@@ -59,7 +62,7 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
         <View style={styles.headerContent}>
           <View style={styles.dateSection}>
             <Text style={styles.dateText}>{formattedDate}</Text>
-            {isStoryVisible && <Text style={styles.timeText}>{`${post.category} • ${formattedTime}`}</Text>}
+            {isStoryVisible && <Text style={styles.timeText}>{`${getLabelByCategory(post.category || '')} • ${formattedTime}`}</Text>}
           </View>
           {isStoryVisible && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
             <MaterialCommunityIcons name="close-thick" size={20} color="white" />
@@ -168,7 +171,7 @@ const useStyles = (isStoryVisible: boolean) =>
       fontSize: 16,
       fontFamily: 'Poppins',
       fontWeight: '600',
-      color: isStoryVisible ? '"#fff' : '#DE728D',
+      color: isStoryVisible ? '#fff' : '#DE728D',
       textAlign: isStoryVisible ? 'left' : 'center',
     },
     timeText: { 
