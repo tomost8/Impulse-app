@@ -247,3 +247,47 @@ export function useGetMessages(chatId: number, shouldFetch: boolean = true) {
     error: error?.message || null
   };
 }
+
+const GET_LATEST_MESSAGES_FOR_USER = gql`
+  query getLatestMessagesForUser($userId: Int!) {
+    getLatestMessagesForUser(userId: $userId) {
+      success
+      messages {
+        id
+        chat_id
+        content
+        created_at
+        sender {
+          id
+          first_name
+          last_name
+          profile_picture
+        }
+        # add other fields as needed
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useGetLatestMessagesForUser(userId: number, shouldFetch: boolean = true) {
+  const { data, loading, error } = useQuery(GET_LATEST_MESSAGES_FOR_USER, {
+    variables: { userId },
+    skip: !shouldFetch,
+    onError: (error) => {
+      console.error('GraphQL Error:', error);
+    }
+  });
+  const fetched = shouldFetch && !loading;
+  return {
+    messages: data?.getLatestMessagesForUser.messages || [],
+    success: data?.getLatestMessagesForUser.success ?? false,
+    errors: data?.getLatestMessagesForUser.errors || [],
+    fetched,
+    loading,
+    error: error?.message || null
+  };
+}
