@@ -11,6 +11,7 @@ import { router } from 'expo-router';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { getCategoryById } from "@/utils/goals";
 import { convertLocalToUtc } from "@/utils/timezoneProcessing";
+import mixpanel from '@/config/mixpanelConfig';
 
 interface GoalFormData {
   startTime: string;
@@ -43,6 +44,10 @@ const AddActivityPage = () => {
           };
           const response = await createActivity(input);
           if (response.success) {
+            mixpanel.trackEvent('Daily Goal Set', {
+              goal_category: getCategoryById(goalId),
+              set_timestamp: new Date().toISOString(),
+            });
             newActivities.push(response.activity);
           } else {
             throw new Error(`Response.success from createActivity was false for goalId: ${goalId}`);

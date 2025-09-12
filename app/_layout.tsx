@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, StyleSheet, AppState } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync(); // Prevent the splash screen from auto-hiding before asset loading is complete.
 import { LogBox } from 'react-native';
@@ -17,11 +17,31 @@ import { StatusBar } from 'expo-status-bar';
 
 import { debugComponentsOn } from '@/debug/utils';
 import TokenTestButton from '@/debug/TokenTestButton';
+import mixpanel from '@/config/mixpanelConfig';
 
 export default function RootLayout() {
+
+  const sessionStartTime = useRef(Date.now());
+
   useEffect(() => {
-    // Hide splash screen once the app is ready
     SplashScreen.hideAsync();
+    (async () => {
+      await mixpanel.initMixpanel();
+    })();
+  }, []);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        sessionStartTime.current = Date.now();
+      } else if (state === 'background' || state === 'inactive') {
+        const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
+        if (duration > 3) {
+          mixpanel.trackEvent('Time per session', { duration_seconds: duration });
+        }
+      }
+    });
+    return () => sub.remove();
   }, []);
 
   return (

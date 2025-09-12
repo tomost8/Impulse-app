@@ -13,6 +13,8 @@ import {
 import LoadingScreen from '@/components/ui/common/loading';
 import { router } from 'expo-router';
 import Header from "@/components/ui/common/headers/Header";
+import mixpanel from '@/config/mixpanelConfig';
+import { useDataProvider } from '@/contexts/DataProviderContext';
 
 interface Friend {
   id: string;
@@ -33,8 +35,12 @@ const AddFriendsScreen = (props: AddFriendsScreenProps) => {
   if (props.loading) {
     return <LoadingScreen />;
   } 
+
+  const { friends } = useDataProvider();
   
   const [searchQuery, setSearchQuery] = useState('');
+
+  const acceptedFriends = friends.filter((friend: any) => friend.status === 'ACCEPTED');
 
   // Filter users based on search query
   const filteredUsers = props.users.filter(user => 
@@ -58,6 +64,10 @@ const AddFriendsScreen = (props: AddFriendsScreenProps) => {
   const handleAddFriend = (friendId: string) => {
     console.log('Add friend:', friendId);
     props.handleSendFriendRequest(Number(friendId));
+    mixpanel.trackEvent('friend_count', {
+    count_friends: acceptedFriends.length + 1, // +1 for the new friend being added
+    count_friends_timestamp: new Date().toISOString(),
+    });
   };
 
   return (

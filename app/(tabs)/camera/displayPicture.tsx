@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from "@/contexts/DataProviderContext";
 import { useDataRefetch } from '@/contexts/DataFetcher';
 import { uploadImage } from '@/utils/imageProcessing';
+import mixpanel from '@/config/mixpanelConfig';
 
 const DisplayPicturePage = () => {
   const context = useContext(CameraHeaderContext);
@@ -73,6 +74,10 @@ const DisplayPicturePage = () => {
       const response = await createPost(input, authToken as string);
       console.log("createPost response:", response);
       if (response.success) {
+        mixpanel.trackEvent('Photo Sent (post)', {
+          photo_sent_timestamp: new Date().toISOString(),
+        });
+        
         console.log("Post created successfully:", response.post);
         // Refetch relevant data after successful post creation
         await refetchData({

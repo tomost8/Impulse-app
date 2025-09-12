@@ -9,6 +9,7 @@ import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/c
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 import { useSendMessage } from '@/hooks/graphql/chats/mutations';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import mixpanel from '@/config/mixpanelConfig';
 
 // ChatScreen的props类型定义
 interface ChatScreenProps {
@@ -247,6 +248,11 @@ function ChatScreen({
 
   // 自定义发送按钮
   const renderSend = (props: SendProps<IMessage>) => {
+    mixpanel.trackEvent('Message Sent', {
+      sent_timestamp: new Date().toISOString(),
+      // sender_id, chat_id, message_length, etc.
+    });
+
     return (
       <Send
         {...props}

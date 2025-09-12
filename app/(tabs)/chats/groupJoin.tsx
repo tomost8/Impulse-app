@@ -4,6 +4,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetAllChats, useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useCreateChatMember } from '@/hooks/graphql/chats/mutations';
+import mixpanel from '@/config/mixpanelConfig';
 // Components
 import JoinChatScreen from '@/components/screens/chats/JoinChatScreen';
 // Debug
@@ -57,6 +58,10 @@ const JoinGroupPage = (props: any) => {
       response_log += "Joining group with input:\n" + JSON.stringify(input) + "\n";
       const response = await createChatMember(input);
       if (response.success) {
+        mixpanel.trackEvent('Group Joined', {
+          group_id: response.chat_member.id,
+          join_timestamp: new Date().toISOString(),
+        });
         response_log += "Group joined successfully:\n" + response.chat_member.id + "\n";
       } else {
         throw new Error("Response.success from createChatMember was false:" + response.errors);

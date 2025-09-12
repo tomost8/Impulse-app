@@ -9,6 +9,7 @@ import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
 import { getAuth } from '@/config/firebaseConfig';
+import mixpanel from '@/config/mixpanelConfig';
 import { createUserWithEmailAndPassword, getIdToken } from '@react-native-firebase/auth';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
 import { uploadImage } from '@/utils/imageProcessing';
@@ -39,6 +40,9 @@ export default function SecondaryGoal() {
       };
       const response = await createCommunityMember(input);
       if (response.success) {
+        mixpanel.trackEvent('community_join', {
+          community_timestamp: new Date().toISOString(),
+        });
         console.log("Community Member created successfully:", response);
       } else {
         console.error("Error creating community member:", response);
@@ -121,6 +125,18 @@ export default function SecondaryGoal() {
         
         if (updateData?.updateUser?.success && updateData?.updateUser?.user) {
           const { __typename, email, id, role, status, is_double_cam, ...profileData } = updateData.updateUser.user;
+
+          const user = updateData.updateUser.user;
+          // --- MIXPANEL TRACKING: Sign Up Completed ---
+          mixpanel.trackEvent('Sign Up Completed', {
+            user_id: user.id, // Backend UID: preferred!
+            sign_up_timestamp: new Date().toISOString(), // Use server time if possible
+            email: user.email,      // Add more props as desired.
+            registration_method: 'email', // Or 'google' / etc. if you support SSO
+          });
+          // Set user profile
+          mixpanel.identifyUser(user.id);
+
           // Sanity check: input and result match for shared fields
           const sharedFields = Object.keys(input).filter(key => key in profileData);
           const fieldsMatch = sharedFields.every(field => (input as any)[field] === (profileData as any)[field]);

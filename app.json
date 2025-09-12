@@ -78,7 +78,8 @@
       },
       "API_ENV": "aws",
       "API_AWS_URL": "http://18.191.234.29:3000/graphql",
-      "API_LOCAL_URL": "http://localhost:3000/graphql"
+      "API_LOCAL_URL": "http://localhost:3000/graphql",
+      "MIXPANEL_TOKEN": "431de022b60e0c270c405468c11ac4f3"
     },
     "owner": "williamwangimpulse"
   }
