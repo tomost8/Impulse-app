@@ -82,9 +82,9 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
             </View>
             <View style={styles.timeContainer}>
               <Text style={styles.time}>{chat.time}</Text>
-              <View style={styles.unreadBadge}>
+              {/* <View style={styles.unreadBadge}>
                 <Text style={styles.unreadCount}>0</Text>
-              </View>
+              </View> */}
             </View>
             </TouchableOpacity>
           

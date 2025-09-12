@@ -6,22 +6,22 @@ export function useWebSocket(userId: number) {
   const wsRef = useRef<WebSocket | null>(null);
   const subscriptionIdRef = useRef<string | null>(null);
 
-  // 生成唯一的订阅ID
+  // Generate unique subscription ID
   const generateSubscriptionId = useCallback(() => {
     return Math.random().toString(36).substring(2, 15);
   }, []);
 
-  // 连接WebSocket
+  // Connect WebSocket
   const connect = useCallback(() => {
     try {
-      console.log('正在连接WebSocket...');
+      console.log('Connecting to WebSocket...');
       wsRef.current = new WebSocket('ws://18.191.234.29:3000/graphql', 'graphql-transport-ws');
       
       wsRef.current.onopen = () => {
-        console.log('WebSocket连接已打开');
+        console.log('WebSocket connection opened');
         setIsConnected(true);
         
-        // 发送初始化消息
+        // Send initialization message
         const initMessage = {
           type: 'connection_init',
           payload: {
@@ -30,29 +30,29 @@ export function useWebSocket(userId: number) {
             }
           }
         };
-        console.log('发送初始化消息:', JSON.stringify(initMessage));
+        console.log('Sending initialization message:', JSON.stringify(initMessage));
         wsRef.current?.send(JSON.stringify(initMessage));
       };
       
       wsRef.current.onclose = (event) => {
-        console.log(`WebSocket连接已关闭。代码: ${event.code}, 原因: ${event.reason}`);
+        console.log(`WebSocket connection closed. Code: ${event.code}, Reason: ${event.reason}`);
         setIsConnected(false);
         subscriptionIdRef.current = null;
       };
       
       wsRef.current.onerror = (event) => {
-        console.error('WebSocket错误:', event);
-        setError('WebSocket连接错误');
+        console.error('WebSocket error:', event);
+        setError('WebSocket connection error');
         setIsConnected(false);
       };
     } catch (error) {
-      console.error('创建WebSocket时出错:', error);
-      setError(`创建WebSocket时出错: ${error}`);
+      console.error('Error creating WebSocket:', error);
+      setError(`Error creating WebSocket: ${error}`);
       setIsConnected(false);
     }
   }, [userId]);
 
-  // 断开WebSocket连接
+  // Disconnect WebSocket
   const disconnect = useCallback(() => {
     if (wsRef.current) {
       unsubscribeFromMessages();
@@ -62,14 +62,14 @@ export function useWebSocket(userId: number) {
     }
   }, []);
 
-  // 订阅消息
+  // Subscribe to messages
   const subscribeToMessages = useCallback((onMessageReceived: (message: any) => void) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      console.log('WebSocket未连接，无法订阅消息');
+      console.log('WebSocket not connected, cannot subscribe to messages');
       return false;
     }
 
-    // 如果已经有订阅，先取消
+    // If already subscribed, unsubscribe first
     if (subscriptionIdRef.current) {
       unsubscribeFromMessages();
     }
@@ -79,28 +79,18 @@ export function useWebSocket(userId: number) {
       id: subscriptionIdRef.current,
       type: 'subscribe',
       payload: {
-        query: `
-          subscription {
-            messageSent {
-              id
-              chat_id
-              sender_id
-              content
-              created_at
-            }
-          }
-        `
+        query: `subscription { messageSent { id chat_id sender_id content created_at } }`
       }
     };
 
-    console.log('订阅消息更新...');
-    console.log('发送订阅消息:', JSON.stringify(subscribeMessage));
+    console.log('Subscribing to message updates...');
+    console.log('Sending subscription message:', JSON.stringify(subscribeMessage));
     wsRef.current.send(JSON.stringify(subscribeMessage));
 
-    // 设置消息处理函数
+    // Set up message handler
     wsRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('收到WebSocket消息:', data);
+      console.log('Received WebSocket message:', data);
       
       if (data.type === 'next' && data.payload?.data?.messageSent) {
         const message = data.payload.data.messageSent;
@@ -111,7 +101,7 @@ export function useWebSocket(userId: number) {
     return true;
   }, [generateSubscriptionId]);
 
-  // 取消订阅消息
+  // Unsubscribe from messages
   const unsubscribeFromMessages = useCallback(() => {
     if (!wsRef.current || !subscriptionIdRef.current) {
       return;
@@ -121,12 +111,12 @@ export function useWebSocket(userId: number) {
       id: subscriptionIdRef.current,
       type: 'complete'
     };
-    console.log('发送取消订阅消息:', JSON.stringify(completeMessage));
+    console.log('Sending unsubscribe message:', JSON.stringify(completeMessage));
     wsRef.current.send(JSON.stringify(completeMessage));
     subscriptionIdRef.current = null;
   }, []);
 
-  // 组件卸载时断开连接
+  // Disconnect when component unmounts
   useEffect(() => {
     return () => {
       disconnect();

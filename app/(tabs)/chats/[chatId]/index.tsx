@@ -1,17 +1,16 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { GiftedChat, Bubble, Day, InputToolbar, Composer, Send, IMessage, BubbleProps, DayProps, InputToolbarProps, SendProps, ComposerProps } from 'react-native-gifted-chat';
 import { Ionicons } from '@expo/vector-icons';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/chats/queries';
-import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 import { useSendMessage } from '@/hooks/graphql/chats/mutations';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import mixpanel from '@/config/mixpanelConfig';
 
-// ChatScreen的props类型定义
+// ChatScreen props type definition
 interface ChatScreenProps {
   userId: number;
   chatId: number;
@@ -19,176 +18,31 @@ interface ChatScreenProps {
     type: 'direct' | 'group';
     title?: string;
   };
-  isChatLoading: boolean;
-  chatMembers: Array<{
-    user: {
-      id: number;
-      first_name: string;
-      last_name: string;
-      profile_picture: string;
-    };
-  }>;
-  isChatMembersLoading: boolean;
-  messages: Array<{
+  partner?: {
     id: number;
-    content: string;
-    created_at: string;
-    sender: {
-      id: number;
-      first_name: string;
-      last_name: string;
-    };
-    post?: {
-      mediaUrls?: string[];
-    };
-  }>;
-  isMessagesLoading: boolean;
+    first_name: string;
+    last_name: string;
+    profile_picture: string;
+  };
+  chatMessages: IMessage[];
+  isConnected: boolean;
+  wsError: string | null;
+  onSend: (messages: IMessage[]) => void;
+  isSendingMessage: boolean;
 }
 
 function ChatScreen({
   userId,
   chatId,
   chat,
-  isChatLoading,
-  chatMembers,
-  isChatMembersLoading,
-  messages,
-  isMessagesLoading,
+  partner,
+  chatMessages,
+  isConnected,
+  wsError,
+  onSend,
+  isSendingMessage,
 }: ChatScreenProps) {
-  const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  
-  // 获取聊天伙伴信息 
-  let partner: any = null;
-  if (chat?.type === 'direct') {
-    chatMembers?.forEach((member: any) => {
-      if (member.user.id !== userId) {
-        partner = member.user;
-      }
-    });
-  }
-
-  // 处理消息数据
-  useEffect(() => {
-    if (messages && messages.length > 0) {
-      const formattedMessages = messages.map((msg) => ({
-        _id: msg.id,
-        text: msg.content,
-        createdAt: new Date(msg.created_at),
-        user: {
-          _id: msg.sender.id,
-          name: `${msg.sender.first_name} ${msg.sender.last_name}`,
-          avatar: msg.sender.id !== userId ? partner?.profile_picture : undefined,
-        },
-        // 如果消息包含帖子，添加图片
-        ...(msg.post?.mediaUrls?.[0] ? { image: msg.post.mediaUrls[0] } : {}),
-      }));
-      
-      setChatMessages(formattedMessages);
-    }
-  }, [messages, userId, partner]);
-
-  // 使用发送消息钩子
-  const { sendMessage } = useSendMessage();
-  const [isSendingMessage, setIsSendingMessage] = useState(false);
-
-  // 使用WebSocket钩子
-  const { 
-    isConnected, 
-    error: wsError, 
-    connect, 
-    disconnect, 
-    subscribeToMessages 
-  } = useWebSocket(userId);
-
-  // 连接WebSocket并订阅消息
-  useEffect(() => {
-    if (!isChatLoading && !isChatMembersLoading && !isMessagesLoading) {
-      // 连接WebSocket
-      connect();
-    }
-    
-    return () => {
-      // 组件卸载时断开连接
-      disconnect();
-    };
-  }, [isChatLoading, isChatMembersLoading, isMessagesLoading, connect, disconnect]);
-
-  // 订阅消息更新
-  useEffect(() => {
-    if (isConnected) {
-      // 处理新消息
-      const handleNewMessage = (newMessage: any) => {
-        console.log('收到新消息:', newMessage);
-        
-        // 只处理当前聊天的消息
-        if (newMessage.chat_id === chatId) {
-          // 查找发送者信息
-          let sender: any = null;
-          if (newMessage.sender_id === userId) {
-            // 自己发送的消息，不需要处理
-            return;
-          } else {
-            // 查找聊天成员中的发送者
-            chatMembers?.forEach((member: any) => {
-              if (member.user.id === newMessage.sender_id) {
-                sender = member.user;
-              }
-            });
-          }
-          
-          // 格式化消息并添加到聊天中
-          const formattedMessage = {
-            _id: newMessage.id,
-            text: newMessage.content,
-            createdAt: new Date(newMessage.created_at),
-            user: {
-              _id: newMessage.sender_id,
-              name: sender ? `${sender.first_name} ${sender.last_name}` : `用户 ${newMessage.sender_id}`,
-              avatar: sender?.profile_picture,
-            },
-          };
-          
-          setChatMessages(previousMessages => 
-            GiftedChat.append(previousMessages, [formattedMessage])
-          );
-        }
-      };
-      
-      subscribeToMessages(handleNewMessage);
-    }
-  }, [isConnected, subscribeToMessages, chatId, userId, chatMembers]);
-
-  // 发送消息处理函数
-  const onSend = useCallback(async (newMessages: IMessage[] = []) => {
-    setChatMessages(previousMessages => 
-      GiftedChat.append(previousMessages, newMessages)
-    );
-    
-    try {
-      setIsSendingMessage(true);
-      const messageToSend = newMessages[0];
-      
-      const input = {
-        chat_id: chatId,
-        sender_id: userId,
-        content: messageToSend.text,
-      };
-      
-      const response = await sendMessage(input);
-      if (!response.success) {
-        console.error("发送消息失败:", response.errors);
-      }
-    } catch (error) {
-      console.error("发送消息时出错:", error);
-    } finally {
-      setIsSendingMessage(false);
-    }
-  }, [chatId, userId, sendMessage]);
-
-  // 自定义气泡样式
+  // Custom bubble styles
   const renderBubble = (props: BubbleProps<IMessage>) => {
     return (
       <Bubble
@@ -217,7 +71,7 @@ function ChatScreen({
     );
   };
 
-  // 自定义日期分隔符
+  // Custom date separator
   const renderDay = (props: /*DayProps<IMessage>*/ any) => {
     return (
       <Day
@@ -231,7 +85,7 @@ function ChatScreen({
     );
   };
 
-  // 自定义输入工具栏
+  // Custom input toolbar
   const renderInputToolbar = (props: InputToolbarProps<IMessage>) => {
     return (
       <InputToolbar
@@ -246,7 +100,7 @@ function ChatScreen({
     );
   };
 
-  // 自定义发送按钮
+  // Custom send button
   const renderSend = (props: SendProps<IMessage>) => {
     mixpanel.trackEvent('Message Sent', {
       sent_timestamp: new Date().toISOString(),
@@ -268,7 +122,7 @@ function ChatScreen({
     );
   };
 
-  // 自定义输入框左侧按钮
+  // Custom input box left button
   const renderActions = () => {
     return (
       <TouchableOpacity 
@@ -280,7 +134,7 @@ function ChatScreen({
     );
   };
 
-  // 自定义输入框
+  // Custom input box
   const renderComposer = (props: ComposerProps) => {
     return (
       <Composer
@@ -298,48 +152,41 @@ function ChatScreen({
     );
   };
 
-  if (isChatLoading || isChatMembersLoading || isMessagesLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>加载中... (Loading...)</Text>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 聊天头部 */}
+      {/* Chat header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color="#000" />
         </TouchableOpacity>
         
-        {chat?.type === 'direct' && (
+        {chat?.type === 'direct' && partner && (
           <TouchableOpacity 
-            onPress={() => router.push(`/user/${partner?.id}`)}
+            onPress={() => router.push(`/user/${partner.id}`)}
             style={styles.avatarContainer}
           >
-            <Image source={{ uri: partner?.profile_picture }} style={styles.avatar} />
+            <Image source={{ uri: partner.profile_picture }} style={styles.avatar} />
           </TouchableOpacity>
         )}
         
         <View style={styles.headerTitle}>
           <Text style={styles.headerText}>
             {chat?.type === 'direct' 
-              ? `${partner?.first_name} ${partner?.last_name}` 
-              : chat?.title || '聊天'}
+              ? partner ? `${partner.first_name} ${partner.last_name}` : 'Chat'
+              : chat?.title || 'Chat'}
           </Text>
           {wsError ? (
-            <Text style={styles.errorText}>连接错误 (Connection Error)</Text>
+            <Text style={styles.errorText}>Connection Error</Text>
           ) : isConnected ? (
-            <Text style={styles.connectedText}>已连接 (Connected)</Text>
+            <Text style={styles.connectedText}>Connected</Text>
           ) : (
-            <Text style={styles.disconnectedText}>未连接 (Disconnected)</Text>
+            <Text style={styles.disconnectedText}>Disconnected</Text>
           )}
         </View>
         
         <TouchableOpacity onPress={() => {
-          if (chat?.type === 'direct') {
+          if (chat?.type === 'direct' && partner) {
             router.push(`/user/${partner.id}`)
           } else {
             router.push(`/chats/${chatId}/groupInfo`)
@@ -349,7 +196,7 @@ function ChatScreen({
         </TouchableOpacity>
       </View>
 
-      {/* 聊天内容 */}
+      {/* Chat content */}
       <GiftedChat
         messages={chatMessages}
         onSend={onSend}
@@ -379,23 +226,150 @@ const ChatPage = (props: any) => {
   const { chatId } = useLocalSearchParams();
   const { userId, authToken } = props;
   const [renderCounter, setRenderCounter] = useState(0);
+  const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
 
-  // 修改引用类型
-  const chatRef = useRef<ChatScreenProps['chat'] | null>(null);
-  const chatMembersRef = useRef<ChatScreenProps['chatMembers'] | null>(null);
-  const messagesRef = useRef<ChatScreenProps['messages'] | null>(null);
+  // Modify reference types
+  const chatRef = useRef<any | null>(null);
+  const chatMembersRef = useRef<any[] | null>(null);
+  const messagesRef = useRef<any[] | null>(null);
   
   const hasFetchedChat = useRef(false);
   const hasFetchedChatMembers = useRef(false);
   const hasFetchedMessages = useRef(false);
 
-  // 查询聊天数据
+  // Query chat data
   const { chat, fetched: hasNewChatData } = useGetChat(Number(chatId), !hasFetchedChat.current);
-
   const { chatMembers, fetched: hasNewChatMembersData } = useGetChatMembers(Number(chatId), !hasFetchedChatMembers.current);
-
-  // 查询消息数据
   const { messages, fetched: hasNewMessagesData } = useGetMessages(Number(chatId), !hasFetchedMessages.current);
+
+  // Use send message hook
+  const { sendMessage } = useSendMessage();
+
+  // Use WebSocket hook
+  const { 
+    isConnected, 
+    error: wsError, 
+    connect, 
+    disconnect, 
+    subscribeToMessages 
+  } = useWebSocket(userId);
+
+  // Get chat partner information
+  const partner = useMemo(() => {
+    if (chatRef.current?.type === 'direct' && chatMembersRef.current) {
+      const foundPartner = chatMembersRef.current.find((member: any) => member.user.id !== userId);
+      return foundPartner?.user || null;
+    }
+    return null;
+  }, [chatMembersRef.current, userId]);
+
+  // Process message data
+  useEffect(() => {
+    if (messagesRef.current && messagesRef.current.length > 0) {
+      const formattedMessages = messagesRef.current.map((msg: any) => ({
+        _id: msg.id,
+        text: msg.content,
+        createdAt: new Date(msg.created_at),
+        user: {
+          _id: msg.sender.id,
+          name: `${msg.sender.first_name} ${msg.sender.last_name}`,
+          avatar: msg.sender.id !== userId ? partner?.profile_picture : undefined,
+        },
+        // If message contains post, add image
+        ...(msg.post?.mediaUrls?.[0] ? { image: msg.post.mediaUrls[0] } : {}),
+      }));
+      
+      setChatMessages(formattedMessages);
+    }
+  }, [messagesRef.current, userId, partner]);
+
+  // Connect WebSocket and subscribe to messages
+  useEffect(() => {
+    if (!hasFetchedChat.current || !hasFetchedChatMembers.current || !hasFetchedMessages.current) {
+      return;
+    }
+    
+    // Connect WebSocket
+    connect();
+    
+    return () => {
+      // Disconnect when component unmounts
+      disconnect();
+    };
+  }, [hasFetchedChat.current, hasFetchedChatMembers.current, hasFetchedMessages.current, connect, disconnect]);
+
+  // Subscribe to message updates
+  useEffect(() => {
+    if (isConnected && chatMembersRef.current) {
+      // Handle new messages
+      const handleNewMessage = (newMessage: any) => {
+        console.log('Received new message:', newMessage);
+        
+        // Only process messages for current chat
+        if (newMessage.chat_id === Number(chatId)) {
+          // Find sender information
+          let sender: any = null;
+          if (newMessage.sender_id === userId) {
+            // Message sent by self, no need to process
+            return;
+          } else {
+            // Find sender among chat members
+            chatMembersRef.current?.forEach((member: any) => {
+              if (member.user.id === newMessage.sender_id) {
+                sender = member.user;
+              }
+            });
+          }
+          
+          // Format message and add to chat
+          const formattedMessage = {
+            _id: newMessage.id,
+            text: newMessage.content,
+            createdAt: new Date(newMessage.created_at),
+            user: {
+              _id: newMessage.sender_id,
+              name: sender ? `${sender.first_name} ${sender.last_name}` : `User ${newMessage.sender_id}`,
+              avatar: sender?.profile_picture,
+            },
+          };
+          
+          setChatMessages(previousMessages => 
+            GiftedChat.append(previousMessages, [formattedMessage])
+          );
+        }
+      };
+      
+      subscribeToMessages(handleNewMessage);
+    }
+  }, [isConnected, subscribeToMessages, chatId, userId]);
+
+  // Send message handler function
+  const handleSend = useCallback(async (newMessages: IMessage[] = []) => {
+    setChatMessages(previousMessages => 
+      GiftedChat.append(previousMessages, newMessages)
+    );
+    
+    try {
+      setIsSendingMessage(true);
+      const messageToSend = newMessages[0];
+      
+      const input = {
+        chat_id: Number(chatId),
+        sender_id: userId,
+        content: messageToSend.text,
+      };
+      
+      const response = await sendMessage(input);
+      if (!response.success) {
+        console.error("Failed to send message:", response.errors);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setIsSendingMessage(false);
+    }
+  }, [chatId, userId, sendMessage]);
 
   useEffect(() => {
     if (!hasNewChatData && !hasNewChatMembersData && !hasNewMessagesData) {
@@ -418,65 +392,30 @@ const ChatPage = (props: any) => {
     }
   }, [hasNewChatData, hasNewChatMembersData, hasNewMessagesData]);
 
-  // 删除好友功能
-  const { deleteFriendship } = useDeleteFriendship();
-  const [isDeletingFriendship, setIsDeletingFriendship] = useState(false);
-  const handleDeleteFriendship = async (friendId: number) => {
-    try {
-      setIsDeletingFriendship(true);
-      const response = await deleteFriendship(userId, friendId, authToken);
-      if (response.success) {
-        console.log("好友关系（和聊天）已成功删除");
-        router.push('/chats');
-      } else {
-        console.error("删除好友关系时出错:", response.errors);
-      }
-    } catch (error) {
-      console.error("删除好友关系时出错:", error);
-    } finally {
-      setIsDeletingFriendship(false);
-    }
-  }
-
-  // 调试
+  // Debug
   const loading = !hasFetchedChat.current || !hasFetchedChatMembers.current || !hasFetchedMessages.current;
-  // if (debugRenders && !loading) {
-  //   console.log("渲染聊天页面\n",
-  //     "聊天:", chatRef.current, "\n",
-  //     "聊天成员:", chatMembersRef.current, "\n",
-  //     "聊天消息:", messagesRef.current, "\n",
-  //     "渲染计数器:", renderCounter, "\n",
-  //   );
-  // }
 
   if (loading) {
-    return null; // 修复空返回值的问题
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>Loading...</Text>
+      </View>
+    );
   }
-
-  // 添加类型检查以确保不会传递 null
-  const currentChatMembers = chatMembersRef.current || [];
-  const currentMessages = messagesRef.current || [];
 
   return (
     <ChatScreen 
       userId={userId}
       chatId={Number(chatId)}
-      chat={chatRef.current!} // 使用非空断言，因为loading时已经返回了
-      isChatLoading={!hasFetchedChat.current}
-      chatMembers={currentChatMembers}
-      isChatMembersLoading={!hasFetchedChatMembers.current}
-      messages={currentMessages}
-      isMessagesLoading={!hasFetchedMessages.current}
+      chat={chatRef.current!}
+      partner={partner}
+      chatMessages={chatMessages}
+      isConnected={isConnected}
+      wsError={wsError}
+      onSend={handleSend}
+      isSendingMessage={isSendingMessage}
     />
   );
-  /*
-  if (chatRef.current.type === "direct") {
-    const partner = chatMembersRef.current?.find((member: any) => member.user.id !== userId)?.user;
-    return <IndividualChat partner={partner} />;
-  } else if (chatRef.current.type === "group") {
-    return <GroupChat chat={chatRef.current} />;
-  }
-  */
 }
 
 const styles = StyleSheet.create({

@@ -176,18 +176,28 @@ const ChatPage = () => {
   const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat.chat);
   const chatInfo = acceptedChats.map((chat: any) => {
     if (chat.type === 'group') {
-      return chat;
+      return {
+        ...chat,
+        message: "Tap to view messages",
+        time: ""
+      };
     } else if (chat.type === 'direct') {
       const matchingFriend = friends.find(friend => friend.chat_id === chat.id);
       const directChatInfo = {
         id: chat.id,
         type: 'direct',
         title: matchingFriend ? matchingFriend.friend.username : chat.title,
-        profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null
+        profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null,
+        message: "Tap to view messages",
+        time: ""
       };
       return directChatInfo;
     }
-    return chat.chat; // fallback case
+    return {
+      ...chat.chat,
+      message: "Tap to view messages",
+      time: ""
+    }; // fallback case
   });
 
   // Display Request Count
