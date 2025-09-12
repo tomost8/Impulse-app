@@ -19,10 +19,10 @@ export default {
         backgroundColor: "#ffffff"
       },
       package: "org.reactjs.native.example.Impluse",
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json"
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON
     },
     ios: {
-      googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || "./GoogleService-Info.plist",
+      googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
       bundleIdentifier: "org.reactjs.native.example.Impluse",
       supportsTablet: true,
       infoPlist: {
@@ -31,14 +31,14 @@ export default {
         NSPhotoLibraryAddUsageDescription: "We need access to save photos to your camera roll.",
         NSPhotoLibraryUsageDescription: "This app needs access to your photo library to select pictures.",
         NSAppTransportSecurity: {
-          NSExceptionDomains: {
-            "18.191.234.29": {
+          NSExceptionDomains: process.env.API_AWS_URL ? {
+            [new URL(process.env.API_AWS_URL).hostname]: {
               NSExceptionAllowsInsecureHTTPLoads: true,
               NSExceptionMinimumTLSVersion: "1.0",
               NSExceptionRequiresForwardSecrecy: false,
               NSIncludesSubdomains: true
             }
-          }
+          } : {}
         }
       }
     },
@@ -76,10 +76,10 @@ export default {
       eas: {
         projectId: "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
       },
-      API_ENV: process.env.EXPO_PUBLIC_API_ENV || "aws",
-      API_AWS_URL: process.env.EXPO_PUBLIC_API_AWS_URL || "http://18.191.234.29:3000/graphql",
-      API_LOCAL_URL: process.env.EXPO_PUBLIC_API_LOCAL_URL || "http://localhost:3000/graphql",
-      MIXPANEL_TOKEN: process.env.EXPO_PUBLIC_MIXPANEL_TOKEN || "431de022b60e0c270c405468c11ac4f3"
+      API_ENV: process.env.EXPO_PUBLIC_API_ENV,
+      API_AWS_URL: process.env.API_AWS_URL,
+      API_LOCAL_URL: process.env.API_LOCAL_URL,
+      MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN
     },
     owner: "williamwangimpulse"
   }

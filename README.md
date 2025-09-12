@@ -63,34 +63,76 @@ npm install
 
 ### 3. Environment Configuration
 
-Create a `.env` file in the root directory:
+Copy the environment template and configure your local environment:
 ```bash
-API_ENV=aws
-API_AWS_URL=http://18.191.234.29:3000/graphql
-API_LOCAL_URL=http://localhost:3000/graphql
+cp env.example .env
 ```
 
-### 4. Starting the App
+The `.env` file should contain:
+```env
+# API Configuration (all required - no defaults)
+EXPO_PUBLIC_API_ENV=aws
+API_AWS_URL=http://18.191.234.29:3000/graphql
+API_LOCAL_URL=http://localhost:3000/graphql
+
+# Mixpanel Configuration (private - required)
+MIXPANEL_TOKEN=431de022b60e0c270c405468c11ac4f3
+
+# Google Services Files (for local development)
+GOOGLE_SERVICES_JSON=./google-services.json
+GOOGLE_SERVICES_PLIST=./GoogleService-Info.plist
+```
+
+**Important**: All environment variables are required. The app will not work without proper configuration. API URLs and Mixpanel token are kept private for security reasons and are not exposed in the app bundle.
+
+**Note**: The values shown above are examples. You must obtain the actual values from the project maintainer.
+
+### 4. Firebase Configuration
+
+**Important**: You need to obtain the Firebase configuration files from the project maintainer:
+
+- `GoogleService-Info.plist` (for iOS)
+- `google-services.json` (for Android)
+
+These files contain sensitive API keys and are not committed to the repository for security reasons.
+
+**To get these files:**
+1. Contact the project maintainer
+2. Or download them from the Firebase console (if you have access to the project)
+3. Place them in the root directory of the project
+
+**Note**: The Firebase project ID is `quizdemov1` with bundle ID `org.reactjs.native.example.Impluse`.
+
+### 5. Starting the App
+
+**For local development (no EAS required):**
 ```bash
 # Start Expo development server
 npx expo start
 
 # Run on specific platforms
-npx expo run:ios        # iOS Simulator
-npx expo run:android    # Android Emulator
+npx expo run:ios --device        # iOS Device
+npx expo run:ios                 # iOS Simulator
+npx expo run:android             # Android Emulator
 ```
 
-### 5. Test Account
+**Note**: For local development, you only need the `.env` file and GoogleService-Info files. EAS is only required for production builds.
+
+### 6. Test Account
 For quick testing, you can use these credentials:
 - **Email**: test@test.com
 - **Password**: test1234
 
 ## Building for Production
 
-### EAS Build
-The project uses EAS Build for production builds:
+### EAS Build Setup
+The project uses EAS Build for production builds. **Note**: EAS is only required for production builds, not local development.
 
+**Setup for EAS builds:**
 ```bash
+# Install EAS CLI
+npm install -g eas-cli
+
 # Login to Expo
 eas login
 
@@ -98,6 +140,17 @@ eas login
 eas build --platform ios
 eas build --platform android
 ```
+
+**Environment Variables for EAS:**
+The project uses EAS secrets for sensitive configuration during builds. The following environment variables are configured in EAS:
+- `GOOGLE_SERVICES_JSON` - Android Firebase configuration
+- `GOOGLE_SERVICES_PLIST` - iOS Firebase configuration
+- `EXPO_PUBLIC_API_ENV` - API environment (public)
+- `API_AWS_URL` - AWS API endpoint (private)
+- `API_LOCAL_URL` - Local API endpoint (private)
+- `MIXPANEL_TOKEN` - Mixpanel analytics token (private)
+
+**Note**: EAS secrets are managed by the project maintainer and are automatically injected during builds. Private variables are not exposed in the app bundle for security.
 
 ## Git Workflow
 
