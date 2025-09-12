@@ -7,35 +7,27 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": {
-        "API_ENVIROMENT": "aws",
-        "API_AWS_URL": "http://18.191.234.29:3000/graphql",
-        "API_LOCAL_URL": "http://localhost:3000/graphql"
-      },
+      "environment": "development",
       "ios": {
         "resourceClass": "m-medium"
       }
     },
     "preview": {
       "distribution": "internal",
-      "env": {
-        "API_ENVIROMENT": "aws",
-        "API_AWS_URL": "http://18.191.234.29:3000/graphql",
-        "API_LOCAL_URL": "http://localhost:3000/graphql"
-      },
+      "environment": "preview",
       "ios": {
         "resourceClass": "m-medium"
       }
     },
     "production": {
       "autoIncrement": true,
-      "env": {
-        "API_ENVIROMENT": "aws",
-        "API_AWS_URL": "http://18.191.234.29:3000/graphql",
-        "API_LOCAL_URL": "http://localhost:3000/graphql"
-      },
+      "environment": "production",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "distribution": "store"
+      },
+      "android": {
+        "buildType": "apk"
       }
     }
   },

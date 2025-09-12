@@ -39,5 +39,6 @@ yarn-error.*
 android
 ios
 
-#google-services.json
-#GoogleService-Info.plist
+# Google Services files (contain sensitive API keys)
+google-services.json
+GoogleService-Info*.plist
