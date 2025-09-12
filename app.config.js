@@ -76,7 +76,7 @@ export default {
       eas: {
         projectId: "4f8ddc48-ae35-499a-9b71-c215c3ec1687"
       },
-      API_ENV: process.env.EXPO_PUBLIC_API_ENV,
+      API_ENV: process.env.API_ENV,
       API_AWS_URL: process.env.API_AWS_URL,
       API_LOCAL_URL: process.env.API_LOCAL_URL,
       MIXPANEL_TOKEN: process.env.MIXPANEL_TOKEN

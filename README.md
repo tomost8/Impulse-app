@@ -71,7 +71,7 @@ cp env.example .env
 The `.env` file should contain:
 ```env
 # API Configuration (all required - no defaults)
-EXPO_PUBLIC_API_ENV=aws
+API_ENV=aws
 API_AWS_URL=http://18.191.234.29:3000/graphql
 API_LOCAL_URL=http://localhost:3000/graphql
 
@@ -145,7 +145,7 @@ eas build --platform android
 The project uses EAS secrets for sensitive configuration during builds. The following environment variables are configured in EAS:
 - `GOOGLE_SERVICES_JSON` - Android Firebase configuration
 - `GOOGLE_SERVICES_PLIST` - iOS Firebase configuration
-- `EXPO_PUBLIC_API_ENV` - API environment (public)
+- `API_ENV` - API environment (private)
 - `API_AWS_URL` - AWS API endpoint (private)
 - `API_LOCAL_URL` - Local API endpoint (private)
 - `MIXPANEL_TOKEN` - Mixpanel analytics token (private)
