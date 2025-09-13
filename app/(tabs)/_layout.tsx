@@ -1,9 +1,10 @@
 import { router, Tabs, usePathname } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, Image, View, Text, Button } from 'react-native';
+import { Platform, Image, View, Text, Button, TouchableOpacity } from 'react-native';
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
+import NotchedTabBarBackground from '@/components/ui/NotchedTabBarBackground';
 
 import CameraPopup from '@/components/screens/home/camerapopup';
 import { useAuth } from '@/contexts/AuthContext';
@@ -56,8 +57,8 @@ function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarBackground: TabBarBackground,
-          tabBarActiveTintColor: '#DE728D',
-          tabBarInactiveTintColor: '#999999',
+          tabBarActiveTintColor: '#DE728D', // Custom active color (you can change this)
+          tabBarInactiveTintColor: '#8E8E93', // Custom inactive color (you can change this)
           tabBarLabelStyle: {
             display: 'none', // Hide all labels by default
           },
@@ -88,7 +89,7 @@ function TabLayout() {
             title: 'Home',
             tabBarIcon: ({ color }) => (
               <Image 
-                source={require('@/assets/icons/navHome.png')} 
+                source={require('@/assets/icons/navBar/navHome.png')} 
                 style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
@@ -106,7 +107,7 @@ function TabLayout() {
             title: 'Chat',
             tabBarIcon: ({ color }) => (
               <Image 
-                source={require('@/assets/icons/navChat.png')} 
+                source={require('@/assets/icons/navBar/navChat.png')} 
                 style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
@@ -148,7 +149,7 @@ function TabLayout() {
             title: 'Social',
             tabBarIcon: ({ color }) => (
               <Image 
-                source={require('@/assets/icons/navCommunities.png')} 
+                source={require('@/assets/icons/navBar/navCommunities.png')} 
                 style={{ width: 25, height: 25, tintColor: color, marginTop: 12}}
               />
             ),
@@ -166,7 +167,7 @@ function TabLayout() {
             title: 'Account',
             tabBarIcon: ({ color }) => (
               <Image 
-                source={require('@/assets/icons/navProfile.png')} 
+                source={require('@/assets/icons/navBar/navProfile.png')} 
                 style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),

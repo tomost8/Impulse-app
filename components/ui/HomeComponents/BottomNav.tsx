@@ -14,12 +14,12 @@ const BottomNav = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Home")}>
-        <HomeIconSvg width="20" height="20" />
+        <HomeIconSvg width="22" height="22" />
         <Text style={styles.label}>Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Community")}>
-        <PeopleIconSvg width="20" height="20" />
+        <PeopleIconSvg width="22" height="22" />
         <Text style={styles.label}>Community</Text>
       </TouchableOpacity>
 

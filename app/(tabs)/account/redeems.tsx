@@ -25,7 +25,9 @@ const RedeemsPage = () => {
       return;
     }
     if (hasNewRewardsData) {
-      rewardsRef.current = rewards;
+      // Sort rewards by points in ascending order (lowest at top)
+      const sortedRewards = [...rewards].sort((a, b) => a.required_points - b.required_points);
+      rewardsRef.current = sortedRewards;
       hasFetchedRewards.current = true;
     }
     if (hasFetchedRewards.current) {
