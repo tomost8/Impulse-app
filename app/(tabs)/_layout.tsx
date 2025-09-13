@@ -56,6 +56,11 @@ function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarBackground: TabBarBackground,
+          tabBarActiveTintColor: '#DE728D',
+          tabBarInactiveTintColor: '#999999',
+          tabBarLabelStyle: {
+            display: 'none', // Hide all labels by default
+          },
           tabBarStyle: {
             display: shouldShowTabBar ? 'flex' : 'none',
             height: shouldShowTabBar ? undefined : 0,
@@ -84,7 +89,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navHome.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}
@@ -102,7 +107,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navChat.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}
@@ -117,7 +122,13 @@ function TabLayout() {
           name="camera"
           options={{
             title: 'Camera',
-            tabBarIcon: ({ color }) => <IconSymbol size={28} name="camera.fill" color={color} />,
+            tabBarLabel: '', // No label for camera
+            tabBarIcon: ({ color }) => (
+              <Image 
+                source={require('@/assets/icons/CameraAndBackground.png')} 
+                style={{ width: 70, height: 70 }}
+              />
+            ),
           }}
           listeners={{
             tabPress: (e) => {
@@ -138,7 +149,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navCommunities.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12}}
               />
             ),
           }}
@@ -156,7 +167,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navProfile.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}

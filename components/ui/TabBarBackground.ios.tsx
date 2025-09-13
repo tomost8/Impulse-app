@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 export default function BlurTabBarBackground() {
   return (
     <View
-      style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 255, 255, 0.8)' }]}
+      style={[StyleSheet.absoluteFill, { backgroundColor: '#FFFFFF' }]}
     />
   );
 }

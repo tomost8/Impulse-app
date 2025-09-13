@@ -14,29 +14,29 @@ const BottomNav = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Home")}>
-        <HomeIconSvg width="24" height="24" />
+        <HomeIconSvg width="20" height="20" />
         <Text style={styles.label}>Home</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Community")}>
-        <PeopleIconSvg width="24" height="24" />
+        <PeopleIconSvg width="20" height="20" />
         <Text style={styles.label}>Community</Text>
       </TouchableOpacity>
 
       {/* Center Floating Camera Button */}
       <View style={styles.cameraWrapper}>
         <TouchableOpacity style={styles.cameraButton} onPress={() => console.log("Camera")}>
-          <CameraIconSvg width={28} height={28} /> 
+          <CameraIconSvg width={32} height={32} /> 
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Leaderboard")}>
-        <BarChartIconSvg width="24" height="24" />
+        <BarChartIconSvg width="20" height="20" />
         <Text style={styles.label}>Stats</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.navItem} onPress={() => console.log("Profile")}>
-        <ProfileIconSvg width="24" height="24" />
+        <ProfileIconSvg width="20" height="20" />
         <Text style={styles.label}>Profile</Text>
       </TouchableOpacity>
     </View>
@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
   },
   navItem: {
     alignItems: "center",
+    paddingTop: 12,
   },
   label: {
     fontSize: 12,

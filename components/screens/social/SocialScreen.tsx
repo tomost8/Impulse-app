@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 65, // Add padding at bottom to ensure visibility (matches home page)
+    paddingBottom: 90, // Add padding at bottom to ensure visibility above navigation bar
   },
   communityListSection: {
     paddingTop: 12,
