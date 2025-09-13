@@ -140,7 +140,7 @@ export default function CameraScreen() {
               if (isCameraReady) {
                 setTimeout(() => {
                   resolve(true);
-                }, 500);
+                }, 1000);
               } else {
                 setTimeout(checkReady, 100);
               }

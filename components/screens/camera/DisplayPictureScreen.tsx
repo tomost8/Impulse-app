@@ -45,7 +45,7 @@ const DisplayPictureScreen = ({
                 <Image
                   source={mainImageSource}
                   style={styles.mainImage}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
               )}
               {previewImageSource && (
@@ -56,7 +56,7 @@ const DisplayPictureScreen = ({
                   <Image
                     source={previewImageSource}
                     style={styles.previewImage}
-                    resizeMode="contain"
+                    resizeMode="cover"
                   />
                 </TouchableOpacity>
               )}

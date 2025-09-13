@@ -27,13 +27,14 @@
  * └── ReplyContext
  */
 
-// Core Post Components
-export { default as FullPostCard } from './core/FullPostCard';
-export { default as ProgressBar } from './core/ProgressBar';
-export { default as DayComponent } from './core/DayComponent';
-
 // Layout Components
 export { default as MemoriesGrid } from './MemoriesGrid';
+
+// Core Post Components
+export { default as DayComponent } from './core/DayComponent';
+export { default as FullPostCard } from './core/FullPostCard';
+export { default as ProgressBar } from './core/ProgressBar';
+
 
 // Comment Components
 export { default as CommentSection } from './comments/CommentSection';

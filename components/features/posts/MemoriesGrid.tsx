@@ -323,7 +323,7 @@ const MemoriesGrid: React.FC<MemoriesProps> = ({ memories }) => {
               <View style={{ position: 'relative', width: '100%', height: '100%' }}>
                 <Image 
                   source={{ uri: dayPosts[storyIndex].mediaUrls?.[0] }} 
-                  style={{ width: '100%', height: '100%', resizeMode: 'contain' }}
+                  style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
                   onLoadStart={() => setStoryImageLoading(true)}
                   onLoadEnd={() => setStoryImageLoading(false)}
                   onError={() => setStoryImageLoading(false)}

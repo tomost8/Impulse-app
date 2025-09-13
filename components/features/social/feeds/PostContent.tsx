@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, StatusBar, Platform } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, PanResponder, Animated, StatusBar, Platform, ActivityIndicator } from 'react-native';
 
 interface PostContentProps {
   imageUrls?: string[];
@@ -14,6 +14,8 @@ const PADDING = 7; // Half the padding of full post view
 const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSinglePost = false }) => {
   const [mainImageIndex, setMainImageIndex] = useState(0);
   const [position] = useState(new Animated.ValueXY({ x: PADDING, y: PADDING }));
+  const [mainImageLoading, setMainImageLoading] = useState(true);
+  const [smallImageLoading, setSmallImageLoading] = useState(true);
   const hasCaption = caption && caption.trim().length > 0;
 
   // Basic validation - ensure we have at least one image
@@ -30,7 +32,17 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
           source={{ uri: imageUrls[0] }}
           style={styles.image}
           resizeMode="cover"
+          onLoadStart={() => setMainImageLoading(true)}
+          onLoadEnd={() => setMainImageLoading(false)}
+          onError={() => setMainImageLoading(false)}
         />
+        
+        {/* Loading indicator for main image */}
+        {mainImageLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="small" color="#DE728D" />
+          </View>
+        )}
 
         {/* Small Image - Only show for double camera posts */}
         {!isSinglePost && imageUrls.length > 1 && (
@@ -40,7 +52,17 @@ const PostContent: React.FC<PostContentProps> = ({ imageUrls, caption, isSingleP
                 source={{ uri: imageUrls[1] }}
                 style={styles.smallImage}
                 resizeMode="cover"
+                onLoadStart={() => setSmallImageLoading(true)}
+                onLoadEnd={() => setSmallImageLoading(false)}
+                onError={() => setSmallImageLoading(false)}
               />
+              
+              {/* Loading indicator for small image */}
+              {smallImageLoading && (
+                <View style={styles.smallLoadingOverlay}>
+                  <ActivityIndicator size="small" color="#DE728D" />
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         )}
@@ -86,6 +108,28 @@ const styles = StyleSheet.create({
   smallImage: {
     width: SMALL_IMAGE_SIZE.width,
     height: SMALL_IMAGE_SIZE.height,
+    borderRadius: 5,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+  smallLoadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(240, 240, 240, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderRadius: 5,
   },
   caption: {

@@ -27,7 +27,7 @@ const DisplayPicturePage = () => {
   const [previewImageSource, setPreviewImageSource] = useState(
     frontImageSource && backImageSource ? frontImageSource : null
   );
-  const imageSources: string[] = [frontImageSource, backImageSource]
+  const imageSources: string[] = [backImageSource, frontImageSource]
     .filter(Boolean)
     .map(source => source!.uri);
 
