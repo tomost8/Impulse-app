@@ -56,9 +56,12 @@ function TabLayout() {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarBackground: NotchedTabBarBackground,
+          tabBarBackground: TabBarBackground,
           tabBarActiveTintColor: '#DE728D', // Custom active color (you can change this)
           tabBarInactiveTintColor: '#8E8E93', // Custom inactive color (you can change this)
+          tabBarLabelStyle: {
+            display: 'none', // Hide all labels by default
+          },
           tabBarStyle: {
             display: shouldShowTabBar ? 'flex' : 'none',
             height: shouldShowTabBar ? undefined : 0,
@@ -89,7 +92,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navHome.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}
@@ -108,7 +111,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navChat.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}
@@ -122,9 +125,25 @@ function TabLayout() {
         <Tabs.Screen
           name="camera"
           options={{
-            title: '',
-            tabBarIcon: () => null, // No icon - this creates space for floating button
-            tabBarButton: () => null, // Completely hide the tab button
+            title: 'Camera',
+            tabBarLabel: '', // No label for camera
+            tabBarIcon: ({ color }) => (
+              <Image 
+                source={require('@/assets/icons/CameraAndBackground.png')} 
+                style={{ width: 70, height: 70 }}
+              />
+            ),
+          }}
+          listeners={{
+            tabPress: (e) => {
+              if (!cameraClickable) {
+                e.preventDefault();
+                console.log("no activities, pop up modal");
+                setModalVisible(true);
+              } else {
+                router.push('/camera');
+              }
+            },
           }}
         />
         <Tabs.Screen
@@ -135,7 +154,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navCommunities.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12}}
               />
             ),
           }}
@@ -154,7 +173,7 @@ function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navProfile.png')} 
-                style={{ width: 28, height: 28, tintColor: color }}
+                style={{ width: 25, height: 25, tintColor: color, marginTop: 12 }}
               />
             ),
           }}
@@ -166,46 +185,6 @@ function TabLayout() {
           }}
         />
       </Tabs>
-
-      {/* Floating Camera Button */}
-      {shouldShowTabBar && (
-        <TouchableOpacity
-          style={{
-            position: 'absolute',
-            bottom: Platform.OS === 'ios' ? 42 : 32, // Position in the notch
-            left: '50%',
-            marginLeft: -30, // Half of button width to center it
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: '#DE728D', // Match your active tint color
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 4,
-            },
-            shadowOpacity: 0.3,
-            shadowRadius: 5,
-            elevation: 8,
-            zIndex: 1000,
-          }}
-          onPress={() => {
-            if (!cameraClickable) {
-              console.log("no activities, pop up modal");
-              setModalVisible(true);
-            } else {
-              router.push('/camera');
-            }
-          }}
-        >
-          <Image 
-            source={require('@/assets/icons/navBar/navCamera.png')} 
-            style={{ width: 32, height: 32 }}
-          />
-        </TouchableOpacity>
-      )}
 
       <CameraPopup
         isVisible={modalVisible}
