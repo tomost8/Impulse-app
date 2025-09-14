@@ -88,7 +88,6 @@ function TabLayout() {
           name="home"
           options={{
             title: 'Home',
-            tabBarLabel: ({ focused, color }) => focused ? <Text style={{ fontSize: 12, color }}>Home</Text> : null,
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navHome.png')} 
@@ -107,7 +106,6 @@ function TabLayout() {
           name="chats"
           options={{
             title: 'Chat',
-            tabBarLabel: ({ focused, color }) => focused ? <Text style={{ fontSize: 12, color }}>Chat</Text> : null,
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navChat.png')} 
@@ -150,7 +148,6 @@ function TabLayout() {
           name="social"
           options={{
             title: 'Social',
-            tabBarLabel: ({ focused, color }) => focused ? <Text style={{ fontSize: 12, color }}>Social</Text> : null,
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navCommunities.png')} 
@@ -169,7 +166,6 @@ function TabLayout() {
           name="account"
           options={{
             title: 'Account',
-            tabBarLabel: ({ focused, color }) => focused ? <Text style={{ fontSize: 12, color }}>Account</Text> : null,
             tabBarIcon: ({ color }) => (
               <Image 
                 source={require('@/assets/icons/navBar/navProfile.png')} 

@@ -55,7 +55,8 @@ const DisplayPictureScreen = ({
                 >
                   <Image
                     source={previewImageSource}
-                    style={styles.previewImage}
+                    style={[styles.previewImage, { 
+                    }]}
                     resizeMode="cover"
                   />
                 </TouchableOpacity>
@@ -140,10 +141,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     left: 16,
-    width: 145,
-    height: 150,
+    width: 155,
+    height: 185,
     borderRadius: 8,
     overflow: 'hidden',
+    backgroundColor: '#000000',
     zIndex: 10,
   },
   previewImage: {
