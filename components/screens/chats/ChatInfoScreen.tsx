@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { LeavePopup } from '@/components/features/chats';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
 import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
 
@@ -29,6 +30,7 @@ interface ChatInfoScreenProps {
   members: Member[];
   leaderboard: any[];
   handleLeave: () => void;
+  chatId?: string | string[];
 }
 
 const ChatInfoScreen = (props: ChatInfoScreenProps) => {
@@ -66,8 +68,9 @@ const ChatInfoScreen = (props: ChatInfoScreenProps) => {
             {props.members.map((member) => (
               <View key={member.id} style={styles.memberCard}>
                 <View style={styles.memberInfo}>
-                  <Image 
+                  <ProfilePictureWithLoading 
                     source={{ uri: member.profile_picture }}
+                    size={48}
                     style={styles.profileImage}
                   />
                   <View style={styles.textContainer}>
@@ -88,7 +91,7 @@ const ChatInfoScreen = (props: ChatInfoScreenProps) => {
           {/* Invite Button */}
           <TouchableOpacity 
             style={styles.inviteButton}
-            onPress={() => router.push('/chats/groups/invite')}
+            onPress={() => router.push(`/chats/${props.chatId}/invite`)}
           >
             <Text style={styles.inviteButtonText}>Invite a friend to this group</Text>
           </TouchableOpacity>

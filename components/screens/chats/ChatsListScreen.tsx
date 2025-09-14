@@ -11,6 +11,7 @@ import {
   StatusBar
 } from 'react-native';
 import LoadingScreen from '@/components/ui/common/loading';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 import { router } from 'expo-router';
 import { ConnectPopup } from '@/components/features/chats';
 
@@ -71,8 +72,9 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
           
             <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
             <View style={styles.messageInfo}>
-              <Image 
+              <ProfilePictureWithLoading 
                 source={{uri: chat.profile_pic}}
+                size={48}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>

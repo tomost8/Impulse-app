@@ -45,8 +45,8 @@ const AddActivityPage = () => {
           const response = await createActivity(input);
           if (response.success) {
             mixpanel.trackEvent('Daily Goal Set', {
-              goal_category: getCategoryById(goalId),
-              set_timestamp: new Date().toISOString(),
+              category: getCategoryById(goalId),
+              timestamp: new Date().toISOString(),
             });
             newActivities.push(response.activity);
           } else {

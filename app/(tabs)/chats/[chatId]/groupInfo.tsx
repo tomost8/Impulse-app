@@ -91,6 +91,7 @@ const GroupInfoPage = (props: any) => {
     members={chatMembersRef.current || []}
     leaderboard={chatLeaderboardRef.current || []}
     handleLeave={() => handleLeaveGroup(userId, Number(chatId))}
+    chatId={chatId}
   />
 }
 

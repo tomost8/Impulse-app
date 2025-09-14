@@ -11,6 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import LoadingScreen from '@/components/ui/common/loading';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 import { router } from 'expo-router';
 import Header from "@/components/ui/common/headers/Header";
 import mixpanel from '@/config/mixpanelConfig';
@@ -64,10 +65,10 @@ const AddFriendsScreen = (props: AddFriendsScreenProps) => {
   const handleAddFriend = (friendId: string) => {
     console.log('Add friend:', friendId);
     props.handleSendFriendRequest(Number(friendId));
-    mixpanel.trackEvent('friend_count', {
-    count_friends: acceptedFriends.length + 1, // +1 for the new friend being added
-    count_friends_timestamp: new Date().toISOString(),
-    });
+    // mixpanel.trackEvent('friend_count', {
+    //   count_friends: acceptedFriends.length + 1, // +1 for the new friend being added
+    //   count_friends_timestamp: new Date().toISOString(),
+    // });
   };
 
   return (
@@ -105,8 +106,9 @@ const AddFriendsScreen = (props: AddFriendsScreenProps) => {
                     style={styles.friendInfo}
                     onPress={() => router.push(`/user/${friend.id}`)}
                   >
-                    <Image 
+                    <ProfilePictureWithLoading 
                       source={{ uri: friend.profile_picture }}
+                      size={48}
                       style={styles.profileImage}
                     />
                     <View style={styles.textContainer}>
@@ -138,8 +140,9 @@ const AddFriendsScreen = (props: AddFriendsScreenProps) => {
                     style={styles.friendInfo}
                     onPress={() => router.push(`/user/${friend.id}`)}
                   >
-                    <Image 
+                    <ProfilePictureWithLoading 
                       source={{ uri: friend.profile_picture }}
+                      size={48}
                       style={styles.profileImage}
                     />
                     <View style={styles.textContainer}>

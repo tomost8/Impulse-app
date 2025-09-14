@@ -11,11 +11,13 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { InviteSentPopup } from '@/components/features/chats';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 import Header from "@/components/ui/common/headers/Header";
 
 interface Friend {
   id: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   username: string;
   profile_picture: any;
   isInvited: boolean;
@@ -109,12 +111,13 @@ const InviteToChatScreen = (props: InviteToChatProps) => {
         {filteredFriends.map((friend) => (
           <View key={friend.id} style={styles.friendCard}>
             <View style={styles.friendInfo}>
-              <Image 
-                source={friend.profile_picture}
+              <ProfilePictureWithLoading 
+                source={{uri: friend.profile_picture}}
+                size={48}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>
-                <Text style={styles.name}>{friend.name}</Text>
+                <Text style={styles.name}>{friend.first_name} {friend.last_name}</Text>
                 <Text style={styles.username}>{friend.username}</Text>
               </View>
             </View>

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAuth } from '@/config/firebaseConfig';
 import { onAuthStateChanged, getIdToken, signOut } from '@react-native-firebase/auth';
+import mixpanel from '@/config/mixpanelConfig';
 
 interface AuthContextType {
   authToken: string | null;
@@ -157,6 +158,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               
               // Schedule refresh for the new token
               scheduleTokenRefresh(freshToken);
+              
+              // Note: User ID should remain the same, but if it changes, 
+              // the _layout.tsx useEffect will handle Mixpanel re-identification
             }
           } else {
             // Don't automatically logout when Firebase user is null
@@ -223,13 +227,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await signOut(getAuth());
       // Clear keys from AsyncStorage
       await AsyncStorage.clear();
+      // Reset Mixpanel user data
+      mixpanel.resetUser();
       // Reset auth React state
       setAuthToken(null);
       setUserId(null);
       currentAuthToken.current = null;
       currentUserId.current = null;
       hasLoadedAuthData.current = false;
-      console.log('🔐 Firebase logout, storage cleared, auth state reset');
+      console.log('🔐 Firebase logout, storage cleared, auth state reset, Mixpanel reset');
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;

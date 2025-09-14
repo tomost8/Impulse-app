@@ -103,7 +103,7 @@ function ChatScreen({
   // Custom send button
   const renderSend = (props: SendProps<IMessage>) => {
     mixpanel.trackEvent('Message Sent', {
-      sent_timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       // sender_id, chat_id, message_length, etc.
     });
 

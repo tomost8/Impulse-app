@@ -58,10 +58,10 @@ const JoinGroupPage = (props: any) => {
       response_log += "Joining group with input:\n" + JSON.stringify(input) + "\n";
       const response = await createChatMember(input);
       if (response.success) {
-        mixpanel.trackEvent('Group Joined', {
-          group_id: response.chat_member.id,
-          join_timestamp: new Date().toISOString(),
-        });
+        // mixpanel.trackEvent('Group Joined', {
+        //   group_id: response.chat_member.id,
+        //   join_timestamp: new Date().toISOString(),
+        // });
         response_log += "Group joined successfully:\n" + response.chat_member.id + "\n";
       } else {
         throw new Error("Response.success from createChatMember was false:" + response.errors);

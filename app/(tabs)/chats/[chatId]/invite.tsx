@@ -19,7 +19,6 @@ const GroupInvitePage = (props: any) => {
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Queries 
-
   const chatMembersRef = useRef<any[] | null>(null);
   const hasFetchedChatMembers = useRef<boolean>(false);
   const { chatMembers, fetched: hasNewChatMembersData } = useGetChatMembers(Number(chatId), !hasFetchedChatMembers.current);

@@ -74,8 +74,9 @@ const DisplayPicturePage = () => {
       const response = await createPost(input, authToken as string);
       console.log("createPost response:", response);
       if (response.success) {
-        mixpanel.trackEvent('Photo Sent (post)', {
-          photo_sent_timestamp: new Date().toISOString(),
+        mixpanel.trackEvent('Daily Goal Completed', {
+          category: category,
+          timestamp: new Date().toISOString(),
         });
         
         console.log("Post created successfully:", response.post);
