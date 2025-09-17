@@ -85,9 +85,15 @@ const MemoryStoryScreen = ({ posts, loading }: StoryScreenProps) => {
             <FullPostCard
               isStory={true}
               post={{
-                timeAgo: getTimeAgo(posts[currentIndex].created_at),
-                images: posts[currentIndex].mediaUrls, // ensure the shown image matches the toggle
-                category: posts[currentIndex].category
+                // timeAgo: getTimeAgo(posts[currentIndex].created_at), // Not used anywhere in FullPostCard
+                // username: posts[currentIndex].username, // Not used in story header
+                // profileImage: posts[currentIndex].profileImage, // Not used in story header
+                category: posts[currentIndex].category,
+                images: posts[currentIndex].mediaUrls,
+                caption: posts[currentIndex].caption,
+                // liked: posts[currentIndex].liked, // Not used in story mode (PostFooter hidden)
+                // likeCount: posts[currentIndex].likeCount, // Not used in story mode (PostFooter hidden)
+                // commentCount: posts[currentIndex].commentCount, // Not used in story mode (PostFooter hidden)
               }}
               mainImageIndex={mainImageIndex}
               onChangeMainImageIndex={setMainImageIndex}

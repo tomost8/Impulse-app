@@ -19,7 +19,12 @@ export default {
         backgroundColor: "#ffffff"
       },
       package: "org.reactjs.native.example.Impluse",
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json"
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
+      permissions: [
+        "android.permission.CAMERA",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ]
     },
     ios: {
       googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || "./GoogleService-Info.plist",
@@ -27,9 +32,9 @@ export default {
       supportsTablet: true,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
-        NSCameraUsageDescription: "This app needs access to the camera to take photos.",
-        NSPhotoLibraryAddUsageDescription: "We need access to save photos to your camera roll.",
-        NSPhotoLibraryUsageDescription: "This app needs access to your photo library to select pictures.",
+        NSCameraUsageDescription: "Allow access to camera to take photos for your daily goals and memories.",
+        NSPhotoLibraryAddUsageDescription: "Allow access to library to save photos to your camera roll.",
+        NSPhotoLibraryUsageDescription: "Allow access to photos to upload pictures from your library.",
         NSAppTransportSecurity: {
           NSExceptionDomains: process.env.API_AWS_URL ? {
             [new URL(process.env.API_AWS_URL).hostname]: {

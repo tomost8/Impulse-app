@@ -1,17 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PostHeader from './PostHeader';
-import PostContent from './PostContent';
+import PostImage from './PostImage';
+import PostFooter from './PostFooter';
 import { PostImageRef } from './PostImage';
-import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
-import { getLabelByCategory, getIconByCategory } from '@/utils/goals';
-import { router } from 'expo-router';
 
 interface FullPostCardProps {
   isStory?: boolean;
   post?: {
     username?: string;
-    timeAgo?: string;
+    //timeAgo?: string; // Not used currently but can be passed in if needed
     profileImage?: string;
     caption?: string;
     images?: string[];
@@ -46,83 +44,58 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
     }
   };
 
-  const handleLike = () => {
-    if (post?.liked) {
-      onUnlike?.();
+  const handleNavigationPress = () => {
+    if (isStoryMode) {
+      // For stories, you might want to implement left/right tap logic here
+      onNext?.();
     } else {
-      onLike?.();
+      onNext?.();
     }
   };
 
+  const shouldShowCaption = post.caption && post.caption.trim().length > 0 && !isStoryMode;
+
   return (
     <View style={styles.container}>
-      {/* Date Section */}
-      {formattedDate && (
-        <View style={styles.headerContent}>
-          <View style={styles.dateSection}>
-            <Text style={styles.dateText}>{formattedDate}</Text>
-            {isStoryMode && <Text style={styles.timeText}>{`${getLabelByCategory(post.category || '')} • ${formattedTime}`}</Text>}
-          </View>
-          {isStoryMode && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-            <MaterialCommunityIcons name="close-thick" size={20} color="white" />
-          </TouchableOpacity>}
-        </View>
-      )}
-      {!isStoryMode && <PostHeader 
+      <PostHeader 
+        isStoryMode={isStoryMode}
+        formattedDate={formattedDate}
+        formattedTime={formattedTime}
+        category={post.category}
         username={post.username}
         profileImage={post.profileImage}
-        imageUrls={post.images}
-        mainImageIndex={mainImageIndex}
-        imageRef={imageRef}
-      />}
-
-      <PostContent 
-        caption={post.caption}
-        imageUrls={post.images}
-        mainImageIndex={mainImageIndex}
-        onImageSwap={handleImageSwap}
-        isSwapping={isSwapping}
-        isStoryMode={isStoryMode}
-        onNext={onNext}
-        onPrev={onPrev}
-        username={post.username}
+        hasImages={post.images && post.images.length > 0}
         imageRef={imageRef}
       />
 
-      {!isStoryMode && <View style={styles.interactionContainer}>
-        <View style={styles.leftInteractions}>
-          <TouchableOpacity 
-            style={styles.interactionButton}
-            onPress={handleLike}
-          >
-            <MaterialCommunityIcons
-              name={post?.liked ? "heart" : "heart-outline"}
-              size={20}
-              color={post?.liked ? "#FF0000" : "#000"}
-            />
-            <Text style={styles.count}>{post.likeCount}</Text>
-          </TouchableOpacity>
+      {post.images && post.images.length > 0 && (
+        <View style={[styles.contentContainer, !shouldShowCaption && styles.contentContainerNoCaption]}>
+          <PostImage
+            ref={imageRef}
+            imageUrls={post.images}
+            mainImageIndex={mainImageIndex}
+            onImageSwap={handleImageSwap}
+            isSwapping={isSwapping}
+            username={post.username}
+            onPress={handleNavigationPress}
+          />
 
-          <TouchableOpacity style={styles.interactionButton}>
-            <Image 
-              source={require("@/assets/icons/commenticon.png")}
-              style={styles.icon}
-            />
-            <Text style={styles.count}>{post.commentCount}</Text>
-          </TouchableOpacity>
+          {shouldShowCaption && (
+            <Text style={styles.caption}>{post.caption}</Text>
+          )}
         </View>
+      )}
 
-        {/* Category */}
-        {post.category && getIconByCategory(post.category) && (
-          <View style={styles.categoryGroup}>
-            <Image 
-              source={getIconByCategory(post.category)!}
-              style={styles.categoryIcon}
-            />
-            <Text style={styles.categoryText}>{getLabelByCategory(post.category)}</Text>
-          </View>
-        )}
-      </View>}
+      {!isStoryMode && (
+        <PostFooter
+          liked={post.liked}
+          likeCount={post.likeCount}
+          commentCount={post.commentCount}
+          category={post.category}
+          onLike={onLike}
+          onUnlike={onUnlike}
+        />
+      )}
     </View>
   );
 };
@@ -132,76 +105,21 @@ const useStyles = (isStoryMode: boolean) =>
       flex: 1,
       backgroundColor: isStoryMode ? "#000000" : "#FFFFFF",
     },
-    interactionContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: 20,
-      paddingVertical: 10,
-    },
-    leftInteractions: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 20,
-    },
-    interactionButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
+    contentContainer: {
+      flex: 1,
+      paddingTop: 0,
       gap: 8,
     },
-    icon: {
-      width: 20,
-      height: 20,
-      resizeMode: 'contain',
+    contentContainerNoCaption: {
+      gap: 0,
     },
-    count: {
-      fontSize: 14,
-      fontFamily: 'Open Sans',
-      color: '#242020',
-    },
-    headerContent: { 
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: isStoryMode? 'space-between' : 'center',
-      backgroundColor: isStoryMode? '#000' : '#FFFFFF',
-      paddingVertical: 8,
-    },
-    dateSection: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-    },
-    dateText: {
-      fontSize: 16,
-      fontFamily: 'Poppins',
-      fontWeight: '600',
-      color: isStoryMode ? '#fff' : '#DE728D',
-      textAlign: isStoryMode ? 'left' : 'center',
-    },
-    timeText: { 
+    caption: {
       fontSize: 12,
-      fontFamily: "Poppins",
-      fontWeight: "500",
-      color: "#fff",
-      marginTop: 2,
-    },
-    closeButton: {
-      marginRight: 24
-    },
-    categoryGroup: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 6,
-    },
-    categoryIcon: {
-      width: 16,
-      height: 16,
-      resizeMode: 'contain',
-    },
-    categoryText: {
-      fontSize: 14,
-      fontFamily: 'Open Sans',
-      color: '#DE728D',
-      fontWeight: '500',
+      fontFamily: "Lato",
+      color: "#5E6676",
+      lineHeight: 17,
+      paddingLeft: 13,
+      paddingBottom: 10,
     },
   });
 

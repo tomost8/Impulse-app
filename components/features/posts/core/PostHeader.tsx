@@ -4,24 +4,33 @@ import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIc
 import * as MediaLibrary from 'expo-media-library';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { PostImageRef } from './PostImage';
+import { getLabelByCategory } from '@/utils/goals';
+import { router } from 'expo-router';
 
 interface HeaderProps {
+  isStoryMode?: boolean;
+  formattedDate?: string | null;
+  formattedTime?: string | null;
+  category?: string;
   username?: string;
   profileImage?: string;
-  imageUrls?: string[];
-  mainImageIndex?: number;
+  hasImages?: boolean;
   imageRef?: React.RefObject<PostImageRef | null>;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
+  isStoryMode = false,
+  formattedDate,
+  formattedTime,
+  category,
   username = "",
   profileImage,
-  imageUrls = [],
-  mainImageIndex = 0,
+  hasImages = false,
   imageRef
 }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const styles = useStyles(isStoryMode);
 
   const saveImageToGallery = async () => {
     try {
@@ -41,17 +50,7 @@ const Header: React.FC<HeaderProps> = ({
           }
         } catch (captureError) {
           console.error('Error capturing view:', captureError);
-          // Fallback to saving individual images if capture fails
-          setSaveMessage('Saving image...');
-          for (let i = 0; i < imageUrls.length; i++) {
-            try {
-              await MediaLibrary.saveToLibraryAsync(imageUrls[i]);
-              setSaveMessage(`Saving ${i + 1}/${imageUrls.length}...`);
-            } catch (imageError) {
-              console.error(`Error saving image ${i + 1}:`, imageError);
-            }
-          }
-          setSaveMessage('Images saved!');
+          setSaveMessage('Save failed');
           setTimeout(() => setSaveMessage(''), 1500);
         }
       } else if (canAskAgain === false) {
@@ -94,52 +93,100 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.userInfo}>
-        <View style={styles.profileContainer}>
-          <Image 
-            source={profileImage ? { uri: profileImage } : { uri: DEFAULT_PROFILE_PICTURE }}
-            style={styles.profilePicture}
-          />
+      {/* Date Section */}
+      {formattedDate && (
+        <View style={styles.headerContent}>
+          <View style={styles.dateSection}>
+            <Text style={styles.dateText}>{formattedDate}</Text>
+            {isStoryMode && <Text style={styles.categoryTimeText}>{`${getLabelByCategory(category || '')} • ${formattedTime}`}</Text>}
+          </View>
+          {isStoryMode && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+            <MaterialCommunityIcons name="close-thick" size={20} color="white" />
+          </TouchableOpacity>}
         </View>
-        <Text style={styles.username}>{username}</Text>
-      </View>
-      <View style={styles.saveContainer}>
-        {saveMessage ? (
-          <Text style={styles.saveMessage} numberOfLines={1}>{saveMessage}</Text>
-        ) : null}
-        <TouchableOpacity 
-          style={[
-            styles.saveButton,
-            (!imageUrls || imageUrls.length === 0) && styles.disabledButton
-          ]}
-          onPress={saveImageToGallery}
-          disabled={isSaving || !imageUrls || imageUrls.length === 0}
-        >
-          {isSaving ? (
-            <ActivityIndicator size="small" color="#DE728D" />
-          ) : (
-            <MaterialCommunityIcons
-              name="download-outline"
-              size={20}
-              color={(!imageUrls || imageUrls.length === 0) ? "#CCCCCC" : "#666666"}
-            />
-          )}
-        </TouchableOpacity>
-      </View>
+      )}
+      
+      {/* User Profile + Save Button - only show for posts (i.e. not stories) */}
+      {!isStoryMode && (
+        <View style={styles.userInfoContainer}>
+          <View style={styles.userInfo}>
+            <View style={styles.profileContainer}>
+              <Image 
+                source={profileImage ? { uri: profileImage } : { uri: DEFAULT_PROFILE_PICTURE }}
+                style={styles.profilePicture}
+              />
+            </View>
+            <Text style={styles.username}>{username}</Text>
+          </View>
+          <View style={styles.saveContainer}>
+            {saveMessage ? (
+              <Text style={styles.saveMessage} numberOfLines={1}>{saveMessage}</Text>
+            ) : null}
+            <TouchableOpacity 
+              style={[
+                styles.saveButton,
+                !hasImages && styles.disabledButton
+              ]}
+              onPress={saveImageToGallery}
+              disabled={isSaving || !hasImages}
+            >
+              {isSaving ? (
+                <ActivityIndicator size="small" color="#DE728D" />
+              ) : (
+                <MaterialCommunityIcons
+                  name="download-outline"
+                  size={20}
+                  color={!hasImages ? "#CCCCCC" : "#666666"}
+                />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = (isStoryMode: boolean) => StyleSheet.create({
   container: {
+    backgroundColor: isStoryMode ? '#000000' : '#FFFFFF',
+    borderBottomWidth: isStoryMode ? 0 : 1,
+    borderBottomColor: '#E1E1E1',
+  },
+  headerContent: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: isStoryMode ? 'space-between' : 'center',
+    backgroundColor: isStoryMode ? '#000000' : '#FFFFFF',
+    paddingVertical: 8,
+  },
+  dateSection: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  dateText: {
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontWeight: '600',
+    color: isStoryMode ? '#fff' : '#DE728D',
+    textAlign: isStoryMode ? 'left' : 'center',
+  },
+  categoryTimeText: { 
+    fontSize: 12,
+    fontFamily: "Poppins",
+    fontWeight: "500",
+    color: "#fff",
+    marginTop: 2,
+  },
+  closeButton: {
+    marginRight: 24
+  },
+  userInfoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E1E1E1',
   },
   userInfo: {
     flexDirection: 'row',

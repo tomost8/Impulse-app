@@ -5,7 +5,6 @@ import { captureRef } from 'react-native-view-shot';
 interface PostImageProps {
   imageUrls?: string[];
   mainImageIndex?: number;
-  isSinglePost?: boolean;
   onImageSwap?: () => void;
   isSwapping?: boolean;
   username?: string;
@@ -22,7 +21,6 @@ const PADDING = 10;
 const PostImage = forwardRef<PostImageRef, PostImageProps>(({ 
   imageUrls, 
   mainImageIndex = 0,
-  isSinglePost = false,
   onImageSwap,
   isSwapping = false,
   username,
@@ -32,7 +30,7 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
   const [imageLoading, setImageLoading] = useState(true);
   const [smallImageLoading, setSmallImageLoading] = useState(true);
   const [alternateImagePreloaded, setAlternateImagePreloaded] = useState(false);
-  const [isCapturing, setIsCapturing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const imageContainerRef = React.useRef<View>(null);
 
   useImperativeHandle(ref, () => ({
@@ -41,37 +39,22 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
         throw new Error('Image container ref not available');
       }
       try {
-        // Show watermark during capture
-        setIsCapturing(true);
-        
+        setIsSaving(true);
         // Wait for watermark to render
         await new Promise(resolve => setTimeout(resolve, 300));
-        
         const uri = await captureRef(imageContainerRef.current, {
           format: 'jpg',
           quality: 0.8,
         });
-        
-        // Hide watermark after capture
-        setIsCapturing(false);
-        
+        setIsSaving(false);
         return uri;
       } catch (error) {
         console.error('Error capturing view:', error);
-        setIsCapturing(false);
+        setIsSaving(false);
         throw error;
       }
     },
   }));
-
-  // Smooth crossfade animation when mainImageIndex changes
-  // React.useEffect(() => {
-  //   Animated.timing(foregroundOpacity, {
-  //     toValue: mainImageIndex === 1 ? 1 : 0,
-  //     duration: 200,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, [mainImageIndex, foregroundOpacity]);
 
   // Reset preload state when main image changes
   React.useEffect(() => {
@@ -105,7 +88,7 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
         {/* Main Image */}
         <Image
           source={{ uri: imageUrls[mainImageIndex] }}
-          style={[styles.image, isCapturing && styles.imageNoCorners]}
+          style={[styles.image, isSaving && styles.imageNoCorners]}
           resizeMode="cover"
           onLoadStart={() => setImageLoading(true)}
           onLoadEnd={() => setImageLoading(false)}
@@ -120,7 +103,7 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
         )}
 
         {/* Small Image - Only show for double camera posts */}
-        {!isSinglePost && imageUrls.length > 1 && (
+        {imageUrls.length > 1 && (
           <Animated.View
             style={[
               styles.smallImageContainer,
@@ -134,7 +117,7 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
             >
               <Image
                 source={{ uri: imageUrls[mainImageIndex === 0 ? 1 : 0] }}
-                style={[styles.smallImage, isCapturing && styles.smallImageNoCorners]}
+                style={[styles.smallImage, isSaving && styles.smallImageNoCorners]}
                 resizeMode="cover"
                 onLoadStart={() => setSmallImageLoading(true)}
                 onLoadEnd={() => setSmallImageLoading(false)}
@@ -152,8 +135,8 @@ const PostImage = forwardRef<PostImageRef, PostImageProps>(({
           </Animated.View>
         )}
 
-        {/* Watermark Text - Only visible during capture */}
-        {isCapturing && (
+        {/* Watermark Text - Only visible during save */}
+        {isSaving && (
           <View style={styles.watermarkContainer}>
             <Text style={styles.watermarkText}>Impulse/{username}</Text>
           </View>

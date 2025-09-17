@@ -12,6 +12,7 @@
  * 
  * AccountScreen (screens/account/AccountScreen.tsx)
  * └── MemoriesGrid
+ *     └── PostImageThumbnail
  * 
  * MemoryCalendarScreen (screens/social/MemoryCalendarScreen.tsx)
  * └── DayComponent
@@ -25,6 +26,11 @@
  * ├── CommentSection
  * ├── CommentInput
  * └── ReplyContext
+ * 
+ * FullPostCard (core/FullPostCard.tsx)
+ * ├── PostHeader
+ * ├── PostImage
+ * └── PostFooter
  */
 
 // Layout Components

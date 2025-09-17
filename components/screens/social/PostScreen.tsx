@@ -70,7 +70,7 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
         <FullPostCard 
           post={{
             username: post.author.username,
-            timeAgo: getTimeAgo(post.created_at),
+            //timeAgo: getTimeAgo(post.created_at),
             profileImage: post.author.profile_picture,
             caption: post.caption,
             images: post.mediaUrls,
