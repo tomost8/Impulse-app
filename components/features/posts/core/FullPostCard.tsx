@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import PostHeader from './PostHeader';
 import PostContent from './PostContent';
+import { PostImageRef } from './PostImage';
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 import { getLabelByCategory, getIconByCategory } from '@/utils/goals';
 import { router } from 'expo-router';
@@ -31,8 +32,19 @@ interface FullPostCardProps {
 
 const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike, onUnlike, mainImageIndex, onChangeMainImageIndex, formattedDate, formattedTime, onNext, onPrev }) => {
   const [isSwapping, setIsSwapping] = useState(false);
-  const [isStoryVisible, setIsStoryVisible] = useState(isStory || false);
-  const styles = useStyles(isStoryVisible);
+  const [isStoryMode, setIsStoryMode] = useState(isStory || false);
+  const styles = useStyles(isStoryMode);
+  const imageRef = useRef<PostImageRef>(null);
+
+  const handleImageSwap = async () => {
+    if (post.images && post.images.length > 1 && !isSwapping) {
+      setIsSwapping(true);
+      // Small delay to prevent spam clicking
+      await new Promise(resolve => setTimeout(resolve, 100));
+      onChangeMainImageIndex(mainImageIndex === 0 ? 1 : 0);
+      setIsSwapping(false);
+    }
+  };
 
   const handleLike = () => {
     if (post?.liked) {
@@ -42,19 +54,6 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
     }
   };
 
-  const handleImageSwap = async () => {
-    if (post.images && post.images.length > 1 && !isSwapping) {
-      setIsSwapping(true);
-      // Small delay to prevent spam clicking
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      onChangeMainImageIndex(mainImageIndex === 0 ? 1 : 0);
-      
-      // Wait for crossfade animation to complete
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setIsSwapping(false);
-    }
-  };
   return (
     <View style={styles.container}>
       {/* Date Section */}
@@ -62,17 +61,19 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
         <View style={styles.headerContent}>
           <View style={styles.dateSection}>
             <Text style={styles.dateText}>{formattedDate}</Text>
-            {isStoryVisible && <Text style={styles.timeText}>{`${getLabelByCategory(post.category || '')} • ${formattedTime}`}</Text>}
+            {isStoryMode && <Text style={styles.timeText}>{`${getLabelByCategory(post.category || '')} • ${formattedTime}`}</Text>}
           </View>
-          {isStoryVisible && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+          {isStoryMode && <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
             <MaterialCommunityIcons name="close-thick" size={20} color="white" />
           </TouchableOpacity>}
         </View>
       )}
-      {!isStoryVisible && <PostHeader 
+      {!isStoryMode && <PostHeader 
         username={post.username}
         profileImage={post.profileImage}
         imageUrls={post.images}
+        mainImageIndex={mainImageIndex}
+        imageRef={imageRef}
       />}
 
       <PostContent 
@@ -81,12 +82,14 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
         mainImageIndex={mainImageIndex}
         onImageSwap={handleImageSwap}
         isSwapping={isSwapping}
-        isStoryVisible={isStoryVisible}
+        isStoryMode={isStoryMode}
         onNext={onNext}
         onPrev={onPrev}
+        username={post.username}
+        imageRef={imageRef}
       />
 
-      {!isStoryVisible && <View style={styles.interactionContainer}>
+      {!isStoryMode && <View style={styles.interactionContainer}>
         <View style={styles.leftInteractions}>
           <TouchableOpacity 
             style={styles.interactionButton}
@@ -123,11 +126,11 @@ const FullPostCard: React.FC<FullPostCardProps> = ({ isStory, post = {}, onLike,
     </View>
   );
 };
-const useStyles = (isStoryVisible: boolean) =>
+const useStyles = (isStoryMode: boolean) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isStoryVisible ? "#000000" : "#FFFFFF",
+      backgroundColor: isStoryMode ? "#000000" : "#FFFFFF",
     },
     interactionContainer: {
       flexDirection: 'row',
@@ -159,8 +162,8 @@ const useStyles = (isStoryVisible: boolean) =>
     headerContent: { 
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: isStoryVisible? 'space-between' : 'center',
-      backgroundColor: isStoryVisible? '#000' : '#FFFFFF',
+      justifyContent: isStoryMode? 'space-between' : 'center',
+      backgroundColor: isStoryMode? '#000' : '#FFFFFF',
       paddingVertical: 8,
     },
     dateSection: {
@@ -171,8 +174,8 @@ const useStyles = (isStoryVisible: boolean) =>
       fontSize: 16,
       fontFamily: 'Poppins',
       fontWeight: '600',
-      color: isStoryVisible ? '#fff' : '#DE728D',
-      textAlign: isStoryVisible ? 'left' : 'center',
+      color: isStoryMode ? '#fff' : '#DE728D',
+      textAlign: isStoryMode ? 'left' : 'center',
     },
     timeText: { 
       fontSize: 12,

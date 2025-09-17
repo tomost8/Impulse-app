@@ -19,10 +19,10 @@ export default {
         backgroundColor: "#ffffff"
       },
       package: "org.reactjs.native.example.Impluse",
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json"
     },
     ios: {
-      googleServicesFile: process.env.GOOGLE_SERVICES_PLIST,
+      googleServicesFile: process.env.GOOGLE_SERVICES_PLIST || "./GoogleService-Info.plist",
       bundleIdentifier: "org.reactjs.native.example.Impluse",
       supportsTablet: true,
       infoPlist: {

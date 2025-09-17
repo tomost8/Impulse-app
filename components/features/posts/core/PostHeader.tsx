@@ -3,17 +3,22 @@ import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator, Ale
 import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIcons';
 import * as MediaLibrary from 'expo-media-library';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
+import { PostImageRef } from './PostImage';
 
 interface HeaderProps {
   username?: string;
   profileImage?: string;
   imageUrls?: string[];
+  mainImageIndex?: number;
+  imageRef?: React.RefObject<PostImageRef | null>;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   username = "",
   profileImage,
-  imageUrls = []
+  imageUrls = [],
+  mainImageIndex = 0,
+  imageRef
 }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -23,18 +28,32 @@ const Header: React.FC<HeaderProps> = ({
       setIsSaving(true);
       const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
       if (status === 'granted') {
-        //setSaveMessage('Saving all images...');
-        for (let i = 0; i < imageUrls.length; i++) {
-          try {
-            await MediaLibrary.saveToLibraryAsync(imageUrls[i]);
-            setSaveMessage(`Saving ${i + 1}/${imageUrls.length}...`);
-          } catch (imageError) {
-            console.error(`Error saving image ${i + 1}:`, imageError);
+        setSaveMessage('Saving image...');
+        try {
+          // Capture the actual rendered view as an image
+          if (imageRef?.current) {
+            const capturedImageUri = await imageRef.current.captureImage();
+            await MediaLibrary.saveToLibraryAsync(capturedImageUri);
+            setSaveMessage('Image saved!');
+            setTimeout(() => setSaveMessage(''), 1500);
+          } else {
+            throw new Error('Image ref not available');
           }
+        } catch (captureError) {
+          console.error('Error capturing view:', captureError);
+          // Fallback to saving individual images if capture fails
+          setSaveMessage('Saving image...');
+          for (let i = 0; i < imageUrls.length; i++) {
+            try {
+              await MediaLibrary.saveToLibraryAsync(imageUrls[i]);
+              setSaveMessage(`Saving ${i + 1}/${imageUrls.length}...`);
+            } catch (imageError) {
+              console.error(`Error saving image ${i + 1}:`, imageError);
+            }
+          }
+          setSaveMessage('Images saved!');
+          setTimeout(() => setSaveMessage(''), 1500);
         }
-        
-        setSaveMessage('All images saved!');
-        setTimeout(() => setSaveMessage(''), 1500);
       } else if (canAskAgain === false) {
         // Permission permanently denied, show alert to go to settings
         Alert.alert(
@@ -72,6 +91,7 @@ const Header: React.FC<HeaderProps> = ({
       setIsSaving(false);
     }
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
