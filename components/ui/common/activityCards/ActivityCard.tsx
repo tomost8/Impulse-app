@@ -4,6 +4,31 @@ import { convertUtcToLocal } from "@/utils/timezoneProcessing";
 import { getLabelByCategory, getIconByCategory } from "@/utils/goals";
 import { useRouter } from "expo-router";
 
+// Function to get grey icons for completed activities
+const getGreyIconByCategory = (category: string, isCompleted: boolean) => {
+  if (!isCompleted) {
+    return getIconByCategory(category);
+  }
+  
+  // Return grey icons for completed activities
+  switch (category) {
+    case 'FOOD':
+      return require("@/assets/icons/greyFood.png");
+    case 'PASSION_HOBBY':
+      return require("@/assets/icons/greyPassionHobby.png");
+    case 'RISE_AND_SHINE':
+      return require("@/assets/icons/greyRiseShine.png");
+    case 'STUDYING_WORKING':
+      return require("@/assets/icons/greyStudyingWorking.png");
+    case 'WELLNESS':
+      return require("@/assets/icons/greyWellness.png");
+    case 'WORKING_OUT':
+      return require("@/assets/icons/greyWorkout.png");
+    default:
+      return getIconByCategory(category);
+  }
+};
+
 type ActivityCardProps = {
   id: number;
   category: string;
@@ -36,11 +61,13 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
     }
   };
 
+  const isCompleted = status.toLowerCase() !== 'pending';
+  
   const CardContent = (
-    <View style={styles.container}>
+    <View style={[styles.container, isCompleted && styles.completedContainer, !isCompleted && styles.incompleteContainer]}>
       {/* Icon */}
       <View style={styles.iconContainer}>
-        <Image source={getIconByCategory(category) as ImageSourcePropType} style={styles.icon} />
+        <Image source={getGreyIconByCategory(category, isCompleted) as ImageSourcePropType} style={styles.icon} />
       </View>
 
       {/* Text Content */}
@@ -52,12 +79,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           </Text>
         )}
         {description && (
-          <Text style={styles.description}>{description}</Text>
+          <Text style={[styles.description, !isCompleted && styles.incompleteDescription]}>{description}</Text>
         )}
       </View>
 
       {/* Status */}
-      <Text style={styles.status}>{status.toLowerCase() === 'pending' ? 'In Progress' : status}</Text>
+      <Text style={[styles.status, isCompleted && styles.completedStatus]}>
+        {status.toLowerCase() === 'pending' ? 'In Progress' : 'Completed'}
+      </Text>
     </View>
   );
 
@@ -151,7 +180,7 @@ const styles = StyleSheet.create({
   },
   status: {
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "700",
     color: "#DE728D",
     fontFamily: "Poppins",
     textAlign: "right",
@@ -159,6 +188,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 14,
     right: 14,
+  },
+  completedContainer: {
+    backgroundColor: "#F1F3FA",
+  },
+  completedStatus: {
+    color: "#5E6676",
+  },
+  incompleteContainer: {
+    backgroundColor: "#FFF5F8",
+  },
+  incompleteDescription: {
+    color: "#DE728D",
   },
 });
 

@@ -39,7 +39,7 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    marginBottom: 10, // ✅ Ensures spacing from bottom navigation
+    marginBottom: 1, // ✅ Ensures spacing from bottom navigation
   },
   leaderboardContent: {
     alignItems: "center",

@@ -10,8 +10,9 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ users }) => {
   // Calculate dynamic height based on number of users
   // Each item is about 58px tall (48px + 10px margin)
   // Add padding top (5px) and bottom (32px)
+  // Add extra height to ensure content fits within rounded container
   const dynamicHeight = users.length > 0 
-    ? users.length * 58 + 37 // (itemHeight * numUsers) + (paddingTop + paddingBottom)
+    ? users.length * 58 + 58 // (itemHeight * numUsers) + (paddingTop + paddingBottom + extra space)
     : 0; // No height if no users
 
   return (
@@ -37,6 +38,8 @@ const styles = StyleSheet.create({
     borderRadius: 32, // Matches Figma
     borderTopLeftRadius: 0,  // Ensure sharp top-left corner
     borderTopRightRadius: 0, // Ensure sharp top-right corner
+    borderBottomLeftRadius: 32, // Ensure rounded bottom-left corner
+    borderBottomRightRadius: 32, // Ensure rounded bottom-right corner
     paddingTop: 0, // No top padding to eliminate gap
     paddingBottom: 32, // Ensures spacing at the bottom
     paddingHorizontal: 22, // Matches Figma

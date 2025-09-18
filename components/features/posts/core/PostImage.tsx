@@ -224,10 +224,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   watermarkText: {
-    color: '#000000',
-    fontSize: 16,
-    fontFamily: 'Inter-Bold',
-    textAlign: 'center',
+    color: '#FFFFFF',                 // #FFF
+  fontSize: 14,                     // Figma: 10px
+  fontFamily: 'Poppins-Bold',       // use your loaded Poppins variant
+  fontWeight: '700',                // fallback if font variant not loaded
+  textAlign: 'center',
+  // RN supports a single text shadow (we'll approximate the glow)
+  textShadowColor: 'rgba(0,0,0,1.75)',
+  textShadowOffset: { width: 0, height: 0 },
+  textShadowRadius: 5,
   },
   imageNoCorners: {
     borderRadius: 0,

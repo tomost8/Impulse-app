@@ -128,7 +128,7 @@ function ProfileSettings({ isDoubleCameraEnabled, onToggleDoubleCamera, loading 
           />
           <SettingsItem
             title="Give Feedback"
-            icon={require("@/assets/icons/settingsFeedback.png")}
+            icon={require("@/assets/icons/newFeedback.png")}
             onPress={() => router.push('/account/settings/feedback')}
           />
           <SettingsItem
@@ -143,7 +143,7 @@ function ProfileSettings({ isDoubleCameraEnabled, onToggleDoubleCamera, loading 
           />
           <SettingsItem
             title="Feature Help Guide"
-            icon={require("@/assets/icons/settingsGuide.png")}
+            icon={require("@/assets/icons/newInfo.png")}
             onPress={() => router.push('/(tabs)/account/settings/featureGuide')}
           />
           <DualLensToggle 

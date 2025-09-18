@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 
 interface LikeButtonProps {
   initialLikes: number;
@@ -31,10 +30,8 @@ const LikeButton: React.FC<LikeButtonProps> = ({
   return (
     <TouchableOpacity onPress={handlePress} style={styles.container}>
       <Text style={styles.likeCount}>{likeCount}</Text>
-      <MaterialCommunityIcons
-        name={isLiked ? "heart" : "heart-outline"}
-        size={20}
-        color={isLiked ? "#FF0000" : "#000"} // ✅ Changes to red when liked
+      <Image
+        source={isLiked ? require("@/assets/icons/heartfilled.png") : require("@/assets/icons/newLike.png")}
         style={styles.icon}
       />
     </TouchableOpacity>

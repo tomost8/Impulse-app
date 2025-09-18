@@ -28,7 +28,7 @@ const Filter: React.FC<FilterProps> = ({ communities, handleFilterChange }) => {
         onPress={() => setIsOpen(!isOpen)}
       >
         <Image 
-          source={require('@/assets/icons/filter.png')} 
+          source={require('@/assets/icons/newFilter.png')} 
           style={styles.filterIcon} 
         />
       </TouchableOpacity>

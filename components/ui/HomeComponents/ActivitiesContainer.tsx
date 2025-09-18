@@ -10,6 +10,19 @@ interface DailyGoalsProps {
 }
 
 const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
+  // Sort activities: in-progress first, then completed
+  const sortedActivities = [...activities].sort((a, b) => {
+    const aIsPending = a.status.toLowerCase() === 'pending';
+    const bIsPending = b.status.toLowerCase() === 'pending';
+    
+    // If one is pending and the other isn't, pending comes first
+    if (aIsPending && !bIsPending) return -1;
+    if (!aIsPending && bIsPending) return 1;
+    
+    // If both have the same status, maintain original order
+    return 0;
+  });
+
   return (
     <View style={styles.container}>
       {/* Header Section */}
@@ -22,7 +35,7 @@ const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
 
       {/* Daily Goals Cards */}
       {activities.length > 0 ? (
-        activities.map((activity) => (
+        sortedActivities.map((activity) => (
           <ActivityCard
             key={activity.id}
             id={activity.id}
