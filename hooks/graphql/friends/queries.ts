@@ -31,9 +31,6 @@ export function useGetFriends(userId: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     variables: { userId },
     fetchPolicy: 'cache-and-network',
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -85,9 +82,6 @@ export function useGetFriendsLeaderboard(userId: number, sortBy: string, shouldF
   const { data, loading, error } = useQuery(GET_FRIENDS_SORTING, {
     skip: !shouldFetch,
     variables: { userId, sortBy },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);  
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -135,9 +129,6 @@ export function useGetFriendRequests(userId: number, role: string, shouldFetch: 
   const { data, loading, error } = useQuery(GET_FRIEND_REQUESTS, {
     skip: !shouldFetch,
     variables: { userId, role: role },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {

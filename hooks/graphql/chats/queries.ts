@@ -15,9 +15,6 @@ export const GET_ALL_CHATS = gql`
 export function useGetAllChats(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_CHATS, {
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -61,9 +58,6 @@ export function useGetChat(id: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_CHAT, {
     variables: { id },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -95,9 +89,6 @@ export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_USER_CHATS, {
     skip: !shouldFetch,
     variables: { userId },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -136,9 +127,6 @@ export function useGetChatMembers(chatId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_CHAT_MEMBERS, {
     variables: { chatId },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -185,9 +173,6 @@ export function useGetGroupLeaderboard(chatId: number, sortBy: string, shouldFet
   const { data, loading, error } = useQuery(GET_CHAT_MEMBERS_SORTED, {
     variables: { chatId, sortBy },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -233,9 +218,6 @@ export function useGetMessages(chatId: number, shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_MESSAGES, {
     variables: { chatId },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -277,9 +259,6 @@ export function useGetLatestMessagesForUser(userId: number, shouldFetch: boolean
   const { data, loading, error } = useQuery(GET_LATEST_MESSAGES_FOR_USER, {
     variables: { userId },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   return {

@@ -18,18 +18,9 @@ import { uploadImage } from '@/utils/imageProcessing';
 export default function SecondaryGoal() {
   const {login, authToken} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [firebaseAuth] = useMutation(FIREBASE_AUTH, {
-    onError: (error: any) => {
-      console.error('GraphQL Error:', error);
-    }
-  });
+  const [firebaseAuth] = useMutation(FIREBASE_AUTH);
 
-  const [updateUser] = useMutation(UPDATE_USER, {
-    onError: (error) => {
-      console.error('❌ UpdateUser GraphQL Error:', error);
-      console.error('❌ Error details:', JSON.stringify(error, null, 2));
-    }
-  }); 
+  const [updateUser] = useMutation(UPDATE_USER); 
   // Mutations
   const { createCommunityMember } = useCreateCommunityMember();
   const handleCreateCommunityMember = async (userId: number, communityId: number) => {

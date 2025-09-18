@@ -1,12 +1,30 @@
 import { ApolloClient, InMemoryCache, createHttpLink, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { setContext } from '@apollo/client/link/context';
+import { loadErrorMessages, loadDevMessages } from '@apollo/client/dev';
 import { API_CONFIG } from '@/config/apiConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Load Apollo Client error messages for better debugging
+if (__DEV__) {
+  loadDevMessages();
+  loadErrorMessages();
+}
+
+// Suppress specific Apollo Client deprecation warnings that are internal bugs
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  const message = args.join(' ');
+  // Filter out the canonizeResults deprecation warnings that are internal Apollo Client bugs
+  if (message.includes('canonizeResults') && message.includes('cache.diff')) {
+    return; // Suppress this specific warning
+  }
+  originalWarn.apply(console, args);
+};
+
 console.log('=== APOLLO CLIENT SETUP ===');
 console.log('API_CONFIG in client.ts:', API_CONFIG);
-console.log('Using BASE_URL:', API_CONFIG.BASE_URL);
+//console.log('Using BASE_URL:', API_CONFIG.BASE_URL);
 
 const httpLink = createHttpLink({
   uri: API_CONFIG.BASE_URL,
@@ -86,7 +104,9 @@ const errorLink = onError(({ graphQLErrors, networkError, operation, forward }) 
 
 export const client = new ApolloClient({
   link: from([errorLink, authLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    // Explicitly disable all deprecated cache options?
+  }),
   defaultOptions: {
     watchQuery: {
       errorPolicy: 'all',

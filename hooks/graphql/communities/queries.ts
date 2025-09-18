@@ -29,9 +29,6 @@ export const GET_COMMUNITIES = gql`
 export function useGetCommunities(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_COMMUNITIES, {
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -68,9 +65,6 @@ export const GET_ALL_CATEGORIES = gql`
 export function useGetAllCategories(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_CATEGORIES, {
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -124,9 +118,6 @@ export function useGetCommunity(id: number, shouldFetch: boolean = true) {
     variables: { id },
     skip: !shouldFetch,
     fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -170,9 +161,6 @@ export function useGetCommunityMembers(communityId: number, shouldFetch: boolean
     variables: { communityId },
     skip: !shouldFetch,
     fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -213,9 +201,6 @@ export function useGetCommunityCategories(communityId: number, shouldFetch: bool
     variables: { communityId },
     skip: !shouldFetch,
     fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -257,9 +242,6 @@ export const GET_ALL_COMMUNITY_MEMBERS = gql`
 export function useGetAllCommunityMembers(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_COMMUNITY_MEMBERS, {
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -307,9 +289,6 @@ export function useGetCommunityLeaderboard(communityId: number, sort_by: string,
   const { data, loading, error } = useQuery(GET_COMMUNITY_LEADERBOARD, {
     variables: { communityId, sort_by },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -349,9 +328,6 @@ export function useGetUserCommunities(userId: number, shouldFetch: boolean = tru
     variables: { userId },
     skip: !shouldFetch,
     fetchPolicy: 'cache-and-network', // Use cache first, then network for fresh data
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -397,9 +373,6 @@ export function useGetCategoryCommunities(category: string, shouldFetch: boolean
   const { data, loading, error } = useQuery(GET_CATEGORY_COMMUNITIES, {
     variables: { category },
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {

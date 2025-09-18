@@ -20,9 +20,6 @@ export const GET_REWARDS = gql`
 export function useGetRewards(shouldFetch: boolean = true) {
   const { data, loading, error } = useQuery(GET_REWARDS, {
     skip: !shouldFetch,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {

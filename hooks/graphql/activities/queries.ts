@@ -29,12 +29,9 @@ export const useGetActivitiesByDate = (userId: number, date: string, authToken: 
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
-      },
+      }
     },
-    fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -110,12 +107,9 @@ export const useGetActivities = (userId: number, authToken: string, shouldFetch:
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
-      },
+      }
     },
-    fetchPolicy: 'cache-and-network',
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'cache-and-network'
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {

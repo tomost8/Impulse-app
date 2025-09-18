@@ -52,12 +52,9 @@ export function useGetCommunityAnnouncements(communityId: number, authToken: str
     context: {
       headers: {
         Authorization: `Bearer ${authToken}`,
-      },
+      }
     },
     skip: !shouldFetch,
-    onError: (error) => {   
-      console.error('GraphQL Error:', error);
-    }
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {

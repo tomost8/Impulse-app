@@ -14,10 +14,7 @@ export const GET_ALL_USERS = gql`
 
 export function useGetAllUsers(hasFetched: boolean = true) {
   const { data, loading, error } = useQuery(GET_ALL_USERS, {
-    skip: !hasFetched,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    skip: !hasFetched
   });
   const fetched = hasFetched && !loading;
   if (debugQueries && fetched) {
@@ -78,10 +75,7 @@ export const GET_USER = gql`
 export function useGetUser(id: number, hasFetched: boolean = true) {
   const { data, loading, error, refetch } = useQuery(GET_USER, {
     variables: { id },
-    skip: !hasFetched,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    skip: !hasFetched
   });
   const fetched = hasFetched && !loading;
   if (debugQueries && fetched) {
@@ -132,10 +126,7 @@ export const GET_USERS_LEADERBOARD = gql`
 export function useGetUsersLeaderboard(sort_by: string, hasFetched: boolean = true) {
   const { data, loading, error } = useQuery(GET_USERS_LEADERBOARD, {
     variables: { sort_by },
-    skip: !hasFetched,
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    skip: !hasFetched
   });
   const fetched = hasFetched && !loading;
   if (debugQueries && fetched) {

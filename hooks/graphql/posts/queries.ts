@@ -48,12 +48,9 @@ export function useGetFeedCommunities(currentUserId: number, authToken: string, 
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
-      },
+      }
     },
-    fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -116,12 +113,9 @@ export function useGetFeedFriends(currentUserId: number, authToken: string, shou
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
-      },
+      }
     },
-    fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -178,10 +172,7 @@ export function useGetPost(id: number, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_POST, {
     skip: !shouldFetch,
     variables: { id },
-    fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -229,10 +220,7 @@ export function useGetPostComments(postId: number, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_POST_COMMENTS, {
     skip: !shouldFetch,
     variables: { postId },
-    fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -307,10 +295,7 @@ export function useGetPosts(currentUserId: number, authToken: string, targetType
     context: {
       headers: {
           Authorization: `Bearer ${authToken}`,
-      },
-    },
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
+      }
     }
   });
   const fetched = shouldFetch && !loading;
@@ -351,10 +336,7 @@ export function useGetPostsByUserId(userId: number, shouldFetch: boolean=true,
   const { data, loading, error } = useQuery(GET_POSTS_BY_USER_ID, {
     skip: !shouldFetch,
     variables: { userId, skip, take },
-    //fetchPolicy: 'network-only', // Always fetch from network, never use cache
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    //fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -402,10 +384,7 @@ export function useGetPostsFromSameDayAsPost(postId: number) {
   const { data, loading, error, refetch } = useQuery(GET_POSTS_FROM_SAME_DAY, {
     variables: { postId },
     skip: !postId, // Don't run if no postId is provided
-    fetchPolicy: 'network-only',
-    onError: (error) => {
-      console.error('GraphQL Error:', error);
-    }
+    fetchPolicy: 'network-only'
   });
 
   const posts = data?.postsFromSameDayAsPost?.posts ?? [];
