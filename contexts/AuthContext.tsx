@@ -39,6 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize auth state from AsyncStorage first
   useEffect(() => {
     const initializeAuth = async () => {
+      // Initialize Mixpanel first
+      await mixpanel.initMixpanel();
       try {
         const [storedToken, storedRememberMe, storedUserId] = await Promise.all([
           AsyncStorage.getItem('authToken'),
@@ -75,6 +77,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initializeAuth();
   }, []);
+
+  // Track Mixpanel events after auth initialization
+  useEffect(() => {
+    if (authInitialized) {
+      if (userId) {
+        mixpanel.identifyUser(userId.toString());
+        
+        // Create basic user profile
+        mixpanel.getPeopleSet({
+          'uid_backend': userId.toString(),
+          'last_seen': new Date().toISOString(),
+        });
+        
+        mixpanel.trackEvent('App Opened', {
+          timestamp: new Date().toISOString(),
+          type: 'app_start',
+          uid_backend: userId.toString(),
+        });
+      } else {
+        mixpanel.resetUser();
+      }
+    }
+  }, [authInitialized, userId]);
 
   // Schedule token refresh based on actual expiration time
   const scheduleTokenRefresh = (token: string) => {

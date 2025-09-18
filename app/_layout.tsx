@@ -7,6 +7,7 @@ LogBox.ignoreLogs(['Sending `onAnimatedValueUpdate` with no listeners registered
 
 import { ApolloProvider } from '@apollo/client';
 import { client } from '../services/client';
+import mixpanel from '@/config/mixpanelConfig';
 import '@react-native-firebase/app';
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataProviderContext';
@@ -17,33 +18,13 @@ import { StatusBar } from 'expo-status-bar';
 
 import { debugComponentsOn } from '@/debug/utils';
 import TokenTestButton from '@/debug/TokenTestButton';
-import mixpanel from '@/config/mixpanelConfig';
-import { useAuth } from '@/contexts/AuthContext';
 
 export default function RootLayout() {
-  const { userId } = useAuth();
   const sessionStartTime = useRef(Date.now());
 
   useEffect(() => {
     SplashScreen.hideAsync();
-    (async () => {
-      await mixpanel.initMixpanel();
-      mixpanel.trackEvent('App Opened', {
-        timestamp: new Date().toISOString(),
-        type: 'app_start',
-      });
-    })();
   }, []);
-
-  // Identify user when userId is available
-  useEffect(() => {
-    if (userId) {
-      mixpanel.identifyUser(userId.toString());
-    } else {
-      // If userId becomes null, reset Mixpanel to prevent data contamination
-      mixpanel.resetUser();
-    }
-  }, [userId]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
@@ -53,12 +34,13 @@ export default function RootLayout() {
           timestamp: new Date().toISOString(),
           type: 'app_resume',
         });
-      } else if (state === 'background' || state === 'inactive') {
+      } else if (state === 'background') {
+        // We have to go to background before inactive, so we only track background
         const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
         if (duration > 3) {
           mixpanel.trackEvent('Time per session', { 
             duration: duration,
-            end_state: state
+            end_state: state,
           });
         }
       }

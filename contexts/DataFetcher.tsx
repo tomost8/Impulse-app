@@ -11,6 +11,7 @@ import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
 import { useGetUserChats } from '@/hooks/graphql/chats/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
+import mixpanel from '@/config/mixpanelConfig';
 
 import { getLocalDay } from '@/utils/timezoneProcessing';
 import { useGetFeedCommunities } from '@/hooks/graphql/posts/queries';
@@ -456,7 +457,23 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       setUserDataComplete(isUserDataMoreComplete);
       lastUserDataCheck.current = user;
       
-      // 设置登录streak数据
+      // Set Mixpanel user data
+      const mixpanelProps = {
+        '$email': user.email,
+        'uid_backend': user.id.toString(),
+        'first_name': user.first_name,
+        'last_name': user.last_name,
+        'username': user.username,
+        'timezone_backend': user.timezone,
+        'age': user.age,
+        'gender': user.gender,
+        'primary_goal': user.primary_goal,
+        'secondary_goal': user.secondary_goal,
+        'last_seen': new Date().toISOString(),
+      };
+      mixpanel.getPeopleSet(mixpanelProps);
+      
+      // Set login streak data
       if (user.login_streak) {
         setLoginStreak(user.login_streak);
       }
