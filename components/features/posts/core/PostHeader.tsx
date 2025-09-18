@@ -69,11 +69,7 @@ const Header: React.FC<HeaderProps> = ({
             },
             { 
               text: 'Open Settings', 
-              onPress: () => {
-                Linking.openSettings();
-                //setSaveMessage('Check settings and try again');
-                //setTimeout(() => setSaveMessage(''), 1000);
-              }
+              onPress: () => Linking.openSettings()
             }
           ]
         );

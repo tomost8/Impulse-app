@@ -50,7 +50,7 @@ const ProfileScreen = ({ formData, handleFormDataChange, handleFormSubmit, isSub
                 source={{
                   uri: formData.profile_picture ? formData.profile_picture : DEFAULT_PROFILE_PICTURE,
                 }}
-                style={[styles.profileImage, { borderWidth: 1, borderColor: 'black' }]}
+                style={styles.profileImage}
                 accessibilityLabel="Profile picture"
               />
             </TouchableWithoutFeedback>

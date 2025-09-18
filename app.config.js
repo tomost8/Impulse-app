@@ -32,9 +32,9 @@ export default {
       supportsTablet: true,
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
-        NSCameraUsageDescription: "Allow access to camera to take photos for your daily goals and memories.",
+        NSCameraUsageDescription: "Allow access to camera to take photos for your daily goals.",
         NSPhotoLibraryAddUsageDescription: "Allow access to library to save photos to your camera roll.",
-        NSPhotoLibraryUsageDescription: "Allow access to photos to upload pictures from your library.",
+        NSPhotoLibraryUsageDescription: "Allow access to photos to select pictures from your library.",
         NSAppTransportSecurity: {
           NSExceptionDomains: process.env.API_AWS_URL ? {
             [new URL(process.env.API_AWS_URL).hostname]: {

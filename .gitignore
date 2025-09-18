@@ -42,3 +42,5 @@ ios
 # Google Services files (contain sensitive API keys)
 google-services.json
 GoogleService-Info*.plist
+
+package-lock.json

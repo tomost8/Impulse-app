@@ -57,7 +57,7 @@ export default function CameraScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.permissionMessage}>Impulse would like permission to use your camera to take photos.</Text>
+        <Text style={styles.permissionMessage}>Impulse would like camera permission to take photos for your daily goals.</Text>
         <TouchableOpacity
           style={styles.permissionButton}
           onPress={requestPermission}
