@@ -1,4 +1,5 @@
 export const debugQueries = true;
+export const debugMixpanel = true;
 export const debugRouting = false;
 
 export const debugComponentsOn = false;

@@ -25,8 +25,8 @@ export default function GetStarted() {
       // Step 2: Verify token with backend and retrieves user id
       const response = await firebaseAuth(authToken);
       if (response.success) {
-        // Step 3: Store token + id in AsyncStorage and auth React state
-        await login(authToken, response.user.id, rememberMe, email);
+        // Step 3: Store token + id + firebaseUid in AsyncStorage and auth React state
+        await login(authToken, response.user.id, userCredential.user.uid, rememberMe, email);
         router.replace('/(tabs)/home');
         onSuccess?.();
       } 

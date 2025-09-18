@@ -30,7 +30,7 @@ export default function RootLayout() {
     const sub = AppState.addEventListener('change', (state) => {
       if (state === 'active') {
         sessionStartTime.current = Date.now();
-        mixpanel.trackEvent('App Opened', {
+        mixpanel.trackEvent('Session Started', {
           timestamp: new Date().toISOString(),
           type: 'app_resume',
         });
@@ -38,9 +38,9 @@ export default function RootLayout() {
         // We have to go to background before inactive, so we only track background
         const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
         if (duration > 3) {
-          mixpanel.trackEvent('Time per session', { 
+          mixpanel.trackEvent('Session Ended', { 
             duration: duration,
-            end_state: state,
+            //end_state: state,
           });
         }
       }

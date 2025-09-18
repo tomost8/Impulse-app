@@ -143,7 +143,7 @@ export default function SecondaryGoal() {
         }
         
         // 6. Login only after profile is complete
-        await login(authToken, userData.id, true, formData.email as string);
+        await login(authToken, userData.id, userCredential.user.uid, true, formData.email as string);
         console.log("✅ User logged in successfully, redirecting to feature guide");
         router.replace('/(tabs)/account/settings/featureGuide');
       } else {

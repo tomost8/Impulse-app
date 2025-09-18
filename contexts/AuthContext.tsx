@@ -7,9 +7,10 @@ import mixpanel from '@/config/mixpanelConfig';
 interface AuthContextType {
   authToken: string | null;
   userId: number | null;
+  firebaseUid: string | null;
   loading: boolean;
   authInitialized: boolean;
-  login: (token: string, id: number, rememberMe: boolean, email: string) => Promise<void>;
+  login: (token: string, id: number, firebaseUid: string, rememberMe: boolean, email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string | null>;
   checkAndRefreshToken: () => Promise<boolean>;
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
   const [authInitialized, setAuthInitialized] = useState(false);
   
   // Add a ref to track if we've already loaded auth data to prevent unnecessary clearing
@@ -35,6 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Add refs to track the current auth state to prevent unnecessary re-renders
   const currentAuthToken = useRef<string | null>(null);
   const currentUserId = useRef<number | null>(null);
+  const currentFirebaseUid = useRef<string | null>(null);
   
   // Initialize auth state from AsyncStorage first
   useEffect(() => {
@@ -42,21 +45,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Initialize Mixpanel first
       await mixpanel.initMixpanel();
       try {
-        const [storedToken, storedRememberMe, storedUserId] = await Promise.all([
+        const [storedToken, storedRememberMe, storedUserId, storedFirebaseUid] = await Promise.all([
           AsyncStorage.getItem('authToken'),
           AsyncStorage.getItem('rememberMe'),
           AsyncStorage.getItem('userId'),
+          AsyncStorage.getItem('firebaseUid'),
         ]);
         const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
 
-        console.log(`🔐 Auth initialization data:\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}\n  - UID: ${storedUserId}\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`);
+        console.log(`🔐 Auth initialization data:\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}\n  - UID: ${storedUserId}\n  - Firebase UID: ${storedFirebaseUid}\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`);
         
-        if (rememberMeData?.rememberMe && storedToken && storedUserId) {
+        if (rememberMeData?.rememberMe && storedToken && storedUserId && storedFirebaseUid) {
           // User wants to be remembered - restore auth state
           setAuthToken(storedToken);
           setUserId(Number(storedUserId));
+          setFirebaseUid(storedFirebaseUid);
           currentAuthToken.current = storedToken;
           currentUserId.current = Number(storedUserId);
+          currentFirebaseUid.current = storedFirebaseUid;
           hasLoadedAuthData.current = true;
           
           // Schedule token refresh based on actual expiration
@@ -81,25 +87,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Track Mixpanel events after auth initialization
   useEffect(() => {
     if (authInitialized) {
-      if (userId) {
-        mixpanel.identifyUser(userId.toString());
-        
-        // Create basic user profile
+      if (firebaseUid) {
+        mixpanel.identifyUser(firebaseUid);
         mixpanel.getPeopleSet({
-          'uid_backend': userId.toString(),
+          'uid_backend': userId?.toString() || '',
           'last_seen': new Date().toISOString(),
         });
-        
-        mixpanel.trackEvent('App Opened', {
+        mixpanel.trackEvent('Session Started', {
           timestamp: new Date().toISOString(),
-          type: 'app_start',
-          uid_backend: userId.toString(),
+          type: 'auth_session',
+          uid_backend: userId?.toString() || '',
         });
       } else {
         mixpanel.resetUser();
       }
     }
-  }, [authInitialized, userId]);
+  }, [authInitialized, firebaseUid, userId]);
 
   // Schedule token refresh based on actual expiration time
   const scheduleTokenRefresh = (token: string) => {
@@ -218,28 +221,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
 
-  const login = async (token: string, id: number, rememberMe: boolean, email: string) => {
+  const login = async (token: string, id: number, firebaseUid: string, rememberMe: boolean, email: string) => {
     try {
       if (rememberMe) {
         // Store data for future restoration (keep me logged in)
         await Promise.all([
           AsyncStorage.setItem('authToken', token),
           AsyncStorage.setItem('userId', id.toString()),
+          AsyncStorage.setItem('firebaseUid', firebaseUid),
           AsyncStorage.setItem('rememberMe', JSON.stringify({
             rememberMe,
             email: email
           }))
         ]);
-        console.log(`🔐 Storing login data (keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+        console.log(`🔐 Storing login data (keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Firebase UID: ${firebaseUid}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
       } else {
         // Don't store data, just set current session (don't keep me logged in)
-        console.log(`🔐 Setting current session (don't keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
+        console.log(`🔐 Setting current session (don't keep me logged in):\n  - Token: ${token.substring(0, 10)}...${token.substring(token.length - 10)}\n  - User ID: ${id}\n  - Firebase UID: ${firebaseUid}\n  - Remember Me: ${rememberMe}\n  - Email: ${email}`);
       }
       
       setAuthToken(token);
       setUserId(id);
+      setFirebaseUid(firebaseUid);
       currentAuthToken.current = token;
       currentUserId.current = id;
+      currentFirebaseUid.current = firebaseUid;
     } catch (error) {
       console.error('Error during login:', error);
       throw error;
@@ -257,8 +263,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Reset auth React state
       setAuthToken(null);
       setUserId(null);
+      setFirebaseUid(null);
       currentAuthToken.current = null;
       currentUserId.current = null;
+      currentFirebaseUid.current = null;
       hasLoadedAuthData.current = false;
       console.log('🔐 Firebase logout, storage cleared, auth state reset, Mixpanel reset');
     } catch (error) {
@@ -397,12 +405,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Ensure we don't return null values if we have valid refs
   const stableAuthToken = currentAuthToken.current || authToken;
   const stableUserId = currentUserId.current || userId;
+  const stableFirebaseUid = currentFirebaseUid.current || firebaseUid;
   
   return (
     <AuthContext.Provider 
       value={{ 
         authToken: stableAuthToken, 
         userId: stableUserId, 
+        firebaseUid: stableFirebaseUid,
         loading, 
         authInitialized,
         login, 
@@ -426,6 +436,7 @@ export const useAuth = () => {
     return {
       authToken: null,
       userId: null,
+      firebaseUid: null,
       loading: true,
       authInitialized: false,
       login: async () => { throw new Error('AuthProvider not available'); },
