@@ -37,8 +37,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-    paddingBottom: 15,
+    paddingTop: Platform.OS === 'android' ? 16 : 0,
+    paddingBottom: 4,
   },
   backButton: {
     flexDirection: "row",

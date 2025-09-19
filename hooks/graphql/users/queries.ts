@@ -51,6 +51,7 @@ export const GET_USER = gql`
         searchable
         last_login_at
         is_double_cam
+        referral_code
         point {
           points
           spending_points

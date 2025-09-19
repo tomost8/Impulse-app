@@ -7,6 +7,7 @@ export default function AccountLayout() {
       <Stack.Screen name="settings" />
       <Stack.Screen name="friends" />
       <Stack.Screen name="communities" />
+      <Stack.Screen name="referrals" />
     </Stack>
   );
 }
