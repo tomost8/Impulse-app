@@ -460,7 +460,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       // Set Mixpanel user data
       const mixpanelProps = {
         '$email': user.email,
-        'uid_backend': user.id.toString(),
+        'uid_backend': user?.id?.toString(),
         'first_name': user.first_name,
         'last_name': user.last_name,
         'username': user.username,

@@ -7,6 +7,7 @@ import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the 
 import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
 import LeaderboardFull from "@/components/ui/common/Leaderboard/homeLeaderboard/LeaderboardFull"
 import DailyAddPopup from "../home/dailyaddpopup";
+import ChallengesSection from "./ChallengesSection";
 
 interface HomeScreenProps {
   loading: boolean;
@@ -61,6 +62,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               timezone={timezone}
             />
           </View>
+
+          {/* ✅ Challenges Section */}
+          <ChallengesSection />
 
           {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
           <View style={styles.leaderboardWrapper}>
