@@ -44,15 +44,26 @@ function AccountProfile({
           <View style={styles.headerExtension}>
             <View style={styles.headerRow}>
               <Text style={styles.headerTitle}>My Account</Text>
-              <TouchableOpacity 
-                style={styles.settingsButton}
-                onPress={() => router.push('/account/settings')}
-              >
-                <Image
-                  source={require('@/assets/icons/setting.png')}
-                  style={styles.settingsIcon}
-                />
-              </TouchableOpacity>
+              <View style={styles.headerItem}>
+                <TouchableOpacity 
+                  style={styles.settingsButton}
+                  onPress={() => router.push('/account/referrals')}
+                >
+                  <Image
+                    source={require('@/assets/icons/referral.png')}
+                    style={styles.settingsIcon}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.settingsButton}
+                  onPress={() => router.push('/account/settings')}
+                >
+                  <Image
+                    source={require('@/assets/icons/setting.png')}
+                    style={styles.settingsIcon}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
 
@@ -143,6 +154,7 @@ const styles = StyleSheet.create({
   headerExtension: {
     backgroundColor: '#E0EDFD',
     width: '100%',
+    paddingVertical: 16,
   },
   scrollView: {
     flex: 1,
@@ -170,6 +182,9 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     marginBottom: -8, 
     zIndex: 1,
+  },
+  headerItem: {
+    flexDirection: 'row',
   },
   headerTitle: {
     fontSize: 18,
