@@ -33,8 +33,8 @@ export default {
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: "Allow access to camera to take photos for your daily goals.",
-        NSPhotoLibraryAddUsageDescription: "Allow access to library to save photos to your camera roll.",
-        NSPhotoLibraryUsageDescription: "Allow access to photos to select pictures from your library.",
+        NSPhotoLibraryAddUsageDescription: "Allow access to library to save daily goal photos to your camera roll.",
+        NSPhotoLibraryUsageDescription: "Allow access to photo library to upload daily goal and profile photos.",
         NSAppTransportSecurity: {
           NSExceptionDomains: process.env.API_AWS_URL ? {
             [new URL(process.env.API_AWS_URL).hostname]: {

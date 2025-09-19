@@ -52,7 +52,7 @@ export const pickImage = async (
       // Permission permanently denied, show alert to go to settings
       Alert.alert(
         'Permission Required',
-        'To select images from your gallery, please enable photo library access in your device settings.',
+        'To upload images from your gallery, please enable photo library access in your device settings.',
         [
           { 
             text: 'Cancel', 

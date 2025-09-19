@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 
+/*
 export function toMonthFilter(date: Date, categories?: string[]) {
   return {
     year: dayjs(date).year(),
@@ -25,3 +26,4 @@ export async function saveImageToCameraRoll(remoteUrl: string) {
   const asset = await MediaLibrary.createAssetAsync(uri);
   return asset;
 }
+*/

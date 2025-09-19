@@ -58,7 +58,7 @@ cd Impulse-app
 bun install
 
 # Or using npm
-npm install
+npm install --legacy-peer-deps
 ```
 
 ### 3. Environment Configuration
@@ -76,7 +76,7 @@ API_AWS_URL=http://18.191.234.29:3000/graphql
 API_LOCAL_URL=http://localhost:3000/graphql
 
 # Mixpanel Configuration (private - required)
-MIXPANEL_TOKEN=431de022b60e0c270c405468c11ac4f3
+MIXPANEL_TOKEN=b1e9e3af5357db33df9ff16f6222f0a9
 
 # Google Services Files (for local development)
 GOOGLE_SERVICES_JSON=./google-services.json
@@ -84,8 +84,6 @@ GOOGLE_SERVICES_PLIST=./GoogleService-Info.plist
 ```
 
 **Important**: All environment variables are required. The app will not work without proper configuration. API URLs and Mixpanel token are kept private for security reasons and are not exposed in the app bundle.
-
-**Note**: The values shown above are examples. You must obtain the actual values from the project maintainer.
 
 ### 4. Firebase Configuration
 
@@ -107,12 +105,10 @@ These files contain sensitive API keys and are not committed to the repository f
 
 **For local development (no EAS required):**
 ```bash
-# Start Expo development server
-npx expo start
-
 # Run on specific platforms
 npx expo run:ios --device        # iOS Device
 npx expo run:ios                 # iOS Simulator
+npx expo run:android --device    # Android Device
 npx expo run:android             # Android Emulator
 ```
 
@@ -169,7 +165,7 @@ The project uses EAS secrets for sensitive configuration during builds. The foll
    git checkout [branch-name]
    git pull origin [branch-name]
    ```
-cl
+
 2. Make your changes and commit:
    ```bash
    git add .
