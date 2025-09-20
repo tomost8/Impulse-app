@@ -4,7 +4,7 @@ import {
   Text, 
   StyleSheet 
 } from 'react-native';
-import ActivityCard from '@/components/features/goals/activities/ActivityCard';
+import { ActivityCard } from '@/components/features/goals';
 
 interface DailyGoal {
   id: number;

@@ -8,54 +8,46 @@
  * - components/screens/home/ViewActivitiesScreen.tsx → ViewActivitiesScreen
  * 
  * - components/screens/camera/SelectActivityModal.tsx → SelectActivityModal
- * - components/features/goals/activities/dailyaddpopup.tsx → DailyAddPopup
+ * - components/features/goals/activities/SetupActivitiesModal.tsx → SetupActivitiesModal
  * - components/features/profile/DailyGoals.tsx → DailyGoals
  * 
  * COMPONENT HIERARCHY:
  * 
- * HomeScreen (screens/home/HomeScreen.tsx)
+ * profile/DailyGoals
+ * └── ActivityCard
+ * 
+ * HomeScreen
  * └── ActivitiesSection
  *     ├── ActivityCard
- *     └── AddDailyGoalsBox
+ *     └── EmptyActivitiesState
  * 
- * AddActivitiesScreen (screens/home/AddActivitiesScreen.tsx)
- * ├── AddActivityCard
- * │   └── ActivityDetails
- * └── ConfirmGoalButton
- * 
- * ViewActivitiesScreen (screens/home/ViewActivitiesScreen.tsx)
- * ├── EditActivityCard
- * │   └── ActivityDetails
- * └── AddNewGoalButton
- * 
- * SelectActivityModal (screens/camera/SelectActivityModal.tsx)
- * └── PostActivityCard
- * 
- * DailyAddPopup (features/goals/activities/dailyaddpopup.tsx)
+ * AddActivitiesScreen
  * └── AddActivityCard
  *     └── ActivityDetails
+ * 
+ * ViewActivitiesScreen
+ * └── EditActivityCard
+ *     └── ActivityDetails
+ * 
+ * SetupActivitiesModal
+ * └── AddActivityCard
+ *     └── ActivityDetails
+ * 
+ * SelectActivityModal
+ * └── PostActivityCard
+ * 
  */
-
-// Core Components
-export { default as ActivityCard } from './activities/ActivityCard';
 
 // HomeScreen Components
 export { default as ActivitiesSection } from './activities/ActivitiesSection';
 export { default as ChallengesSection } from './challenges/ChallengesSection';
 
-// AddActivitiesScreen Components
-export { default as AddActivityCard } from './activities/AddActivityCard';
-export { default as ConfirmGoalButton } from './activities/ConfirmGoalButton';
+// Activity Cards
+export { default as ActivityCard } from './activities/cards/ActivityCard';
+export { default as AddActivityCard } from './activities/cards/AddActivityCard';
+export { default as EditActivityCard } from './activities/cards/EditActivityCard';
+export { default as PostActivityCard } from './activities/cards/PostActivityCard';
 
-// ViewActivitiesScreen Components
-export { default as EditActivityCard } from './activities/EditActivityCard';
-export { default as AddNewGoalButton } from './activities/AddNewGoalButton';
-
-// Modal-related Components
-export { default as CameraPopup } from './activities/camerapopup';
-export { default as DailyAddPopup } from './activities/dailyaddpopup';
-export { default as PostActivityCard } from './activities/PostActivityCard';
-
-// Additional Components:
-// - AddDailyGoalsBox (used by ActivitiesSection)
-// - ActivityDetails (used by AddActivityCard and EditActivityCard)
+// Modals
+export { default as SetupActivitiesModal } from './activities/SetupActivitiesModal';
+export { default as RequireActivitiesModal } from './activities/RequireActivitiesModal'; 

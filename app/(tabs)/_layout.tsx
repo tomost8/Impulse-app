@@ -1,16 +1,18 @@
-import { router, Tabs, usePathname } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Platform, Image, View, Text, Button, TouchableOpacity } from 'react-native';
+import { Platform, Image } from 'react-native';
+import { router, Tabs, usePathname, Redirect } from 'expo-router';
 
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-
-import CameraPopup from '@/components/features/goals/activities/camerapopup';
+// Contexts
 import { useAuth } from '@/contexts/AuthContext';
-import { debugRouting } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
+
+// Components
 import LoadingScreen from '@/components/ui/common/loading';
-import { Redirect } from 'expo-router';
+import TabBarBackground from '@/components/ui/TabBarBackground';
+import { RequireActivitiesModal } from '@/components/features/goals';
+
+// Utils
+import { debugRouting } from '@/debug/utils';
 
 function TabLayout() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -181,7 +183,7 @@ function TabLayout() {
         />
       </Tabs>
 
-      <CameraPopup
+      <RequireActivitiesModal
         isVisible={modalVisible}
         onClose={() => {
           setModalVisible(false);

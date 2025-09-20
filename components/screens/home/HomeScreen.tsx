@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 
 import { HomeHeader, QuoteofDay } from "../../features/home";
-import { ActivitiesSection, ChallengesSection, DailyAddPopup } from "../../features/goals";
+import { ActivitiesSection, ChallengesSection, SetupActivitiesModal } from "../../features/goals";
 import LeaderboardFull from "@/components/ui/common/Leaderboard/homeLeaderboard/LeaderboardFull"
 
 interface HomeScreenProps {
@@ -75,7 +75,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </ScrollView>
 
-        <DailyAddPopup  
+        <SetupActivitiesModal  
           isVisible={showDailyAddPopup}
           onClose={() => setShowDailyAddPopup(false)}
           onConfirm={onConfirm}

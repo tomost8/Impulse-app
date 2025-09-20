@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width;
 // Importing the new "add-goal.png" icon from the assets folder
 const addGoalIcon = require("@/assets/icons/add-goal.png");
 
-const AddDailyGoalsBox: React.FC = () => {
+const EmptyActivitiesState: React.FC = () => {
   return (
     <TouchableOpacity style={styles.container} onPress={() => router.push("/home/addActivity")}>
       <Image source={addGoalIcon} style={styles.icon} />
@@ -45,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddDailyGoalsBox;
+export default EmptyActivitiesState;

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import ActivityCard from "./ActivityCard";
-import AddDailyGoalsBox from "./AddDailyGoalsBox";
+import ActivityCard from "./cards/ActivityCard";
+import EmptyActivitiesState from "./EmptyActivitiesState";
 import { router } from "expo-router";
 
 interface ActivitiesSectionProps {
@@ -49,8 +49,9 @@ const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => 
           />
         ))
       ) : (
+        // No activities, display empty state
         <View style={styles.addGoalContainer}>
-          <AddDailyGoalsBox />
+          <EmptyActivitiesState />
         </View>
       )}
     </View>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { View, SafeAreaView, StyleSheet, Text, ScrollView, KeyboardAvoidingView, Platform, Keyboard, StatusBar } from "react-native";
+import { View, SafeAreaView, StyleSheet, Text, ScrollView, KeyboardAvoidingView, Platform, Keyboard, StatusBar, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 
 import LoadingScreen from "@/components/ui/common/loading";
 import Header from "@/components/ui/common/headers/Header";
-import { EditActivityCard, AddNewGoalButton } from "../../features/goals";
+import { EditActivityCard } from "../../features/goals";
 
 interface GoalFormData {
   startTime: string;
@@ -89,7 +89,9 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
         {/* Only show button when keyboard is not visible */}
         {!isKeyboardVisible && (
           <View style={styles.buttonContainer}>
-            <AddNewGoalButton onPress={() => router.push("/home/addActivity")} />
+            <TouchableOpacity style={styles.addNewGoalButton} onPress={() => router.push("/home/addActivity")}>
+              <Text style={styles.addNewGoalButtonText}>Add New Daily Goal</Text>
+            </TouchableOpacity>
           </View>
         )}
       </KeyboardAvoidingView>
@@ -136,6 +138,23 @@ const styles = StyleSheet.create({
   },
   activitiesContainer: {
     marginTop: 0, // Space below the section title
+  },
+  addNewGoalButton: {
+    height: 50,
+    backgroundColor: "#DE728D", // Figma background color
+    borderRadius: 30, // Rounded edges as per Figma
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "stretch", // Stretch to fit container width
+    paddingHorizontal: 60, // Ensures padding around text
+    marginHorizontal: 10, // Adds spacing on sides
+    marginBottom: 5, // Matches Figma spacing at the bottom
+  },
+  addNewGoalButtonText: {
+    fontSize: 18, // Matches Figma font size
+    fontFamily: "Poppins", // Figma-specified font
+    fontWeight: "600", // Semi-bold
+    color: "#FFFFFF", // White text
   },
 });
   

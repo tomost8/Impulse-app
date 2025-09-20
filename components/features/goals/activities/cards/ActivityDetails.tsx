@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput, Keyboard } from 'react-native';
-import DurationPicker from '../../../ui/common/pickers/DurationPicker';
-import TimePicker from '../../../ui/common/pickers/TimePicker';
+import DurationPicker from '../../../../ui/common/pickers/DurationPicker';
+import TimePicker from '../../../../ui/common/pickers/TimePicker';
 
 interface ActivityDetailsProps {
   formData: {

@@ -9,12 +9,12 @@ import {
   Image
 } from 'react-native';
 
-interface CameraPopupProps {
+interface RequireActivitiesModalProps {
   isVisible: boolean;
   onClose: () => void;
 }
 
-const CameraPopup: React.FC<CameraPopupProps> = ({ isVisible, onClose }) => {
+const RequireActivitiesModal: React.FC<RequireActivitiesModalProps> = ({ isVisible, onClose }) => {
   const handleAddDailyGoals = () => {
     onClose(); // Close the popup
   };
@@ -101,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CameraPopup;
+export default RequireActivitiesModal;

@@ -9,7 +9,7 @@ import {
   Dimensions,
   ScrollView,
 } from 'react-native';
-import PostActivityCard from '@/components/features/goals/activities/PostActivityCard';
+import PostActivityCard from '@/components/features/goals/activities/cards/PostActivityCard';
 
 interface SelectActivityProps {
   loading: boolean;

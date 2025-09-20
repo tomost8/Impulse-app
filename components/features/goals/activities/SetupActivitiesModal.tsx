@@ -8,10 +8,10 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import AddActivityCard from '@/components/features/goals/activities/AddActivityCard';
+import AddActivityCard from '@/components/features/goals/activities/cards/AddActivityCard';
 import { goals } from '@/utils/goals'; // Import goals from the same source
 
-interface DailyAddPopupProps {
+interface SetupActivitiesModalProps {
   isVisible: boolean;
   onClose: () => void;
   onConfirm: (selectedGoals: any[], goalFormData: any) => Promise<void>;
@@ -24,7 +24,7 @@ interface GoalFormData {
   description: string;
 }
 
-const DailyAddPopup: React.FC<DailyAddPopupProps> = ({
+const SetupActivitiesModal: React.FC<SetupActivitiesModalProps> = ({
   isVisible,
   onClose,
   onConfirm,
@@ -187,4 +187,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DailyAddPopup;
+export default SetupActivitiesModal;

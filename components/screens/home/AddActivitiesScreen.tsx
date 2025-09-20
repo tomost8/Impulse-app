@@ -1,9 +1,9 @@
-import { View, StyleSheet, ScrollView, Platform, StatusBar } from "react-native";
+import { View, StyleSheet, ScrollView, Platform, StatusBar, TouchableOpacity, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { goals } from "@/utils/goals";
 
 import Header from "@/components/ui/common/headers/Header";
-import { AddActivityCard, ConfirmGoalButton } from "@/components/features/goals";
+import { AddActivityCard } from "@/components/features/goals";
 
 interface GoalFormData {
   startTime: string;
@@ -56,7 +56,12 @@ const AddDailyGoalsScreen = ({
           />
         ))}
       </ScrollView>
-      <ConfirmGoalButton onPress={onAddGoals} />
+      <TouchableOpacity 
+        style={styles.confirmButton}
+        onPress={onAddGoals}
+      >
+        <Text style={styles.confirmButtonText}>Confirm</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -75,15 +80,29 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   goalContainer: {
-      backgroundColor: "#FFF",
-      borderRadius: 20,
-      borderWidth: 1,
-      borderColor: "#E1E1E1",
-      padding: 10,
-      marginBottom: 20, // Adds more spacing between each goal
-      marginTop: 20, // Adds extra space above the first goal
-    },
-
+    backgroundColor: "#FFF",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#E1E1E1",
+    padding: 10,
+    marginBottom: 20, // Adds more spacing between each goal
+    marginTop: 20, // Adds extra space above the first goal
+  },
+  confirmButton: {
+    backgroundColor: '#DE728D',
+    borderRadius: 50,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
+    marginBottom: 28,
+  },
+  confirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+  },
 });
   
 export default AddDailyGoalsScreen;
