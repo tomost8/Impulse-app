@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 
-import TopSection from "../../ui/HomeComponents/HeaderComponents/TopSection"; // ✅ Added Top Section
-import QuoteofDay from "../../ui/HomeComponents/QuoteofDay"; // ✅ Matches the actual file name
-import DailyGoals from "../../ui/HomeComponents/ActivitiesContainer";
+import { TopSection, QuoteOfTheDay as QuoteofDay, DailyGoals } from "../../features/home";
 import LeaderboardFull from "@/components/ui/common/Leaderboard/homeLeaderboard/LeaderboardFull"
 import DailyAddPopup from "../home/dailyaddpopup";
 import ChallengesSection from "./ChallengesSection";
@@ -14,6 +12,7 @@ interface HomeScreenProps {
   name: string;
   activities: any[]; 
   timezone: string;
+  challenges: any;
   friendsLeaderboard: any[]; 
   handleAddGoals: (selectedGoals: any[], goalFormData: any) => Promise<void>;
 }
@@ -23,6 +22,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   name,
   activities,
   timezone,
+  challenges,
   friendsLeaderboard,
   handleAddGoals,
 }) => {
@@ -64,7 +64,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
 
           {/* ✅ Challenges Section */}
-          <ChallengesSection />
+          <ChallengesSection challenges={challenges} />
 
           {/* ✅ Leaderboard Section with Navigation to Full Leaderboard */}
           <View style={styles.leaderboardWrapper}>

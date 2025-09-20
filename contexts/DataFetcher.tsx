@@ -17,39 +17,7 @@ import { getLocalDay } from '@/utils/timezoneProcessing';
 import { useGetFeedCommunities } from '@/hooks/graphql/posts/queries';
 import { useGetFeedFriends } from '@/hooks/graphql/posts/queries';
 import { useGetPost, useGetPostComments, useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
-
-/*
- * USAGE EXAMPLES:
- * 
- * 1. In any component within DataFetcher:
- * 
- * import { useDataRefetch } from '@/contexts/DataFetcher';
- * 
- * const MyComponent = () => {
- *   const { refetchData, isRefetching } = useDataRefetch();
- *   
- *   const handleRefreshButton = () => {
- *     refetchData({ user: true, activities: true }); // Selective refresh with cache cleared by default
- *   };
- *   
- *   return (
- *     <TouchableOpacity onPress={handleRefreshButton} disabled={isRefetching}>
- *       <Text>{isRefetching ? 'Refreshing...' : 'Refresh Data'}</Text>
- *     </TouchableOpacity>
- *   );
- * };
- * 
- * 2. After completing an action that changes user data:
- * 
- * const handleCompleteAction = async () => {
- *   await someMutation();
- *   refetchData({ friendsFeed: true, communityFeed: true }); // Refresh feeds with fresh data
- * };
- * 
- * 3. If you want to use cached data (rare case):
- * 
- * refetchData({ friends: true, clearCache: false }); // Use cached data if available
- */
+import { useGetMyChallenges } from '@/hooks/graphql/challenges/queries';
 
 // Context for global data refetch
 interface DataRefetchContextType {
@@ -66,6 +34,7 @@ interface RefetchOptions {
   friends?: boolean;
   friendsFeed?: boolean;
   communityFeed?: boolean;
+  challenges?: boolean;
 
   currentCommunity?: boolean;
   currentCommunityMembers?: boolean;
@@ -90,7 +59,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,
-    setCommunityFeed, setFriendsFeed,
+    setCommunityFeed, setFriendsFeed, setChallenges,
     setCurrentCommunity, setCurrentCommunityMembers, setCurrentCommunityAnnouncements,
     setCurrentPost, setCurrentPostComments
   } = useDataProvider();
@@ -203,6 +172,22 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     shouldFetchFriends
   );
 
+  // Challenges Query
+  // Refs
+  const challengesRef = useRef<any | null>(null);
+  const hasFetchedChallenges = useRef(false);
+  
+  // Conditions
+  const shouldFetchChallengesInitially = !hasFetchedChallenges.current && hasValidAuth;
+  const shouldRefetchChallenges = Boolean(actionRefetchTrigger > 0 && 
+    actionRefetchTrigger !== lastActionRefetchTrigger.current && 
+    currentRefetchOptions.current.challenges);
+  const shouldFetchChallenges = shouldFetchChallengesInitially || shouldRefetchChallenges;
+  
+  const { activeChallenges, completedChallenges, fetched: hasNewChallengesData } = useGetMyChallenges(
+    shouldFetchChallenges
+  );
+
   // Friends Feed Query
   // Refs
   const friendsFeedRef = useRef<any[] | null>(null);
@@ -305,6 +290,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     hasFetchedCommunities.current = false;
     hasFetchedChats.current = false;
     hasFetchedFriends.current = false;
+    hasFetchedChallenges.current = false;
     hasFetchedFriendsFeed.current = false;
     hasFetchedCommunityFeed.current = false;
 
@@ -346,6 +332,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (options.communities) hasFetchedCommunities.current = false;
     if (options.chats) hasFetchedChats.current = false;
     if (options.friends) hasFetchedFriends.current = false;
+    if (options.challenges) hasFetchedChallenges.current = false;
     if (options.friendsFeed) hasFetchedFriendsFeed.current = false;
     if (options.communityFeed) hasFetchedCommunityFeed.current = false;
 
@@ -409,6 +396,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       communitiesRef.current = null;
       chatsRef.current = null;
       friendsRef.current = null;
+      challengesRef.current = null;
       friendsFeedRef.current = null;
       communityFeedRef.current = null;
   
@@ -430,7 +418,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!hasValidAuth) {
         return;
     }
-    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewFriendsData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
+    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewFriendsData && !hasNewChallengesData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
       return;
     }
     if (hasNewUserData) {
@@ -532,6 +520,15 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedFriends.current = true;
       setFriends(friends);
     }
+    if (hasNewChallengesData) {
+      const challengesData = {
+        activeChallenges,
+        completedChallenges
+      };
+      challengesRef.current = challengesData;
+      hasFetchedChallenges.current = true;
+      setChallenges(challengesData);
+    }
     if (hasNewFriendsFeedData) {
       friendsFeedRef.current = friendsFeed;
       hasFetchedFriendsFeed.current = true;
@@ -553,14 +550,14 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedCurrentPostComments.current = true;
       setCurrentPostComments(currentPostComments);
     }
-    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
+    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedChallenges.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
       setFetching(false);
       setIsRefetching(false); // Reset refetching state when complete
       
       console.log("✅ User Data Loaded Successfully");
     } else {
     }
-  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
+  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewChallengesData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
 
   // Track when queries are executed to prevent multiple executions
   useEffect(() => {
@@ -592,6 +589,12 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       lastActionRefetchTrigger.current = actionRefetchTrigger;
     }
   }, [hasNewFriendsData, actionRefetchTrigger]);
+
+  useEffect(() => {
+    if (hasNewChallengesData && actionRefetchTrigger > 0) {
+      lastActionRefetchTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewChallengesData, actionRefetchTrigger]);
 
   useEffect(() => {
     if (hasNewFriendsFeedData && actionRefetchTrigger > 0) {

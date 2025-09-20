@@ -1,11 +1,11 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
-interface AddGoalButtonProps {
+interface ConfirmGoalButtonProps {
   onPress: () => void;
 }
 
-const AddGoalButton: React.FC<AddGoalButtonProps> = ({ onPress }) => {
+const ConfirmGoalButton: React.FC<ConfirmGoalButtonProps> = ({ onPress }) => {
   return (
     <TouchableOpacity 
       style={styles.button}
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddGoalButton;
+export default ConfirmGoalButton;

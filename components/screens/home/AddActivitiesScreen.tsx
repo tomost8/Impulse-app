@@ -1,6 +1,6 @@
 import { View, StyleSheet, ScrollView, Platform, StatusBar, SafeAreaView, TouchableOpacity, Text, Image } from "react-native";
 import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
-import AddGoalButton from "@/components/ui/DailyGoalsViewAll/AddDailyGoals/AddGoalButton";
+import { ConfirmGoalButton } from "@/components/features/home";
 import Header from "@/components/ui/common/headers/Header";
 import { goals } from "@/utils/goals";
 import { useRouter } from "expo-router";
@@ -56,7 +56,7 @@ const AddDailyGoalsScreen = ({
           />
         ))}
       </ScrollView>
-      <AddGoalButton onPress={onAddGoals} />
+      <ConfirmGoalButton onPress={onAddGoals} />
     </View>
   );
 };

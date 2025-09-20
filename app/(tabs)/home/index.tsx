@@ -14,7 +14,7 @@ import { convertLocalToUtc } from '@/utils/timezoneProcessing';
 import { getCategoryById } from '@/utils/goals';
 
 const HomePage = () => {
-  const { fetching, user, activities, timezone, setActivities, setCameraClickable } = useDataProvider();
+  const { fetching, user, activities, timezone, challenges, setActivities, setCameraClickable } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
   const router = useRouter();
@@ -31,8 +31,9 @@ const HomePage = () => {
 
   // Check if activities data is available
   const hasActivitiesData = activities !== null && activities !== undefined;
+  const hasChallengesData = challenges !== null && challenges !== undefined;
   
-  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity || !hasActivitiesData;
+  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity || !hasActivitiesData || !hasChallengesData;
 
   useEffect(() => {
     if (!hasNewLeaderboardData) {
@@ -104,14 +105,14 @@ const HomePage = () => {
   };
 
   if (debugHomePage) {
-    console.log(`HomePage Loading States - hasFetchedFriends: ${hasFetchedFriends.current}, fetching: ${fetching}, isCreatingActivity: ${isCreatingActivity}, hasActivitiesData: ${hasActivitiesData}, loading: ${loading}`);
+    console.log(`HomePage Loading States - hasFetchedFriends: ${hasFetchedFriends.current}, fetching: ${fetching}, isCreatingActivity: ${isCreatingActivity}, hasActivitiesData: ${hasActivitiesData}, hasChallengesData: ${hasChallengesData}, loading: ${loading}`);
     if (!loading) {
       const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
         id: item.id,
         username: item.username,
         weekly_points: item.point?.weekly_points || 0
       })) || [];
-      console.log(`Rendering HomePage - Activities: ${activities.length} | Leaderboard:`, leaderboardDetails);
+      console.log(`Rendering HomePage - Activities: ${activities.length} | Challenges: ${challenges?.activeChallenges?.length || 0} active, ${challenges?.completedChallenges?.length || 0} completed | Leaderboard:`, leaderboardDetails);
     }
   }
 
@@ -121,6 +122,7 @@ const HomePage = () => {
       name={user?.first_name}
       activities={activities}
       timezone={timezone}
+      challenges={challenges}
       friendsLeaderboard={leaderboardRef.current}
       handleAddGoals={handleAddGoals}
     />

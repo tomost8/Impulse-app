@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import ActivityCard from "../common/activityCards/ActivityCard";
+import ActivityCard from "../../../ui/common/activityCards/ActivityCard";
 import AddDailyGoalsBox from "./AddDailyGoalsBox";
 import { router } from "expo-router";
 

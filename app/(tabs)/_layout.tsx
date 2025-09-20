@@ -4,7 +4,6 @@ import { Platform, Image, View, Text, Button, TouchableOpacity } from 'react-nat
 
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
-import NotchedTabBarBackground from '@/components/ui/NotchedTabBarBackground';
 
 import CameraPopup from '@/components/screens/home/camerapopup';
 import { useAuth } from '@/contexts/AuthContext';

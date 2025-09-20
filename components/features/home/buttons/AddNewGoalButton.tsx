@@ -1,11 +1,11 @@
 import React from "react";
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 
-interface AddGoalButtonProps {
+interface AddNewGoalButtonProps {
   onPress: () => void; // Function to handle button press
 }
 
-const AddGoalButton: React.FC<AddGoalButtonProps> = ({ onPress }) => {
+const AddNewGoalButton: React.FC<AddNewGoalButtonProps> = ({ onPress }) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Text style={styles.buttonText}>Add New Daily Goal</Text>
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddGoalButton;
+export default AddNewGoalButton;

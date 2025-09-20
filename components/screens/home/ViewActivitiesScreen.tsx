@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
-import AddGoalButton from "../../ui/DailyGoalsViewAll/AddGoalButton";
+import { AddNewGoalButton } from "../../features/home";
 import Header from "@/components/ui/common/headers/Header";
 import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
 import React, { useState } from "react";
@@ -102,7 +102,7 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
         {/* Only show button when keyboard is not visible */}
         {!isKeyboardVisible && (
           <View style={styles.buttonContainer}>
-            <AddGoalButton onPress={() => router.push("/home/addActivity")} />
+            <AddNewGoalButton onPress={() => router.push("/home/addActivity")} />
           </View>
         )}
       </KeyboardAvoidingView>
