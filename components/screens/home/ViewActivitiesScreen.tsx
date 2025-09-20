@@ -1,20 +1,10 @@
-import { 
-  View, 
-  SafeAreaView, 
-  StyleSheet, 
-  Text, 
-  ScrollView, 
-  KeyboardAvoidingView, 
-  Platform,
-  Keyboard,
-  StatusBar,
-} from "react-native";
-import LoadingScreen from "@/components/ui/common/loading";
-import { AddNewGoalButton } from "../../features/home";
-import Header from "@/components/ui/common/headers/Header";
-import EditActivityCard from "@/components/ui/common/activityCards/EditActivityCard";
 import React, { useState } from "react";
+import { View, SafeAreaView, StyleSheet, Text, ScrollView, KeyboardAvoidingView, Platform, Keyboard, StatusBar } from "react-native";
 import { router } from "expo-router";
+
+import LoadingScreen from "@/components/ui/common/loading";
+import Header from "@/components/ui/common/headers/Header";
+import { EditActivityCard, AddNewGoalButton } from "../../features/goals";
 
 interface GoalFormData {
   startTime: string;
@@ -40,7 +30,6 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
   }
 
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-  const scrollViewRef = React.useRef<ScrollView>(null);
 
   // Add keyboard listeners
   React.useEffect(() => {
@@ -70,7 +59,6 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
         style={styles.keyboardView}
       >
         <ScrollView 
-          ref={scrollViewRef}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
@@ -93,7 +81,6 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
                 formData={props.formData}
                 onFormDataChange={(field, value) => props.handleFormDataChange(field as keyof GoalFormData, value)}
                 onSave={props.onSave}
-                scrollViewRef={scrollViewRef}
               />
             ))}
           </View>

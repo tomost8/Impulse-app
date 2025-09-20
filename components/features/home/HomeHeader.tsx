@@ -6,7 +6,7 @@ import StreakBadge from "./StreakBadge"; // ✅ Importing StreakBadge
 import { useDataProvider } from "@/contexts/DataProviderContext";
 
 
-const TopSectionContainer: React.FC<{ name: string }> = ({ name }) => {
+const HomeHeader: React.FC<{ name: string }> = ({ name }) => {
     const { loginStreak } = useDataProvider();
     // 使用API返回的streak_count，如果没有则默认为0
     const streakCount = loginStreak?.streak_count || 0;
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default TopSectionContainer;
+export default HomeHeader;

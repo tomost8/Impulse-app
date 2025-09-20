@@ -17,7 +17,6 @@ interface EditActivityCardProps {
   };
   onFormDataChange: (field: string, value: string | { hours: number; minutes: number }) => void;
   onSave: () => void;
-  scrollViewRef: React.RefObject<ScrollView>;
 }
 
 const EditActivityCard: React.FC<EditActivityCardProps> = ({
@@ -27,7 +26,6 @@ const EditActivityCard: React.FC<EditActivityCardProps> = ({
   formData,
   onFormDataChange,
   onSave,
-  scrollViewRef,
 }) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
 

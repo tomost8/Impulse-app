@@ -5,7 +5,7 @@ import { Platform, Image, View, Text, Button, TouchableOpacity } from 'react-nat
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 
-import CameraPopup from '@/components/screens/home/camerapopup';
+import CameraPopup from '@/components/features/goals/activities/camerapopup';
 import { useAuth } from '@/contexts/AuthContext';
 import { debugRouting } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';

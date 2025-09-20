@@ -1,17 +1,29 @@
-// Activities
-export { default as DailyGoals } from './activities/ActivitiesContainer';
-export { default as AddDailyGoalsBox } from './activities/AddDailyGoalsBox';
+/*
+ * Home Feature Components
+ * =======================
+ * 
+ * ENTRY POINTS:
+ * - app/(tabs)/home/index.tsx → HomeScreen
+ * 
+ * COMPONENT HIERARCHY:
+ * 
+ * HomeScreen (screens/home/HomeScreen.tsx)
+ * ├── HomeHeader
+ * │   ├── Greeting
+ * │   ├── StreakBadge
+ * │   └── StreakTracker
+ * ├── QuoteOfTheDay
+ * │   └── QuoteCard
+ * ├── ActivitiesSection (from features/goals/activities/ActivitiesSection)
+ * ├── ChallengesSection (from features/goals/challenges/ChallengesSection)
+ * └── LeaderboardFull (from ui/common/Leaderboard/homeLeaderboard/LeaderboardFull)
+ */
 
-// Buttons
-export { default as AddNewGoalButton } from './buttons/AddNewGoalButton';
-export { default as ConfirmGoalButton } from './buttons/ConfirmGoalButton';
+export { default as HomeHeader } from './HomeHeader';
+export { default as QuoteofDay } from './QuoteofDay';
 
-// Header Components
-export { default as TopSection } from './header/TopSection';
-export { default as Greeting } from './header/Greeting';
-export { default as StreakBadge } from './header/StreakBadge';
-export { default as StreakTracker } from './header/StreakTracker';
-
-// Quotes
-export { default as QuoteCard } from './quotes/QuoteCard';
-export { default as QuoteOfTheDay } from './quotes/QuoteofDay';
+// Internal components:
+// - Greeting (used by HomeHeader)
+// - StreakBadge (used by HomeHeader)
+// - StreakTracker (used by HomeHeader)
+// - QuoteCard (used by QuoteOfTheDay)

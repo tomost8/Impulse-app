@@ -1,15 +1,15 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import ActivityCard from "../../../ui/common/activityCards/ActivityCard";
+import ActivityCard from "./ActivityCard";
 import AddDailyGoalsBox from "./AddDailyGoalsBox";
 import { router } from "expo-router";
 
-interface DailyGoalsProps {
+interface ActivitiesSectionProps {
   activities: any[];
   timezone: string;
 }
 
-const DailyGoals = ({ activities, timezone }: DailyGoalsProps) => {
+const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => {
   // Sort activities: in-progress first, then completed
   const sortedActivities = [...activities].sort((a, b) => {
     const aIsPending = a.status.toLowerCase() === 'pending';
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DailyGoals;
+export default ActivitiesSection;

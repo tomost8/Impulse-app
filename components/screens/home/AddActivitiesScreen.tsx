@@ -1,9 +1,9 @@
-import { View, StyleSheet, ScrollView, Platform, StatusBar, SafeAreaView, TouchableOpacity, Text, Image } from "react-native";
-import AddActivityCard from "@/components/ui/common/activityCards/AddActivityCard";
-import { ConfirmGoalButton } from "@/components/features/home";
-import Header from "@/components/ui/common/headers/Header";
-import { goals } from "@/utils/goals";
+import { View, StyleSheet, ScrollView, Platform, StatusBar } from "react-native";
 import { useRouter } from "expo-router";
+import { goals } from "@/utils/goals";
+
+import Header from "@/components/ui/common/headers/Header";
+import { AddActivityCard, ConfirmGoalButton } from "@/components/features/goals";
 
 interface GoalFormData {
   startTime: string;
