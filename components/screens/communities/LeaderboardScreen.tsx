@@ -1,8 +1,6 @@
 import React from "react";
 import { View, StyleSheet, ScrollView, Text } from "react-native";
-import LeaderboardHeader from "@/components/ui/common/Leaderboard/LeaderboardHeader";
-import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
-import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
+import { LeaderboardHeader, LeaderboardPodium, LeaderboardList } from "@/components/features/leaderboard";
 
 import { router } from "expo-router";
 
@@ -31,9 +29,9 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
           />
   
           {/* Podium */}
-          <LeaderboardPodium podiumData={communityLeaderboard.slice(0, 3)} />
+          <LeaderboardPodium podiumData={communityLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           {/*  Leaderboard List */}
-          <LeaderboardList leaderboardData={communityLeaderboard.slice(3)} />
+          <LeaderboardList leaderboardData={communityLeaderboard.slice(3)} selectedPeriod={selectedPeriod} />
 
         </ScrollView>
       </View>

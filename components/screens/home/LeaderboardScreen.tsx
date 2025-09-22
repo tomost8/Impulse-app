@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
-import LeaderboardHeader from "../../ui/common/Leaderboard/LeaderboardHeader";
-import LeaderboardPodium from "../../ui/common/Leaderboard/LeaderboardPodium";
-import LeaderboardList from "../../ui/common/Leaderboard/LeaderboardList";
-import LeaderboardTabs from "../../ui/common/Leaderboard/LeaderboardTabs";
+import { LeaderboardHeader, LeaderboardPodium, LeaderboardList, LeaderboardTabs } from "@/components/features/leaderboard";
 
 import { router } from "expo-router";
 
@@ -44,16 +41,16 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
   
           {/* Podium */}
           {activeTab === "Friends" ? (
-            <LeaderboardPodium podiumData={friendsLeaderboard.slice(0, 3)} />
+            <LeaderboardPodium podiumData={friendsLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           ) : (
-            <LeaderboardPodium podiumData={allLeaderboard.slice(0, 3)} />
+            <LeaderboardPodium podiumData={allLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           )}
   
           {/* Conditional Leaderboard List */}
           {activeTab === "Friends" ? (
-            <LeaderboardList leaderboardData={friendsLeaderboard.slice(3)} />
+            <LeaderboardList leaderboardData={friendsLeaderboard.slice(3)} selectedPeriod={selectedPeriod} />
           ) : (
-            <LeaderboardList leaderboardData={allLeaderboard.slice(3)} />
+            <LeaderboardList leaderboardData={allLeaderboard.slice(3)} selectedPeriod={selectedPeriod} />
           )}
         </ScrollView>
       </View>

@@ -4,9 +4,26 @@ import LeaderboardRow from "./LeaderboardRow";
 
 interface LeaderboardListProps {
   leaderboardData: any[];
+  selectedPeriod?: 'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL';
 }
 
-const LeaderboardList: React.FC<LeaderboardListProps> = ({ leaderboardData }) => {
+const LeaderboardList: React.FC<LeaderboardListProps> = ({ leaderboardData, selectedPeriod = 'POINTS_WEEKLY' }) => {
+  // Function to get the correct points based on selected period
+  const getPointsForPeriod = (user: any) => {
+    if (!user?.point) return 0;
+    
+    switch (selectedPeriod) {
+      case 'POINTS_WEEKLY':
+        return user.point.weekly_points || 0;
+      case 'POINTS_MONTHLY':
+        return user.point.monthly_points || 0;
+      case 'POINTS_ALL':
+        return user.point.points || 0;
+      default:
+        return user.point.weekly_points || 0;
+    }
+  };
+
   return (
     <View style={styles.container}>
       {leaderboardData.map((user, index) => (
@@ -14,7 +31,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ leaderboardData }) =>
           key={index}
           rank={index + 4}
           name={user.username}
-          points={user.point.weekly_points.toLocaleString()}
+          points={getPointsForPeriod(user).toLocaleString()}
           imageUrl={user.profile_picture}
         />
       ))}

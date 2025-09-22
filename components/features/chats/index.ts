@@ -29,8 +29,8 @@
  * └── PasswordPopup
  * 
  * ChatInfoScreen (screens/chats/ChatInfoScreen.tsx)
- * ├── LeaderboardPodium (from ui/common/Leaderboard)
- * ├── LeaderboardList (from ui/common/Leaderboard)
+ * ├── LeaderboardPodium (from features/leaderboard)
+ * ├── LeaderboardList (from features/leaderboard)
  * └── LeavePopup
  * 
  * InviteToChatScreen (screens/chats/InviteToChatScreen.tsx)

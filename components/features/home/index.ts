@@ -16,7 +16,7 @@
  * │   └── QuoteCard
  * ├── ActivitiesSection (from features/goals/activities/ActivitiesSection)
  * ├── ChallengesSection (from features/goals/challenges/ChallengesSection)
- * └── LeaderboardFull (from ui/common/Leaderboard/homeLeaderboard/LeaderboardFull)
+ * └── LeaderboardFull (from features/leaderboard/homeLeaderboard/LeaderboardFull)
  */
 
 export { default as HomeHeader } from './HomeHeader';

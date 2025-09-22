@@ -22,7 +22,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ users }) => {
           key={index}
           rank={index + 4} // Adding 4 because we're starting from 4th place
           name={user.username}
-          points={user.point.weekly_points.toLocaleString()}
+          points={(user.point?.weekly_points || 0).toLocaleString()}
           imageUrl={user.profile_picture}
         />
       ))}

@@ -25,7 +25,7 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
 
       {/* Main Content: Leaderboard */}
       <View style={styles.leaderboardContent}>
-        <LeaderboardPodium podiumData={podiumUsers} />
+        <LeaderboardPodium podiumData={podiumUsers} selectedPeriod="POINTS_WEEKLY" />
         {/* Leaderboard List (Ranks 4+) */}
         {listUsers.length > 0 && (
           <LeaderboardList users={listUsers} />

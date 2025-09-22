@@ -13,8 +13,7 @@ import {
 import { router } from 'expo-router';
 import { LeavePopup } from '@/components/features/chats';
 import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
-import LeaderboardPodium from "@/components/ui/common/Leaderboard/LeaderboardPodium";
-import LeaderboardList from "@/components/ui/common/Leaderboard/LeaderboardList";
+import { LeaderboardPodium, LeaderboardList } from "@/components/features/leaderboard";
 
 interface Member {
   id: string;
@@ -100,8 +99,8 @@ const ChatInfoScreen = (props: ChatInfoScreenProps) => {
     } else {
       return (
         <View style={styles.leaderboardContainer}>
-          <LeaderboardPodium podiumData={props.leaderboard.slice(0, 3)} />
-          <LeaderboardList leaderboardData={props.leaderboard.slice(3)} />
+          <LeaderboardPodium podiumData={props.leaderboard.slice(0, 3)} selectedPeriod="POINTS_WEEKLY" />
+          <LeaderboardList leaderboardData={props.leaderboard.slice(3)} selectedPeriod="POINTS_WEEKLY" />
         </View>
       );
     }

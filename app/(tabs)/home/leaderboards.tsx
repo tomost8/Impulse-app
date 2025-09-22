@@ -18,11 +18,30 @@ const LeaderboardsPage = () => {
   // Queries for Loading State
   const allLeaderboardRef = useRef<any | null>(null);
   const hasFetchedAllLeaderboard = useRef(false);
-  const { users: allLeaderboard, fetched: hasNewAllLeaderboardData } = useGetUsersLeaderboard(selectedPeriod, !hasFetchedAllLeaderboard.current);
+  const lastFetchedPeriod = useRef<string | undefined>(undefined);
+  
+  // Allow refetching when period changes or when first loading
+  const shouldFetchAllLeaderboard = !hasFetchedAllLeaderboard.current || 
+    lastFetchedPeriod.current !== selectedPeriod;
+  
+  const { users: allLeaderboard, fetched: hasNewAllLeaderboardData } = useGetUsersLeaderboard(selectedPeriod, shouldFetchAllLeaderboard);
 
   const friendsLeaderboardRef = useRef<any | null>(null);
   const hasFetchedFriendsLeaderboard = useRef(false);
-  const { friends: friendsLeaderboard, fetched: hasNewFriendsLeaderboardData } = useGetFriendsLeaderboard(user?.id as number, selectedPeriod, !hasFetchedFriendsLeaderboard.current && !fetching);
+  
+  // Allow refetching when period changes or when first loading
+  const shouldFetchFriendsLeaderboard = (!hasFetchedFriendsLeaderboard.current && !fetching) || 
+    lastFetchedPeriod.current !== selectedPeriod;
+  
+  const { friends: friendsLeaderboard, fetched: hasNewFriendsLeaderboardData } = useGetFriendsLeaderboard(user?.id as number, selectedPeriod, shouldFetchFriendsLeaderboard);
+
+  // Reset fetch flags when period changes
+  useEffect(() => {
+    if (lastFetchedPeriod.current !== selectedPeriod) {
+      hasFetchedAllLeaderboard.current = false;
+      hasFetchedFriendsLeaderboard.current = false;
+    }
+  }, [selectedPeriod]);
 
   useEffect(() => {
     if (!hasNewAllLeaderboardData && !hasNewFriendsLeaderboardData) {
@@ -31,6 +50,7 @@ const LeaderboardsPage = () => {
     if (hasNewAllLeaderboardData) {
       allLeaderboardRef.current = allLeaderboard;
       hasFetchedAllLeaderboard.current = true;
+      lastFetchedPeriod.current = selectedPeriod;
     }
     if (hasNewFriendsLeaderboardData) {
       // Combined leaderboard with friends and user
@@ -52,21 +72,50 @@ const LeaderboardsPage = () => {
       combinedLeaderboard.sort((a: any, b: any) => b.point.weekly_points - a.point.weekly_points);
       friendsLeaderboardRef.current = combinedLeaderboard;
       hasFetchedFriendsLeaderboard.current = true;
+      lastFetchedPeriod.current = selectedPeriod;
     }
     if (hasFetchedAllLeaderboard.current && hasFetchedFriendsLeaderboard.current) {
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewAllLeaderboardData, hasNewFriendsLeaderboardData]);
+  }, [hasNewAllLeaderboardData, hasNewFriendsLeaderboardData, selectedPeriod]);
 
   // Debug
   const loading = !hasFetchedAllLeaderboard.current || !hasFetchedFriendsLeaderboard.current;
   if (debugRenders && !loading) {
-    console.log('Rendering LeaderboardsPage\n',
-      'All Users Leaderboard:', allLeaderboardRef.current, '\n',
-      'Friends Leaderboard:', friendsLeaderboardRef.current, '\n',
-      'Selected Period:', selectedPeriod, '\n',
-      'Render Counter:', renderCounter, '\n',
-    );
+    const allLeaderboard = allLeaderboardRef.current || [];
+    const friendsLeaderboard = friendsLeaderboardRef.current || [];
+    const allCount = allLeaderboard.length;
+    const friendsCount = friendsLeaderboard.length;
+    
+    // Summary line
+    const summary = {
+      selectedPeriod,
+      allCount,
+      friendsCount,
+      renderCounter
+    };
+    
+    let formattedData = `Rendering LeaderboardsPage: ${JSON.stringify(summary)}\n`;
+    
+    // Log all users leaderboard
+    if (allCount > 0) {
+      formattedData += `All Users Leaderboard (${allCount}):\n`;
+      allLeaderboard.forEach((user: any, index: number) => {
+        const points = user.point || {};
+        formattedData += `  ${index + 1}. ${user.username} - Points: ${points.points || 0}, Weekly: ${points.weekly_points || 0}, Monthly: ${points.monthly_points || 0}\n`;
+      });
+    }
+    
+    // Log friends leaderboard
+    if (friendsCount > 0) {
+      formattedData += `Friends Leaderboard (${friendsCount}):\n`;
+      friendsLeaderboard.forEach((user: any, index: number) => {
+        const points = user.point || {};
+        formattedData += `  ${index + 1}. ${user.username} - Points: ${points.points || 0}, Weekly: ${points.weekly_points || 0}, Monthly: ${points.monthly_points || 0}\n`;
+      });
+    }
+    
+    console.log(formattedData);
   }
 
   return <LeaderboardScreen

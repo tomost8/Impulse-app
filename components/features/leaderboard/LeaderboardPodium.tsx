@@ -1,12 +1,29 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
-
+import { View, Text, StyleSheet } from "react-native";
+import ProfilePictureWithLoading from "@/components/ui/common/ProfilePictureWithLoading";
 
 interface LeaderboardPodiumProps {
   podiumData: any[];
+  selectedPeriod?: 'POINTS_WEEKLY' | 'POINTS_MONTHLY' | 'POINTS_ALL';
 }
 
-const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData }) => {
+const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData, selectedPeriod = 'POINTS_WEEKLY' }) => {
+  // Function to get the correct points based on selected period
+  const getPointsForPeriod = (user: any) => {
+    if (!user?.point) return 0;
+    
+    switch (selectedPeriod) {
+      case 'POINTS_WEEKLY':
+        return user.point.weekly_points || 0;
+      case 'POINTS_MONTHLY':
+        return user.point.monthly_points || 0;
+      case 'POINTS_ALL':
+        return user.point.points || 0;
+      default:
+        return user.point.weekly_points || 0;
+    }
+  };
+
   // Ensure users are sorted correctly (2nd, 1st, 3rd for correct layout)
   const sortedPodium = [
     podiumData[1],
@@ -22,9 +39,13 @@ const LeaderboardPodium: React.FC<LeaderboardPodiumProps> = ({ podiumData }) => 
             {/* Profile Image, Username, and Points only shown if user exists */}
             {user && (
               <>
-                <Image source={{uri: user.profile_picture}} style={styles.profileImage} />
+                <ProfilePictureWithLoading 
+                  source={{uri: user.profile_picture}} 
+                  size={50}
+                  style={styles.profileImage} 
+                />
                 <Text style={styles.username}>{user.username}</Text>
-                <Text style={styles.points}>{user.point.weekly_points} Pts</Text>
+                <Text style={styles.points}>{getPointsForPeriod(user)} Pts</Text>
               </>
             )}
 

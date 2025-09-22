@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import ProfilePictureWithLoading from "@/components/ui/common/ProfilePictureWithLoading";
 
 interface LeaderboardRowProps {
   rank: number;
@@ -15,7 +16,11 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ rank, name, points, ima
       <Text style={styles.rank}>{rank}</Text>
 
       {/* Profile Image */}
-      <Image source={{uri: imageUrl}} style={styles.profileImage} />
+      <ProfilePictureWithLoading 
+        source={{uri: imageUrl}} 
+        size={48}
+        style={styles.profileImage} 
+      />
 
       {/* Name */}
       <View style={styles.textContainer}>

@@ -4,7 +4,7 @@ import LoadingScreen from "@/components/ui/common/loading";
 
 import { HomeHeader, QuoteofDay } from "../../features/home";
 import { ActivitiesSection, ChallengesSection, SetupActivitiesModal } from "../../features/goals";
-import LeaderboardFull from "@/components/ui/common/Leaderboard/homeLeaderboard/LeaderboardFull"
+import { LeaderboardFull } from "@/components/features/leaderboard"
 
 interface HomeScreenProps {
   loading: boolean;
