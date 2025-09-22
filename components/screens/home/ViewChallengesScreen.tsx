@@ -22,13 +22,11 @@ const ViewChallengesScreen: React.FC<ChallengesScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      <Header 
+        title="My Challenges"
+        onBackPress={() => router.back()}
+      />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Header 
-          title="My Challenges"
-          onBackPress={() => router.back()}
-        />
-
-
         {/* Active Challenges Section */}
         {myChallenges && myChallenges.activeChallenges && myChallenges.activeChallenges.length > 0 && (
           <>

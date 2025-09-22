@@ -39,18 +39,18 @@ const CommunityMainScreen: React.FC<CommunityMainScreenProps> = ({
 
   return (
     <View style={styles.container}>
+      <CommunityHeader onLeaderboardPress={handleLeaderboardPress} />
+      <CommunityProfile
+        thumbnail={community?.thumbnail}
+        name={community?.name || "Community Name"}
+        memberCount={members?.length || 0}
+        communityId={community?.id}
+        isAdmin={isAdmin}
+        isMember={isMember}
+        onJoinCommunity={onJoinCommunity}
+        isJoining={isJoining}
+      />
       <ScrollView style={styles.scrollView}>
-        <CommunityHeader onLeaderboardPress={handleLeaderboardPress} />
-        <CommunityProfile
-          thumbnail={community?.thumbnail}
-          name={community?.name || "Community Name"}
-          memberCount={members?.length || 0}
-          communityId={community?.id}
-          isAdmin={isAdmin}
-          isMember={isMember}
-          onJoinCommunity={onJoinCommunity}
-          isJoining={isJoining}
-        />
         <About
           description={community?.description}
           founderName={community?.influencer?.first_name + " " + community?.influencer?.last_name}

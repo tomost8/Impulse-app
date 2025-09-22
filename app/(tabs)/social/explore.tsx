@@ -110,6 +110,7 @@ const ExplorePage = () => {
       categoryList={categoriesRef.current || []}
       memberList={membersRef.current || []}
       handleJoinCommunity={handleCreateCommunityMember}
+      userRole={user?.role}
     />
   );
 }

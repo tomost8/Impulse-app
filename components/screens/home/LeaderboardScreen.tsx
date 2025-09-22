@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Text, Platform, StatusBar } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 import { LeaderboardHeader, LeaderboardPodium, LeaderboardList, LeaderboardTabs } from "@/components/features/leaderboard";
 
@@ -23,29 +23,24 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
   
     return (
       <View style={styles.container}>
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.headerBackground}>
-            <SafeAreaView>
-              <LeaderboardHeader
-                onBackPress={() => router.back()}
-                selectedPeriod={selectedPeriod}
-                setSelectedPeriod={setSelectedPeriod}
-              />
-            </SafeAreaView>
-          </View>
-  
-          {/* Tabs Section - Fixing Alignment */}
+        <LeaderboardHeader
+          onBackPress={() => router.back()}
+          selectedPeriod={selectedPeriod}
+          setSelectedPeriod={setSelectedPeriod}
+        />
+        <ScrollView style={styles.scrollView}>
+          {/* Tabs Section */}
           <View>
             <LeaderboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           </View>
-  
+
           {/* Podium */}
           {activeTab === "Friends" ? (
             <LeaderboardPodium podiumData={friendsLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           ) : (
             <LeaderboardPodium podiumData={allLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           )}
-  
+
           {/* Conditional Leaderboard List */}
           {activeTab === "Friends" ? (
             <LeaderboardList leaderboardData={friendsLeaderboard.slice(3)} selectedPeriod={selectedPeriod} />
@@ -60,14 +55,11 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, allLea
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#F8F8F8",
+      backgroundColor: '#FFFFFF',
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
-    headerBackground: {
-      backgroundColor: '#E0EDFD',
-    },
-    scrollContent: {
-      paddingBottom: 20,
-      paddingTop: 0,
+    scrollView: {
+      flex: 1,
     },
   });
   

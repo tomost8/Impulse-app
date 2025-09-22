@@ -10,10 +10,11 @@ interface ExploreScreenProps {
   categoryList: any[];
   memberList: any[];
   handleJoinCommunity: (communityId: number) => void;
+  userRole?: string;
 }
 
 const ExploreScreen = ({ 
-  loading, communities, categoryList, memberList, handleJoinCommunity 
+  loading, communities, categoryList, memberList, handleJoinCommunity, userRole 
 }: ExploreScreenProps) => {
   if (loading) {
     return <LoadingScreen />;
@@ -42,7 +43,7 @@ const ExploreScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <ExploreHeader />
+      <ExploreHeader userRole={userRole} />
       <ScrollView 
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}

@@ -38,6 +38,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <View style={styles.headerExtension}>
+          <HomeHeader name={name} />
+        </View>
         <ScrollView 
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
@@ -47,10 +50,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           scrollEventThrottle={16}
           decelerationRate="normal"
         >
-          <View style={styles.headerExtension}>
-            <HomeHeader name={name} />
-          </View>
-
           <View style={styles.quoteSection}>
             <QuoteofDay />
           </View>

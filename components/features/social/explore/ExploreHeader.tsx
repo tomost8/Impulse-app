@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Platform, StatusBar } from 'react-native';
 import { router } from 'expo-router';
 
-const Header = () => {
-  const handleCreate = () => {
-    router.push('/social/createCommunity');
-  };
+interface ExploreHeaderProps {
+  userRole?: string;
+}
+
+const Header = ({ userRole }: ExploreHeaderProps) => {
+  const isInfluencer = userRole === 'INFLUENCER';
 
   return (
     <View style={styles.container}>
@@ -19,12 +21,14 @@ const Header = () => {
         />
       </TouchableOpacity>
       <Text style={styles.title}>Discover</Text>
-      <TouchableOpacity 
-        style={styles.createButton}
-        onPress={handleCreate}
-      >
-        <Text style={styles.createButtonText}>Create</Text>
-      </TouchableOpacity>
+      {isInfluencer && (
+        <TouchableOpacity 
+          style={styles.createButton}
+          onPress={() => router.push('/social/createCommunity')}
+        >
+          <Text style={styles.createButtonText}>Create</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

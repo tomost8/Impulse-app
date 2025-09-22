@@ -21,6 +21,12 @@ export const UPDATE_USER = gql`
         timezone
         role
         is_double_cam
+        point {
+          points
+          spending_points
+          weekly_points
+          monthly_points
+        }
       }
       errors {
         field

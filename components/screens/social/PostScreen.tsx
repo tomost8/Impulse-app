@@ -49,79 +49,79 @@ const PostScreen = ({ post, comments, loading, createComment, onLike, onUnlike, 
       
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.contentContainer}>
-          <ScrollView style={styles.scrollView}>
-            {/* Header Extension */}
-            <View style={styles.headerExtension}>
-              <View style={styles.headerContent}>
-                <TouchableOpacity 
-                  style={styles.backButton}
-                  onPress={() => router.back()}
-                >
-                  <Image 
-                    source={require("@/assets/icons/backArrow.png")}
-                    style={styles.backIcon}
-                  />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Post</Text>
-              </View>
+          {/* Header Extension - Outside ScrollView */}
+          <View style={styles.headerExtension}>
+            <View style={styles.headerContent}>
+              <TouchableOpacity 
+                style={styles.backButton}
+                onPress={() => router.back()}
+              >
+                <Image 
+                  source={require("@/assets/icons/backArrow.png")}
+                  style={styles.backIcon}
+                />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Post</Text>
             </View>
+          </View>
 
-        {/* Full Post Card */}
-        <FullPostCard 
-          post={{
-            username: post.author.username,
-            //timeAgo: getTimeAgo(post.created_at),
-            profileImage: post.author.profile_picture,
-            caption: post.caption,
-            images: post.mediaUrls,
-            liked: post.liked,
-            likeCount: post.likeCount,
-            commentCount: comments.reduce((total, comment) => 
-              total + 1 + (comment.replies?.length || 0), 0),
-            category: post.category
-          }} 
-          mainImageIndex={mainImageIndex}
-          onChangeMainImageIndex={setMainImageIndex}
-          onLike={onLike} 
-          onUnlike={onUnlike}
-          formattedDate={formattedDate}
-        />
-
-          {/* Comments Section */}
-          <CommentSection
-            comments={comments}
-            onReply={handleReply}
-          />
-        </ScrollView>
-
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-          style={styles.bottomContainer}
-        >
-          {/* Reply Section (if active) */}
-          {showReply && selectedComment && (
-            <ReplyContext
-              profileImage={selectedComment.user.profile_picture}
-              username={selectedComment.user.username}
-              timestamp={getTimeAgo(selectedComment.created_at)}
-              comment={selectedComment.content}
-              onClose={() => {
-                setShowReply(false);
-                setSelectedComment(null);
-              }}
+          <ScrollView style={styles.scrollView}>
+            {/* Full Post Card */}
+            <FullPostCard 
+              post={{
+                username: post.author.username,
+                //timeAgo: getTimeAgo(post.created_at),
+                profileImage: post.author.profile_picture,
+                caption: post.caption,
+                images: post.mediaUrls,
+                liked: post.liked,
+                likeCount: post.likeCount,
+                commentCount: comments.reduce((total, comment) => 
+                  total + 1 + (comment.replies?.length || 0), 0),
+                category: post.category
+              }} 
+              mainImageIndex={mainImageIndex}
+              onChangeMainImageIndex={setMainImageIndex}
+              onLike={onLike} 
+              onUnlike={onUnlike}
+              formattedDate={formattedDate}
             />
-          )}
 
-          {/* Comment Input */}
-          <CommentInput 
-            onSubmit={handleCommentSubmit}
-            placeholder={showReply ? `Reply to @${selectedComment?.username}...` : "Type comment..."}
-          />
-          
-          {/* Bottom Safe Area - White (inside KeyboardAvoidingView) */}
-          <View style={[styles.bottomSafeArea, { height: insets.bottom }]} />
-        </KeyboardAvoidingView>
+            {/* Comments Section */}
+            <CommentSection
+              comments={comments}
+              onReply={handleReply}
+            />
+          </ScrollView>
+
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+            style={styles.bottomContainer}
+          >
+            {/* Reply Section (if active) */}
+            {showReply && selectedComment && (
+              <ReplyContext
+                profileImage={selectedComment.user.profile_picture}
+                username={selectedComment.user.username}
+                timestamp={getTimeAgo(selectedComment.created_at)}
+                comment={selectedComment.content}
+                onClose={() => {
+                  setShowReply(false);
+                  setSelectedComment(null);
+                }}
+              />
+            )}
+
+            {/* Comment Input */}
+            <CommentInput 
+              onSubmit={handleCommentSubmit}
+              placeholder={showReply ? `Reply to @${selectedComment?.username}...` : "Type comment..."}
+            />
+            
+            {/* Bottom Safe Area - White (inside KeyboardAvoidingView) */}
+            <View style={[styles.bottomSafeArea, { height: insets.bottom }]} />
+          </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
     </View>

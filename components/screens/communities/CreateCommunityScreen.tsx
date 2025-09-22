@@ -40,6 +40,10 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
 
   return (
     <View style={styles.container}>
+      <Header 
+        title="Create Community"
+        onBackPress={() => router.back()}
+      />
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
@@ -48,11 +52,6 @@ const CreateCommunityScreen = (props: CreateCommunityScreenProps) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <Header 
-            title="Create Community"
-            onBackPress={() => router.back()}
-          />
-
           {/* Profile Image Section */}
           <TouchableOpacity 
             style={styles.profileImageContainer}

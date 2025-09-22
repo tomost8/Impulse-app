@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, ScrollView, Text } from "react-native";
+import { View, StyleSheet, ScrollView, Text, Platform, StatusBar } from "react-native";
 import { LeaderboardHeader, LeaderboardPodium, LeaderboardList } from "@/components/features/leaderboard";
 
 import { router } from "expo-router";
@@ -20,19 +20,16 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
   
     return (
       <View style={styles.container}>
+        <LeaderboardHeader
+          onBackPress={() => router.back()}
+          selectedPeriod={selectedPeriod}
+          setSelectedPeriod={setSelectedPeriod}
+        />
         <ScrollView style={styles.scrollView}>
-          {/* Header + Leaderboard Selector */}
-          <LeaderboardHeader
-            onBackPress={() => router.back()}
-            selectedPeriod={selectedPeriod}
-            setSelectedPeriod={setSelectedPeriod}
-          />
-  
           {/* Podium */}
           <LeaderboardPodium podiumData={communityLeaderboard.slice(0, 3)} selectedPeriod={selectedPeriod} />
           {/*  Leaderboard List */}
           <LeaderboardList leaderboardData={communityLeaderboard.slice(3)} selectedPeriod={selectedPeriod} />
-
         </ScrollView>
       </View>
     );
@@ -41,7 +38,8 @@ const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({ isLoading, commun
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#F8F8F8",
+      backgroundColor: '#FFFFFF',
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
     scrollView: {
       flex: 1,

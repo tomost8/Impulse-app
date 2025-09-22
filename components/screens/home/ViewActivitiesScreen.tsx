@@ -54,6 +54,10 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
 
   return (
     <View style={styles.container}>
+      <Header 
+        title="View All"
+        onBackPress={() => router.back()}
+      />
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
@@ -62,11 +66,6 @@ const ViewGoalsScreen: React.FC<ViewGoalsScreenProps> = (props: ViewGoalsScreenP
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
         >
-          <Header 
-            title="View All"
-            onBackPress={() => router.back()}
-          />
-
           {/* Section Title - "Goals for the Day" */}
           <Text style={styles.sectionTitle}>Goals for the Day</Text>
 
