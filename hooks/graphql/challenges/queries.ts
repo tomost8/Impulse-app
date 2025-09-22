@@ -59,16 +59,13 @@ export const GET_MY_CHALLENGES = gql`
       activeChallenges {
         userChallenge {
           id
-          user_id
+          status
           challenge_id
           started_at
           ends_at
-          status
           days_completed
           challenge {
-            id
             title
-            description
             category
             length
           }
@@ -90,24 +87,17 @@ export const GET_MY_CHALLENGES = gql`
       completedChallenges {
         userChallenge {
           id
-          user_id
           challenge_id
+          status
           started_at
           ends_at
-          status
+          completed_at
           days_completed
           challenge {
-            id
             title
-            description
             category
             length
           }
-        }
-        progress {
-          daysRemaining
-          progressLabel
-          daysUntilNextBadge
         }
         badgesEarned
         friendsCompleted {
@@ -116,7 +106,6 @@ export const GET_MY_CHALLENGES = gql`
           first_name
           last_name
         }
-        pictures
       }
       errors {
         field
@@ -156,8 +145,27 @@ export function useGetMyChallenges(hasFetched: boolean = true) {
     ];
     
     allChallenges.forEach((challenge: any) => {
-      const daysLeft = challenge.status === 'active' ? challenge.progress.daysRemaining : 'N/A';
-      formattedData += `  - ${challenge.userChallenge.challenge.title}, Status: ${challenge.status}, Progress: ${challenge.progress.progressLabel}, Days Left: ${daysLeft}\n`;
+      const length = challenge.userChallenge.challenge.length;
+      const daysCompleted = challenge.userChallenge.days_completed;
+      const startedAt = new Date(challenge.userChallenge.started_at).toLocaleDateString();
+      const endsAt = challenge.userChallenge.ends_at ? new Date(challenge.userChallenge.ends_at).toLocaleDateString() : 'N/A';
+      const completedAt = challenge.userChallenge.completed_at ? new Date(challenge.userChallenge.completed_at).toLocaleDateString() : 'N/A';
+      
+      if (challenge.status === 'active') {
+        // Active challenge formatting
+        const daysLeft = challenge.progress ? challenge.progress.daysRemaining : 'N/A';
+        const daysUntilNextBadge = challenge.progress?.daysUntilNextBadge || 'N/A';
+        formattedData += `  - ${challenge.userChallenge.challenge.title} (${challenge.status}), Progress: ${challenge.progress?.progressLabel || 'N/A'}, Days Left: ${daysLeft}, Days Until Next Badge: ${daysUntilNextBadge}\n`;
+        formattedData += `    Started: ${startedAt} | Ends: ${endsAt}\n`;
+      } else {
+        // Completed challenge formatting
+        formattedData += `  - ${challenge.userChallenge.challenge.title} (${challenge.status}), ${daysCompleted}/${length}\n`;
+        formattedData += `    Started: ${startedAt} | Ended: ${endsAt} | Completed: ${completedAt}\n`;
+      }
+      // Badges, Friends, and Pictures
+      const friendsCount = challenge.friendsCompleted?.length || 0;
+      const picturesCount = challenge.pictures?.length || 0;
+      formattedData += `    Badges: ${JSON.stringify(challenge.badgesEarned || [])} | Friends Completed: ${friendsCount} | Pictures: ${picturesCount}\n`;
     });
     
     console.log(formattedData);

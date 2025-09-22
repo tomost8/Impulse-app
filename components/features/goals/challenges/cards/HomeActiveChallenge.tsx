@@ -53,7 +53,7 @@ const CircularProgress = ({ progressLabel }: { progressLabel: string }) => {
   );
 };
 
-type ChallengeCardProps = {
+type HomeActiveChallengeProps = {
   id: string;
   title: string;
   progress: {
@@ -64,7 +64,7 @@ type ChallengeCardProps = {
   description?: string;
 };
 
-const ChallengeCard: React.FC<ChallengeCardProps> = ({
+const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
   id,
   title,
   progress,
@@ -227,4 +227,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChallengeCard;
+export default HomeActiveChallenge;

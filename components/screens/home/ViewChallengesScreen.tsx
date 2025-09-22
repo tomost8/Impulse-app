@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, Platform } from "react-native";
+import { router } from "expo-router";
+
 import LoadingScreen from "@/components/ui/common/loading";
 import Header from "@/components/ui/common/headers/Header";
-import { router } from "expo-router";
+import { ViewActiveChallenge, ViewCompletedChallenge } from "@/components/features/goals";
 
 interface ChallengesScreenProps {
   isLoading: boolean;
   myChallenges: any;
-  myChallengesSuccess: boolean;
-  myChallengesErrors: any[];
 }
 
 const ViewChallengesScreen: React.FC<ChallengesScreenProps> = ({ 
   isLoading, 
   myChallenges,
-  myChallengesSuccess,
-  myChallengesErrors
 }) => {
 
   if (isLoading) {
@@ -34,24 +32,19 @@ const ViewChallengesScreen: React.FC<ChallengesScreenProps> = ({
         {/* Active Challenges Section */}
         {myChallenges && myChallenges.activeChallenges && myChallenges.activeChallenges.length > 0 && (
           <>
-            <Text style={styles.sectionTitle}>Active Challenges</Text>
+            <Text style={styles.sectionTitle}>My Challenges</Text>
             <View style={styles.challengesContainer}>
-              {myChallenges.activeChallenges.map((activeChallenge: any, index: number) => {
-                const userChallenge = activeChallenge.userChallenge;
-                const challenge = userChallenge.challenge;
-                return (
-                  <View key={userChallenge.id || index} style={styles.challengeCard}>
-                    <Text style={styles.challengeTitle}>{challenge.title}</Text>
-                    <Text style={styles.challengeCategory}>{challenge.category}</Text>
-                    <Text style={styles.challengeProgress}>
-                      {userChallenge.days_completed} days completed
-                    </Text>
-                    <Text style={styles.challengeStatus}>
-                      {activeChallenge.progress?.daysRemaining || 'Unknown'} days remaining
-                    </Text>
-                  </View>
-                );
-              })}
+              {myChallenges.activeChallenges.map((activeChallenge: any, index: number) => (
+                <ViewActiveChallenge
+                  key={activeChallenge.userChallenge.id}
+                  id={activeChallenge.userChallenge.id}
+                  title={activeChallenge.userChallenge.challenge.title}
+                  progress={activeChallenge.progress}
+                  status="active"
+                  description={activeChallenge.userChallenge.challenge.description}
+                  category={activeChallenge.userChallenge.challenge.category}
+                />
+              ))}
             </View>
           </>
         )}
@@ -61,22 +54,18 @@ const ViewChallengesScreen: React.FC<ChallengesScreenProps> = ({
           <>
             <Text style={styles.sectionTitle}>Completed Challenges</Text>
             <View style={styles.challengesContainer}>
-              {myChallenges.completedChallenges.map((completedChallenge: any, index: number) => {
-                const userChallenge = completedChallenge.userChallenge;
-                const challenge = userChallenge.challenge;
-                return (
-                  <View key={userChallenge.id || index} style={styles.challengeCard}>
-                    <Text style={styles.challengeTitle}>{challenge.title}</Text>
-                    <Text style={styles.challengeCategory}>{challenge.category}</Text>
-                    <Text style={styles.challengeProgress}>
-                      Completed on {new Date(userChallenge.ends_at).toLocaleDateString()}
-                    </Text>
-                    <Text style={styles.challengeStatus}>
-                      Status: {userChallenge.status}
-                    </Text>
-                  </View>
-                );
-              })}
+              {myChallenges.completedChallenges.map((completedChallenge: any, index: number) => (
+                <ViewCompletedChallenge
+                  key={completedChallenge.userChallenge.id}
+                  id={completedChallenge.userChallenge.id}
+                  title={completedChallenge.userChallenge.challenge.title}
+                  totalDays={completedChallenge.userChallenge.challenge.length}
+                  completedAt={completedChallenge.userChallenge.completed_at}
+                  endsAt={completedChallenge.userChallenge.ends_at}
+                  badgesEarned={completedChallenge.badgesEarned}
+                  category={completedChallenge.userChallenge.challenge.category}
+                />
+              ))}
             </View>
           </>
         )}
@@ -116,37 +105,6 @@ const styles = StyleSheet.create({
   challengesContainer: {
     marginTop: 0,
     paddingHorizontal: 20,
-  },
-  challengeCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E1E1E1",
-    padding: 16,
-    marginBottom: 16,
-  },
-  challengeTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#242020",
-    marginBottom: 8,
-  },
-  challengeCategory: {
-    fontSize: 12,
-    color: "#DE728D",
-    fontWeight: "600",
-    textTransform: "uppercase",
-    marginBottom: 8,
-  },
-  challengeProgress: {
-    fontSize: 14,
-    color: "#666666",
-    marginBottom: 4,
-  },
-  challengeStatus: {
-    fontSize: 12,
-    color: "#999999",
-    fontWeight: "500",
   },
   emptyContainer: {
     flex: 1,

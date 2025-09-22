@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, Platform } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 import Header from "@/components/ui/common/headers/Header";
+import { ExploreChallenge } from "@/components/features/goals";
 import { router } from "expo-router";
 
 interface AddChallengeScreenProps {
@@ -46,96 +47,61 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      {/* Blue Header Area */}
+      <SafeAreaView style={styles.headerArea}>
         <Header 
-          title="Join Challenge"
+          title="Challenges"
           onBackPress={() => router.back()}
         />
+      </SafeAreaView>
 
-        {/* Category Filter */}
-        <View style={styles.categorySection}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-            {categories.map((category) => (
-              <TouchableOpacity
-                key={category.key || 'all'}
-                style={[
-                  styles.categoryButton,
-                  selectedCategory === category.key && styles.categoryButtonActive
-                ]}
-                onPress={() => setSelectedCategory(category.key)}
-              >
-                <Text style={[
-                  styles.categoryButtonText,
-                  selectedCategory === category.key && styles.categoryButtonTextActive
-                ]}>
-                  {category.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+      {/* White Category Filter Area */}
+      <View style={styles.categorySection}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category.key || 'all'}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category.key && styles.categoryButtonActive
+              ]}
+              onPress={() => setSelectedCategory(category.key)}
+            >
+              <Text style={[
+                styles.categoryButtonText,
+                selectedCategory === category.key && styles.categoryButtonTextActive
+              ]}>
+                {category.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
-        {/* Available Challenges Section */}
-        {challenges && challenges.length > 0 ? (
-          <>
-            <Text style={styles.sectionTitle}>Available Challenges</Text>
-            <View style={styles.challengesContainer}>
-              {challenges.map((challengeItem, index) => (
-                <View key={challengeItem.challenge.id || index} style={styles.challengeCard}>
-                  <Text style={styles.challengeTitle}>{challengeItem.challenge.title}</Text>
-                  <Text style={styles.challengeDescription}>
-                    {challengeItem.shortDescription || challengeItem.challenge.description}
-                  </Text>
-                  <View style={styles.challengeMeta}>
-                    <Text style={styles.challengeCategory}>{challengeItem.challenge.category}</Text>
-                    <Text style={styles.challengeLength}>{challengeItem.challenge.length}</Text>
-                  </View>
-                  <View style={styles.challengePoints}>
-                    <Text style={styles.pointsLabel}>Points:</Text>
-                    <Text style={styles.pointsText}>
-                      Bronze: {challengeItem.challenge.points_bronze} | 
-                      Silver: {challengeItem.challenge.points_silver} | 
-                      Gold: {challengeItem.challenge.points_gold} | 
-                      Diamond: {challengeItem.challenge.points_diamond}
-                    </Text>
-                  </View>
-                  <View style={styles.challengeStatus}>
-                    <Text style={[
-                      styles.statusText,
-                      challengeItem.isJoined ? styles.joinedText : styles.notJoinedText
-                    ]}>
-                      {challengeItem.isJoined ? 'Already Joined' : 'Available to Join'}
-                    </Text>
-                    <Text style={[
-                      styles.statusText,
-                      challengeItem.isLocked ? styles.lockedText : styles.unlockedText
-                    ]}>
-                      {challengeItem.isLocked ? 'Locked' : 'Available'}
-                    </Text>
-                  </View>
-                  
-                  {!challengeItem.isJoined && !challengeItem.isLocked && (
-                    <TouchableOpacity 
-                      style={[styles.joinButton, isJoiningChallenge && styles.joinButtonDisabled]}
-                      onPress={() => handleJoinChallenge(challengeItem.challenge.id, challengeItem.challenge.title)}
-                      disabled={isJoiningChallenge}
-                    >
-                      <Text style={styles.joinButtonText}>
-                        {isJoiningChallenge ? 'Joining...' : 'Join Challenge'}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ))}
+      {/* White Bottom Area */}
+      <View style={styles.bottomArea}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+          {challenges && challenges.length > 0 ? (
+            <>
+              <View style={styles.challengesContainer}>
+                {challenges.map((challengeItem, index) => (
+                  <ExploreChallenge
+                    key={challengeItem.challenge.id || index}
+                    challengeItem={challengeItem}
+                    isJoiningChallenge={isJoiningChallenge}
+                    onJoinChallenge={handleJoinChallenge}
+                  />
+                ))}
+              </View>
+            </>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>No challenges available</Text>
+              <Text style={styles.emptySubtext}>Check back later for new challenges</Text>
             </View>
-          </>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No challenges available</Text>
-            <Text style={styles.emptySubtext}>Check back later for new challenges</Text>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -144,10 +110,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    paddingTop: Platform.OS === 'android' ? 0 : 0,
+  },
+  headerArea: {
+    backgroundColor: "#E0EDFD",
+  },
+  bottomArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    flexGrow: 1,
     paddingBottom: 100,
   },
   categorySection: {
@@ -187,89 +161,6 @@ const styles = StyleSheet.create({
   challengesContainer: {
     marginTop: 0,
     paddingHorizontal: 20,
-  },
-  challengeCard: {
-    backgroundColor: "#FFF",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#E1E1E1",
-    padding: 16,
-    marginBottom: 16,
-  },
-  challengeTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#242020",
-    marginBottom: 8,
-  },
-  challengeDescription: {
-    fontSize: 14,
-    color: "#666666",
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  challengeMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  challengeCategory: {
-    fontSize: 12,
-    color: "#DE728D",
-    fontWeight: "600",
-    textTransform: "uppercase",
-  },
-  challengeLength: {
-    fontSize: 12,
-    color: "#666666",
-  },
-  challengePoints: {
-    marginBottom: 12,
-  },
-  pointsLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "#242020",
-    marginBottom: 4,
-  },
-  pointsText: {
-    fontSize: 11,
-    color: "#666666",
-  },
-  challengeStatus: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  joinedText: {
-    color: '#DE728D',
-  },
-  notJoinedText: {
-    color: '#666666',
-  },
-  lockedText: {
-    color: '#FF9800',
-  },
-  unlockedText: {
-    color: '#DE728D',
-  },
-  joinButton: {
-    backgroundColor: '#DE728D',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  joinButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-  },
-  joinButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,

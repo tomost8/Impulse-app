@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import ChallengeCard from "./cards/ChallengeCard";
+import HomeActiveChallenge from "./cards/HomeActiveChallenge";
+import HomeCompletedChallenge from "./cards/HomeCompletedChallenge";
 
 interface ChallengesSectionProps {
   challenges: any;
@@ -19,6 +20,8 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
   // TEMPORARY: Force empty state for testing
   const forceEmptyState = false;
   const hasActiveChallenges = forceEmptyState ? false : activeChallenges.length > 0;
+  const hasCompletedChallenges = completedChallenges.length > 0;
+  const hasAnyChallenges = hasActiveChallenges || hasCompletedChallenges;
 
 
   return (
@@ -33,10 +36,13 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
 
       {/* Main Content: Challenge Cards */}
       <View style={styles.content}>
-        {hasActiveChallenges ? (
+        {hasAnyChallenges ? (
           <>
+            {/* Active Challenges */}
+            {hasActiveChallenges && (
+              <>
             {activeChallenges.map((challenge: any, index: number) => (
-              <ChallengeCard
+              <HomeActiveChallenge
                 key={challenge.userChallenge.id}
                 id={challenge.userChallenge.id}
                 title={challenge.userChallenge.challenge.title}
@@ -45,11 +51,30 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
                 description={challenge.userChallenge.challenge.description}
               />
             ))}
+              </>
+            )}
+
+            {/* Completed Challenges */}
+            {hasCompletedChallenges && (
+              <>
+            {completedChallenges.map((challenge: any, index: number) => (
+              <HomeCompletedChallenge
+                key={challenge.userChallenge.id}
+                id={challenge.userChallenge.id}
+                title={challenge.userChallenge.challenge.title}
+                totalDays={challenge.userChallenge.challenge.length}
+                completedAt={challenge.userChallenge.completed_at}
+                endsAt={challenge.userChallenge.ends_at}
+                badgesEarned={challenge.badgesEarned}
+              />
+            ))}
+              </>
+            )}
           </>
         ) : (
-          // No active challenges, display empty state
+          // No challenges at all, display empty state
           <View style={styles.emptyState}>
-            <Text style={styles.emptyMessage}>No active challenges, join one today!</Text>
+            <Text style={styles.emptyMessage}>No challenges yet, join one today!</Text>
           </View>
         )}
         

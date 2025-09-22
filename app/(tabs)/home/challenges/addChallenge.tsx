@@ -5,7 +5,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 import { useGetExploreChallenges } from '@/hooks/graphql/challenges/queries';
 import { useJoinChallenge } from '@/hooks/graphql/challenges/mutations';
 // Components
-import AddChallengeScreen from '../../../../components/screens/home/AddChallengeScreen';
+import AddChallengeScreen from '@/components/screens/home/AddChallengeScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 import { useDataProvider } from '@/contexts/DataProviderContext';
@@ -18,9 +18,17 @@ const AddChallengePage = () => {
   // Query for Loading State - Explore Challenges Only
   const challengesRef = useRef<any | null>(null);
   const hasFetchedChallenges = useRef(false);
+  const lastFetchedCategory = useRef<string | undefined>(undefined);
+  
+  // Allow refetching when category changes or when first loading
+  const shouldFetch = !fetching && !!user?.id && (
+    !hasFetchedChallenges.current || 
+    lastFetchedCategory.current !== selectedCategory
+  );
+  
   const { challenges, success, errors, fetched: hasNewChallengesData } = useGetExploreChallenges(
     selectedCategory, 
-    !hasFetchedChallenges.current && !fetching && !!user?.id
+    shouldFetch
   );
 
   // Join Challenge Mutation
@@ -33,9 +41,10 @@ const AddChallengePage = () => {
     if (hasNewChallengesData) {
       challengesRef.current = challenges;
       hasFetchedChallenges.current = true;
+      lastFetchedCategory.current = selectedCategory;
       setRenderCounter(prev => prev + 1);
     }
-  }, [hasNewChallengesData]);
+  }, [hasNewChallengesData, selectedCategory]);
 
   const handleJoinChallenge = async (challengeId: number) => {
     console.log('Join Challenge button pressed for challenge ID:', challengeId);
@@ -56,22 +65,21 @@ const AddChallengePage = () => {
   // Debug
   const loading = !hasFetchedChallenges.current;
   if (debugRenders && !loading) {
-    console.log('Rendering AddChallengePage');
+    let output = 'Rendering AddChallengePage\n';
     
     if (challengesRef.current && challengesRef.current.length > 0) {
-      console.log('Explore Challenges:');
       challengesRef.current.forEach((challengeItem: any, index: number) => {
         const challenge = challengeItem.challenge;
-        console.log(`  ${index + 1}. ${challenge.title} (${challenge.category}) - ${challenge.length}`);
-        console.log(`     Points: Bronze(${challenge.points_bronze}) Silver(${challenge.points_silver}) Gold(${challenge.points_gold}) Diamond(${challenge.points_diamond})`);
-        console.log(`     Status: ${challengeItem.isJoined ? 'Joined' : 'Not Joined'} | ${challengeItem.isLocked ? 'Locked' : 'Available'}`);
+        const maxPoints = Math.max(challenge.points_bronze, challenge.points_silver, challenge.points_gold, challenge.points_diamond);
+        const status = `${challengeItem.isJoined ? 'Joined' : 'Not Joined'} | ${challengeItem.isLocked ? 'Locked' : 'Available'}`;
+        output += `  - ${challenge.title}, Max_points: ${maxPoints}, Status: ${status}\n`;
       });
-    } else {
-      console.log('Explore Challenges: []');
     }
     
-    console.log('Selected Category:', selectedCategory);
-    console.log('Render Counter:', renderCounter);
+    output += `Selected Category: ${selectedCategory}\n`;
+    output += `Render Counter: ${renderCounter}`;
+    
+    console.log(output);
   }
 
   return <AddChallengeScreen

@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Modal,
-  Dimensions,
-  ScrollView,
-} from 'react-native';
-import PostActivityCard from '@/components/features/goals/activities/cards/PostActivityCard';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Modal, Dimensions, ScrollView } from 'react-native';
+
+import LoadingScreen from '@/components/ui/common/loading';
+import { PostActivityCard } from '@/components/features/goals';
 
 interface SelectActivityProps {
   loading: boolean;
@@ -23,9 +16,7 @@ interface SelectActivityProps {
 
 const SelectActivity = ({ isVisible, onClose, onNext, activitiesList, timezone, loading, onSelectActivity }: SelectActivityProps) => {
   if (loading) {
-    return (
-      <Text>Loading...</Text>
-    );
+    return <LoadingScreen />;
   }
   const [selectedActivity, setSelectedActivity] = useState<string | null>(null);
   const handleSelectActivity = (activityId: string, category: string) => {

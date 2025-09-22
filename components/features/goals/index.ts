@@ -3,13 +3,15 @@
  * ========================
  * 
  * ENTRY POINTS:
+ * - components/features/profile/DailyGoals.tsx → DailyGoals
+ * 
  * - app/(tabs)/home/index.tsx → HomeScreen
  * - components/screens/home/AddActivitiesScreen.tsx → AddActivitiesScreen
  * - components/screens/home/ViewActivitiesScreen.tsx → ViewActivitiesScreen
+ * - components/screens/home/ViewChallengesScreen.tsx → ViewChallengesScreen
  * 
  * - components/screens/camera/SelectActivityModal.tsx → SelectActivityModal
  * - components/features/goals/activities/SetupActivitiesModal.tsx → SetupActivitiesModal
- * - components/features/profile/DailyGoals.tsx → DailyGoals
  * 
  * COMPONENT HIERARCHY:
  * 
@@ -17,9 +19,12 @@
  * └── ActivityCard
  * 
  * HomeScreen
- * └── ActivitiesSection
- *     ├── ActivityCard
- *     └── EmptyActivitiesState
+ * ├── ActivitiesSection
+ * │   ├── ActivityCard
+ * │   └── EmptyActivitiesState
+ * └── ChallengesSection
+ *     ├── HomeActiveChallenge
+ *     └── HomeCompletedChallenge
  * 
  * AddActivitiesScreen
  * └── AddActivityCard
@@ -28,6 +33,10 @@
  * ViewActivitiesScreen
  * └── EditActivityCard
  *     └── ActivityDetails
+ * 
+ * ViewChallengesScreen
+ * ├── ViewActiveChallenge
+ * └── ViewCompletedChallenge
  * 
  * SetupActivitiesModal
  * └── AddActivityCard
@@ -47,6 +56,13 @@ export { default as ActivityCard } from './activities/cards/ActivityCard';
 export { default as AddActivityCard } from './activities/cards/AddActivityCard';
 export { default as EditActivityCard } from './activities/cards/EditActivityCard';
 export { default as PostActivityCard } from './activities/cards/PostActivityCard';
+
+// Challenge Cards
+export { default as HomeActiveChallenge } from './challenges/cards/HomeActiveChallenge';
+export { default as HomeCompletedChallenge } from './challenges/cards/HomeCompletedChallenge';
+export { default as ViewActiveChallenge } from './challenges/cards/ViewActiveChallenge';
+export { default as ViewCompletedChallenge } from './challenges/cards/ViewCompletedChallenge';
+export { default as ExploreChallenge } from './challenges/cards/ExploreChallenge';
 
 // Modals
 export { default as SetupActivitiesModal } from './activities/SetupActivitiesModal';
