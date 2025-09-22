@@ -15,18 +15,17 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
   const listUsers = users.slice(3, 10);
   return (
     <View style={styles.container}>
-      
-      {/* Leaderboard Header */}
-      <View style={styles.header}>
+      {/* Header Section */}
+      <View style={styles.sectionHeader}>
         <Text style={styles.title}>Weekly Leaderboard</Text>
         <TouchableOpacity onPress={() => router.push('/home/leaderboards')}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
-      
+
+      {/* Main Content: Leaderboard */}
       <View style={styles.leaderboardContent}>
         <LeaderboardPodium podiumData={podiumUsers} />
-        
         {/* Leaderboard List (Ranks 4+) */}
         {listUsers.length > 0 && (
           <LeaderboardList users={listUsers} />
@@ -37,21 +36,17 @@ const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading
 };
 
 const styles = StyleSheet.create({
+  // Section Container + Header
   container: {
-    alignItems: "center",
-    marginBottom: 1, // ✅ Ensures spacing from bottom navigation
+    padding: 16,
+    backgroundColor: "white",
+    borderRadius: 12,
   },
-  leaderboardContent: {
-    alignItems: "center",
-    width: "100%",
-  },
-  header: {
+  sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    width: '100%',
-    paddingHorizontal: 16,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   title: {
     fontSize: 18,
@@ -65,6 +60,11 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins",
     color: "#DE728D",
     textDecorationLine: "underline",
+  },
+  // Main Content
+  leaderboardContent: {
+    alignItems: "center",
+    width: "100%",
   },
 });
 

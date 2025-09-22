@@ -134,7 +134,33 @@ export function useGetMyChallenges(hasFetched: boolean = true) {
   const fetched = hasFetched && !loading;
   
   if (debugQueries && fetched) {
-    console.log("useGetMyChallenges data", data, error ? 'error:' + error : '');
+    const activeChallenges = data?.getUserChallenges?.activeChallenges || [];
+    const completedChallenges = data?.getUserChallenges?.completedChallenges || [];
+    const activeCount = activeChallenges.length;
+    const completedCount = completedChallenges.length;
+    
+    // Summary line
+    const summary = {
+      success: data?.getUserChallenges?.success || false,
+      errors: data?.getUserChallenges?.errors || null,
+      activeCount,
+      completedCount
+    };
+    
+    let formattedData = `useGetMyChallenges: ${JSON.stringify(summary)}\n`;
+    
+    // Log all challenges with their status
+    const allChallenges = [
+      ...activeChallenges.map((challenge: any) => ({ ...challenge, status: 'active' })),
+      ...completedChallenges.map((challenge: any) => ({ ...challenge, status: 'completed' }))
+    ];
+    
+    allChallenges.forEach((challenge: any) => {
+      const daysLeft = challenge.status === 'active' ? challenge.progress.daysRemaining : 'N/A';
+      formattedData += `  - ${challenge.userChallenge.challenge.title}, Status: ${challenge.status}, Progress: ${challenge.progress.progressLabel}, Days Left: ${daysLeft}\n`;
+    });
+    
+    console.log(formattedData);
   }
   
   return {

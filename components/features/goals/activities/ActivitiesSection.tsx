@@ -26,14 +26,14 @@ const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => 
   return (
     <View style={styles.container}>
       {/* Header Section */}
-      <View style={styles.header}>
+      <View style={styles.sectionHeader}>
         <Text style={styles.title}>Daily Goals</Text>
         <TouchableOpacity onPress={() => {router.push('/home/viewActivity')}}>
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Daily Goals Cards */}
+      {/* Main Content: Activity Cards */}
       {activities.length > 0 ? (
         sortedActivities.map((activity) => (
           <ActivityCard
@@ -59,12 +59,13 @@ const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => 
 };
 
 const styles = StyleSheet.create({
+  // Section Container + Header
   container: {
     padding: 16,
     backgroundColor: "white",
     borderRadius: 12,
   },
-  header: {
+  sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -72,16 +73,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 8,
+    fontWeight: "700",
+    fontFamily: "Poppins",
+    color: "#242020",
   },
   viewAll: {
     fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "Poppins",
     color: "#DE728D",
-    fontWeight: "bold",
     textDecorationLine: "underline",
-    marginRight: 6, 
   },
+  // Main Content
   addGoalContainer: {
     marginTop: 12, // Add some space between the cards and the add box
     alignSelf: "stretch", // Ensures it spans full width

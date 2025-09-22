@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import ChallengeCard from "./cards/ChallengeCard";
 
 interface ChallengesSectionProps {
   challenges: any;
@@ -9,63 +10,56 @@ interface ChallengesSectionProps {
 const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => {
   const router = useRouter();
 
-  const handleChallengesPress = () => {
-    router.push("/home/challenges");
-  };
 
-  const handleStartChallengePress = () => {
-    router.push("/home/challenges/addChallenge");
-  };
 
   // Get active challenges data
   const activeChallenges = challenges?.activeChallenges || [];
   const completedChallenges = challenges?.completedChallenges || [];
-  const hasActiveChallenges = activeChallenges.length > 0;
+  
+  // TEMPORARY: Force empty state for testing
+  const forceEmptyState = false;
+  const hasActiveChallenges = forceEmptyState ? false : activeChallenges.length > 0;
+
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Challenges</Text>
-        <TouchableOpacity 
-          style={styles.viewAllButton}
-          onPress={handleChallengesPress}
-        >
-          <Text style={styles.viewAllText}>View All</Text>
+      {/* Header Section */}
+      <View style={styles.sectionHeader}>
+        <Text style={styles.title}>My Challenges</Text>
+        <TouchableOpacity onPress={() => router.push("/home/challenges")}>
+          <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
-      
+
+      {/* Main Content: Challenge Cards */}
       <View style={styles.content}>
         {hasActiveChallenges ? (
           <>
-            <Text style={styles.subtitle}>
-              {activeChallenges.length} Active Challenge{activeChallenges.length !== 1 ? 's' : ''}
-            </Text>
-            {activeChallenges.slice(0, 2).map((challenge: any, index: number) => (
-              <View key={challenge.userChallenge.id} style={styles.challengeItem}>
-                <Text style={styles.challengeTitle}>
-                  {challenge.userChallenge.challenge.title}
-                </Text>
-                <Text style={styles.challengeProgress}>
-                  {challenge.progress.progressLabel} • {challenge.progress.daysRemaining} days left
-                </Text>
-              </View>
+            {activeChallenges.map((challenge: any, index: number) => (
+              <ChallengeCard
+                key={challenge.userChallenge.id}
+                id={challenge.userChallenge.id}
+                title={challenge.userChallenge.challenge.title}
+                progress={challenge.progress}
+                status="active"
+                description={challenge.userChallenge.challenge.description}
+              />
             ))}
-            {activeChallenges.length > 2 && (
-              <Text style={styles.moreText}>
-                +{activeChallenges.length - 2} more challenge{activeChallenges.length - 2 !== 1 ? 's' : ''}
-              </Text>
-            )}
           </>
         ) : (
-          <Text style={styles.subtitle}>No active challenges, join one today!</Text>
+          // No active challenges, display empty state
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyMessage}>No active challenges, join one today!</Text>
+          </View>
         )}
         
-        {/* Always show the Add Challenge button */}
+        {/* Add Challenge button (always shown) */}
         <TouchableOpacity 
-          style={styles.challengeButton}
-          onPress={handleStartChallengePress}
+          style={styles.addChallengeButton}
+          onPress={() => router.push("/home/challenges/addChallenge")}
         >
-          <Text style={styles.challengeButtonText}>Add a Challenge</Text>
+          <Text style={styles.plusSymbol}>+</Text>
+          <Text style={styles.addChallengeText}>Add a Challenge</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -73,12 +67,13 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
 };
 
 const styles = StyleSheet.create({
+  // Section Container + Header
   container: {
     padding: 16,
     backgroundColor: "white",
     borderRadius: 12,
   },
-  header: {
+  sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -86,20 +81,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 8,
+    fontWeight: "700",
+    fontFamily: "Poppins",
+    color: "#242020",
   },
-  viewAllButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  viewAllText: {
+  viewAll: {
     fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "Poppins",
     color: "#DE728D",
-    fontWeight: "bold",
     textDecorationLine: "underline",
-    marginRight: 6,
   },
+  // Main Content
   content: {
     alignItems: 'center',
   },
@@ -109,31 +102,6 @@ const styles = StyleSheet.create({
     color: '#666666',
     marginBottom: 16,
   },
-  challengeItem: {
-    width: '100%',
-    backgroundColor: '#F8F9FA',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#DE728D',
-  },
-  challengeTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 4,
-  },
-  challengeProgress: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  moreText: {
-    fontSize: 12,
-    color: '#DE728D',
-    fontStyle: 'italic',
-    marginTop: 8,
-  },
   description: {
     fontSize: 14,
     color: '#666666',
@@ -141,18 +109,42 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 16,
   },
-  challengeButton: {
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+  },
+  emptyMessage: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666666',
+    textAlign: 'center',
+  },
+  // Add Challenge Button
+  addChallengeButton: {
     backgroundColor: '#DE728D',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 25,
     minWidth: 140,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
   },
-  challengeButtonText: {
+  plusSymbol: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
+    marginRight: 6,
+    lineHeight: 18,
+  },
+  addChallengeText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+    lineHeight: 18,
   },
 });
 

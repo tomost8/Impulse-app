@@ -56,7 +56,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
 
           {/* Activities Section */}
-          <View style={styles.section}>
+          <View>
             <ActivitiesSection 
               activities={activities} 
               timezone={timezone}
@@ -114,8 +114,6 @@ const styles = StyleSheet.create({
     marginBottom: 24, // Ensures spacing between sections
   },
   leaderboardWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
     marginBottom: 45, // Add margin to ensure space at bottom
   },
   header: {
