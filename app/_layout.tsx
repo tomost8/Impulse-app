@@ -58,6 +58,7 @@ export default function RootLayout() {
                 {/* Debug component - remove in production */}
                 {debugComponentsOn && <TokenTestButton />}
                 <Stack>
+                  <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                   <Stack.Screen name="community/[id]" options={{ headerShown: false }} />

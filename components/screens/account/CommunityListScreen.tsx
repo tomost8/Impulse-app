@@ -1,19 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+
 import Header from "@/components/ui/common/headers/Header";
-import LeaveCommunityPopup from './CommunityLeaveModal';
+import LoadingScreen from "@/components/ui/common/loading";
+import LeaveCommunityPopup from '@/components/features/account/CommunityLeaveModal';
 
 
 
@@ -23,9 +15,9 @@ interface CommunityProps {
   handleLeaveCommunity: (id: number) => void;
 }
 
-const CommunitiesList = (props: CommunityProps) => {
+const CommunityListScreen = (props: CommunityProps) => {
   if (props.loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   const [searchText, setSearchText] = useState("");
@@ -204,4 +196,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommunitiesList;
+export default CommunityListScreen;

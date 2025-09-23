@@ -1,7 +1,7 @@
-import FeatureGuide from '@/components/screens/profile/FeatureGuide/MainScreen';
+import GuideScreen from '@/components/screens/account/settings/GuideScreen';
 
 export default function FeatureGuidePage() {
   return (
-    <FeatureGuide />
+    <GuideScreen />
   );
 } 

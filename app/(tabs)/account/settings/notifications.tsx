@@ -1,5 +1,5 @@
 
-import ReminderNotifications from '@/components/screens/profile/setting/ReminderNotifications';
+import ReminderNotifications from '@/components/features/account/settings/ReminderNotifications';
 import { useSendBroadcastNotification } from '@/hooks/graphql/notifications/mutations';
 import { useCreateReminder } from '@/hooks/graphql/notifications/mutations';
 

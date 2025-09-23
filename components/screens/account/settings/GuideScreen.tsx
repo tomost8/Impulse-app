@@ -1,20 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
 import { s } from "react-native-size-matters";
 import { router } from 'expo-router';
+
 import Header from "@/components/ui/common/headers/Header";
-import AddActivities from './AddActivities';
-import CompleteActivities from './CompleteActivities';
-import CustomNotifications from './CustomNotifications';
-import JoinCommunity from './JoinCommunity';
+import { AddActivities, CompleteActivities, CustomNotifications, JoinCommunity } from '@/components/features/account';
 
 const FeatureGuide = () => {
   const [showAddActivities, setShowAddActivities] = useState(false);

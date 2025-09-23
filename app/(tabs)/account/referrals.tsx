@@ -4,7 +4,7 @@ import { useDataProvider } from "@/contexts/DataProviderContext";
 // Debug
 import { debugRenders } from "@/debug/utils";
 // Components
-import ReferralScreen from "@/components/screens/profile/ReferralScreen/ReferralScreen";
+import ReferralScreen from "@/components/screens/account/ReferralScreen";
 import LoadingScreen from "@/components/ui/common/loading";
 import { useGenerateReferralLink } from "@/hooks/graphql/referrals/mutations";
 

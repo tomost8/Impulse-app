@@ -5,14 +5,12 @@ import { router } from 'expo-router';
 // GraphQL hooks
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Components
-import ProfileScreen from '@/components/screens/profile/ProfileSetting/EditProfileScreen';
-// Debug
-import { debugEditProfile } from '@/debug/utils';
+import ProfileScreen from '@/components/screens/account/settings/EditProfileScreen';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 
-
+const DEBUG_EDIT_PROFILE = false;
 
 const EditProfilePage = () => {
   const { authToken } = useAuth();
@@ -84,7 +82,6 @@ const EditProfilePage = () => {
           ])
       );
       // TODO: handle the case where secondary_goal is '' because the user wants no goal, has to be on backend side i think
-      console.log('Form Data:', formData, '\nInput:', input);
       const response = await updateUser(input, authToken as string);
       if (response.success) {
         const updatedUser = {
@@ -92,7 +89,7 @@ const EditProfilePage = () => {
           ...response.user   // Update any fields from response.user
         };
         setUser(updatedUser);
-        console.log("Updated user data", updatedUser)
+        console.log('✅ updateUser mutation successful: profile updated')
         router.back();
       } else {
         throw new Error('updateUser response.success is false');
@@ -106,7 +103,7 @@ const EditProfilePage = () => {
 
   // Debug
   const loading = isSubmitting;
-  if (debugEditProfile && !loading) {
+  if (DEBUG_EDIT_PROFILE && !loading) {
     console.log("Rendering EditProfilePage\n",
       "User:", user, "\n",
       "Form Data:", formData, "\n",

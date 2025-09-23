@@ -1,30 +1,23 @@
 import React from "react";
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Text,
-  Image,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
-import { router } from 'expo-router';
-import { getLabelByCategory } from '@/utils/goals';
+import { View, ScrollView, StyleSheet, Text, Image, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
+import { router } from 'expo-router';
+
+import { getLabelByCategory } from '@/utils/goals';
+
+import LoadingScreen from "@/components/ui/common/loading";
 import Header from "@/components/ui/common/headers/Header";
+
 
 interface ProfileScreenProps {  
   user: any;
   isUserLoading: boolean;
 }
 
-
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, isUserLoading }) => {
   if (isUserLoading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
-  //console.log("ProfileScreen", user);
   
   const infoItems = [
     { label: "Email", value: user.email || "N/A" },
@@ -148,14 +141,6 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 65,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
   },
   personalInfoContainer: {
     marginBottom: 40,

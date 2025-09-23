@@ -1,20 +1,9 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+
 import Header from "@/components/ui/common/headers/Header";
-
-
 
 function PasswordInput({ 
   placeholder, 

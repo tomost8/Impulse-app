@@ -1,17 +1,10 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
-import { useAuth } from '@/contexts/AuthContext';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { router } from "expo-router";
 import { s } from "react-native-size-matters";
+
+import { useAuth } from '@/contexts/AuthContext';
+
 import Header from "@/components/ui/common/headers/Header";
 
 function SettingsItem({ 

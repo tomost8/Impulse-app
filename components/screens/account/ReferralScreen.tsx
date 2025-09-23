@@ -1,18 +1,11 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView, Platform, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 import { s } from 'react-native-size-matters';
+
 import Header from '@/components/ui/common/headers/Header';
-import ReferralIllustration from './ReferralIllustration';
-import ReferralLinkBox from './ReferralLinkBox';
+import LoadingScreen from "@/components/ui/common/loading";
+import { ReferralIllustration, ReferralLinkBox } from '@/components/features/account';
 
 interface ReferralScreenProps {
   loading: boolean;
@@ -23,7 +16,7 @@ const ReferralScreen: React.FC<ReferralScreenProps> = ({ loading, referralLink }
   const router = useRouter();
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
 
   return (

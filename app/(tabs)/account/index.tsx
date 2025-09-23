@@ -9,7 +9,7 @@ import { useDataProvider } from '@/contexts/DataProviderContext';
 import { useGetPostsByUserId } from '@/hooks/graphql/posts/queries';
 
 // Components
-import AccountProfile from '@/components/screens/account/index/AccountScreen';
+import AccountMainScreen from '@/components/screens/account/AccountMainScreen';
 
 // Debug utilities
 import { debugAccountPage } from '@/debug/utils';
@@ -59,7 +59,7 @@ const AccountPage = () => {
     console.log(`Rendering AccountPage - User: ${user?.username || 'Unknown'} (ID: ${user?.id}, Double Cam: ${user?.is_double_cam}, TZ: ${user?.timezone}) | Communities: ${communities.length} | Friends: ${acceptedFriends.length} | Memories: ${memoriesRef.current?.length || 0}`);
   }
 
-  return <AccountProfile
+  return <AccountMainScreen
     user={user} 
     isLoading={fetching} 
     numCommunities={communities.length}

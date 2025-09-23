@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, SafeAreaView, Image } from "react-native";
 import { router } from 'expo-router';
-import { getLabelByCategory } from '@/utils/goals';
 
 import LoadingScreen from "@/components/ui/common/loading";
-import Bio from '@/components/features/profile/Bio';
 import { MemoriesGrid } from '@/components/features/posts';
-import PointGuideModal from "./PointGuideModal";
+import { PointGuideModal } from "@/components/features/account";
 
 interface AccountProfileProps {
   user: any;
@@ -16,7 +14,7 @@ interface AccountProfileProps {
   memories: any[];
 }
 
-function AccountProfile({ 
+function AccountMainScreen({ 
   user, 
   isLoading,
   numCommunities,
@@ -118,15 +116,6 @@ function AccountProfile({
               <Text style={styles.statLabel}>Friends</Text>
             </TouchableOpacity>
           </View>
-
-          {/* Bio Section - Temporarily Removed */}
-          {/* <Bio 
-            bioText={user.bio}
-            primaryActivity={getLabelByCategory(user.primary_goal)}
-            secondaryActivity={getLabelByCategory(user.secondary_goal)}
-            gender={user.gender}
-            timezone={user.timezone}
-          /> */}
 
           {/* Memories Section */}
           <MemoriesGrid memories={memories || []} />
@@ -319,4 +308,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountProfile;
+export default AccountMainScreen;

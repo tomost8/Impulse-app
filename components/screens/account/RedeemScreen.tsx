@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity, Text, Image, Platform, StatusBar} from "react-native";
 import { s } from "react-native-size-matters";
 import { useRouter } from "expo-router";
-import Header from "@/components/ui/common/headers/Header";
-import PointsDisplay from "./PointsDisplay";
-import RewardItem from "./RewardItem";
-import RedeemRewardPopup from "../popups/RedeemRewardPopup";
 
-interface RewardsScreenProps {
+import Header from "@/components/ui/common/headers/Header";
+import LoadingScreen from "@/components/ui/common/loading";
+import { PointsDisplay, RewardItem, RedeemRewardPopup } from "@/components/features/account";
+
+interface RedeemScreenProps {
   loading: boolean;
   userPoints: number;
   rewards: any;
   handleCreateRedeem: (rewardId: number) => void;
 }
 
-const RewardsScreen: React.FC<RewardsScreenProps> = ({ 
+const RedeemScreen: React.FC<RedeemScreenProps> = ({ 
   loading,
   userPoints, 
   rewards,
   handleCreateRedeem,
 }) => {
   if (loading) {
-    return <Text>Loading...</Text>;
+    return <LoadingScreen />;
   }
   const [selectedReward, setSelectedReward] = useState<number | null>(null);
   const [showRedeemPopup, setShowRedeemPopup] = useState(false);
@@ -74,32 +74,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  headerBackground: {
-    backgroundColor: '#E0EDFD',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 16,
-  },
-  backButton: {
-    marginRight: s(12),
-    paddingLeft: 4, 
-  },
-  backIcon: {
-    width: 12,
-    height: 16,
-    tintColor: '#242020',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-  },
   scrollView: {
     flex: 1,
     backgroundColor: '#FFFFFF',
@@ -114,4 +88,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RewardsScreen;
+export default RedeemScreen;

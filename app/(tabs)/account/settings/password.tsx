@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // Components
-import PasswordScreen from '@/components/screens/profile/ProfileSetting/ResetPasswordScreen';
+import PasswordScreen from '@/components/screens/account/settings/ResetPasswordScreen';
 // Firebase
 import { getAuth } from '@/config/firebaseConfig';
 import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from '@react-native-firebase/auth';

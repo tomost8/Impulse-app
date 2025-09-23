@@ -21,11 +21,3 @@ export const debugEditCommunityPage = true && debugRenders; // community/[id]/ed
 export const debugEditCommunityMembersPage = true && debugRenders; // community/[id]/editMembers.tsx
 export const debugCommunityLeaderboardPage = true && debugRenders; // community/[id]/leaderboard.tsx
 export const debugAnnouncementsPage = true && debugRenders; // community/[id]/announcements.tsx
-// Post pages
-
-// Chat and profile pages
-
-// Home and activity pages
-
-// Account pages
-export const debugEditProfile = false;

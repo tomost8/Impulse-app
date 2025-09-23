@@ -1,20 +1,11 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
-} from "react-native";
-import LoadingScreen from "@/components/ui/common/loading";
+import { View, Text, Image, StyleSheet, ScrollView, TextInput, TouchableOpacity, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+
 import Header from "@/components/ui/common/headers/Header";
-import RemoveFriendPopup from './FriendRemoveModal';
+import LoadingScreen from "@/components/ui/common/loading";
+import RemoveFriendPopup from '@/components/features/account/FriendRemoveModal';
 
 
 
@@ -24,7 +15,7 @@ interface FriendProps {
   handleRemoveFriend: (id: number) => void;
 }
 
-const FriendsList = (props: FriendProps) => {
+const FriendListScreen = (props: FriendProps) => {
   if (props.loading) {
     return <LoadingScreen />;
   }
@@ -209,4 +200,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendsList;
+export default FriendListScreen;

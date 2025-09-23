@@ -1,20 +1,9 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Text,
-  Linking,
-  Image,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet, TouchableOpacity, Text, Linking, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+
 import Header from "@/components/ui/common/headers/Header";
-
-
 
 const FeedbackScreen = () => {
   const handleFeedbackForm = () => {
@@ -27,13 +16,13 @@ const FeedbackScreen = () => {
         title="Give Feedback"
         onBackPress={() => router.back()}
       />
-      <ScrollView style={styles.content}>
+      <View style={styles.content}>
         <Text style={styles.heading}>We want to hear from you!</Text>
         <Text style={styles.description}>
           We value your input more than anything. Tell us what's working, what's not, or what you'd love to see next! Who knows? Your suggestion might just become our next feature!{"\n\n"}
           As a thank you for leaving feedback you will be entered in a raffle for various gift card prizes. Reward selection is in the form below!
         </Text>
-      </ScrollView>
+      </View>
       <TouchableOpacity
         style={styles.feedbackButton}
         onPress={handleFeedbackForm}

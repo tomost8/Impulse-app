@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 // Components
-import CommunityScreen from '@/components/screens/profile/FriendsCommunityList/CommunitiesList';
+import CommunityListScreen from '@/components/screens/account/CommunityListScreen';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { useDataProvider } from '@/contexts/DataProviderContext';
@@ -55,7 +55,7 @@ const handleLeaveCommunity = async (communityId: number) => {
   }
 
   return (
-    <CommunityScreen
+    <CommunityListScreen
       loading={loading}
       communities={acceptedCommunities}
       handleLeaveCommunity={handleLeaveCommunity}

@@ -3,7 +3,7 @@ import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useDeleteFriendship } from '@/hooks/graphql/friends/mutations';
 // Components
-import FriendsList from '@/components/screens/profile/FriendsCommunityList/FriendsList';
+import FriendListScreen from '@/components/screens/account/FriendListScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
@@ -43,7 +43,7 @@ const handleRemoveFriend = async (friendId: number) => {
   const loading = fetching || isRemovingFriend;
 
   return (
-    <FriendsList 
+    <FriendListScreen 
       loading={loading}
       friends={acceptedFriends} 
       handleRemoveFriend={handleRemoveFriend}

@@ -17,10 +17,10 @@ import {
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
 import Header from "@/components/ui/common/headers/Header";
-import Info2 from '@/components/screens/profile/setting/info2';
-import Info3 from '@/components/screens/profile/setting/info3';
-import Info4 from '@/components/screens/profile/setting/info4';
-import Info1 from '@/components/screens/profile/setting/info1';
+import Info2 from './info2';
+import Info3 from './info3';
+import Info4 from './info4';
+import Info1 from './info1';
 import PreferencesUpdatedPopup from './PreferencesUpdatedPopup';
 
 function ReminderItem({ 

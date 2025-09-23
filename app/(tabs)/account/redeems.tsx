@@ -5,7 +5,7 @@ import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetRewards } from '@/hooks/graphql/rewards/queries';
 import { useCreateRedeem } from '@/hooks/graphql/rewards/mutations';
 // Components
-import RewardsScreen from '@/components/screens/profile/RewardsScreen/RewardsScreen';
+import RedeemScreen from '@/components/screens/account/RedeemScreen';
 // Debug
 import { debugRenders } from '@/debug/utils';
 // Services
@@ -70,7 +70,7 @@ const RedeemsPage = () => {
 
   
   return (
-    <RewardsScreen 
+    <RedeemScreen 
       loading={loading}
       userPoints={user.point.spending_points}
       rewards={rewardsRef.current}

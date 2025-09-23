@@ -1,42 +1,38 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Image,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  Linking,
-  TextInput,
-  ActivityIndicator,
-  Platform,
-  StatusBar,
-} from "react-native";
+import { View, StyleSheet, Image, Text, TouchableOpacity, Linking, TextInput, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
+
 import Header from "@/components/ui/common/headers/Header";
-import AccountChangedConfirmation from '../popups/AccountChangedConfirmation';
+import LoadingOverlay from "@/components/ui/common/LoadingOverlay";
+import { AccountChangedConfirmation } from '@/components/features/account';
 
 interface SupportScreenProps {
-  loading: boolean;
-  handleUpdateUser: () => void;
+  handleUpdateUser: () => Promise<void>;
 }
 
-const SupportScreen = ({ handleUpdateUser, loading }: SupportScreenProps) => {
-  if (loading) {
-    return <ActivityIndicator />;
-  }
+const SupportScreen = ({ handleUpdateUser }: SupportScreenProps) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (code === 'INSPIRE') {
-      handleUpdateUser();
       setError('');
-      setShowConfirmation(true);
+      setIsUpdating(true);
+      try {
+        await handleUpdateUser(); 
+        setCode('');
+        setShowConfirmation(true); 
+      } catch (error) {
+        setError('Error: Update failed');
+        console.error('Update failed:', error);
+      } finally {
+        setIsUpdating(false);
+      }
     } else {
-      setError('Error: Code is incorrect');
+      setError('Error: Invalid Code');
     }
   };
 
@@ -50,42 +46,50 @@ const SupportScreen = ({ handleUpdateUser, loading }: SupportScreenProps) => {
         title="Support and Account Deletion"
         onBackPress={() => router.back()}
       />
-      <View style={styles.emailSection}>
-        <View style={styles.emailContainer}>
-          <Image 
-            source={require("@/assets/icons/email.png")}
-            style={styles.emailIcon}
-          />
-          <View>
-            <Text style={styles.label}>Email Us At</Text>
-            <Text style={styles.email}>support@findyourimpulse.com</Text>
+      <View style={[styles.content, isUpdating && styles.disabledContent]}>
+        <View style={styles.emailSection}>
+          <View style={styles.emailContainer}>
+            <Image 
+              source={require("@/assets/icons/email.png")}
+              style={styles.emailIcon}
+            />
+            <View>
+              <Text style={styles.label}>Email Us At</Text>
+              <Text style={styles.email}>support@findyourimpulse.com</Text>
+            </View>
           </View>
         </View>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Community Leader Account Change</Text>
-        <View style={styles.codeSection}>
-          <TextInput
-            style={styles.codeInput}
-            placeholder="Enter given code"
-            value={code}
-            onChangeText={setCode}
-          />
-          <TouchableOpacity 
-            style={styles.applyButton}
-            onPress={handleApply}
-          >
-            <Text style={styles.applyButtonText}>Apply</Text>
-          </TouchableOpacity>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Community Leader Account Change</Text>
+          <View style={styles.codeSection}>
+            <TextInput
+              style={styles.codeInput}
+              placeholder="Enter given code"
+              value={code}
+              onChangeText={setCode}
+              editable={!isUpdating}
+            />
+            <TouchableOpacity 
+              style={[styles.applyButton, isUpdating && styles.disabledButton]}
+              onPress={handleApply}
+              disabled={isUpdating}
+            >
+              <Text style={styles.applyButtonText}>Apply</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.errorText}>{error}</Text>
         </View>
-        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity
+          style={[styles.deleteAccountButton, isUpdating && styles.disabledButton]}
+          onPress={handleDeleteAccountPress}
+          disabled={isUpdating}
+        >
+          <Text style={styles.buttonText}>Account Deletion Form</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.deleteAccountButton}
-        onPress={handleDeleteAccountPress}
-      >
-        <Text style={styles.buttonText}>Account Deletion Form</Text>
-      </TouchableOpacity>
+      
+      <LoadingOverlay visible={isUpdating} />
+      
       <AccountChangedConfirmation 
         visible={showConfirmation}
         onClose={() => setShowConfirmation(false)}
@@ -99,6 +103,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  content: {
+    flex: 1,
+  },
+  disabledContent: {
+    opacity: 0.5,
   },
   headerBackground: {
     backgroundColor: '#E0EDFD',
@@ -186,6 +196,9 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disabledButton: {
+    opacity: 0.6,
   },
   applyButtonText: {
     color: '#FFFFFF',

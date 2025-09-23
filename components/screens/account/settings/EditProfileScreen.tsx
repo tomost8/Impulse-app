@@ -1,25 +1,15 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Platform,
-  StatusBar,
-} from "react-native";
-import PickerModal from "@/components/ui/common/pickers/PickerModal";
-import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
-import { GENDER_OPTIONS, GOAL_OPTIONS } from "@/utils/userOptions";
-import { getLabelByCategory } from "@/utils/goals";
-import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
-import { pickImage } from "@/utils/imageProcessing";
-import { router } from "expo-router";
+import { View, StyleSheet, ScrollView, Image, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, Platform, StatusBar } from "react-native";
 import { s } from "react-native-size-matters";
+import { router } from "expo-router";
+
+import { TIMEZONE_OPTIONS } from "@/utils/timezoneProcessing";
+import { GENDER_OPTIONS, GOAL_OPTIONS, DEFAULT_PROFILE_PICTURE } from "@/utils/userOptions";
+import { getLabelByCategory } from "@/utils/goals";
+import { pickImage } from "@/utils/imageProcessing";
+
 import Header from "@/components/ui/common/headers/Header";
+import PickerModal from "@/components/ui/common/pickers/PickerModal";
 
 interface ProfileScreenProps {
   formData: any;

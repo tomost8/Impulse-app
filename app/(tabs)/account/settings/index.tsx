@@ -1,4 +1,4 @@
-import ProfileSettings from '@/components/screens/profile/ProfileSetting/ProfileSettings';
+import SettingsScreen from '@/components/screens/account/settings/SettingsScreen';
 // GraphQL hooks
 import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 // Services
@@ -21,7 +21,7 @@ export default function SettingsPage() {
       };
       const response = await updateUser(input, authToken as string);
       if (response.success) {
-        console.log('User Profile Updated', response.user);
+        console.log('✅ updateUser mutation successful: double cam setting updated');
         setUser(response.user);
       } else {
         throw new Error('updateUser response.success is false');
@@ -35,10 +35,10 @@ export default function SettingsPage() {
 
   const isLoading = fetching || isSubmitting;
   return (
-    <ProfileSettings 
+    <SettingsScreen 
       loading={isLoading}
       isDoubleCameraEnabled={user?.is_double_cam}
-      onToggleDoubleCamera={handleFormSubmit} 
+      onToggleDoubleCamera={handleFormSubmit}
     />
   );
 }
