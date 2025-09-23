@@ -46,6 +46,7 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
                 key={challenge.userChallenge.id}
                 id={challenge.userChallenge.id}
                 title={challenge.userChallenge.challenge.title}
+                daysCompleted={challenge.userChallenge.days_completed}
                 progress={challenge.progress}
                 status="active"
                 description={challenge.userChallenge.challenge.description}
@@ -65,7 +66,7 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
                 totalDays={challenge.userChallenge.challenge.length}
                 completedAt={challenge.userChallenge.completed_at}
                 endsAt={challenge.userChallenge.ends_at}
-                badgesEarned={challenge.badgesEarned}
+                badge={challenge.userChallenge.badge_level || []}
               />
             ))}
               </>

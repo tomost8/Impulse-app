@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontWeight: '600',
     color: '#000000',
-    fontWeight: '600',
   },
 });
 

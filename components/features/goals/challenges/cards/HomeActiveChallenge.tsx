@@ -1,5 +1,6 @@
+import { getBadges } from "@/utils/challengeUtils";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import Svg, { Circle } from 'react-native-svg';
 
 // Function to parse progress from "0/7" format
@@ -56,6 +57,7 @@ const CircularProgress = ({ progressLabel }: { progressLabel: string }) => {
 type HomeActiveChallengeProps = {
   id: string;
   title: string;
+  daysCompleted: number;
   progress: {
     progressLabel: string;
     daysRemaining: number;
@@ -67,12 +69,14 @@ type HomeActiveChallengeProps = {
 const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
   id,
   title,
+  daysCompleted,
   progress,
   status,
   description,
 }) => {
   const isCompleted = status === 'completed';
   const isActive = status === 'active';
+  console.log("Rendering HomeActiveChallenge:", { title });
   
   return (
     <View style={[
@@ -108,10 +112,13 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
 
           {/* Badges Section */}
           <View style={styles.badgesContainer}>
-            <View style={styles.badgePlaceholder} />
-            <View style={styles.badgePlaceholder} />
-            <View style={styles.badgePlaceholder} />
-            <View style={styles.badgePlaceholder} />
+            {getBadges(title, daysCompleted).map((imgSrc, idx) => (
+              <Image 
+                key={idx}
+                source={imgSrc}
+                style={styles.icon}
+              />
+            ))}
           </View>
         </View>
       </View>
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#000000",
+    borderColor: "#5E6676",
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
@@ -212,6 +219,12 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: "#E5E7EB",
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    marginRight: 2,
+    resizeMode: "contain",
   },
   completedContainer: {
     backgroundColor: "#F1F3FA",

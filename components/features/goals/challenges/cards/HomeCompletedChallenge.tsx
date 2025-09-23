@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { getBadgeImage } from "@/utils/challengeUtils";
 
 type HomeCompletedChallengeProps = {
   id: string;
@@ -7,7 +8,7 @@ type HomeCompletedChallengeProps = {
   totalDays: number;
   completedAt: string;
   endsAt: string;
-  badgesEarned: any[];
+  badge: string;
 };
 
 const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
@@ -16,20 +17,22 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
   totalDays,
   completedAt,
   endsAt,
-  badgesEarned,
+  badge,
 }) => {
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown date';
     return new Date(dateString).toLocaleDateString();
   };
 
-
   return (
     <View style={styles.container}>
       {/* Main Content Row */}
       <View style={styles.mainContent}>
         {/* Badge Placeholder */}
-        <View style={styles.badgePlaceholder} />
+        <Image 
+          source={getBadgeImage(title, badge)}
+          style={styles.icon}
+        />
 
         {/* Text Content */}
         <View style={styles.textContainer}>
@@ -43,8 +46,6 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
             <Text style={styles.completedText}>Completed</Text>
             <Text style={styles.dot}>•</Text>
             <Text style={styles.completionDate}>{completedAt ? formatDate(completedAt) : 'N/A'}</Text>
-            <Text style={styles.dot}>•</Text>
-            <Text style={styles.endDate}>{formatDate(endsAt)} End</Text>
           </View>
 
           {/* View Results */}
@@ -66,19 +67,18 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#000000",
+    borderColor: "#5E6676",
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 12,
     marginTop: 8,
     width: "100%",
   },
-  badgePlaceholder: {
+  icon: {
     width: 50,
     height: 50,
-    borderRadius: 25,
-    backgroundColor: "#E5E7EB",
     marginRight: 12,
+    resizeMode: "contain",
   },
   mainContent: {
     flexDirection: "row",
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
   },
   viewResultsText: {
     fontSize: 12,
-    fontWeight: "600",
-    color: "#242020",
+    fontWeight: "700",
+    color: "#363636",
     fontFamily: "Open Sans",
     marginRight: 4,
   },

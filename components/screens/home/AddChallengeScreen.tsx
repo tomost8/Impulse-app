@@ -109,7 +109,9 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#E0EDFD",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   headerArea: {
     backgroundColor: "#E0EDFD",
@@ -127,6 +129,8 @@ const styles = StyleSheet.create({
   categorySection: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 16,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   categoryScroll: {
     paddingHorizontal: 16,

@@ -82,7 +82,6 @@ export const GET_MY_CHALLENGES = gql`
           first_name
           last_name
         }
-        pictures
       }
       completedChallenges {
         userChallenge {
@@ -93,6 +92,7 @@ export const GET_MY_CHALLENGES = gql`
           ends_at
           completed_at
           days_completed
+          badge_level
           challenge {
             title
             category
