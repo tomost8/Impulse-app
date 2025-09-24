@@ -237,11 +237,14 @@ export const categoryIcons: Record<string, any> = {
   passion: require("@/assets/icons/challenges/category_passion.png"),
 };
 
-export const challengeIcons: Record<string, any> = {
-  food: require("@/assets/icons/food.png"),
-  workout: require("@/assets/icons/workout.png"),
-  studying: require("@/assets/icons/studyingworking.png"), 
-  wellness: require("@/assets/icons/wellness.png"),
-  rise: require("@/assets/icons/riseshine.png"),
-  passion: require("@/assets/icons/passionhobby.png"),
-};
+// Function to parse title from "Num Day Category Challenge" format
+export function parseTitle(title: string): string {
+  // Match pattern: "Num Day" + Category + "Challenge"
+  const match = title.match(/^(\d+\s+Day)\s+(.+?)\s+(Challenge)$/);
+  if (match) {
+    const dayPart = match[1];
+    const challengePart = match[3];
+    return `${dayPart} ${challengePart}`;
+  }
+  return title; // Return original if pattern doesn't match
+}

@@ -62,7 +62,6 @@ type HomeActiveChallengeProps = {
     progressLabel: string;
     daysRemaining: number;
   };
-  status: 'active' | 'completed' | 'pending';
   description?: string;
 };
 
@@ -71,18 +70,10 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
   title,
   daysCompleted,
   progress,
-  status,
   description,
 }) => {
-  const isCompleted = status === 'completed';
-  const isActive = status === 'active';
-  console.log("Rendering HomeActiveChallenge:", { title });
-  
   return (
-    <View style={[
-      styles.container, 
-      isCompleted && styles.completedContainer
-    ]}>
+    <View style={styles.container}>
       {/* Main Content Row */}
       <View style={styles.mainContent}>
         {/* Circular Progress */}
@@ -103,7 +94,7 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
           
           {/* Description */}
           {description && (
-            <Text style={[styles.description, isActive && styles.activeDescription]}>
+            <Text style={styles.activeDescription}>
               {description}
             </Text>
           )}

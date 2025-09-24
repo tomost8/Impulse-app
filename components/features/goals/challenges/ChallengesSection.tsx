@@ -10,9 +10,7 @@ interface ChallengesSectionProps {
 
 const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => {
   const router = useRouter();
-
-
-
+  
   // Get active challenges data
   const activeChallenges = challenges?.activeChallenges || [];
   const completedChallenges = challenges?.completedChallenges || [];
@@ -48,7 +46,6 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
                 title={challenge.userChallenge.challenge.title}
                 daysCompleted={challenge.userChallenge.days_completed}
                 progress={challenge.progress}
-                status="active"
                 description={challenge.userChallenge.challenge.description}
               />
             ))}
@@ -159,18 +156,21 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   plusSymbol: {
+    textAlign: 'center',
     color: '#FFFFFF',
-    fontSize: 18,
+    fontFamily: 'Lato',
     fontWeight: '600',
-    marginRight: 6,
+    fontSize: 17,
     lineHeight: 18,
+    marginRight: 6,
   },
   addChallengeText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 18,
+    color: '#FFFFFF',
+    fontFamily: 'Lato',
+    fontWeight: '600',
+    fontSize: 14,
+    lineHeight: 20,
   },
 });
 
