@@ -45,7 +45,7 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
           <View style={styles.completionInfo}>
             <Text style={styles.completedText}>Completed</Text>
             <Text style={styles.dot}>•</Text>
-            <Text style={styles.completionDate}>{completedAt ? formatDate(completedAt) : 'N/A'}</Text>
+            <Text style={styles.completionDate}>{completedAt ? formatDate(completedAt) : 'MM/DD/YY'}</Text>
           </View>
 
           {/* View Results */}

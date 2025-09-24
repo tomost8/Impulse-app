@@ -218,3 +218,15 @@ export function getBadgeImage(title: string, badge: string) {
   const name = getBadgeImageName(title, badge);
   return badgeImages[name];
 }
+
+// Function to parse title from "Num Day Category Challenge" format
+export function parseTitle(title: string): string {
+  // Match pattern: "Num Day" + Category + "Challenge"
+  const match = title.match(/^(\d+\s+Day)\s+(.+?)\s+(Challenge)$/);
+  if (match) {
+    const dayPart = match[1];
+    const challengePart = match[3];
+    return `${dayPart} ${challengePart}`;
+  }
+  return title; // Return original if pattern doesn't match
+}

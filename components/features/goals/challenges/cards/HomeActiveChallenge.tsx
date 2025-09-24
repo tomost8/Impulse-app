@@ -62,7 +62,6 @@ type HomeActiveChallengeProps = {
     progressLabel: string;
     daysRemaining: number;
   };
-  status: 'active' | 'completed' | 'pending';
   description?: string;
 };
 
@@ -71,18 +70,10 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
   title,
   daysCompleted,
   progress,
-  status,
   description,
 }) => {
-  const isCompleted = status === 'completed';
-  const isActive = status === 'active';
-  console.log("Rendering HomeActiveChallenge:", { title });
-  
   return (
-    <View style={[
-      styles.container, 
-      isCompleted && styles.completedContainer
-    ]}>
+    <View style={styles.container}>
       {/* Main Content Row */}
       <View style={styles.mainContent}>
         {/* Circular Progress */}
@@ -93,8 +84,8 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
           {/* Title and Status Row */}
           <View style={styles.titleRow}>
             <Text style={styles.title}>{title}</Text>
-            <Text style={[styles.status, isCompleted && styles.completedStatus]}>
-              {status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Pending'}
+            <Text style={styles.status}>
+              Active
             </Text>
           </View>
           
@@ -105,7 +96,7 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
           
           {/* Description */}
           {description && (
-            <Text style={[styles.description, isActive && styles.activeDescription]}>
+            <Text style={styles.activeDescription}>
               {description}
             </Text>
           )}
@@ -225,15 +216,6 @@ const styles = StyleSheet.create({
     height: 24,
     marginRight: 2,
     resizeMode: "contain",
-  },
-  completedContainer: {
-    backgroundColor: "#F1F3FA",
-  },
-  completedStatus: {
-    color: "#5E6676",
-  },
-  activeContainer: {
-    backgroundColor: "#FFF5F8",
   },
   activeDescription: {
     color: "#DE728D",

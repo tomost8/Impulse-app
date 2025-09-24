@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { getBadgeImage, parseTitle } from "@/utils/challengeUtils";
 import { getLabelByCategory } from '@/utils/goals';
 
 type ViewCompletedChallengeProps = {
@@ -9,6 +10,7 @@ type ViewCompletedChallengeProps = {
   completedAt: string;
   endsAt: string;
   badgesEarned: any[];
+  badge: string;
   category?: string;
 };
 
@@ -19,6 +21,7 @@ const ViewCompletedChallenge: React.FC<ViewCompletedChallengeProps> = ({
   completedAt,
   endsAt,
   badgesEarned,
+  badge,
   category,
 }) => {
   const formatDate = (dateString: string) => {
@@ -30,25 +33,22 @@ const ViewCompletedChallenge: React.FC<ViewCompletedChallengeProps> = ({
   return (
     <View style={styles.container}>
       {/* Main Content Row */}
-      <View style={styles.mainContent}>
-        {/* Left Column - Badge and Date */}
-        <View style={styles.leftColumn}>
-          {/* Badge Placeholder */}
-          <View style={styles.badgePlaceholder} />
-          
-          {/* Completed Date */}
-          <Text style={styles.completedDate}>
-            {completedAt ? formatDate(completedAt) : 'N/A'}
+      <View style={styles.contentRowContainer}>
+        {/* Badge + Completed Date */}
+        <View style={styles.badgeContainer}>
+          <Image 
+            source={getBadgeImage(title, badge)}
+            style={styles.badgeImage}
+          />
+          <Text style={styles.dateText}>
+            {completedAt ? formatDate(completedAt) : 'MM/DD/YY'}
           </Text>
         </View>
 
-        {/* Text Content */}
+        {/* Middle Text Content */}
         <View style={styles.textContainer}>
-          {/* Category */}
-          <Text style={styles.category}>{getLabelByCategory(category || '')}</Text>
-          
-          {/* Title */}
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.categoryText}>{getLabelByCategory(category || '')}</Text>
+          <Text style={styles.titleText}>{parseTitle(title)}</Text>
         </View>
 
         {/* Recap Button */}
@@ -64,67 +64,42 @@ const ViewCompletedChallenge: React.FC<ViewCompletedChallengeProps> = ({
 };
 
 const styles = StyleSheet.create({
+  // Containers
   container: {
     flexDirection: "column",
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#000000",
+    borderColor: "#e1e1e1",
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 12,
-    borderRadius: 12,
     marginTop: 8,
     width: "100%",
+    height: 80,
   },
-  leftColumn: {
-    alignItems: "center",
-    marginRight: 12,
-    width: 50,
-  },
-  badgePlaceholder: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#E5E7EB",
-    marginBottom: 4,
-  },
-  mainContent: {
+  contentRowContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 0,
+  },
+  badgeContainer: {
+    alignItems: "center",
+    marginRight: 12,
+    width: 70,
+    height: 55,
+    // borderColor: '#007AFF',
+    // borderWidth: 2,
   },
   textContainer: {
     flex: 1,
     flexDirection: "column",
     justifyContent: "flex-start",
-  },
-  category: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#242020",
-    fontFamily: "Open Sans",
-    lineHeight: 19,
-    textAlign: "left",
-    marginBottom: 2,
-  },
-  title: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: "#A4ACBC",
-    fontFamily: "Open Sans",
-    lineHeight: 16,
-    textAlign: "left",
-    marginBottom: 2,
-  },
-  completedDate: {
-    fontSize: 10,
-    fontWeight: "400",
-    color: "#A4ACBC",
-    fontFamily: "Open Sans",
-    lineHeight: 14,
-    textAlign: "center",
+    height: 45,
+    // borderColor: '#007AFF',
+    // borderWidth: 2,
   },
   recapButton: {
-    height: 40,
+    height: 30,
     backgroundColor: "#FFFFFF",
     borderWidth: 1,
     borderColor: "#DE728D",
@@ -132,7 +107,42 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    marginLeft: 12,
+    marginLeft: 16,
+  },
+
+  // Content
+  badgeImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#E5E7EB",
+    marginBottom: 4,
+  },
+  dateText: {
+    fontSize: 11,
+    fontWeight: "400",
+    color: "#787878",
+    fontFamily: "Open Sans",
+    lineHeight: 10,
+    textAlign: "center",
+  },
+  categoryText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#242020",
+    fontFamily: "Open Sans",
+    lineHeight: 19,
+    textAlign: "left",
+    marginBottom: 2,
+  },
+  titleText: {
+    fontSize: 12,
+    fontWeight: "400",
+    color: "#5e6676",
+    fontFamily: "Open Sans",
+    lineHeight: 16,
+    textAlign: "left",
+    marginBottom: 2,
   },
   recapButtonText: {
     fontSize: 14,
