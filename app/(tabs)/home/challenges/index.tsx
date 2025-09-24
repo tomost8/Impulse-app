@@ -15,7 +15,7 @@ const ChallengesPage = () => {
   // Query for Loading State - My Challenges Only
   const myChallengesRef = useRef<any | null>(null);
   const hasFetchedMyChallenges = useRef(false);
-  const { activeChallenges, completedChallenges, success: myChallengesSuccess, errors: myChallengesErrors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
+  const { activeChallenges, completedChallenges, success, errors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
     !hasFetchedMyChallenges.current && !fetching && !!user?.id
   );
 
@@ -37,15 +37,12 @@ const ChallengesPage = () => {
     console.log('Rendering ChallengesPage\n' +
       `Active Challenges: ${myChallenges?.activeChallenges?.length || 0}\n` +
       `Completed Challenges: ${myChallenges?.completedChallenges?.length || 0}\n` +
-      `Success: ${myChallengesSuccess}\n` +
       `Render Counter: ${renderCounter}`);
   }
 
   return <ViewChallengesScreen
     isLoading={loading}
     myChallenges={myChallengesRef.current}
-    myChallengesSuccess={myChallengesSuccess}
-    myChallengesErrors={myChallengesErrors}
   />;
 }
 

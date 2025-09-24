@@ -1,6 +1,7 @@
 import { getBadges } from "@/utils/challengeUtils";
 import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 import Svg, { Circle } from 'react-native-svg';
 
 // Function to parse progress from "0/7" format
@@ -72,8 +73,15 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
   progress,
   description,
 }) => {
+  const router = useRouter();
+
+  const handlePress = () => {
+    // Navigate to challenge details using the dynamic route
+    router.push(`/home/challenges/${id}`);
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handlePress} activeOpacity={0.7}>
       {/* Main Content Row */}
       <View style={styles.mainContent}>
         {/* Circular Progress */}
@@ -111,7 +119,7 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

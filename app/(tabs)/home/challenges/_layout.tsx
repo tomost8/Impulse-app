@@ -24,6 +24,13 @@ export default function ChallengesLayout() {
           headerShown: false 
         }} 
       />
+      <Stack.Screen 
+        name="[id]" 
+        options={{ 
+          title: 'Challenge Details',
+          headerShown: false 
+        }} 
+      />
     </Stack>
   );
 }

@@ -10,6 +10,7 @@ interface AuthContextType {
   firebaseUid: string | null;
   loading: boolean;
   authInitialized: boolean;
+  tokenRefreshComplete: boolean;
   login: (token: string, id: number, firebaseUid: string, rememberMe: boolean, email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string | null>;
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
   const [authInitialized, setAuthInitialized] = useState(false);
+  const [tokenRefreshComplete, setTokenRefreshComplete] = useState(false);
   
   // Add a ref to track if we've already loaded auth data to prevent unnecessary clearing
   const hasLoadedAuthData = useRef(false);
@@ -65,14 +67,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           currentFirebaseUid.current = storedFirebaseUid;
           hasLoadedAuthData.current = true;
           
-          // Schedule token refresh based on actual expiration
-          scheduleTokenRefresh(storedToken);
+          // Check if token needs immediate refresh and wait for it to complete
+          try {
+            const tokenPayload = JSON.parse(atob(storedToken.split('.')[1]));
+            const expirationTime = tokenPayload.exp * 1000;
+            const currentTime = Date.now();
+            
+            if (expirationTime - currentTime <= 5 * 60 * 1000) {
+              console.log('🔐 Token needs immediate refresh during initialization');
+              await refreshAuthToken();
+            } else {
+              // Token is still valid, mark refresh as complete
+              setTokenRefreshComplete(true);
+              // Schedule future refresh
+              scheduleTokenRefresh(storedToken);
+            }
+          } catch (error) {
+            console.error('Error checking token during initialization:', error);
+            setTokenRefreshComplete(true);
+          }
         } else if (storedToken || storedUserId) {
           // User doesn't want to be remembered but old data exists
           // Clear Firebase session and stored data to prevent old token refresh
           console.log('🔐 Clearing old session data (rememberMe = false)');
           await signOut(getAuth());
           await AsyncStorage.clear();
+          // Mark token refresh as complete since we cleared everything
+          setTokenRefreshComplete(true);
+        } else {
+          // No stored auth data, mark token refresh as complete
+          setTokenRefreshComplete(true);
         }
         setAuthInitialized(true);
       } catch (error) {
@@ -311,11 +335,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Schedule refresh for the new token
             scheduleTokenRefresh(newToken);
             
+            // Mark token refresh as complete
+            setTokenRefreshComplete(true);
+            
             return newToken;
           }
         } else {
           console.log('🔄 Token is still valid, no refresh needed');
         }
+        
+        // If token is still valid, mark refresh as complete
+        setTokenRefreshComplete(true);
         
         // If token is still valid, return the current token
         return currentToken;
@@ -324,10 +354,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // If no current user but we have stored auth data, don't force logout
       // This allows for JWT-based authentication without Firebase user
       console.log('No Firebase user found, but keeping stored auth state');
+      
+      // Mark token refresh as complete even if no Firebase user
+      setTokenRefreshComplete(true);
+      
       return authToken;
     } catch (error) {
       console.error('Error refreshing token:', error);
       // Don't automatically logout on token refresh errors
+      
+      // Mark token refresh as complete even on error to prevent blocking
+      setTokenRefreshComplete(true);
+      
       return authToken;
     }
   };
@@ -415,6 +453,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         firebaseUid: stableFirebaseUid,
         loading, 
         authInitialized,
+        tokenRefreshComplete,
         login, 
         logout,
         refreshAuthToken,
@@ -439,6 +478,7 @@ export const useAuth = () => {
       firebaseUid: null,
       loading: true,
       authInitialized: false,
+      tokenRefreshComplete: false,
       login: async () => { throw new Error('AuthProvider not available'); },
       logout: async () => { throw new Error('AuthProvider not available'); },
       refreshAuthToken: async () => { throw new Error('AuthProvider not available'); },

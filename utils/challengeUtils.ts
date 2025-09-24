@@ -65,7 +65,7 @@ export function getBadgeImageName(title: string, badge: string): string {
 // Helper to get the image directly
 export function getBadgeImage(title: string, badge: string) {
   const name = getBadgeImageName(title, badge);
-  console.log("🛹 Getting badge image for:", name);
+  //console.log("🛹 Getting badge image for:", name);
   return badgeImages[name];
 }
 

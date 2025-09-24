@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { useRouter } from "expo-router";
 import { getBadgeImage } from "@/utils/challengeUtils";
 
 type HomeCompletedChallengeProps = {
@@ -19,13 +20,20 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
   endsAt,
   badge,
 }) => {
+  const router = useRouter();
+
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown date';
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handlePress = () => {
+    // Navigate to challenge details using the dynamic route
+    router.push(`/home/challenges/${id}`);
+  };
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handlePress} activeOpacity={0.7}>
       {/* Main Content Row */}
       <View style={styles.mainContent}>
         {/* Badge Placeholder */}
@@ -58,7 +66,7 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

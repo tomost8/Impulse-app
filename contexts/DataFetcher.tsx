@@ -55,7 +55,7 @@ export const useDataRefetch = () => {
 };
 
 export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userId, authToken, loading, authInitialized } = useAuth();
+  const { userId, authToken, loading, authInitialized, tokenRefreshComplete } = useAuth();
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,
@@ -89,7 +89,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const hasFetchedUser = useRef(false);
   
   // Conditions
-  const shouldFetchUserInitially = !hasFetchedUser.current && hasValidAuth;
+  const shouldFetchUserInitially = !hasFetchedUser.current && hasValidAuth && tokenRefreshComplete;
   const shouldRefetchUser = Boolean(actionRefetchTrigger > 0 && 
     actionRefetchTrigger !== lastActionRefetchTrigger.current && 
     currentRefetchOptions.current.user);
@@ -127,7 +127,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const hasFetchedCommunities = useRef(false);
   
   // Conditions
-  const shouldFetchCommunitiesInitially = !hasFetchedCommunities.current && hasValidAuth;
+  const shouldFetchCommunitiesInitially = !hasFetchedCommunities.current && hasValidAuth && tokenRefreshComplete;
   const shouldRefetchCommunities = Boolean(actionRefetchTrigger > 0 && 
     actionRefetchTrigger !== lastActionRefetchTrigger.current && 
     currentRefetchOptions.current.communities);
@@ -144,7 +144,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const hasFetchedChats = useRef(false);
   
   // Conditions
-  const shouldFetchChatsInitially = !hasFetchedChats.current && hasValidAuth;
+  const shouldFetchChatsInitially = !hasFetchedChats.current && hasValidAuth && tokenRefreshComplete;
   const shouldRefetchChats = Boolean(actionRefetchTrigger > 0 && 
     actionRefetchTrigger !== lastActionRefetchTrigger.current && 
     currentRefetchOptions.current.chats);
@@ -161,7 +161,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const hasFetchedFriends = useRef(false);
   
   // Conditions
-  const shouldFetchFriendsInitially = !hasFetchedFriends.current && hasValidAuth;
+  const shouldFetchFriendsInitially = !hasFetchedFriends.current && hasValidAuth && tokenRefreshComplete;
   const shouldRefetchFriends = Boolean(actionRefetchTrigger > 0 && 
     actionRefetchTrigger !== lastActionRefetchTrigger.current && 
     currentRefetchOptions.current.friends);
@@ -178,7 +178,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const hasFetchedChallenges = useRef(false);
   
   // Conditions
-  const shouldFetchChallengesInitially = !hasFetchedChallenges.current && hasValidAuth;
+  const shouldFetchChallengesInitially = !hasFetchedChallenges.current && hasValidAuth && tokenRefreshComplete;
   const shouldRefetchChallenges = Boolean(actionRefetchTrigger > 0 && 
     actionRefetchTrigger !== lastActionRefetchTrigger.current && 
     currentRefetchOptions.current.challenges);
