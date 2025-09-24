@@ -93,9 +93,7 @@ const HomeActiveChallenge: React.FC<HomeActiveChallengeProps> = ({
           {/* Title and Status Row */}
           <View style={styles.titleRow}>
             <Text style={styles.title}>{title}</Text>
-            <Text style={[styles.status, isCompleted && styles.completedStatus]}>
-              {status === 'active' ? 'Active' : status === 'completed' ? 'Completed' : 'Pending'}
-            </Text>
+            <Text style={styles.status}>Active</Text>
           </View>
           
           {/* Days Remaining */}
@@ -228,9 +226,6 @@ const styles = StyleSheet.create({
   },
   completedContainer: {
     backgroundColor: "#F1F3FA",
-  },
-  completedStatus: {
-    color: "#5E6676",
   },
   activeContainer: {
     backgroundColor: "#FFF5F8",

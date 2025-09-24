@@ -62,6 +62,20 @@ export function getBadgeImageName(title: string, badge: string): string {
   return `${category}_level_${level}_${badge.toLowerCase()}`;
 }
 
+// Helper to get the image directly
+export function getBadgeImage(title: string, badge: string) {
+  const name = getBadgeImageName(title, badge);
+  console.log("🛹 Getting badge image for:", name);
+  return badgeImages[name];
+}
+
+export function getCategoryIcon(category?: string) {
+  let iconName = category?.split("_")[0].toLowerCase();
+  if (iconName === "working") iconName = "workout";
+
+  return categoryIcons[iconName || "available"];
+}
+
 // Static image map (Metro requires explicit requires)
 export const badgeImages: Record<string, any> = {
   food_level_1_bronze: require("@/assets/images/challenge/badges/food_level_1_bronze.png"),
@@ -213,8 +227,21 @@ export const greyBadgeImages: Record<string, any> = {
   passion_level_3_diamond: require("@/assets/images/challenge/badges/passion_level_3_diamond.png"),
 };
 
-// Helper to get the image directly
-export function getBadgeImage(title: string, badge: string) {
-  const name = getBadgeImageName(title, badge);
-  return badgeImages[name];
-}
+export const categoryIcons: Record<string, any> = {
+  available: require("@/assets/icons/challenges/category_available.png"),
+  food: require("@/assets/icons/challenges/category_food.png"),
+  workout: require("@/assets/icons/challenges/category_workout.png"),
+  studying: require("@/assets/icons/challenges/category_studying.png"), 
+  wellness: require("@/assets/icons/challenges/category_wellness.png"),
+  rise: require("@/assets/icons/challenges/category_rise.png"),
+  passion: require("@/assets/icons/challenges/category_passion.png"),
+};
+
+export const challengeIcons: Record<string, any> = {
+  food: require("@/assets/icons/food.png"),
+  workout: require("@/assets/icons/workout.png"),
+  studying: require("@/assets/icons/studyingworking.png"), 
+  wellness: require("@/assets/icons/wellness.png"),
+  rise: require("@/assets/icons/riseshine.png"),
+  passion: require("@/assets/icons/passionhobby.png"),
+};

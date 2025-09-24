@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, Platform } from "react-native";
+import { View, StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, Image } from "react-native";
 import LoadingScreen from "@/components/ui/common/loading";
 import Header from "@/components/ui/common/headers/Header";
 import { ExploreChallenge } from "@/components/features/goals";
 import { router } from "expo-router";
+import { getCategoryIcon } from "@/utils/challengeUtils";
 
 interface AddChallengeScreenProps {
   isLoading: boolean;
@@ -12,7 +13,6 @@ interface AddChallengeScreenProps {
   errors: any[];
   selectedCategory: string | undefined;
   setSelectedCategory: (category: string | undefined) => void;
-  onJoinChallenge: (challengeId: number) => Promise<void>;
   isJoiningChallenge: boolean;
 }
 
@@ -23,11 +23,10 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
   errors, 
   selectedCategory, 
   setSelectedCategory,
-  onJoinChallenge,
   isJoiningChallenge
 }) => {
   const categories = [
-    { key: undefined, label: 'All' },
+    { key: undefined, label: 'Available' },
     { key: 'FOOD', label: 'Food' },
     { key: 'WELLNESS', label: 'Wellness' },
     { key: 'WORKING_OUT', label: 'Working Out' },
@@ -36,10 +35,7 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
     { key: 'PASSION_HOBBY', label: 'Passion/Hobby' },
   ];
 
-  const handleJoinChallenge = async (challengeId: number, challengeTitle: string) => {
-    console.log('Join Challenge button pressed for:', challengeTitle, 'ID:', challengeId);
-    onJoinChallenge(challengeId);
-  };
+  console.log("AddChallengeScreen render - selectedCategory:", selectedCategory);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -66,13 +62,22 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
                 selectedCategory === category.key && styles.categoryButtonActive
               ]}
               onPress={() => setSelectedCategory(category.key)}
-            >
-              <Text style={[
-                styles.categoryButtonText,
-                selectedCategory === category.key && styles.categoryButtonTextActive
-              ]}>
-                {category.label}
-              </Text>
+            > 
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Image 
+                  source={getCategoryIcon(category.key)}
+                  style={[
+                    styles.icon,
+                    selectedCategory === category.key && styles.iconActive
+                  ]}
+                />
+                <Text style={[
+                  styles.categoryButtonText,
+                  selectedCategory === category.key && styles.categoryButtonTextActive
+                ]}>
+                  {category.label}
+                </Text>
+              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -84,12 +89,22 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
           {challenges && challenges.length > 0 ? (
             <>
               <View style={styles.challengesContainer}>
-                {challenges.map((challengeItem, index) => (
+                {challenges
+                .filter((challengeItem) => {
+                  // If category.key is undefined → only allow ACTIVE or COMPLETED
+                  if (selectedCategory === undefined) {
+                    return ( 
+                      !challengeItem.isJoined && !challengeItem.isLocked
+                    );
+                  }
+                  // Otherwise, keep everything
+                  return true;
+                })
+                .map((challengeItem, index) => (
                   <ExploreChallenge
                     key={challengeItem.challenge.id || index}
                     challengeItem={challengeItem}
                     isJoiningChallenge={isJoiningChallenge}
-                    onJoinChallenge={handleJoinChallenge}
                   />
                 ))}
               </View>
@@ -133,14 +148,24 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
   },
   categoryScroll: {
-    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingLeft: 10,
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginRight: 20,
     borderRadius: 20,
     backgroundColor: '#F5F5F5',
+  },
+  icon: {
+    width: 16,
+    height: 16,
+    marginRight: 4,
+    resizeMode: "contain",
+  },
+  iconActive: {
+    tintColor: '#FFFFFF',
   },
   categoryButtonActive: {
     backgroundColor: '#DE728D',

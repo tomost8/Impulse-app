@@ -21,6 +21,7 @@ export const GET_EXPLORE_CHALLENGES = gql`
         isJoined
         isLocked
         shortDescription
+        status
       }
       errors {
         field
@@ -41,6 +42,8 @@ export function useGetExploreChallenges(category?: string, hasFetched: boolean =
   if (debugQueries && fetched) {
     console.log("useGetExploreChallenges data", data, error ? 'error:' + error : '');
   }
+
+  console.log("useGetExploreChallenges fetched", data?.getExploreChallenges?.challenges || [], error ? 'error:' + error : '');
   
   return {
     challenges: data?.getExploreChallenges?.challenges || [],

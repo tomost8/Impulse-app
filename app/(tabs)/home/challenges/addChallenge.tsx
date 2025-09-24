@@ -46,22 +46,6 @@ const AddChallengePage = () => {
     }
   }, [hasNewChallengesData, selectedCategory]);
 
-  const handleJoinChallenge = async (challengeId: number) => {
-    console.log('Join Challenge button pressed for challenge ID:', challengeId);
-    
-    try {
-      const result = await joinChallenge(challengeId);
-      if (result.success) {
-        console.log('Successfully joined challenge:', challengeId);
-        // Optionally refresh the challenges data or navigate back
-      } else {
-        console.error('Failed to join challenge:', result.error);
-      }
-    } catch (error) {
-      console.error('Error joining challenge:', error);
-    }
-  };
-
   // Debug
   const loading = !hasFetchedChallenges.current;
   if (debugRenders && !loading) {
@@ -89,7 +73,6 @@ const AddChallengePage = () => {
     errors={errors}
     selectedCategory={selectedCategory}
     setSelectedCategory={setSelectedCategory}
-    onJoinChallenge={handleJoinChallenge}
     isJoiningChallenge={isJoiningChallenge}
   />;
 }

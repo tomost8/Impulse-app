@@ -1,6 +1,9 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, ImageSourcePropType } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, ImageSourcePropType, TouchableOpacity } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 import { getIconByCategory, getLabelByCategory } from '@/utils/goals';
+import ChallengeLockedModal from '../Modal/ChallengeLockedModal';
+import { router } from 'expo-router';
 
 interface ExploreChallengeProps {
   challengeItem: {
@@ -16,22 +19,19 @@ interface ExploreChallengeProps {
       points_diamond: number;
     };
     shortDescription?: string;
+    status?: string;
     isJoined: boolean;
     isLocked: boolean;
   };
   isJoiningChallenge: boolean;
-  onJoinChallenge: (challengeId: number, challengeTitle: string) => void;
 }
 
 const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
   challengeItem,
-  isJoiningChallenge,
-  onJoinChallenge
 }) => {
-  const handleJoinChallenge = () => {
-    onJoinChallenge(challengeItem.challenge.id, challengeItem.challenge.title);
-  };
 
+  const [showModalPopup, setshowModalPopup] = useState(false);
+  
   const maxPoints = Math.max(
     challengeItem.challenge.points_bronze,
     challengeItem.challenge.points_silver,
@@ -53,23 +53,62 @@ const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
     return title;
   };
 
+  const handlePress = () => {
+    if (!challengeItem.isJoined && !challengeItem.isLocked) {
+      // Go to Join Challenge
+      router.push({
+        pathname: "/home/challenges/joinChallenge",
+        params: {
+          challenge: JSON.stringify(challengeItem), // send challengeItem as string
+        },
+      });
+    } else if (!challengeItem.isJoined && challengeItem.isLocked) {
+      // Show locked modal
+      setshowModalPopup(true);
+    }
+  };
+
+
   return (
-    <View style={styles.challengeCard}>
-      <View style={styles.iconContainer}>
-        {categoryIcon && (
-          <Image source={categoryIcon as ImageSourcePropType} style={styles.icon} />
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.challengeCard}>
+        <View style={styles.iconContainer}>
+          {categoryIcon && (
+            <Image source={categoryIcon as ImageSourcePropType} style={styles.icon} />
+          )}
+        </View>
+
+        <View style={styles.content}>
+          <View style={styles.titleRow}>
+            <Text style={styles.challengeTitle}>{formatTitle(challengeItem.challenge.title)}</Text>
+
+            <Text style={styles.status}>
+              {(challengeItem.status === "ACTIVE" || challengeItem.status === "COMPLETED")
+                ? challengeItem.status.charAt(0).toUpperCase() + challengeItem.status.slice(1).toLowerCase()
+                : ""}
+            </Text>
+          </View>
+          <Text style={styles.challengeMeta}>
+            {getLabelByCategory(challengeItem.challenge.category)}  •  Max: {maxPoints} points
+          </Text>
+        </View>
+
+        {!challengeItem.isJoined && challengeItem.isLocked && (
+          <Feather name="lock" size={24} color="#FE6D73" />
         )}
+
+
+        {!challengeItem.isJoined && !challengeItem.isLocked && (
+          <Feather name="unlock" size={24} color="#FE6D73" />
+        )}
+
+        <ChallengeLockedModal
+          isVisible={showModalPopup}
+          onClose={() => setshowModalPopup(false)}
+        />
+
       </View>
-      
-      <View style={styles.content}>
-        <Text style={styles.challengeTitle}>{formatTitle(challengeItem.challenge.title)}</Text>
-        <Text style={styles.challengeMeta}>
-          {getLabelByCategory(challengeItem.challenge.category)} • Max: {maxPoints} points
-        </Text>
-      </View>
-      
-      <View style={styles.rightCircle} />
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -97,6 +136,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 4,
+  },
   challengeTitle: {
     fontSize: 16,
     fontWeight: "600",
@@ -105,7 +150,7 @@ const styles = StyleSheet.create({
   },
   challengeMeta: {
     fontSize: 12,
-    color: "#666666",
+    color: "#5E6676",
   },
   rightCircle: {
     width: 40,
@@ -113,6 +158,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#E1E1E1',
     marginLeft: 12,
+  },
+  status: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#DE728D",
+    fontFamily: "Poppins",
+    lineHeight: 18,
+    marginLeft: 8,
   },
 });
 

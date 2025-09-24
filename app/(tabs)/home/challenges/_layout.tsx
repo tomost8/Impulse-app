@@ -17,6 +17,13 @@ export default function ChallengesLayout() {
           headerShown: false 
         }} 
       />
+      <Stack.Screen 
+        name="joinChallenge" 
+        options={{ 
+          title: 'Show Challenge',
+          headerShown: false 
+        }} 
+      />
     </Stack>
   );
 }
