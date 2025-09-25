@@ -35,6 +35,7 @@
 
 // Account Main Screen Components
 export { default as AccountHeader } from './AccountHeader';
+export { default as ProfileHeader } from './ProfileHeader';
 
 // Rewards Components
 export { default as PointsDisplay } from './rewards/PointsDisplay';

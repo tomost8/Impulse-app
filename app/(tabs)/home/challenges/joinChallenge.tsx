@@ -5,9 +5,10 @@ import AuthWrapper from "@/contexts/AuthWrapper";
 import { useJoinChallenge } from "@/hooks/graphql/challenges/mutations";
 import LoadingScreen from "@/components/ui/common/loading";
 
+const DEBUG_JOIN_CHALLENGE_PAGE = true;
+
 const JoinChallengePage = () => {
   const { challenge } = useLocalSearchParams<{ challenge?: string }>();
-  console.log("🍾 Received challenge param:", challenge);
 
   const loading = !challenge;
 
@@ -42,6 +43,7 @@ const JoinChallengePage = () => {
     { title, badge: "Diamond", days: +totalDays, points: points_diamond },
   ];
 
+
   const { joinChallenge } = useJoinChallenge();
 
   const handleJoinChallenge = async () => {
@@ -50,7 +52,7 @@ const JoinChallengePage = () => {
       const result = await joinChallenge(id);
       if (result.success) {
         console.log("Successfully joined challenge:", id);
-        setJoined(true); // mark as joined
+        setJoined(true);
       } else {
         console.error("Failed to join challenge:", result.error);
       }
@@ -58,6 +60,24 @@ const JoinChallengePage = () => {
       console.error("Error joining challenge:", error);
     }
   };
+
+  if (DEBUG_JOIN_CHALLENGE_PAGE && !loading) {
+    console.log("Rendering JoinChallengePage:", {
+      challenge: {
+        id,
+        title,
+        category,
+        description,
+        dayLength,
+        joined
+      },
+      milestones: milestones.map(m => ({
+        badge: m.badge,
+        days: m.days,
+        points: m.points
+      }))
+    });
+  }
 
   return (
     <JoinChallengeScreen

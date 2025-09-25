@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL Hooks
 import { useGetMyChallenges } from '@/hooks/graphql/challenges/queries';
+// Contexts
+import { useAuth } from '@/contexts/AuthContext';
 // Components
 import ChallengeDetailScreen from '@/components/screens/home/ChallengeDetailScreen';
 import Header from '@/components/ui/common/headers/Header';
@@ -15,12 +17,14 @@ const ChallengeDetailPage = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { fetching, user } = useDataProvider();
+  const { authToken } = useAuth();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Query for Loading State - My Challenges Only
   const myChallengesRef = useRef<any | null>(null);
   const hasFetchedMyChallenges = useRef(false);
   const { activeChallenges, completedChallenges, success, errors: myChallengesErrors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
+    authToken as string,
     !hasFetchedMyChallenges.current && !fetching && !!user?.id
   );
 

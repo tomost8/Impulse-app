@@ -117,7 +117,7 @@ function TabLayout() {
           listeners={{
             tabPress: (e) => {
               e.preventDefault();
-              router.push('/chats');
+              router.replace('/chats');
             },
           }}
         />
@@ -159,7 +159,7 @@ function TabLayout() {
           listeners={{
             tabPress: (e) => {
               e.preventDefault();
-              router.push('/social');
+              router.replace('/social');
             },
           }}
         />
@@ -177,7 +177,7 @@ function TabLayout() {
           listeners={{
             tabPress: (e) => {
               e.preventDefault();
-              router.push('/account');
+              router.replace('/account');
             },
           }}
         />

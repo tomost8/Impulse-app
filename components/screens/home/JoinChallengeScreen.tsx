@@ -6,19 +6,19 @@ import Header from "@/components/ui/common/headers/Header";
 import { router } from "expo-router";
 import { getBadgeImage } from "@/utils/challengeUtils";
 
-type Friend = {
-  id: number;
-  name: string;
-  username: string;
-  avatar: string;
-};
-
 type Milestone = {
   title: string;
   badge: string;
   days: number;
   points: number;
   src?: ImageSourcePropType;
+};
+
+type Friend = {
+  id: number;
+  name: string;
+  username: string;
+  avatar: string;
 };
 
 interface JoinChallengeScreenProps {
@@ -44,23 +44,17 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
   milestones,
   // friends,
 }) => {
-
   const categoryIcon = getIconByCategory(category);
-
-  console.log("🍳 milestones:", milestones);
 
   const handleJoinChallenge = async () => {
     console.log('Join Challenge button pressed for:', title);
     onJoinChallenge();
   };
 
-
-
   if (isLoading) {
     return <LoadingScreen />;
   }
   
-
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.headerArea}>
@@ -69,28 +63,34 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
           onBackPress={() => router.back()}
         />
       </SafeAreaView>
-      <View>
+      <View style={styles.scrollContainer}>
         <ScrollView>
-          <View style={styles.contentContainer}>
-            <View style={styles.titleContainer}>
-              <View style={styles.iconContainer}>
-                {categoryIcon && (
-                  <Image source={categoryIcon as ImageSourcePropType} style={styles.icon} />
-                )}
-              </View>
-              <View style={styles.textContainer}>
+          <View style={styles.challengeHeaderContainer}>
+            <View style={styles.challengeInfo}>
+              {categoryIcon && (
+                <Image source={categoryIcon as ImageSourcePropType} style={styles.categoryIcon} />
+              )}
+              <View style={styles.textSection}>
                 <Text style={styles.title}>{getLabelByCategory(category)}</Text>
                 <Text style={styles.subtitle}>{dayLength}</Text>
               </View>
             </View>
             <View>
-              <TouchableOpacity style={styles.joinButton} onPress={handleJoinChallenge}>
-                <Text style={styles.joinButtonText}>{joined ? "Joined" : "Join"}</Text>
+              <TouchableOpacity 
+                style={joined ? styles.joinButtonDisabled : styles.joinButton} 
+                onPress={joined ? undefined : handleJoinChallenge}
+                disabled={joined}
+              >
+                <Text style={joined ? styles.joinButtonTextDisabled : styles.joinButtonText}>
+                  {joined ? "Joined" : "Join"}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
-          <Text style={styles.description}>Complete and upload a picture of a {title} activity each day to achieve the milestones below. Build your badge collection and share your success!</Text>
-
+          <Text style={styles.description}>
+            Complete and upload a picture of a {getLabelByCategory(category).toLowerCase()} activity 
+            each day to achieve the milestones below. Build your badge collection and share your success!
+          </Text>
 
           {/* Milestones */}
           <View style={styles.milestonesContainer}>
@@ -99,7 +99,7 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
                 <Text style={styles.milestoneText}>{m.badge}</Text>
                 <Image 
                   source={getBadgeImage(m.title, m.badge)}
-                  style={styles.icon}
+                  style={styles.badge}
                 />
                 <Text style={styles.milestoneSubText}>
                   {m.days} days 
@@ -112,7 +112,7 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
           </View>
 
           {/* Friends */}
-          <Text style={styles.friendsTitle}>Friends</Text>
+          {/* <Text style={styles.friendsTitle}>Friends</Text> */}
           {/* {friends.map((f) => (
             <View key={f.id} style={styles.friendItem}>
               <Image source={{ uri: f.avatar }} style={styles.avatar} />
@@ -129,6 +129,7 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
 };
 
 const styles = StyleSheet.create({
+  // Containers
   container: { 
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -136,32 +137,47 @@ const styles = StyleSheet.create({
   headerArea: {
     backgroundColor: "#E0EDFD",
   },
-  contentContainer: {
+  scrollContainer: {
+    flex: 1,
+  },
+  challengeHeaderContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 16,
   },
-  titleContainer: {
+  description: {
+    fontSize: 14,
+    color: "#444",
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    marginBottom: 20,
+  },
+  milestonesContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    marginBottom: 20,
+  },
+
+  /* Challenge Header */
+  challengeInfo: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  iconContainer: {
-    width: 57,
-    height: 57,
-    marginRight: 16,
-  },
-  icon: {
-    width: 60,
-    height: 60,
-    resizeMode: "contain",
-  },
-  textContainer: {
+  textSection: {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "center",
     gap: 8,
+  },
+  categoryIcon: {
+    width: 57,
+    height: 57,
+    marginRight: 16,
+    resizeMode: "contain",
   },
   title: {
     fontFamily: "Lato",
@@ -181,12 +197,8 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     paddingBottom: 10
   },
-  description: {
-    fontSize: 14,
-    color: "#444",
-    padding: 16,
-    marginBottom: 20
-  },
+
+  /* Join Button */
   joinButton: {
     backgroundColor: "#E75480",
     paddingVertical: 6,
@@ -201,20 +213,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
   },
-  milestonesContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
+  joinButtonDisabled: {
+    backgroundColor: "#CCCCCC",
+    paddingVertical: 6,
+    paddingHorizontal: 24,
+    borderRadius: 28,
+    alignItems: "center",
   },
+  joinButtonTextDisabled: {
+    color: "#999999",
+    fontWeight: "600",
+    fontFamily: "Inter",
+    fontSize: 14,
+    lineHeight: 22,
+  },
+
+  /* Milestones */
   milestone: {
     alignItems: "center",
-    flex: 1
-  },
-  badge: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginBottom: 5
+    flex: 1,
   },
   milestoneText: {
     color: '#5E6676',
@@ -223,6 +240,13 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontStyle: 'normal',
     fontWeight: '700',
+  },
+  badge: {
+    width: 57,
+    height: 50,
+    borderRadius: 20,
+    marginVertical: 8,
+    alignSelf: 'center'
   },
   milestoneSubText: {
     color: '#5E6676',
@@ -233,12 +257,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     lineHeight: 12,
   },
-  friendsTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    marginTop: 20,
-    marginBottom: 10
-  },
+
+  /* Friends */
   friendItem: {
     flexDirection: "row",
     alignItems: "center",
@@ -249,6 +269,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 12
+  },
+  friendsTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginTop: 20,
+    marginBottom: 10
   },
   friendName: {
     fontWeight: "600"

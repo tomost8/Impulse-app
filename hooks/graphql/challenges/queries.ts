@@ -31,7 +31,7 @@ export const GET_EXPLORE_CHALLENGES = gql`
   }
 `;
 
-export function useGetExploreChallenges(category?: string, hasFetched: boolean = true) {
+export function useGetExploreChallenges(category?: string, hasFetched: boolean=true, verbose: boolean=false) {
   const { data, loading, error } = useQuery(GET_EXPLORE_CHALLENGES, {
     variables: { category: category || null },
     skip: !hasFetched
@@ -40,10 +40,31 @@ export function useGetExploreChallenges(category?: string, hasFetched: boolean =
   const fetched = hasFetched && !loading;
   
   if (debugQueries && fetched) {
-    console.log("useGetExploreChallenges data", data, error ? 'error:' + error : '');
+    const challenges = data?.getExploreChallenges?.challenges || [];
+    const challengesCount = challenges.length;
+    
+    // Summary line
+    const summary = {
+      success: data?.getExploreChallenges?.success || false,
+      errors: data?.getExploreChallenges?.errors || null,
+      category: category || 'all',
+      challengesCount
+    };
+    
+    let formattedData = `useGetExploreChallenges: ${JSON.stringify(summary)}\n`;
+    
+    // Log all challenges with their status (verbose mode)
+    if (verbose) {
+      challenges.forEach((challengeItem: any) => {
+        const challenge = challengeItem.challenge;
+        const maxPoints = Math.max(challenge.points_bronze, challenge.points_silver, challenge.points_gold, challenge.points_diamond);
+        const status = `${challengeItem.isJoined ? 'Joined' : 'Not Joined'} | ${challengeItem.isLocked ? 'Locked' : 'Available'}`;
+        formattedData += `  - ${challenge.title}, Max_points: ${maxPoints}, Status: ${status}\n`;
+      });
+    }
+    
+    console.log(formattedData);
   }
-
-  console.log("useGetExploreChallenges fetched", data?.getExploreChallenges?.challenges || [], error ? 'error:' + error : '');
   
   return {
     challenges: data?.getExploreChallenges?.challenges || [],
@@ -118,12 +139,17 @@ export const GET_MY_CHALLENGES = gql`
   }
 `;
 
-export function useGetMyChallenges(hasFetched: boolean = true) {
+export function useGetMyChallenges(authToken: string, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_MY_CHALLENGES, {
-    skip: !hasFetched
+    skip: !shouldFetch,
+    context: {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      }
+    }
   });
   
-  const fetched = hasFetched && !loading;
+  const fetched = shouldFetch && !loading;
   
   if (debugQueries && fetched) {
     const activeChallenges = data?.getUserChallenges?.activeChallenges || [];
