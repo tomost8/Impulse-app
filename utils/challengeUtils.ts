@@ -34,7 +34,6 @@ function extractCategoryAndLevel(title: string) {
   return { category, level, totalDays };
 }
 
-
 export function getBadges(title: string, daysCompleted: number) {
   const totalDays = +title.split(" ")[0];
   const { category, level } = extractCategoryAndLevel(title);
@@ -56,16 +55,14 @@ export function getBadges(title: string, daysCompleted: number) {
   });
 }
 
-export function getBadgeImageName(title: string, badge: string): string {
-  const { category, level } = extractCategoryAndLevel(title);
-
-  return `${category}_level_${level}_${badge.toLowerCase()}`;
-}
-
 // Helper to get the image directly
 export function getBadgeImage(title: string, badge: string) {
-  const name = getBadgeImageName(title, badge);
-  //console.log("🛹 Getting badge image for:", name);
+
+  const { category, level } = extractCategoryAndLevel(title);
+  const name = `${category}_level_${level}_${badge.toLowerCase()}`;
+  
+  console.log("🛹 Getting badge image for:", name);
+  console.log("🛹 badgeImages:", badgeImages[name]);
   return badgeImages[name];
 }
 
@@ -74,6 +71,26 @@ export function getCategoryIcon(category?: string) {
   if (iconName === "working") iconName = "workout";
 
   return categoryIcons[iconName || "available"];
+}
+
+export function getPointsByBadge(badge: string, totalDays: number) {
+  if (badge.toUpperCase() === "BRONZE") return Math.round(totalDays * 200 / 7);
+  if (badge.toUpperCase() === "SILVER") return Math.round(totalDays * 250 / 7);
+  if (badge.toUpperCase() === "GOLD") return Math.round(totalDays * 300 / 7);
+  if (badge.toUpperCase() === "DIAMOND") return Math.round(totalDays * 400 / 7);
+  return 0;
+}
+
+// Function to parse title from "Num Day Category Challenge" format
+export function parseTitle(title: string): string {
+  // Match pattern: "Num Day" + Category + "Challenge"
+  const match = title.match(/^(\d+\s+Day)\s+(.+?)\s+(Challenge)$/);
+  if (match) {
+    const dayPart = match[1];
+    const challengePart = match[3];
+    return `${dayPart} ${challengePart}`;
+  }
+  return title; // Return original if pattern doesn't match
 }
 
 // Static image map (Metro requires explicit requires)
@@ -236,15 +253,3 @@ export const categoryIcons: Record<string, any> = {
   rise: require("@/assets/icons/challenges/category_rise.png"),
   passion: require("@/assets/icons/challenges/category_passion.png"),
 };
-
-// Function to parse title from "Num Day Category Challenge" format
-export function parseTitle(title: string): string {
-  // Match pattern: "Num Day" + Category + "Challenge"
-  const match = title.match(/^(\d+\s+Day)\s+(.+?)\s+(Challenge)$/);
-  if (match) {
-    const dayPart = match[1];
-    const challengePart = match[3];
-    return `${dayPart} ${challengePart}`;
-  }
-  return title; // Return original if pattern doesn't match
-}

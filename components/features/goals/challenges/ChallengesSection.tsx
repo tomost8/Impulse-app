@@ -14,6 +14,9 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
   // Get active challenges data
   const activeChallenges = challenges?.activeChallenges || [];
   const completedChallenges = challenges?.completedChallenges || [];
+  // console.log("🪢 Challenges", challenges);
+  // console.log("🪢 ActiveChallenges", activeChallenges);
+  console.log("🪢 CompletedChallenges", completedChallenges);
   
   // TEMPORARY: Force empty state for testing
   const forceEmptyState = false;

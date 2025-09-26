@@ -56,7 +56,10 @@ const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
   const handlePress = () => {
     if (!challengeItem.isJoined && !challengeItem.isLocked) {
       // Go to Challenge Details using dynamic route
-      router.push(`/home/challenges/${challengeItem.challenge.id}`);
+      router.push({
+        pathname: '/home/challenges/[id]',
+        params: { id: String(challengeItem.challenge.id) }
+      });
     } else if (!challengeItem.isJoined && challengeItem.isLocked) {
       // Show locked modal
       setshowModalPopup(true);

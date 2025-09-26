@@ -69,61 +69,59 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
           onBackPress={() => router.back()}
         />
       </SafeAreaView>
-      <View>
-        <ScrollView>
-          <View style={styles.contentContainer}>
-            <View style={styles.titleContainer}>
-              <View style={styles.iconContainer}>
-                {categoryIcon && (
-                  <Image source={categoryIcon as ImageSourcePropType} style={styles.icon} />
-                )}
-              </View>
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-                <Text style={styles.subtitle}>{dayLength}</Text>
-              </View>
+      <ScrollView>
+        <View style={styles.contentContainer}>
+          <View style={styles.titleContainer}>
+            <View style={styles.iconContainer}>
+              {categoryIcon && (
+                <Image source={categoryIcon as ImageSourcePropType} style={styles.icon} />
+              )}
             </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{getLabelByCategory(category)}</Text>
+              <Text style={styles.subtitle}>{dayLength}</Text>
+            </View>
+          </View>
+          <View>
+            <TouchableOpacity style={styles.joinButton} onPress={handleJoinChallenge}>
+              <Text style={styles.joinButtonText}>{joined ? "Joined" : "Join"}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <Text style={styles.description}>Complete and upload a picture of a {title} activity each day to achieve the milestones below. Build your badge collection and share your success!</Text>
+
+
+        {/* Milestones */}
+        <View style={styles.milestonesContainer}>
+          {milestones.map((m, index) => (
+            <View key={index} style={styles.milestone}>
+              <Text style={styles.milestoneText}>{m.badge}</Text>
+              <Image 
+                source={getBadgeImage(m.title, m.badge)}
+                style={styles.icon}
+              />
+              <Text style={styles.milestoneSubText}>
+                {m.days} days 
+              </Text>
+              <Text style={styles.milestoneSubText}>
+                {m.points} points
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Friends */}
+        <Text style={styles.friendsTitle}>Friends</Text>
+        {/* {friends.map((f) => (
+          <View key={f.id} style={styles.friendItem}>
+            <Image source={{ uri: f.avatar }} style={styles.avatar} />
             <View>
-              <TouchableOpacity style={styles.joinButton} onPress={handleJoinChallenge}>
-                <Text style={styles.joinButtonText}>{joined ? "Joined" : "Join"}</Text>
-              </TouchableOpacity>
+              <Text style={styles.friendName}>{f.name}</Text>
+              <Text style={styles.friendUsername}>{f.username}</Text>
             </View>
           </View>
-          <Text style={styles.description}>Complete and upload a picture of a {title} activity each day to achieve the milestones below. Build your badge collection and share your success!</Text>
-
-
-          {/* Milestones */}
-          <View style={styles.milestonesContainer}>
-            {milestones.map((m, index) => (
-              <View key={index} style={styles.milestone}>
-                <Text style={styles.milestoneText}>{m.badge}</Text>
-                <Image 
-                  source={getBadgeImage(m.title, m.badge)}
-                  style={styles.icon}
-                />
-                <Text style={styles.milestoneSubText}>
-                  {m.days} days 
-                </Text>
-                <Text style={styles.milestoneSubText}>
-                  {m.points} points
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Friends */}
-          <Text style={styles.friendsTitle}>Friends</Text>
-          {/* {friends.map((f) => (
-            <View key={f.id} style={styles.friendItem}>
-              <Image source={{ uri: f.avatar }} style={styles.avatar} />
-              <View>
-                <Text style={styles.friendName}>{f.name}</Text>
-                <Text style={styles.friendUsername}>{f.username}</Text>
-              </View>
-            </View>
-          ))} */}
-        </ScrollView>
-      </View>
+        ))} */}
+      </ScrollView>
     </View>
   );
 };
@@ -181,12 +179,6 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     paddingBottom: 10
   },
-  description: {
-    fontSize: 14,
-    color: "#444",
-    padding: 16,
-    marginBottom: 20
-  },
   joinButton: {
     backgroundColor: "#E75480",
     paddingVertical: 6,
@@ -200,6 +192,12 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontSize: 14,
     lineHeight: 22,
+  },
+  description: {
+    fontSize: 14,
+    color: "#444",
+    padding: 16,
+    marginBottom: 20
   },
   milestonesContainer: {
     flexDirection: "row",

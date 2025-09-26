@@ -16,7 +16,7 @@ const parseProgress = (progressLabel: string) => {
 };
 
 // Circular Progress Component
-const CircularProgress = ({ progressLabel }: { progressLabel: string }) => {
+export const CircularProgress = ({ progressLabel }: { progressLabel: string }) => {
   const { current, total, percentage } = parseProgress(progressLabel);
   const size = 50;
   const strokeWidth = 4;

@@ -184,5 +184,77 @@ export function useGetMyChallenges(hasFetched: boolean = true) {
   };
 }
 
+export const GET_CHALLENGE_DAY_MEDIA = gql`
+  query GetChallengeDayMedia($userChallengeId: Int!) {
+    getChallengeDayMedia(userChallengeId: $userChallengeId) {
+      success
+      entries {
+        day_number
+        mediaUrls
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
 
+export function useGetChallengeDayMedia(userChallengeId: number, hasFetched: boolean = true) {
+  const { data, loading, error } = useQuery(GET_CHALLENGE_DAY_MEDIA, {
+    variables: { userChallengeId },
+    skip: !hasFetched,
+  });
 
+  const fetched = hasFetched && !loading;
+
+  if (debugQueries && fetched) {
+    console.log("useGetChallengeDayMedia data", data, error ? "error:" + error : "");
+  }
+
+  return {
+    entries: data?.getChallengeDayMedia?.entries || [],
+    success: data?.getChallengeDayMedia?.success || false,
+    errors: data?.getChallengeDayMedia?.errors || [],
+    fetched,
+    error: error?.message || null,
+  };
+}
+
+export const GET_FRIENDS_IN_CHALLENGE = gql`
+  query GetFriendsInChallenge($challengeId: Int!, $status: ChallengeStatus!) {
+    getFriendsInChallenge(challengeId: $challengeId, status: $status) {
+      success
+      friends {
+        id
+        username
+        first_name
+        last_name
+        days_completed
+        status
+        badge_level
+        profile_picture
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+// Hook for usage in components
+export function useGetFriendsInChallenge(challengeId: number, status: string, hasFetched: boolean = true) {
+  const { data, loading, error } = useQuery(GET_FRIENDS_IN_CHALLENGE, {
+    variables: { challengeId, status },
+    skip: !hasFetched
+  });
+
+  return {
+    friends: data?.getFriendsInChallenge?.friends || [],
+    success: data?.getFriendsInChallenge?.success || false,
+    errors: data?.getFriendsInChallenge?.errors || [],
+    loading,
+    error: error?.message || null
+  };
+}
