@@ -23,7 +23,6 @@ interface ExploreChallengeProps {
     isJoined: boolean;
     isLocked: boolean;
   };
-  isJoiningChallenge: boolean;
 }
 
 const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
@@ -54,14 +53,12 @@ const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
   };
 
   const handlePress = () => {
-    if (!challengeItem.isJoined && !challengeItem.isLocked) {
-      // Go to Challenge Details using dynamic route
+    if (!challengeItem.isLocked) {
       router.push({
-        pathname: '/home/challenges/[id]',
-        params: { id: String(challengeItem.challenge.id) }
+        pathname: '/home/challenges/joinChallenge',
+        params: { challenge: JSON.stringify(challengeItem) }
       });
-    } else if (!challengeItem.isJoined && challengeItem.isLocked) {
-      // Show locked modal
+    } else {
       setshowModalPopup(true);
     }
   };

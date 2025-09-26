@@ -3,7 +3,6 @@ import { Alert } from 'react-native';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL Hooks
 import { useGetExploreChallenges } from '@/hooks/graphql/challenges/queries';
-import { useJoinChallenge } from '@/hooks/graphql/challenges/mutations';
 // Components
 import AddChallengeScreen from '@/components/screens/home/AddChallengeScreen';
 // Debug
@@ -15,24 +14,18 @@ const AddChallengePage = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [renderCounter, setRenderCounter] = useState(0);
 
-  // Query for Loading State - Explore Challenges Only
   const challengesRef = useRef<any | null>(null);
   const hasFetchedChallenges = useRef(false);
   const lastFetchedCategory = useRef<string | undefined>(undefined);
-  
   // Allow refetching when category changes or when first loading
   const shouldFetch = !fetching && !!user?.id && (
     !hasFetchedChallenges.current || 
     lastFetchedCategory.current !== selectedCategory
   );
-  
-  const { challenges, success, errors, fetched: hasNewChallengesData } = useGetExploreChallenges(
+  const { challenges, fetched: hasNewChallengesData } = useGetExploreChallenges(
     selectedCategory, 
     shouldFetch
   );
-
-  // Join Challenge Mutation
-  const { joinChallenge, loading: isJoiningChallenge } = useJoinChallenge();
 
   useEffect(() => {
     if (!hasNewChallengesData) {
@@ -49,31 +42,15 @@ const AddChallengePage = () => {
   // Debug
   const loading = !hasFetchedChallenges.current;
   if (debugRenders && !loading) {
-    let output = 'Rendering AddChallengePage\n';
-    
-    if (challengesRef.current && challengesRef.current.length > 0) {
-      challengesRef.current.forEach((challengeItem: any, index: number) => {
-        const challenge = challengeItem.challenge;
-        const maxPoints = Math.max(challenge.points_bronze, challenge.points_silver, challenge.points_gold, challenge.points_diamond);
-        const status = `${challengeItem.isJoined ? 'Joined' : 'Not Joined'} | ${challengeItem.isLocked ? 'Locked' : 'Available'}`;
-        output += `  - ${challenge.title}, Max_points: ${maxPoints}, Status: ${status}\n`;
-      });
-    }
-    
-    output += `Selected Category: ${selectedCategory}\n`;
-    output += `Render Counter: ${renderCounter}`;
-    
-    console.log(output);
+    const challengesCount = challengesRef.current?.length || 0;
+    console.log(`Rendering AddChallengePage - Challenges: ${challengesCount}, Category: ${selectedCategory || 'all'}, Render Counter: ${renderCounter}`);
   }
 
   return <AddChallengeScreen
     isLoading={loading}
     challenges={challengesRef.current}
-    success={success}
-    errors={errors}
     selectedCategory={selectedCategory}
     setSelectedCategory={setSelectedCategory}
-    isJoiningChallenge={isJoiningChallenge}
   />;
 }
 

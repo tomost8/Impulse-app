@@ -4,13 +4,19 @@ import { router } from 'expo-router';
 
 import LoadingScreen from "@/components/ui/common/loading";
 import { MemoriesGrid } from '@/components/features/posts';
-import { PointGuideModal } from "@/components/features/account";
+import { ProfileHeader, PointGuideModal } from "@/components/features/account";
 
 interface AccountProfileProps {
   user: any;
   isLoading: boolean;
   numCommunities: number;
   numFriends: number;
+  badgeInfo: Array<{
+    id: number;
+    length: string;
+    category: string;
+    badgeLevel: string;
+  }>;
   memories: any[];
 }
 
@@ -19,6 +25,7 @@ function AccountMainScreen({
   isLoading,
   numCommunities,
   numFriends,
+  badgeInfo,
   memories
 }: AccountProfileProps): JSX.Element {
   if (isLoading) {
@@ -39,49 +46,31 @@ function AccountMainScreen({
           scrollEventThrottle={16}
           decelerationRate="normal"
         >
-          <View style={styles.headerExtension}>
-            <View style={styles.headerRow}>
-              <Text style={styles.headerTitle}>My Account</Text>
-              <View style={styles.headerItem}>
-                <TouchableOpacity 
-                  style={styles.settingsButton}
-                  onPress={() => router.push('/account/referrals')}
-                >
-                  <Image
-                    source={require('@/assets/icons/referral.png')}
-                    style={styles.settingsIcon}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={styles.settingsButton}
-                  onPress={() => router.push('/account/settings')}
-                >
-                  <Image
-                    source={require('@/assets/icons/setting.png')}
-                    style={styles.settingsIcon}
-                  />
-                </TouchableOpacity>
-              </View>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>My Account</Text>
+            <View style={styles.headerButtons}>
+              <TouchableOpacity 
+                style={styles.headerButton}
+                onPress={() => router.push('/account/referrals')}
+              >
+                <Image
+                  source={require('@/assets/icons/referral.png')}
+                  style={styles.headerIcon}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.headerButton}
+                onPress={() => router.push('/account/settings')}
+              >
+                <Image
+                  source={require('@/assets/icons/setting.png')}
+                  style={styles.headerIcon}
+                />
+              </TouchableOpacity>
             </View>
           </View>
-
-          {/* Custom Header Section */}
-          <View style={styles.headerContainer}>
-            {/* Crescent Background */}
-            <View style={styles.crescentContainer}>
-              <View style={styles.crescent} />
-            </View>
-
-            {/* Profile Section */}
-            <View style={styles.profileSection}>
-              <Image
-                source={{ uri: user.profile_picture }}
-                style={styles.profileImage}
-              />
-              <Text style={styles.profileName}>{user.first_name} {user.last_name}</Text>
-              <Text style={styles.username}>@{user.username}</Text>
-            </View>
-          </View>
+          <ProfileHeader user={user} />
 
           {/* Points Section */}
           <View style={styles.pointsContainer}>
@@ -106,16 +95,22 @@ function AccountMainScreen({
 
           {/* Stats Section */}
           <View style={styles.statsContainer}>
-            <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
-              <Text style={styles.statNumber}>{numCommunities}</Text>
-              <Text style={styles.statLabel}>Communities</Text>
-            </TouchableOpacity>
-            <View style={styles.divider} />
             <TouchableOpacity onPress={() => router.push('/account/friends')} style={styles.statItem}>
               <Text style={styles.statNumber}>{numFriends}</Text>
-              <Text style={styles.statLabel}>Friends</Text>
+              <Text style={styles.statLabel}>{numFriends === 1 ? 'Friend' : 'Friends'}</Text>
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity onPress={() => router.push('/account/badges')} style={styles.statItem}>
+              <Text style={styles.statNumber}>{badgeInfo.length}</Text>
+              <Text style={styles.statLabel}>{badgeInfo.length === 1 ? 'Badge' : 'Badges'}</Text>
+            </TouchableOpacity>
+            <View style={styles.divider} />
+            <TouchableOpacity onPress={() => router.push('/account/communities')} style={styles.statItem}>
+              <Text style={styles.statNumber}>{numCommunities}</Text>
+              <Text style={styles.statLabel}>{numCommunities === 1 ? 'Community' : 'Communities'}</Text>
             </TouchableOpacity>
           </View>
+
 
           {/* Memories Section */}
           <MemoriesGrid memories={memories || []} />
@@ -132,6 +127,7 @@ function AccountMainScreen({
 }
 
 const styles = StyleSheet.create({
+  /* Main Container & Layout */
   safeArea: {
     flex: 1,
     backgroundColor: '#E0EDFD',
@@ -140,40 +136,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerExtension: {
-    backgroundColor: '#E0EDFD',
-    width: '100%',
-    paddingVertical: 16,
-  },
   scrollView: {
     flex: 1,
   },
   scrollViewContent: {
-    paddingBottom: 200, // Add extra space for dropdowns
+    paddingBottom: 100,
   },
-  headerContainer: {
-    position: 'relative',
-    paddingBottom: 16,
-  },
-  crescentContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 200,
-    overflow: 'hidden',
-  },
-  headerRow: {
+
+  /* Header */
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#E0EDFD',
+    width: '100%',
+    paddingVertical: 16,
     paddingHorizontal: 20,
     paddingTop: 2,
-    marginBottom: -8, 
-    zIndex: 1,
-  },
-  headerItem: {
-    flexDirection: 'row',
+    marginBottom: -8,
   },
   headerTitle: {
     fontSize: 18,
@@ -181,40 +161,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#242020',
   },
-  settingsButton: {
+  headerButtons: {
+    flexDirection: 'row',
+  },
+  headerButton: {
     width: 40,
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  settingsIcon: {
+  headerIcon: {
     width: 24,
     height: 24,
     resizeMode: 'contain',
   },
-  profileSection: {
-    alignItems: 'center',
-    marginTop: 60,
-    zIndex: 1,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  profileName: {
-    fontSize: 24,
-    fontFamily: 'Poppins',
-    fontWeight: '600',
-    color: '#242020',
-    marginTop: 16,
-  },
-  username: {
-    fontSize: 14,
-    fontFamily: 'Open Sans',
-    color: '#979797',
-    marginTop: 4,
-  },
+
+
+  /* Points */
   pointsContainer: {
     paddingHorizontal: 20,
     marginTop: 35,
@@ -259,20 +222,24 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 7,
   },
+
+  // ===== STATS SECTION =====
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
+    height: 65,
     borderColor: '#fff0f1',
+    borderWidth: 2,
     borderRadius: 20,
     marginTop: 28,
     marginHorizontal: 20,
     padding: 15,
   },
   statItem: {
+    flex: 1,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   statNumber: {
     fontFamily: 'Poppins',
@@ -282,7 +249,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontFamily: 'Open Sans',
-    fontSize: 14,
+    fontSize: 13,
     color: '#000',
     marginTop: 5,
   },
@@ -290,22 +257,8 @@ const styles = StyleSheet.create({
     width: 1,
     height: 47,
     backgroundColor: '#d9d9d9',
-    marginHorizontal: 33,
   },
-  crescent: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 500,
-    borderBottomLeftRadius: 800,
-    borderBottomRightRadius: 800,
-    backgroundColor: '#E0EDFD',
-    transform: [
-      { scaleX: 1.3 },
-      { translateY: -380 },
-    ],
-  },
+
 });
 
 export default AccountMainScreen;

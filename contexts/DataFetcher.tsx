@@ -185,6 +185,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const shouldFetchChallenges = shouldFetchChallengesInitially || shouldRefetchChallenges;
   
   const { activeChallenges, completedChallenges, fetched: hasNewChallengesData } = useGetMyChallenges(
+    authToken as string,
     shouldFetchChallenges
   );
 

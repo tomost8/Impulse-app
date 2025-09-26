@@ -33,7 +33,7 @@ const ChallengeLockedModal: React.FC<ChallengeLockedModalProps> = ({
           {/* Message */}
           <Text style={styles.message}>
             You must achieve a minimum of a silver badge in the previous
-            challenge level to unlock this
+            challenge level to unlock this.
           </Text>
 
           {/* Button */}

@@ -9,21 +9,15 @@ import { getCategoryIcon } from "@/utils/challengeUtils";
 interface AddChallengeScreenProps {
   isLoading: boolean;
   challenges: any[];
-  success: boolean;
-  errors: any[];
   selectedCategory: string | undefined;
   setSelectedCategory: (category: string | undefined) => void;
-  isJoiningChallenge: boolean;
 }
 
 const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({ 
   isLoading, 
   challenges, 
-  success, 
-  errors, 
   selectedCategory, 
-  setSelectedCategory,
-  isJoiningChallenge
+  setSelectedCategory
 }) => {
   const categories = [
     { key: undefined, label: 'Available' },
@@ -35,15 +29,12 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
     { key: 'PASSION_HOBBY', label: 'Passion/Hobby' },
   ];
 
-  console.log("AddChallengeScreen render - selectedCategory:", selectedCategory);
-
   if (isLoading) {
     return <LoadingScreen />;
   }
 
   return (
     <View style={styles.container}>
-      {/* Blue Header Area */}
       <SafeAreaView style={styles.headerArea}>
         <Header 
           title="Challenges"
@@ -51,7 +42,7 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
         />
       </SafeAreaView>
 
-      {/* White Category Filter Area */}
+      {/* Category Filter */}
       <View style={styles.categorySection}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
           {categories.map((category) => (
@@ -83,7 +74,7 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
         </ScrollView>
       </View>
 
-      {/* White Bottom Area */}
+      {/* Explore Challenge Cards */}
       <View style={styles.bottomArea}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {challenges && challenges.length > 0 ? (
@@ -104,7 +95,6 @@ const AddChallengeScreen: React.FC<AddChallengeScreenProps> = ({
                   <ExploreChallenge
                     key={challengeItem.challenge.id || index}
                     challengeItem={challengeItem}
-                    isJoiningChallenge={isJoiningChallenge}
                   />
                 ))}
               </View>
@@ -154,7 +144,7 @@ const styles = StyleSheet.create({
   categoryButton: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    marginRight: 20,
+    marginRight: 10,
     borderRadius: 20,
     backgroundColor: '#F5F5F5',
   },

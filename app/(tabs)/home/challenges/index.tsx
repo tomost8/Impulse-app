@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL Hooks
 import { useGetMyChallenges } from '@/hooks/graphql/challenges/queries';
+// Contexts
+import { useAuth } from '@/contexts/AuthContext';
 // Components
 import ViewChallengesScreen from '../../../../components/screens/home/ViewChallengesScreen';
 // Debug
@@ -10,12 +12,14 @@ import { useDataProvider } from '@/contexts/DataProviderContext';
 
 const ChallengesPage = () => {
   const { fetching, user } = useDataProvider();
+  const { authToken } = useAuth();
   const [renderCounter, setRenderCounter] = useState(0);
 
   // Query for Loading State - My Challenges Only
   const myChallengesRef = useRef<any | null>(null);
   const hasFetchedMyChallenges = useRef(false);
   const { activeChallenges, completedChallenges, success, errors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
+    authToken as string,
     !hasFetchedMyChallenges.current && !fetching && !!user?.id
   );
 
