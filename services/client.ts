@@ -30,6 +30,7 @@ const httpLink = createHttpLink({
   uri: API_CONFIG.BASE_URL,
 });
 
+
 // Auth link to automatically include token in requests
 const authLink = setContext(async (_, { headers }) => {
   // Get the current auth token from AsyncStorage

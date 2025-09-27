@@ -10,6 +10,7 @@ import { badgeImages } from '@/utils/challengeUtils';
 interface BadgeCount {
   badge: string;
   count: number;
+  length?: number; // Challenge length in days (e.g., 7, 14, 21)
 }
 
 interface BadgeListScreenProps {
@@ -22,6 +23,53 @@ function BadgeListScreen({ user, badgeCount, isLoading }: BadgeListScreenProps):
   if (isLoading) {
     return <LoadingScreen />;
   }
+
+  // Group badges by length
+  const challengeLengths = [7, 14, 21];
+
+  const badgesByLength = badgeCount.reduce((groups, badgeItem) => {
+    const length = badgeItem.length || 0;
+    if (!groups[length]) {
+      groups[length] = [];
+    }
+    groups[length].push(badgeItem);
+    return groups;
+  }, {} as Record<number, BadgeCount[]>);
+
+  const renderBadgeSection = (length: number) => {
+    const badges = badgesByLength[length] || [];
+    
+    return (
+      <View key={length} style={styles.badgeSection}>
+        <Text style={styles.sectionTitle}>{length} Day Challenges</Text>
+        <View style={styles.badgeContainer}>
+          {badges.length > 0 ? (
+            badges.map((badgeItem: BadgeCount) => {
+              const badgeImage = badgeImages[badgeItem.badge];
+              return (
+                <View key={badgeItem.badge} style={styles.badgeItem}>
+                  {badgeImage ? (
+                    <Image source={badgeImage} style={styles.badgeImage} />
+                  ) : (
+                    <View style={styles.badgePlaceholder}>
+                      <Text style={styles.badgePlaceholderText}>?</Text>
+                    </View>
+                  )}
+                  {badgeItem.count > 1 && (
+                    <View style={styles.badgeCount}>
+                      <Text style={styles.badgeCountText}>{badgeItem.count}×</Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })
+          ) : (
+            <Text style={styles.emptySectionText}>No badges earned</Text>
+          )}
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -40,32 +88,8 @@ function BadgeListScreen({ user, badgeCount, isLoading }: BadgeListScreenProps):
         >
           <ProfileHeader user={user} />
 
-          {/* Badges Section */}
-          <View style={styles.badgeContainer}>
-            {badgeCount.map((badgeItem, index) => {
-              const badgeImage = badgeImages[badgeItem.badge];
-              return (
-                <View key={badgeItem.badge} style={styles.badgeItem}>
-                  {badgeImage ? (
-                    <Image source={badgeImage} style={styles.badgeImage} />
-                  ) : (
-                    <View style={styles.badgePlaceholder}>
-                      <Text style={styles.badgePlaceholderText}>?</Text>
-                    </View>
-                  )}
-                  {badgeItem.count > 1 && (
-                    <View style={styles.badgeCount}>
-                      <Text style={styles.badgeCountText}>{badgeItem.count}×</Text>
-                    </View>
-                  )}
-                </View>
-              );
-            })}
-          </View>
-          
-          {badgeCount.length === 0 && (
-            <Text style={styles.emptyText}>No badges yet</Text>
-          )}
+          {/* Badge Sections */}
+          {challengeLengths.map(renderBadgeSection)}
         </ScrollView>
     </View>
   );
@@ -82,11 +106,25 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     paddingBottom: 100,
   },
+
+  /* Badge Section */
+  badgeSection: {
+    marginTop: 0,
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontFamily: 'Lato',
+    fontWeight: '700',
+    color: '#333333',
+    textAlign: 'left',
+    marginBottom: 15,
+    marginHorizontal: 20,
+  },
   badgeContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginTop: 20,
     marginHorizontal: 20,
     gap: 16,
     //borderColor: 'blue',
@@ -121,6 +159,14 @@ const styles = StyleSheet.create({
   },
 
   /* Placeholders */
+  emptySectionText: {
+    fontSize: 14,
+    fontWeight: '400',
+    fontFamily: 'Open Sans',
+    color: '#5E6676',
+    textAlign: 'center',
+    marginTop: 20,
+  },
   badgePlaceholder: {
     width: 70,
     height: 60,
@@ -136,12 +182,6 @@ const styles = StyleSheet.create({
     color: '#6c757d',
     fontFamily: 'Poppins',
     fontWeight: '600',
-  },
-  emptyText: {
-    fontSize: 14,
-    color: '#6c757d',
-    textAlign: 'center',
-    marginTop: 20,
   },
 });
 

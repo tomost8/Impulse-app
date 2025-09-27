@@ -8,47 +8,73 @@ const USE_SAMPLE_BADGES = false;
 
 // Sample badge data for testing
 const SAMPLE_BADGES = [
-  // Food badges
-  { badge: 'food_level_1_bronze', count: 1 },
-  { badge: 'food_level_1_silver', count: 2 },
-  { badge: 'food_level_2_gold', count: 2 },
-  { badge: 'food_level_3_diamond', count: 2 },
+  // Food badges - Level 1 (7 days)
+  { badge: 'food_level_1_bronze', count: 1, length: 7 },
+  { badge: 'food_level_1_silver', count: 2, length: 7 },
+  // Food badges - Level 2 (14 days)
+  { badge: 'food_level_2_gold', count: 2, length: 14 },
+  // Food badges - Level 3 (21 days)
+  { badge: 'food_level_3_diamond', count: 2, length: 21 },
   
-  // Workout badges
-  { badge: 'workout_level_1_bronze', count: 1 },
-  { badge: 'workout_level_1_silver', count: 2 },
-  { badge: 'workout_level_2_gold', count: 2 },
-  { badge: 'workout_level_3_diamond', count: 2 },
+  // Workout badges - Level 1 (7 days)
+  { badge: 'workout_level_1_bronze', count: 1, length: 7 },
+  { badge: 'workout_level_1_silver', count: 2, length: 7 },
+  // Workout badges - Level 2 (14 days)
+  { badge: 'workout_level_2_gold', count: 2, length: 14 },
+  // Workout badges - Level 3 (21 days)
+  { badge: 'workout_level_3_diamond', count: 2, length: 21 },
   
-  // Studying badges
-  { badge: 'studying_level_1_bronze', count: 1 },
-  { badge: 'studying_level_1_silver', count: 2 },
-  { badge: 'studying_level_2_gold', count: 2 },
-  { badge: 'studying_level_3_diamond', count: 2 },
+  // Studying badges - Level 1 (7 days)
+  { badge: 'studying_level_1_bronze', count: 1, length: 7 },
+  { badge: 'studying_level_1_silver', count: 2, length: 7 },
+  // Studying badges - Level 2 (14 days)
+  { badge: 'studying_level_2_gold', count: 2, length: 14 },
+  // Studying badges - Level 3 (21 days)
+  { badge: 'studying_level_3_diamond', count: 2, length: 21 },
   
-  // Wellness badges
-  { badge: 'wellness_level_1_bronze', count: 1 },
-  { badge: 'wellness_level_1_silver', count: 2 },
-  { badge: 'wellness_level_2_gold', count: 2 },
-  { badge: 'wellness_level_3_diamond', count: 2 },
+  // Wellness badges - Level 1 (7 days)
+  { badge: 'wellness_level_1_bronze', count: 1, length: 7 },
+  { badge: 'wellness_level_1_silver', count: 2, length: 7 },
+  // Wellness badges - Level 2 (14 days)
+  { badge: 'wellness_level_2_gold', count: 2, length: 14 },
+  // Wellness badges - Level 3 (21 days)
+  { badge: 'wellness_level_3_diamond', count: 2, length: 21 },
   
-  // Rise badges
-  { badge: 'rise_level_1_bronze', count: 1 },
-  { badge: 'rise_level_1_silver', count: 2 },
-  { badge: 'rise_level_2_gold', count: 2 },
-  { badge: 'rise_level_3_diamond', count: 2 },
+  // Rise badges - Level 1 (7 days)
+  { badge: 'rise_level_1_bronze', count: 1, length: 7 },
+  { badge: 'rise_level_1_silver', count: 2, length: 7 },
+  // Rise badges - Level 2 (14 days)
+  { badge: 'rise_level_2_gold', count: 2, length: 14 },
+  // Rise badges - Level 3 (21 days)
+  { badge: 'rise_level_3_diamond', count: 2, length: 21 },
   
-  // Passion badges
-  { badge: 'passion_level_1_bronze', count: 1 },
-  { badge: 'passion_level_1_silver', count: 2 },
-  { badge: 'passion_level_2_gold', count: 2 },
-  { badge: 'passion_level_3_diamond', count: 2 },
+  // Passion badges - Level 1 (7 days)
+  { badge: 'passion_level_1_bronze', count: 1, length: 7 },
+  { badge: 'passion_level_1_silver', count: 2, length: 7 },
+  // Passion badges - Level 2 (14 days)
+  { badge: 'passion_level_2_gold', count: 2, length: 14 },
+  // Passion badges - Level 3 (21 days)
+  { badge: 'passion_level_3_diamond', count: 2, length: 21 },
 
-  // Placeholder badge (badge that doesn't exist in badgeImages)
-  { badge: 'placeholder_badge_1', count: 2 },
-  { badge: 'placeholder_badge_2', count: 2 },
-  { badge: 'placeholder_badge_3', count: 2 },
+  // Placeholder badges
+  { badge: 'placeholder_badge_1', count: 2, length: 7 },
+  { badge: 'placeholder_badge_2', count: 2, length: 14 },
+  { badge: 'placeholder_badge_3', count: 2, length: 21 },
 ];
+
+// Helper functions for challenge level and length mapping
+
+const getBadgeKeyAndLength = (badge: any): { key: string; length: number } => {
+  // Convert length to level number and extract day count
+  const dayCount = parseInt(badge.length.replace('DAYS_', ''));
+  let level = 1;
+  if (dayCount >= 21) level = 3;
+  if (dayCount >= 14) level = 2;
+  
+  const category = badge.category.toLowerCase();
+  const key = `${category}_level_${level}_${badge.badgeLevel.toLowerCase()}`;
+  return { key, length: dayCount };
+};
 
 const BadgesPage = () => {
   const { user, fetching, challenges } = useDataProvider();
@@ -92,34 +118,27 @@ const BadgesPage = () => {
     })) || [];
 
   // Count occurrences of each badge type and create badge count array
-  const badgeCountMap = new Map<string, number>();
+  const badgeCountMap = new Map<string, { count: number; length: number }>();
   
   if (USE_SAMPLE_BADGES) {
     // Add sample test data for debugging
-    SAMPLE_BADGES.forEach(({ badge, count }) => {
-      badgeCountMap.set(badge, (badgeCountMap.get(badge) || 0) + count);
+    SAMPLE_BADGES.forEach(({ badge, count, length }) => {
+      const existing = badgeCountMap.get(badge) || { count: 0, length: length || 7 };
+      badgeCountMap.set(badge, { count: existing.count + count, length: length || 7 });
     });
   } else {
     // Process real badge data
     badgeInfo.forEach((badge: any) => {
-      // Convert length to level number
-      const dayCount = parseInt(badge.length.split(' ')[0]);
-      let level = 1;
-      if (dayCount >= 14) level = 2;
-      if (dayCount >= 30) level = 3;
-      
-      // Normalize category name
-      let category = badge.category.toLowerCase();
-      
-      // Create the correct key format for badgeImages
-      const key = `${category}_level_${level}_${badge.badgeLevel.toLowerCase()}`;
-      badgeCountMap.set(key, (badgeCountMap.get(key) || 0) + 1);
+      const { key, length } = getBadgeKeyAndLength(badge);
+      const existing = badgeCountMap.get(key) || { count: 0, length };
+      badgeCountMap.set(key, { count: existing.count + 1, length });
     });
   }
   
-  const badgeCount = Array.from(badgeCountMap.entries()).map(([badge, count]) => ({
+  const badgeCount = Array.from(badgeCountMap.entries()).map(([badge, data]) => ({
     badge,
-    count
+    count: data.count,
+    length: data.length
   }));
 
   if (DEBUG_BADGES_PAGE && !fetching) {

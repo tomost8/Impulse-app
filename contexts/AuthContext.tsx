@@ -10,7 +10,6 @@ interface AuthContextType {
   firebaseUid: string | null;
   loading: boolean;
   authInitialized: boolean;
-  tokenRefreshComplete: boolean;
   login: (token: string, id: number, firebaseUid: string, rememberMe: boolean, email: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshAuthToken: () => Promise<string | null>;
@@ -26,7 +25,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [userId, setUserId] = useState<number | null>(null);
   const [firebaseUid, setFirebaseUid] = useState<string | null>(null);
   const [authInitialized, setAuthInitialized] = useState(false);
-  const [tokenRefreshComplete, setTokenRefreshComplete] = useState(false);
   
   // Add a ref to track if we've already loaded auth data to prevent unnecessary clearing
   const hasLoadedAuthData = useRef(false);
@@ -44,7 +42,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Initialize auth state from AsyncStorage first
   useEffect(() => {
     const initializeAuth = async () => {
-      // Initialize Mixpanel first
       await mixpanel.initMixpanel();
       try {
         const [storedToken, storedRememberMe, storedUserId, storedFirebaseUid] = await Promise.all([
@@ -55,10 +52,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         ]);
         const rememberMeData = storedRememberMe ? JSON.parse(storedRememberMe) : null;
 
-        console.log(`🔐 Auth initialization data:\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}\n  - UID: ${storedUserId}\n  - Firebase UID: ${storedFirebaseUid}\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`);
-        
+        console.log(`🔐 Auth Initialization:` +
+          `\n  - Token: ${storedToken ? storedToken.substring(0, 10) + '...' + storedToken.substring(storedToken.length - 10) : 'null'}` +
+          `\n  - UID: ${storedUserId}` +
+          `\n  - Firebase UID: ${storedFirebaseUid}` +
+          `\n  - Remember Me data: ${JSON.stringify(rememberMeData)}`
+        );
+
         if (rememberMeData?.rememberMe && storedToken && storedUserId && storedFirebaseUid) {
-          // User wants to be remembered - restore auth state
+          // rememberMe true: restore auth state
+          console.log('🔐 Auth Initialization: rememberMe true, restoring auth state');
           setAuthToken(storedToken);
           setUserId(Number(storedUserId));
           setFirebaseUid(storedFirebaseUid);
@@ -67,135 +70,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           currentFirebaseUid.current = storedFirebaseUid;
           hasLoadedAuthData.current = true;
           
-          // Check if token needs immediate refresh and wait for it to complete
-          try {
-            const tokenPayload = JSON.parse(atob(storedToken.split('.')[1]));
-            const expirationTime = tokenPayload.exp * 1000;
-            const currentTime = Date.now();
-            
-            if (expirationTime - currentTime <= 5 * 60 * 1000) {
-              console.log('🔐 Token needs immediate refresh during initialization');
-              await refreshAuthToken();
-            } else {
-              // Token is still valid, mark refresh as complete
-              setTokenRefreshComplete(true);
-              // Schedule future refresh
-              scheduleTokenRefresh(storedToken);
-            }
-          } catch (error) {
-            console.error('Error checking token during initialization:', error);
-            setTokenRefreshComplete(true);
+          const tokenPayload = JSON.parse(atob(storedToken.split('.')[1]));
+          const expirationTime = tokenPayload.exp * 1000;
+          const currentTime = Date.now();
+          // Check token expiration to determine if it needs refreshing
+          if (expirationTime - currentTime <= 5 * 60 * 1000) {
+            console.log('🔐 Auth Initialization: token needs refresh');
+            await refreshAuthToken(storedToken);
+          } else {
+            scheduleTokenRefresh(storedToken);
           }
-        } else if (storedToken || storedUserId) {
-          // User doesn't want to be remembered but old data exists
-          // Clear Firebase session and stored data to prevent old token refresh
-          console.log('🔐 Clearing old session data (rememberMe = false)');
-          await signOut(getAuth());
-          await AsyncStorage.clear();
-          // Mark token refresh as complete since we cleared everything
-          setTokenRefreshComplete(true);
         } else {
-          // No stored auth data, mark token refresh as complete
-          setTokenRefreshComplete(true);
+          // rememberMe false
+          console.log('🔐 Auth Initialization: rememberMe false, clearing auth state');
+          await logout();
         }
-        setAuthInitialized(true);
       } catch (error) {
         console.error('Error initializing auth state:', error);
+      } finally {
+        console.log('🔐 Auth Initialization complete');
         setAuthInitialized(true);
       }
     };
-
     initializeAuth();
   }, []);
-
-  // Track Mixpanel events after auth initialization
-  useEffect(() => {
-    if (authInitialized) {
-      if (firebaseUid) {
-        mixpanel.identifyUser(firebaseUid);
-        mixpanel.getPeopleSet({
-          'uid_backend': userId?.toString() || '',
-          'last_seen': new Date().toISOString(),
-        });
-        mixpanel.trackEvent('Session Started', {
-          timestamp: new Date().toISOString(),
-          type: 'auth_session',
-          uid_backend: userId?.toString() || '',
-        });
-      } else {
-        mixpanel.resetUser();
-      }
-    }
-  }, [authInitialized, firebaseUid, userId]);
-
-  // Schedule token refresh based on actual expiration time
-  const scheduleTokenRefresh = (token: string) => {
-    try {
-      // Decode the JWT token to get the expiration time
-      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
-      const currentTime = Date.now();
-      
-      // Calculate time until refresh (5 minutes before expiry)
-      const refreshBuffer = 5 * 60 * 1000; // 5 minutes
-      const timeUntilRefresh = expirationTime - currentTime - refreshBuffer;
-      
-      console.log('🔐 Token expires at:', new Date(expirationTime).toLocaleString(), '| Scheduling refresh in:', Math.round(timeUntilRefresh / 1000 / 60), 'minutes');
-      
-      if (timeUntilRefresh > 0) {
-        // Schedule refresh for the future
-        setTimeout(async () => {
-          console.log('🔐 Scheduled token refresh triggered');
-          await refreshAuthToken();
-        }, timeUntilRefresh);
-      } else {
-        // Token needs immediate refresh
-        console.log('🔐 Token needs immediate refresh');
-        refreshAuthToken();
-      }
-    } catch (error) {
-      console.error('Error scheduling token refresh:', error);
-    }
-  };
-
-  // Check token validity (expiration time)
-  const checkTokenValidity = async (token: string): Promise<boolean> => {
-    try {
-      // Decode the JWT token to get the expiration time
-      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-      const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
-      const currentTime = Date.now();
-      
-      // Consider token valid if it won't expire in the next 10 minutes
-      const bufferTime = 10 * 60 * 1000; // 10 minutes
-      return (expirationTime - currentTime) > bufferTime;
-    } catch (error) {
-      console.error('Error checking token validity:', error);
-      return false;
-    }
-  };
 
   // Enhanced Firebase auth state listener with automatic token refresh
   useEffect(() => {
     if (!authInitialized || authListenerSetup.current) return;
-
     authListenerSetup.current = true;
-    
     // Clean up any existing listener
     if (authListenerUnsubscribe.current) {
       authListenerUnsubscribe.current();
       authListenerUnsubscribe.current = null;
     }
-
     try {
       const unsubscribe = onAuthStateChanged(getAuth(), async (user: any) => {
         if (isProcessingAuthChange.current) {
           return;
         }
-
         // Add a small delay to ensure auth state is stable
         await new Promise(resolve => setTimeout(resolve, 100));
-
         isProcessingAuthChange.current = true;
         
         try {
@@ -243,7 +158,108 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [authInitialized]); // Only depend on authInitialized, not authToken
 
+  // Track Mixpanel events after auth initialization
+  useEffect(() => {
+    if (authInitialized) {
+      if (firebaseUid) {
+        mixpanel.identifyUser(firebaseUid);
+        mixpanel.getPeopleSet({
+          'uid_backend': userId?.toString() || '',
+          'last_seen': new Date().toISOString(),
+        });
+        mixpanel.trackEvent('Session Started', {
+          timestamp: new Date().toISOString(),
+          type: 'auth_session',
+          uid_backend: userId?.toString() || '',
+        });
+      } else {
+        mixpanel.resetUser();
+      }
+    }
+  }, [authInitialized, firebaseUid, userId]);
 
+  const refreshAuthToken = async (existingToken?: string) => {
+    try {
+      console.log('🔄 refreshAuthToken called...');
+      // Get React Native Firebase auth
+      const currentUser = getAuth().currentUser;
+      if (currentUser) {
+        // Check current token expiration time (use existing token if provided, otherwise fetch from AsyncStorage)
+        const currentToken = existingToken || await AsyncStorage.getItem('authToken');
+        if (!currentToken) {
+          throw new Error('No auth token found in AsyncStorage or React state');
+        }
+        const tokenPayload = JSON.parse(atob(currentToken.split('.')[1]));
+        const expirationTime = tokenPayload.exp * 1000;
+        const currentTime = Date.now();
+        
+        console.log(`🔄 Current Token expires in ${Math.round((expirationTime - currentTime) / 1000 / 60)} minutes` +
+          `\n  - Token: ${currentToken.substring(0, 10)}...${currentToken.substring(currentToken.length - 10)}` +
+          `\n  - Expires at: ${new Date(expirationTime).toLocaleString()}` +
+          `\n  - Current time: ${new Date(currentTime).toLocaleString()}`
+        );
+        
+        // Refresh token if it expires in the next 5 minutes
+        if (expirationTime - currentTime <= 5 * 60 * 1000) {
+          const newToken = await getIdToken(currentUser, true);
+          if (newToken) {
+            console.log(`🔄 New Token: ${newToken.substring(0, 10)}...${newToken.substring(newToken.length - 10)}`);
+            await AsyncStorage.setItem('authToken', newToken);
+            setAuthToken(newToken);
+            currentAuthToken.current = newToken;
+            console.log('🔄 New Token stored in AsyncStorage and React state');
+
+
+            scheduleTokenRefresh(newToken);
+            return newToken;
+          }
+        } else {
+          console.log('🔄 Token is still valid, no refresh needed');
+          return currentToken;
+        }
+      }
+      // ❌ No Firebase user
+      console.log('❌ No Firebase user found, clearing stored auth state');
+      await logout();
+      return null;
+    } catch (error) {
+      console.error('❌ Error refreshing token:', error);
+      // Don't automatically logout on token refresh errors
+      
+      // Return existing token on error
+      return authToken;
+    }
+  };
+
+  // Schedule token refresh based on actual expiration time
+  const scheduleTokenRefresh = (token: string) => {
+    try {
+      // Decode the JWT token to get the expiration time
+      const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+      const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
+      const currentTime = Date.now();
+      
+      // Calculate time until refresh (5 minutes before expiry)
+      const refreshBuffer = 5 * 60 * 1000; // 5 minutes
+      const timeUntilRefresh = expirationTime - currentTime - refreshBuffer;
+      
+      console.log('🔄 Token expires at:', new Date(expirationTime).toLocaleString(), '| Scheduling refresh in:', Math.round(timeUntilRefresh / 1000 / 60), 'minutes');
+      
+      if (timeUntilRefresh > 0) {
+        // Schedule refresh for the future
+        setTimeout(async () => {
+          console.log('🔄 Scheduled token refresh triggered');
+          await refreshAuthToken();
+        }, timeUntilRefresh);
+      } else {
+        // Token needs immediate refresh
+        console.log('🔐 Token needs immediate refresh');
+        refreshAuthToken();
+      }
+    } catch (error) {
+      console.error('Error scheduling token refresh:', error);
+    }
+  };
 
   const login = async (token: string, id: number, firebaseUid: string, rememberMe: boolean, email: string) => {
     try {
@@ -296,77 +312,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
-    }
-  };
-
-  const refreshAuthToken = async () => {
-    try {
-      console.log('🔄 Starting token refresh...');
-      
-      // Get React Native Firebase auth
-      const currentUser = getAuth().currentUser;
-      
-      if (currentUser) {
-        console.log('🔄 Firebase user found, getting current token...');
-        
-        // Get the current token without forcing refresh
-        const currentToken = await getIdToken(currentUser, false);
-        console.log('🔄 Current token obtained');
-        
-        // Decode the JWT token to get the expiration time
-        const tokenPayload = JSON.parse(atob(currentToken.split('.')[1]));
-        const expirationTime = tokenPayload.exp * 1000; // Convert to milliseconds
-        const currentTime = Date.now();
-        
-        console.log('🔄 Token expires in:', Math.round((expirationTime - currentTime) / 1000 / 60), 'minutes');
-        
-        // Only refresh if token will expire in the next 5 minutes
-        if (expirationTime - currentTime <= 5 * 60 * 1000) {
-          console.log('🔄 Token expires soon, forcing refresh...');
-          const newToken = await getIdToken(currentUser, true);
-          console.log('🔄 New token obtained:', newToken ? 'SUCCESS' : 'FAILED');
-          
-          if (newToken) {
-            console.log('🔐 Token refreshed successfully');
-            await AsyncStorage.setItem('authToken', newToken);
-            setAuthToken(newToken);
-            currentAuthToken.current = newToken;
-            
-            // Schedule refresh for the new token
-            scheduleTokenRefresh(newToken);
-            
-            // Mark token refresh as complete
-            setTokenRefreshComplete(true);
-            
-            return newToken;
-          }
-        } else {
-          console.log('🔄 Token is still valid, no refresh needed');
-        }
-        
-        // If token is still valid, mark refresh as complete
-        setTokenRefreshComplete(true);
-        
-        // If token is still valid, return the current token
-        return currentToken;
-      }
-      
-      // If no current user but we have stored auth data, don't force logout
-      // This allows for JWT-based authentication without Firebase user
-      console.log('No Firebase user found, but keeping stored auth state');
-      
-      // Mark token refresh as complete even if no Firebase user
-      setTokenRefreshComplete(true);
-      
-      return authToken;
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      // Don't automatically logout on token refresh errors
-      
-      // Mark token refresh as complete even on error to prevent blocking
-      setTokenRefreshComplete(true);
-      
-      return authToken;
     }
   };
 
@@ -453,7 +398,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         firebaseUid: stableFirebaseUid,
         loading, 
         authInitialized,
-        tokenRefreshComplete,
         login, 
         logout,
         refreshAuthToken,
@@ -478,7 +422,6 @@ export const useAuth = () => {
       firebaseUid: null,
       loading: true,
       authInitialized: false,
-      tokenRefreshComplete: false,
       login: async () => { throw new Error('AuthProvider not available'); },
       logout: async () => { throw new Error('AuthProvider not available'); },
       refreshAuthToken: async () => { throw new Error('AuthProvider not available'); },

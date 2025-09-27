@@ -57,37 +57,32 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
   
   return (
     <View style={styles.container}>
-      <SafeAreaView style={styles.headerArea}>
-        <Header 
-          title="Challenges"
-          onBackPress={() => router.back()}
-        />
-      </SafeAreaView>
-      <View style={styles.scrollContainer}>
-        <ScrollView>
-          <View style={styles.challengeHeaderContainer}>
-            <View style={styles.challengeInfo}>
-              {categoryIcon && (
-                <Image source={categoryIcon as ImageSourcePropType} style={styles.categoryIcon} />
-              )}
-              <View style={styles.textSection}>
-                <Text style={styles.title}>{getLabelByCategory(category)}</Text>
-                <Text style={styles.subtitle}>{dayLength}</Text>
-              </View>
-            </View>
-            <View style={styles.textContainer}>
+      <Header 
+        title="Challenges"
+        onBackPress={() => router.back()}
+      />    
+      <ScrollView 
+        style={styles.scrollContainer}
+        alwaysBounceVertical={false}
+      >
+        <View style={styles.challengeHeaderContainer}>
+          <View style={styles.challengeInfo}>
+            {categoryIcon && (
+              <Image source={categoryIcon as ImageSourcePropType} style={styles.categoryIcon} />
+            )}
+            <View style={styles.textSection}>
               <Text style={styles.title}>{getLabelByCategory(category)}</Text>
               <Text style={styles.subtitle}>{dayLength}</Text>
             </View>
           </View>
-          <View>
-            <TouchableOpacity style={styles.joinButton} onPress={handleJoinChallenge}>
-              <Text style={styles.joinButtonText}>{joined ? "Joined" : "Join"}</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-        <Text style={styles.description}>Complete and upload a picture of a {title} activity each day to achieve the milestones below. Build your badge collection and share your success!</Text>
-
+          <TouchableOpacity style={styles.joinButton} onPress={handleJoinChallenge}>
+            <Text style={styles.joinButtonText}>{joined ? "Joined" : "Join"}</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.description}>
+          Complete and upload a picture of a {getLabelByCategory(category).toLowerCase()} activity 
+          each day to achieve the milestones below. Build your badge collection and share your success!
+        </Text>
 
         {/* Milestones */}
         <View style={styles.milestonesContainer}>
@@ -109,48 +104,8 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
         </View>
 
         {/* Friends */}
-        <Text style={styles.friendsTitle}>Friends</Text>
-        {/* {friends.map((f) => (
-          <View key={f.id} style={styles.friendItem}>
-            <Image source={{ uri: f.avatar }} style={styles.avatar} />
-            <View>
-              <TouchableOpacity 
-                style={joined ? styles.joinButtonDisabled : styles.joinButton} 
-                onPress={joined ? undefined : handleJoinChallenge}
-                disabled={joined}
-              >
-                <Text style={joined ? styles.joinButtonTextDisabled : styles.joinButtonText}>
-                  {joined ? "Joined" : "Join"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <Text style={styles.description}>
-            Complete and upload a picture of a {getLabelByCategory(category).toLowerCase()} activity 
-            each day to achieve the milestones below. Build your badge collection and share your success!
-          </Text>
-
-          {/* Milestones */}
-          <View style={styles.milestonesContainer}>
-            {milestones.map((m, index) => (
-              <View key={index} style={styles.milestone}>
-                <Text style={styles.milestoneText}>{m.badge}</Text>
-                <Image 
-                  source={getBadgeImage(m.title, m.badge)}
-                  style={styles.badge}
-                />
-                <Text style={styles.milestoneSubText}>
-                  {m.days} days 
-                </Text>
-                <Text style={styles.milestoneSubText}>
-                  {m.points} points
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Friends */}
-          {/* <Text style={styles.friendsTitle}>Friends</Text> */}
+        <View style={styles.friendsContainer}> 
+          <Text style={styles.friendsTitle}>Friends</Text>
           {/* {friends.map((f) => (
             <View key={f.id} style={styles.friendItem}>
               <Image source={{ uri: f.avatar }} style={styles.avatar} />
@@ -160,7 +115,8 @@ const JoinChallengeScreen: React.FC<JoinChallengeScreenProps> = ({
               </View>
             </View>
           ))} */}
-      </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -170,9 +126,6 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     backgroundColor: "#FFFFFF",
-  },
-  headerArea: {
-    backgroundColor: "#E0EDFD",
   },
   scrollContainer: {
     flex: 1,
@@ -196,6 +149,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 24,
     marginBottom: 20,
+  },
+  friendsContainer: {
+    paddingHorizontal: 24,
+    marginBottom: 20,
+    display: "none",
   },
 
   /* Challenge Header */

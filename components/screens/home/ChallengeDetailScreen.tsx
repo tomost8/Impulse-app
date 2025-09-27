@@ -27,7 +27,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
   if (isLoading) {
     return <LoadingScreen />;
   }
-  console.log("Rendering ChallengeDetailScreen for challengeId:", challengeId, "with data:", JSON.stringify(challenge));
+  //console.log("Rendering ChallengeDetailScreen for challengeId:", challengeId, "with data:", JSON.stringify(challenge));
 
   const {
     userChallenge: {
@@ -48,10 +48,10 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
 
   const { progressLabel, daysRemaining } = progress ?? {};
 
-  console.log("⛳ ChallengeDetailScreen Status", status, isActive, !isActive && !isCompleted);
+  //console.log("⛳ ChallengeDetailScreen Status", status, isActive, !isActive && !isCompleted);
 
   const categoryIcon = getIconByCategory(challengeData.category);
-  console.log("🌾 categoryIcon", categoryIcon)
+  //console.log("🌾 categoryIcon", categoryIcon)
   const Points = getPointsByBadge(badge_level, totalDays);
 
   const handleJoinChallenge = async () => {
@@ -64,7 +64,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
   const { entries } = useGetChallengeDayMedia(userChallenge_id, true);
   const { friends: participants, success: participantsLoadingSucess, error: participantsError } =
   useGetFriendsInChallenge(challenge.userChallenge.challenge_id, status, true);
-  console.log("🍇 Completed Friends", participants);
+  //console.log("🍇 Completed Friends", participants);
 
 
   const recapData = Array.from({ length: totalDays }, (_, i) => {
@@ -76,7 +76,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
     };
   });
 
-  console.log("🎓 Recap Data:", recapData);
+  //console.log("🎓 Recap Data:", recapData);
   
   return (
     <View style={styles.container}>

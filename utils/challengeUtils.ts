@@ -61,8 +61,8 @@ export function getBadgeImage(title: string, badge: string) {
   const { category, level } = extractCategoryAndLevel(title);
   const name = `${category}_level_${level}_${badge.toLowerCase()}`;
   
-  console.log("🛹 Getting badge image for:", name);
-  console.log("🛹 badgeImages:", badgeImages[name]);
+  //console.log("🛹 Getting badge image for:", name);
+  //console.log("🛹 badgeImages:", badgeImages[name]);
   return badgeImages[name];
 }
 
