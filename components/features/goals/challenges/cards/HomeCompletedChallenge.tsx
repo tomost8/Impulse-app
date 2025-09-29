@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { getBadgeImage } from "@/utils/challengeUtils";
+import BadgeEarnedModal from "../Modal/BadgeEarnedModal";
 
 type HomeCompletedChallengeProps = {
   id: string;
@@ -21,10 +22,18 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
   badge,
 }) => {
   const router = useRouter();
+  const [showModalPopup, setshowModalPopup] = useState(false);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown date';
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const toShortDate = (d?: string) => {
+    if (!d) return 'MM/DD/YY';
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return 'MM/DD/YY';
+    return `${String(date.getDate()).padStart(2,'0')}-${date.toLocaleString('en-GB',{ month:'short' })}-${date.getFullYear()}`;
   };
 
   const handlePress = () => {
@@ -59,12 +68,21 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
           {/* View Results */}
           <TouchableOpacity 
             style={styles.viewResultsContainer}
-            onPress={() => console.log('View Results pressed for UserChallenge:', id)}
+            onPress={() => setshowModalPopup(true)}
           >
             <Text style={styles.viewResultsText}>View Results</Text>
             <Text style={styles.arrow}>→</Text>
           </TouchableOpacity>
         </View>
+
+        <BadgeEarnedModal
+          isVisible={showModalPopup}
+          badgeTitle={title}
+          badgeLevel={badge}
+          badgeDate={completedAt ? toShortDate(completedAt) : 'MM/DD/YY'}
+          onClose={() => setshowModalPopup(false)}
+        />
+
       </View>
     </TouchableOpacity>
   );

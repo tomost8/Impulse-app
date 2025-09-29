@@ -22,6 +22,7 @@ export const GET_EXPLORE_CHALLENGES = gql`
         isLocked
         shortDescription
         status
+        userChallengeId
       }
       errors {
         field

@@ -20,6 +20,7 @@ interface ExploreChallengeProps {
     };
     shortDescription?: string;
     status?: string;
+    userChallengeId?: number;
     isJoined: boolean;
     isLocked: boolean;
   };
@@ -53,11 +54,13 @@ const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
   };
 
   const handlePress = () => {
-    if (!challengeItem.isLocked) {
+    if (!challengeItem.isLocked && !challengeItem.isJoined) {
       router.push({
         pathname: '/home/challenges/joinChallenge',
         params: { challenge: JSON.stringify(challengeItem) }
       });
+    } else if (challengeItem.isJoined) {
+        router.push(`/home/challenges/${challengeItem.userChallengeId}`);
     } else {
       setshowModalPopup(true);
     }
