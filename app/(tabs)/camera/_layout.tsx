@@ -35,13 +35,8 @@ function CameraHeader() {
     <View style={headerStyles.header}>
       {/* Back Button */}
       <TouchableOpacity onPress={() => {
+        header.setPictureTaken(false);
         router.back();
-        header.setId(0);
-        header.setCategory('');
-        if (header.pictureTaken) {
-          router.back();
-          header.setPictureTaken(false);
-        }
       }}>
         <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
@@ -49,11 +44,9 @@ function CameraHeader() {
       <Text style={headerStyles.text}>{getLabelByCategory(header.category)}</Text>
       {/* Retake Button or Flash Button*/}
       {header.pictureTaken ? (
-                      <TouchableOpacity onPress={() => {
-          router.back();
-          header.setId(0);
-          header.setCategory('');
+        <TouchableOpacity onPress={() => {
           header.setPictureTaken(false);
+          router.back();
         }}>
           <Image 
             source={require("@/assets/icons/retake.png")}
@@ -74,33 +67,30 @@ function CameraHeader() {
 }
 
 export default function CameraLayout() {
-  const { id: activityId, category: activityCategory } = useLocalSearchParams();
   const [pictureTaken, setPictureTaken] = useState(false);
   const [flash, setFlash] = useState(false);
-  const [internalId, setInternalId] = useState(activityId ? Number(activityId) : 0);
-  const [internalCategory, setInternalCategory] = useState(activityCategory as string || '');
+  const [activityId, setActivityId] = useState(0);
+  const [activityCategory, setActivityCategory] = useState('');
 
   // useMemo ensures context values are always updated when parameters change
   const contextValues = useMemo(() => {
-    // Prioritize URL params if they exist, otherwise use internal state
-    const newId = activityId ? Number(activityId) : internalId;
-    const newCategory = activityCategory as string || internalCategory;
-    
     return {
-      id: newId,
-      category: newCategory,
+      id: activityId,
+      category: activityCategory,
       pictureTaken,
       flash,
       setId: (id: number) => {
-        setInternalId(id);
+        //console.log(`🎯 Context: setId(${id})`);
+        setActivityId(id);
       },
       setCategory: (category: string) => {
-        setInternalCategory(category);
+        //console.log(`🎯 Context: setCategory(${category})`);
+        setActivityCategory(category);
       },
       setPictureTaken,
       setFlash,
     };
-  }, [activityId, activityCategory, internalId, internalCategory, pictureTaken, flash]);
+  }, [activityId, activityCategory, pictureTaken, flash]);
 
   return (
     <CameraHeaderContext.Provider value={contextValues}>

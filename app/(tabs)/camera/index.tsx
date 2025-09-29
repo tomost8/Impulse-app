@@ -1,7 +1,7 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Platform } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { CameraHeaderContext } from './_layout';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -15,6 +15,7 @@ export default function CameraScreen() {
   const { id, category } = useLocalSearchParams();
   const { fetching, user } = useDataProvider();
   const context = useContext(CameraHeaderContext);
+  if (!context) return null;
   
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
@@ -22,20 +23,21 @@ export default function CameraScreen() {
   const [isCameraReady, setIsCameraReady] = useState(true);
   const [isSwitchingCamera, setIsSwitchingCamera] = useState(false);
 
-  // Update header context when activity/category changes
-  useEffect(() => {
-    if (context) {
+  // Update header context whenever screen is focused (navigated to)
+  useFocusEffect(
+    React.useCallback(() => {
       context.setPictureTaken(false);
-      if (category) {
-        context.setCategory(category as string);
+      if (id && category) {
+        // Navigated from activity cards
         context.setId(Number(id));
+        context.setCategory(category as string);
       } else {
-        // Reset header when no activity/category is selected (camera button navigation)
-        context.setCategory('');
+        // Navigated from camera button
         context.setId(0);
+        context.setCategory('');
       }
-    }
-  }, [category, id, context]);
+    }, [id, category, context])
+  );
 
   // Handle camera switching state
   useEffect(() => {

@@ -144,8 +144,8 @@ export default function SecondaryGoal() {
         
         // 6. Login only after profile is complete
         await login(authToken, userData.id, userCredential.user.uid, true, formData.email as string);
-        console.log("✅ User logged in successfully, redirecting to feature guide");
-        router.replace('/(tabs)/account/settings/featureGuide');
+        console.log("✅ User logged in successfully, redirecting to homepage with welcome popup");
+        router.replace('/(tabs)/home?welcome=true');
       } else {
         throw new Error("firebaseAuth failed: firebaseAuth.success is false");
       }

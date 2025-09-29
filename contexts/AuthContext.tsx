@@ -70,6 +70,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           currentFirebaseUid.current = storedFirebaseUid;
           hasLoadedAuthData.current = true;
           
+          // Set Mixpanel user data
+          mixpanel.identifyUser(storedFirebaseUid);
+          mixpanel.getPeopleSet({
+            'uid_backend': storedUserId.toString(),
+            'last_seen': new Date().toISOString(),
+          });
+          mixpanel.trackEvent('Session Started', {
+            timestamp: new Date().toISOString(),
+            type: 'auth_session',
+            uid_backend: storedUserId.toString(),
+          });
+          
           const tokenPayload = JSON.parse(atob(storedToken.split('.')[1]));
           const expirationTime = tokenPayload.exp * 1000;
           const currentTime = Date.now();
@@ -81,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             scheduleTokenRefresh(storedToken);
           }
         } else {
-          // rememberMe false
+          // rememberMe false - logout
           console.log('🔐 Auth Initialization: rememberMe false, clearing auth state');
           await logout();
         }
@@ -158,25 +170,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [authInitialized]); // Only depend on authInitialized, not authToken
 
-  // Track Mixpanel events after auth initialization
-  useEffect(() => {
-    if (authInitialized) {
-      if (firebaseUid) {
-        mixpanel.identifyUser(firebaseUid);
-        mixpanel.getPeopleSet({
-          'uid_backend': userId?.toString() || '',
-          'last_seen': new Date().toISOString(),
-        });
-        mixpanel.trackEvent('Session Started', {
-          timestamp: new Date().toISOString(),
-          type: 'auth_session',
-          uid_backend: userId?.toString() || '',
-        });
-      } else {
-        mixpanel.resetUser();
-      }
-    }
-  }, [authInitialized, firebaseUid, userId]);
 
   const refreshAuthToken = async (existingToken?: string) => {
     try {
@@ -286,6 +279,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       currentAuthToken.current = token;
       currentUserId.current = id;
       currentFirebaseUid.current = firebaseUid;
+      
+      // Set Mixpanel user data for fresh login
+      mixpanel.identifyUser(firebaseUid);
+      mixpanel.getPeopleSet({
+        'uid_backend': id.toString(),
+        'last_seen': new Date().toISOString(),
+      });
+      mixpanel.trackEvent('Session Started', {
+        timestamp: new Date().toISOString(),
+        type: 'auth_session',
+        uid_backend: id.toString(),
+      });
+      
     } catch (error) {
       console.error('Error during login:', error);
       throw error;
@@ -294,11 +300,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      // Sign out from Firebase
-      await signOut(getAuth());
-      // Clear keys from AsyncStorage
+      // Sign out from Firebase if there is a user
+      const currentUser = getAuth().currentUser;
+      if (currentUser) {
+        await signOut(getAuth());
+      }
+      // Clear AsyncStorage keys
       await AsyncStorage.clear();
-      // Reset Mixpanel user data
+      // Reset Mixpanel user state
       mixpanel.resetUser();
       // Reset auth React state
       setAuthToken(null);
@@ -308,7 +317,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       currentUserId.current = null;
       currentFirebaseUid.current = null;
       hasLoadedAuthData.current = false;
-      console.log('🔐 Firebase logout, storage cleared, auth state reset, Mixpanel reset');
+      console.log('🔐 Storage cleared, auth state reset, Mixpanel reset');
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;

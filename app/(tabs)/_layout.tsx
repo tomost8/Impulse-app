@@ -137,7 +137,6 @@ function TabLayout() {
             tabPress: (e) => {
               if (!cameraClickable) {
                 e.preventDefault();
-                console.log("no activities, pop up modal");
                 setModalVisible(true);
               } else {
                 router.push('/camera');

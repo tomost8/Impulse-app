@@ -1,5 +1,5 @@
 /*
- * Home Feature Components
+ * Home Components
  * =======================
  * 
  * ENTRY POINTS:
@@ -14,6 +14,7 @@
  * │   └── StreakTracker
  * ├── QuoteOfTheDay
  * │   └── QuoteCard
+ * ├── WelcomePopup
  * ├── ActivitiesSection (from features/goals/activities/ActivitiesSection)
  * ├── ChallengesSection (from features/goals/challenges/ChallengesSection)
  * └── LeaderboardFull (from features/leaderboard/homeLeaderboard/LeaderboardFull)
@@ -21,6 +22,7 @@
 
 export { default as HomeHeader } from './HomeHeader';
 export { default as QuoteofDay } from './QuoteofDay';
+export { default as WelcomePopup } from './WelcomePopup';
 
 // Internal components:
 // - Greeting (used by HomeHeader)

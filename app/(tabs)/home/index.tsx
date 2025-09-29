@@ -1,23 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
-// GraphQL hooks
-import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
-import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
-import { useRouter } from 'expo-router';
-// Components
-import HomeScreen from '@/components/screens/home/HomeScreen';
-// Debug
-import { debugHomePage } from '@/debug/utils';
-// Services
+// Services + Utils
+import { router } from 'expo-router';
 import { useDataProvider } from '@/contexts/DataProviderContext';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
 import { getCategoryById } from '@/utils/goals';
+// GraphQL hooks
+import { useGetFriendsLeaderboard } from '@/hooks/graphql/friends/queries';
+import { useCreateActivity } from '@/hooks/graphql/activities/mutations';
+// Components
+import HomeScreen from '@/components/screens/home/HomeScreen';
+// Debug
+const DEBUG_HOME_PAGE = false;
 
 const HomePage = () => {
   const { fetching, user, activities, timezone, challenges, setActivities, setCameraClickable } = useDataProvider();
   const [renderCounter, setRenderCounter] = useState(0);
+
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
-  const router = useRouter();
   const { createActivity } = useCreateActivity();
 
   /* friends leaderboard */
@@ -28,12 +28,6 @@ const HomePage = () => {
     'POINTS_WEEKLY', 
     !hasFetchedFriends.current && !fetching && !!user?.id
   ); 
-
-  // Check if activities data is available
-  const hasActivitiesData = activities !== null && activities !== undefined;
-  const hasChallengesData = challenges !== null && challenges !== undefined;
-  
-  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity || !hasActivitiesData || !hasChallengesData;
 
   useEffect(() => {
     if (!hasNewLeaderboardData) {
@@ -104,28 +98,28 @@ const HomePage = () => {
     }
   };
 
-  if (debugHomePage) {
-    console.log(`HomePage Loading States - hasFetchedFriends: ${hasFetchedFriends.current}, fetching: ${fetching}, isCreatingActivity: ${isCreatingActivity}, hasActivitiesData: ${hasActivitiesData}, hasChallengesData: ${hasChallengesData}, loading: ${loading}`);
-    if (!loading) {
-      const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
-        id: item.id,
-        username: item.username,
-        weekly_points: item.point?.weekly_points || 0
-      })) || [];
-      console.log(`Rendering HomePage - Activities: ${activities.length} | Challenges: ${challenges?.activeChallenges?.length || 0} active, ${challenges?.completedChallenges?.length || 0} completed | Leaderboard:`, leaderboardDetails);
-    }
+  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity;
+  if (DEBUG_HOME_PAGE && !loading) {
+    const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
+      id: item.id,
+      username: item.username,
+      weekly_points: item.point?.weekly_points || 0
+    })) || [];
+    console.log(`Rendering HomePage - Activities: ${activities.length} | Challenges: ${challenges?.activeChallenges?.length || 0} active, ${challenges?.completedChallenges?.length || 0} completed | Leaderboard:`, leaderboardDetails);
   }
 
   return (
-    <HomeScreen  
-      loading={loading}
-      name={user?.first_name}
-      activities={activities}
-      timezone={timezone}
-      challenges={challenges}
-      friendsLeaderboard={leaderboardRef.current}
-      handleAddGoals={handleAddGoals}
-    />
+    <>
+      <HomeScreen  
+        loading={loading}
+        name={user?.first_name}
+        activities={activities}
+        timezone={timezone}
+        challenges={challenges}
+        friendsLeaderboard={leaderboardRef.current}
+        handleAddGoals={handleAddGoals}
+      />
+    </>
   );
 };
 

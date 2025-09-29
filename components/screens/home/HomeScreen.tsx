@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { useLocalSearchParams } from 'expo-router';
 import LoadingScreen from "@/components/ui/common/loading";
 
-import { HomeHeader, QuoteofDay } from "../../features/home";
-import { ActivitiesSection, ChallengesSection, SetupActivitiesModal } from "../../features/goals";
-import { LeaderboardFull } from "@/components/features/leaderboard"
+import { HomeHeader, QuoteofDay, WelcomePopup } from "@/components/features/home";
+import { ActivitiesSection, ChallengesSection, SetupActivitiesModal } from "@/components/features/goals";
+import { LeaderboardFull } from "@/components/features/leaderboard";
 
 interface HomeScreenProps {
   loading: boolean;
@@ -28,7 +29,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   if (loading) {
     return <LoadingScreen />;
   }
-  const [showDailyAddPopup, setShowDailyAddPopup] = useState(activities.length === 0);
+  
+  const { welcome } = useLocalSearchParams();
+  const [showWelcomePopup, setShowWelcomePopup] = useState(welcome === 'true');
+  const [showDailyAddPopup, setShowDailyAddPopup] = useState(activities.length === 0 && !showWelcomePopup);
+
+  // Daily Acivities modal only shows after Welcome modal closed
+  useEffect(() => {
+    if (!showWelcomePopup && activities.length === 0) {
+      setShowDailyAddPopup(true);
+    }
+  }, [showWelcomePopup, activities.length]);
+
+  const handleCloseWelcomePopup = () => {
+    setShowWelcomePopup(false);
+  };
 
   const onConfirm = async (selectedGoals: any[], goalFormData: any) => {
     await handleAddGoals(selectedGoals, goalFormData);
@@ -80,6 +95,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           onConfirm={onConfirm}
         />
       </View>
+      
+      <WelcomePopup
+        visible={showWelcomePopup}
+        onClose={handleCloseWelcomePopup}
+      />
     </SafeAreaView>
   );
 };

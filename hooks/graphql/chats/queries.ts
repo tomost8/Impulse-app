@@ -6,7 +6,7 @@ export const GET_ALL_CHATS = gql`
   query {
     getAllChats {
       success
-      chats { id type title password profile_pic creator { first_name last_name email } creator_id }
+      chats { id type title password profile_pic creator { first_name last_name email } creator_id updated_at }
       errors { field message }
     }
   }
@@ -76,7 +76,7 @@ export const GET_USER_CHATS = gql`
     getUserChats(id: $userId) {
       success
       chat_members {
-        chat { id type title profile_pic }
+        chat { id type title profile_pic updated_at }
         role
         status
       }

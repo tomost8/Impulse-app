@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 
 interface UserOptionProps {
@@ -46,6 +47,7 @@ interface SelectUsersProps {
   selectedPostTargets: string[];
   togglePostTarget: (optionId: string) => void;
   userId: string;
+  isCreatingPost: boolean;
 }
 
 const SelectUsers = ({ 
@@ -58,7 +60,8 @@ const SelectUsers = ({
   acceptedFriends,
   acceptedGroups,
   acceptedCommunities,
-  userId 
+  userId,
+  isCreatingPost
 }: SelectUsersProps) => {
   if (loading) {
     return (
@@ -142,14 +145,24 @@ const SelectUsers = ({
               <Text style={styles.backButtonText}>Back</Text>
             </TouchableOpacity>
             <TouchableOpacity 
-              style={styles.sendButton}
+              style={[styles.sendButton, isCreatingPost && styles.sendButtonDisabled]}
               onPress={handleSend}
+              disabled={isCreatingPost}
             >
-              <Text style={styles.sendButtonText}>Send</Text>
+              <Text style={[styles.sendButtonText, isCreatingPost && styles.sendButtonTextDisabled]}>
+                {isCreatingPost ? 'Creating...' : 'Send'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
+      
+      {/* Loading Overlay */}
+      {isCreatingPost && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#DE728D" />
+        </View>
+      )}
     </Modal>
   );
 };
@@ -252,6 +265,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Open Sans',
     fontWeight: '600',
+  },
+  sendButtonDisabled: {
+    backgroundColor: '#CCCCCC',
+    opacity: 0.6,
+  },
+  sendButtonTextDisabled: {
+    color: '#999999',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
   },
 });
 

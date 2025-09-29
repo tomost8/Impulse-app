@@ -6,25 +6,23 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import { s } from "react-native-size-matters";
-import { router } from 'expo-router';
 
-interface WalkthroughPopupProps {
+interface WelcomePopupProps {
   visible: boolean;
   onClose: () => void;
 }
 
-const WalkthroughPopup: React.FC<WalkthroughPopupProps> = ({ visible, onClose }) => {
+const WelcomePopup: React.FC<WelcomePopupProps> = ({ visible, onClose }) => {
   return (
     <Modal
       visible={visible}
       transparent={true}
       animationType="fade"
     >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
+      <View style={[styles.overlay, { pointerEvents: 'box-none' }]}>
+        <View style={[styles.container, { pointerEvents: 'auto' }]}>
           <Text style={styles.title}>Welcome to Impulse!</Text>
           
           <Image
@@ -99,7 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WalkthroughPopup;
-
-
-
+export default WelcomePopup;

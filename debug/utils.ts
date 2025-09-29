@@ -9,7 +9,6 @@ export const pageDisplay = true;
 
 export const debugRenders = true;
 // Main pages from bottom tabs
-export const debugHomePage = false && debugRenders;
 export const debugChatsPage = false && debugRenders;
 export const debugSocialPage = true && debugRenders; // social/index.tsx
 export const debugAccountPage = false && debugRenders;

@@ -92,7 +92,6 @@ export { default as AddActivities } from './guide/AddActivities';
 export { default as CompleteActivities } from './guide/CompleteActivities';
 export { default as CustomNotifications } from './guide/CustomNotifications';
 export { default as JoinCommunity } from './guide/JoinCommunity';
-export { default as WalkthroughPopup } from './guide/WalkthroughPopup';
 
 // Settings Components
 export { default as InfoPopup } from './settings/InfoPopup';
