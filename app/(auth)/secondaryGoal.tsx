@@ -1,20 +1,22 @@
-import SecondaryGoalScreen from '@/components/screens/SignupLogin/Signup/secondaryGoal';
-import { useAuth } from '@/contexts/AuthContext';
-import { useSignup } from '@/contexts/SignupContext';
-import { getCategoryById } from '@/utils/goals';
-import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
-import { router } from 'expo-router';
 import { useState } from 'react';
-import EmailEntryModal from '@/components/screens/SignupLogin/EmailEntryModal';
-// GraphQL + Auth
+import { router } from 'expo-router';
+// Services
 import { useMutation } from '@apollo/client';
+import mixpanel from '@/config/mixpanelConfig';
+import { getAuth } from '@/config/firebaseConfig';
+import { createUserWithEmailAndPassword } from '@react-native-firebase/auth';
+import { useAuth } from '@/contexts/AuthContext';
+// GraphQL Hooks
 import { FIREBASE_AUTH } from '@/hooks/graphql/auth';
 import { UPDATE_USER } from '@/hooks/graphql/users/mutations';
-import { getAuth } from '@/config/firebaseConfig';
-import mixpanel from '@/config/mixpanelConfig';
-import { createUserWithEmailAndPassword, getIdToken } from '@react-native-firebase/auth';
 import { useCreateCommunityMember } from '@/hooks/graphql/communities/mutations';
+// Utils
+import { getCategoryById } from '@/utils/goals';
+import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { uploadImage } from '@/utils/imageProcessing';
+// Components
+import SecondaryGoalScreen from '@/components/screens/auth/SecondaryGoalScreen';
+import EmailTakenModal from '@/components/screens/auth/EmailTakenModal';
 
 // Signup Page 4
 export default function SecondaryGoal() {
@@ -180,7 +182,7 @@ export default function SecondaryGoal() {
         isLoading={isLoading}
         handleCreateAccount={handleCreateAccount}
       />
-      <EmailEntryModal
+      <EmailTakenModal
         visible={emailModalVisible}
         onClose={() => setEmailModalVisible(false)}
         handleCreateAccount={(formData, newEmail) => handleCreateAccount(formData, newEmail, true)}

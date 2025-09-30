@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import LoginPopup from './LoginPopup';
+import LoginModal from './LoginModal';
 
 interface GetStartedScreenProps {
   error: string | null;
@@ -58,7 +51,7 @@ const GetStartedScreen = ({ tryLogin, error }: GetStartedScreenProps) => {
         </View>
       </View>
 
-      <LoginPopup 
+      <LoginModal 
         isVisible={showLoginPopup}
         error={error}
         onClose={() => setShowLoginPopup(false)}

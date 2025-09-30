@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, ActivityIndicator } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { useSignup } from '@/contexts/SignupContext';
@@ -349,4 +340,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAccountScreen; 
+export default CreateAccountScreen;

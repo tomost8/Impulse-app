@@ -1,22 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Modal,
-  Keyboard,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Image, KeyboardAvoidingView, Platform, ScrollView, Modal, Keyboard } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 import { useSignup } from '@/contexts/SignupContext';
+// Utils
+import { TIMEZONE_OPTIONS } from '@/utils/timezoneProcessing';
 import { GENDER_OPTIONS } from '@/utils/userOptions';
 import { pickImage } from '@/utils/imageProcessing';
 

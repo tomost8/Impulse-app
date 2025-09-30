@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { useSignup } from '@/contexts/SignupContext';
 import { useGetAllUsernames } from '@/hooks/graphql/users/queries';
 
-import CreateAccountScreen from '@/components/screens/SignupLogin/Signup/createaccount';
+import CreateAccountScreen from '@/components/screens/auth/CreateAccountScreen';
 
 interface FieldErrors {
   firstName?: string;

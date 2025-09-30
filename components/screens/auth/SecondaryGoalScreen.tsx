@@ -1,79 +1,85 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  ImageSourcePropType,
-} from 'react-native';
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
 import { s } from 'react-native-size-matters';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { goals } from '@/utils/goals';
 import { useSignup } from '@/contexts/SignupContext';
+import LoadingOverlay from '@/components/ui/common/LoadingOverlay';
 
-const PrimaryGoalScreen = () => {
+interface SecondaryGoalScreenProps {
+  isLoading: boolean;
+  handleCreateAccount: (formData: any) => void;
+}
+
+const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalScreenProps) => {
   const { signupData, updateSignupData } = useSignup();
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { primaryGoalId } = useLocalSearchParams<{ primaryGoalId: string }>();
+
+  // Filter out the primary goal
+  const availableGoals = goals.filter(goal => goal.id !== Number(primaryGoalId));
 
   const handleGoalSelect = (goalId: number) => {
     // If clicking the same goal, unselect it
-    if (signupData.primaryGoalId === goalId) {
-      updateSignupData({ primaryGoalId: null });
+    if (signupData.secondaryGoalId === goalId) {
+      updateSignupData({ secondaryGoalId: null });
     } else {
       // Select the new goal
-      updateSignupData({ primaryGoalId: goalId });
+      updateSignupData({ secondaryGoalId: goalId });
     }
-    // Clear any error message when making a selection
-    if (errorMessage) setErrorMessage('');
   };
 
-  const handleNext = () => {
-    if (signupData.primaryGoalId === null || signupData.primaryGoalId === undefined) {
-      setErrorMessage('Please select a primary goal');
-      return;
+  const handleFinish = () => {
+    const formData = {
+      firstName: signupData.firstName,
+      lastName: signupData.lastName,
+      email: signupData.email,
+      username: signupData.username,
+      password: signupData.password,
+      age: signupData.age,
+      gender: signupData.gender,
+      timezone: signupData.timezone,
+      bio: signupData.bio,
+      profilePicture: signupData.profilePicture,
+      code: signupData.code,
+      communityId: signupData.communityId,
+      primaryGoalId: signupData.primaryGoalId,
+      secondaryGoalId: signupData.secondaryGoalId,
     }
-    router.push({
-      pathname: '/(auth)/secondaryGoal',
-      params: { primaryGoalId: signupData.primaryGoalId }
-    });
+    handleCreateAccount(formData);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <LoadingOverlay visible={isLoading} />
+      
       {/* Progress Bars */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
           <View style={styles.progressFilled} />
           <View style={styles.progressFilled} />
-          <View style={styles.progressEmpty} />
+          <View style={styles.progressFilled} />
         </View>
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.title}>Select your primary goal</Text>
+        <Text style={styles.title}>Select your secondary goal</Text>
         
         <Text style={styles.subtitle}>
-          This app works best when you prioritize a single goal, helping you build a strong connection to your progress.
+          Pick a second goal or stick to just one. Keeping it simple helps you stay focused and make real progress.
         </Text>
 
         <Text style={styles.description}>
-          Each category is flexible—you can choose what specifically you want to work on within it
+          Your goal selections aren't permanent, you can update this anytime in Settings.
         </Text>
-
-        {errorMessage && (
-          <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
-        )}
 
         {/* Goals Grid */}
         <View style={styles.goalsGrid}>
-          {goals.map((goal) => (
+          {availableGoals.map((goal) => (
             <TouchableOpacity
               key={goal.id}
               style={[
                 styles.goalCard,
-                signupData.primaryGoalId === goal.id && styles.goalCardSelected
+                signupData.secondaryGoalId === goal.id && styles.goalCardSelected
               ]}
               onPress={() => handleGoalSelect(goal.id)}
             >
@@ -82,17 +88,17 @@ const PrimaryGoalScreen = () => {
                   source={goal.icon as ImageSourcePropType}
                   style={[
                     styles.goalIcon,
-                    signupData.primaryGoalId === goal.id && styles.goalIconSelected
+                    signupData.secondaryGoalId === goal.id && styles.goalIconSelected
                   ]}
                 />
               </View>
               <Text style={[
                 styles.goalText,
-                signupData.primaryGoalId === goal.id && styles.goalTextSelected
+                signupData.secondaryGoalId === goal.id && styles.goalTextSelected
               ]}>
                 {goal.label}
               </Text>
-              {signupData.primaryGoalId === goal.id && (
+              {signupData.secondaryGoalId === goal.id && (
                 <Image
                   source={require('@/assets/icons/checkGreen.png')}
                   style={styles.checkIcon}
@@ -113,9 +119,9 @@ const PrimaryGoalScreen = () => {
 
           <TouchableOpacity 
             style={styles.nextButton}
-            onPress={handleNext}
+            onPress={handleFinish}
           >
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text style={styles.nextButtonText}>Finish</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -123,6 +129,7 @@ const PrimaryGoalScreen = () => {
   );
 };
 
+// Use exact same styles as PrimaryGoal
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -270,4 +277,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PrimaryGoalScreen;
+export default SecondaryGoalScreen;

@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  SafeAreaView,
-  Image,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Image } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import ForgotPassword from './forgotPassword';
+import ForgotPasswordModal from './ForgotPasswordModal';
 
-interface LoginPopupProps {
+interface LoginModalProps {
   isVisible: boolean;
   error: string | null;
   onClose: () => void;
@@ -26,7 +17,7 @@ interface LoginPopupProps {
 }
 
 
-const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, error, onClose, tryLogin }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isVisible, error, onClose, tryLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -117,7 +108,7 @@ const LoginPopup: React.FC<LoginPopupProps> = ({ isVisible, error, onClose, tryL
         </View>
       </SafeAreaView>
 
-      <ForgotPassword 
+      <ForgotPasswordModal 
         isVisible={showForgotPassword}
         onClose={() => setShowForgotPassword(false)}
       />
@@ -254,4 +245,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPopup;
+export default LoginModal;

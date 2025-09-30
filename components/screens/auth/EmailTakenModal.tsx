@@ -3,17 +3,17 @@ import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, ActivityInd
 import { s } from 'react-native-size-matters';
 import { useSignup } from '@/contexts/SignupContext';
 
-interface EmailEntryModalProps {
+interface EmailTakenModalProps {
   visible: boolean;
   onClose: () => void;
   handleCreateAccount: (formData: any, newEmail?: string) => Promise<boolean>;
 }
 
-export default function EmailEntryModal({
+export default function EmailTakenModal({
   visible,
   onClose,
   handleCreateAccount,
-}: EmailEntryModalProps) {
+}: EmailTakenModalProps) {
   const { signupData, updateSignupData } = useSignup();
   const currentEmail = signupData.email;
   const [newEmail, setNewEmail] = useState(currentEmail);
