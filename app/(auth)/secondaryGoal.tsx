@@ -1,9 +1,11 @@
 import SecondaryGoalScreen from '@/components/screens/SignupLogin/Signup/secondaryGoal';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSignup } from '@/contexts/SignupContext';
 import { getCategoryById } from '@/utils/goals';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
 import { router } from 'expo-router';
 import { useState } from 'react';
+import EmailEntryModal from '@/components/screens/SignupLogin/EmailEntryModal';
 // GraphQL + Auth
 import { useMutation } from '@apollo/client';
 import { FIREBASE_AUTH } from '@/hooks/graphql/auth';
@@ -16,12 +18,14 @@ import { uploadImage } from '@/utils/imageProcessing';
 
 // Signup Page 4
 export default function SecondaryGoal() {
-  const {login, authToken} = useAuth();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [firebaseAuth] = useMutation(FIREBASE_AUTH);
+  const [emailModalVisible, setEmailModalVisible] = useState(false);
 
-  const [updateUser] = useMutation(UPDATE_USER); 
   // Mutations
+  const [firebaseAuth] = useMutation(FIREBASE_AUTH);
+  const [updateUser] = useMutation(UPDATE_USER); 
+  
   const { createCommunityMember } = useCreateCommunityMember();
   const handleCreateCommunityMember = async (userId: number, communityId: number) => {
     try {
@@ -43,11 +47,14 @@ export default function SecondaryGoal() {
     }
   };
 
-  const handleCreateAccount = async (formData: any) => {
-    setIsLoading(true);
+  const handleCreateAccount = async (formData: any, newEmail?: string, fromModal?: boolean): Promise<boolean> => {
+    if (!fromModal) {
+      setIsLoading(true);
+    }
     try {
       // 1. Create Firebase user
-      const userCredential = await createUserWithEmailAndPassword(getAuth(), formData.email as string, formData.password as string);
+      const emailToUse = newEmail || formData.email;
+      const userCredential = await createUserWithEmailAndPassword(getAuth(), emailToUse as string, formData.password as string);
       console.log(`✅ Firebase User Created:\n  - Email: ${userCredential.user.email}\n  - Firebase UID: ${userCredential.user.uid}`);
       
       // 2. Get Firebase token directly from user (fixes race condition)
@@ -146,18 +153,38 @@ export default function SecondaryGoal() {
         await login(authToken, userData.id, userCredential.user.uid, true, formData.email as string);
         console.log("✅ User logged in successfully, redirecting to homepage with welcome popup");
         router.replace('/(tabs)/home?welcome=true');
+        return true; // Success
       } else {
         throw new Error("firebaseAuth failed: firebaseAuth.success is false");
       }
-    } catch (error) {
-      console.log('Signup failed', error);
+    } catch (error: any) {
+      // Handle email already exists error
+      if (error.code === 'auth/email-already-in-use') {
+        setEmailModalVisible(true);
+        return false; // Failure
+      } else {
+        console.error('Signup failed', error);
+      }
+      // For other errors, you might want to show a generic error message or handle them differently
+      return false; // Failure
     } finally {
-      setIsLoading(false);
+      if (!fromModal) {
+        setIsLoading(false);
+      }
     }
   };
 
-  return <SecondaryGoalScreen 
-    isLoading={isLoading}
-    handleCreateAccount={handleCreateAccount}
-  />;
+  return (
+    <>
+      <SecondaryGoalScreen 
+        isLoading={isLoading}
+        handleCreateAccount={handleCreateAccount}
+      />
+      <EmailEntryModal
+        visible={emailModalVisible}
+        onClose={() => setEmailModalVisible(false)}
+        handleCreateAccount={(formData, newEmail) => handleCreateAccount(formData, newEmail, true)}
+      />
+    </>
+  );
 }

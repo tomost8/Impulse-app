@@ -1,6 +1,41 @@
 import { gql, useQuery } from '@apollo/client';
 import { debugQueries } from '@/debug/utils';
 
+// Query - Get All Usernames
+export const GET_ALL_USERNAMES = gql`
+  query {
+    users {
+      success
+      users { username }
+      errors { field message }
+    }
+  }
+`;
+
+export function useGetAllUsernames(hasFetched: boolean = true) {
+  const { data, loading, error } = useQuery(GET_ALL_USERNAMES, {
+    skip: !hasFetched
+  });
+  const fetched = hasFetched && !loading;
+  if (debugQueries && fetched) {
+    const success = data?.users.success;
+    const errors = data?.users.errors;
+    const usernames = data?.users.users?.map((user: any) => user?.username).filter(Boolean) || [];
+    console.log("useGetAllUsernames:", {
+      success,
+      errors: errors?.length > 0 ? errors : null,
+      usernamesCount: usernames.length,
+      usernames: usernames.slice(0, 5), // Show first 5 usernames
+      error: error ? error.message : null
+    });
+  }
+  return {
+    usernames: data?.users.users?.map((user: any) => user?.username?.toLowerCase()).filter(Boolean) || [],
+    fetched: fetched,
+    error: error?.message || null
+  };
+}
+
 // Query - Get All Users
 export const GET_ALL_USERS = gql`
   query {

@@ -7,62 +7,41 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { useSignup } from '@/contexts/SignupContext';
 
-const CreateAccountScreen = () => {
+interface FieldErrors {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+}
+
+interface CreateAccountScreenProps {
+  fieldErrors: FieldErrors;
+  isValidating: boolean;
+  validateAndProceed: () => Promise<void>;
+  clearFieldError: (field: keyof FieldErrors) => void;
+}
+
+const CreateAccountScreen = ({ 
+  fieldErrors, 
+  isValidating, 
+  validateAndProceed, 
+  clearFieldError 
+}: CreateAccountScreenProps) => {
   const { signupData, updateSignupData } = useSignup();
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleInputChange = (field: string, value: string) => {
     updateSignupData({ [field]: value });
-    // Clear error message when user starts typing
-    if (errorMessage) setErrorMessage('');
+    clearFieldError(field as keyof FieldErrors);
   };
 
-  const validateForm = (): boolean => {
-    // Check if required string fields are filled
-    const requiredFields = {
-      firstName: signupData.firstName,
-      lastName: signupData.lastName,
-      username: signupData.username,
-      email: signupData.email,
-      password: signupData.password,
-    };
-
-    const isAnyFieldEmpty = Object.values(requiredFields).some(value => 
-      !value || value.trim() === ''
-    );
-
-    if (isAnyFieldEmpty) {
-      setErrorMessage('All information has to be filled out');
-      return false;
-    }
-
-    // Check password length
-    if (signupData.password.length < 8) {
-      setErrorMessage('Password does not meet requirements');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleNext = () => {
-    // Clear any existing error message
-    setErrorMessage('');
-
-    // Validate form
-    if (!validateForm()) {
-      return;
-    }
-
-    // If validation passes, navigate to PersonalProfile
-    router.push('/(auth)/personalProfile');
-  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -76,17 +55,37 @@ const CreateAccountScreen = () => {
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.title}>Create Account</Text>
+        <View style={styles.topSection}>
+          <Text style={styles.title}>Create Account</Text>
 
-        {/* Error Message */}
-        {errorMessage && (
-          <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
-        )}
+          {/* Error Messages */}
+          {Object.values(fieldErrors).some(error => error) && (
+            <View style={styles.errorContainer}>
+              {fieldErrors.firstName && (
+                <Text style={styles.errorMessage}>• {fieldErrors.firstName}</Text>
+              )}
+              {fieldErrors.lastName && (
+                <Text style={styles.errorMessage}>• {fieldErrors.lastName}</Text>
+              )}
+              {fieldErrors.username && (
+                <Text style={styles.errorMessage}>• {fieldErrors.username}</Text>
+              )}
+              {fieldErrors.email && (
+                <Text style={styles.errorMessage}>• {fieldErrors.email}</Text>
+              )}
+              {fieldErrors.password && (
+                <Text style={styles.errorMessage}>• {fieldErrors.password}</Text>
+              )}
+            </View>
+          )}
 
-        {/* Form Fields */}
-        <View style={styles.formContainer}>
+          {/* Form Fields */}
+          <View style={styles.formContainer}>
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              fieldErrors.firstName && styles.inputError
+            ]}
             placeholder="First Name"
             placeholderTextColor="#979797"
             value={signupData.firstName}
@@ -94,7 +93,10 @@ const CreateAccountScreen = () => {
           />
 
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              fieldErrors.lastName && styles.inputError
+            ]}
             placeholder="Last Name"
             placeholderTextColor="#979797"
             value={signupData.lastName}
@@ -102,15 +104,22 @@ const CreateAccountScreen = () => {
           />
 
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              fieldErrors.username && styles.inputError
+            ]}
             placeholder="Username"
             placeholderTextColor="#979797"
             value={signupData.username}
             onChangeText={(value) => handleInputChange('username', value)}
+            autoCapitalize="none"
           />
 
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              fieldErrors.email && styles.inputError
+            ]}
             placeholder="Email Address"
             placeholderTextColor="#979797"
             value={signupData.email}
@@ -123,7 +132,7 @@ const CreateAccountScreen = () => {
             <TextInput
               style={[
                 styles.passwordInput,
-                errorMessage && styles.inputError // Only highlight password field for any error
+                fieldErrors.password && styles.passwordInputError
               ]}
               placeholder="Enter Password"
               placeholderTextColor="#979797"
@@ -145,30 +154,44 @@ const CreateAccountScreen = () => {
             </TouchableOpacity>
           </View>
           <Text style={styles.passwordHint}>Must be at least 8 characters</Text>
+          </View>
         </View>
 
-        {/* Login Link */}
-        <View style={styles.loginContainer}>
-          <Text style={styles.loginText}>Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/(auth)/getStarted')}>
-            <Text style={styles.loginLink}>Login</Text>
+        <View style={styles.bottomSection}>
+          {/* Login Link */}
+          <View style={styles.loginContainer}>
+            <Text style={styles.loginText}>Already have an account? </Text>
+            <TouchableOpacity onPress={() => router.push('/(auth)/getStarted')}>
+              <Text style={styles.loginLink}>Login</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Next Button */}
+          <TouchableOpacity 
+            style={[
+              styles.nextButton,
+              (!signupData.firstName || !signupData.lastName || !signupData.username || !signupData.email || !signupData.password || isValidating) && styles.nextButtonDisabled
+            ]}
+            onPress={validateAndProceed}
+            disabled={!signupData.firstName || !signupData.lastName || !signupData.username || !signupData.email || !signupData.password || isValidating}
+          >
+            {isValidating ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <Text style={[
+                styles.nextButtonText,
+                (!signupData.firstName || !signupData.lastName || !signupData.username || !signupData.email || !signupData.password || isValidating) && styles.nextButtonTextDisabled
+              ]}>Next</Text>
+            )}
           </TouchableOpacity>
+
+          {/* Terms and Privacy */}
+          <Text style={styles.termsText}>
+            By signing up you are agreeing to our{' '}
+            <Text style={styles.termsLink}>Terms of Use</Text> and our{' '}
+            <Text style={styles.termsLink}>Privacy Policy</Text>.
+          </Text>
         </View>
-
-        {/* Next Button */}
-        <TouchableOpacity 
-          style={styles.nextButton}
-          onPress={handleNext}
-        >
-          <Text style={styles.nextButtonText}>Next</Text>
-        </TouchableOpacity>
-
-        {/* Terms and Privacy */}
-        <Text style={styles.termsText}>
-          By signing up you are agreeing to our{' '}
-          <Text style={styles.termsLink}>Terms of Use</Text> and our{' '}
-          <Text style={styles.termsLink}>Privacy Policy</Text>.
-        </Text>
       </View>
     </SafeAreaView>
   );
@@ -198,6 +221,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: s(20),
     paddingBottom: s(18),
+    justifyContent: 'space-between', // Push bottom content to bottom
+  },
+  topSection: {
+    flex: 1,
+  },
+  bottomSection: {
+    // Bottom section stays at bottom
   },
   title: {
     fontSize: s(22),
@@ -206,12 +236,19 @@ const styles = StyleSheet.create({
     color: '#242020',
     marginBottom: s(16),
   },
+  errorContainer: {
+    maxHeight: s(120), // Fixed max height for error messages
+    marginBottom: s(12),
+    marginTop: -6,
+  },
   errorMessage: {
     color: '#DE728D',
     fontSize: s(12),
     fontFamily: 'Open Sans',
-    marginBottom: s(12),
-    marginTop: -6,
+    marginBottom: s(4),
+  },
+  inputError: {
+    borderColor: '#DE728D',
   },
   formContainer: {
     gap: s(16),
@@ -226,9 +263,6 @@ const styles = StyleSheet.create({
     fontSize: s(14),
     fontFamily: 'Open Sans',
   },
-  inputError: {
-    borderColor: '#DE728D',
-  },
   passwordContainer: {
     position: 'relative',
   },
@@ -241,6 +275,9 @@ const styles = StyleSheet.create({
     paddingRight: s(50),
     fontSize: s(14),
     fontFamily: 'Open Sans',
+  },
+  passwordInputError: {
+    borderColor: '#DE728D',
   },
   unhideButton: {
     position: 'absolute',
@@ -287,11 +324,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: s(24),
   },
+  nextButtonDisabled: {
+    backgroundColor: '#E1E1E1',
+  },
   nextButtonText: {
     fontSize: s(14),
     fontFamily: 'Open Sans',
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  nextButtonTextDisabled: {
+    color: '#979797',
   },
   termsText: {
     fontSize: s(12),

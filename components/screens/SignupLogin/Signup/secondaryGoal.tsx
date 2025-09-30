@@ -12,7 +12,7 @@ import { s } from 'react-native-size-matters';
 import { router, useLocalSearchParams } from 'expo-router';
 import { goals } from '@/utils/goals';
 import { useSignup } from '@/contexts/SignupContext';
-import LoadingScreen from '@/components/ui/common/loading';
+import LoadingOverlay from '@/components/ui/common/LoadingOverlay';
 
 interface SecondaryGoalScreenProps {
   isLoading: boolean;
@@ -20,9 +20,6 @@ interface SecondaryGoalScreenProps {
 }
 
 const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalScreenProps) => {
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
   const { signupData, updateSignupData } = useSignup();
   const { primaryGoalId } = useLocalSearchParams<{ primaryGoalId: string }>();
 
@@ -61,6 +58,8 @@ const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalSc
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <LoadingOverlay visible={isLoading} />
+      
       {/* Progress Bars */}
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
