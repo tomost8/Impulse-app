@@ -170,9 +170,9 @@ export const badgeImages: Record<string, any> = {
 };
 
 export const grayBadgeImages: Record<string, any> = {
-  food_level_1_bronze: require("@/assets/icons/challenges/grayed_badges/gray_food_level.png"),
-  food_level_1_silver: require("@/assets/icons/challenges/grayed_badges/gray_food_level.png"),
-  food_level_1_gold: require("@/assets/icons/challenges/grayed_badges/gray_food_level.png"),
+  food_level_1_bronze: require("@/assets/icons/challenges/grayed_badges/gray_food_level_1.png"),
+  food_level_1_silver: require("@/assets/icons/challenges/grayed_badges/gray_food_level_1.png"),
+  food_level_1_gold: require("@/assets/icons/challenges/grayed_badges/gray_food_level_1.png"),
   food_level_1_diamond: require("@/assets/icons/challenges/grayed_badges/gray_food_level_1_diamond.png"),
   food_level_2_bronze: require("@/assets/icons/challenges/grayed_badges/gray_food_level_2.png"),
   food_level_2_silver: require("@/assets/icons/challenges/grayed_badges/gray_food_level_2.png"),
