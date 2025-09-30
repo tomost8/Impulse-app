@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 interface Member {
   id: string;
   name: string;
@@ -24,8 +25,9 @@ const MembersList: React.FC<MemberListProps> = ({
         {members.map((member, index) => (
           <View key={`${member.id}-${index}`} style={styles.memberCard}>
             <View style={styles.memberInfo}>
-              <Image
+              <ProfilePictureWithLoading
                 source={member.profile_picture ? { uri: member.profile_picture } : { uri: DEFAULT_PROFILE_PICTURE }}
+                size={50}
                 style={styles.profileImage}
               />
               <View style={styles.textContainer}>

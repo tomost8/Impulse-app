@@ -17,7 +17,15 @@ const ChatPage = () => {
 
   // Display Chat Info
   const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat.chat);
-  const chatInfo = acceptedChats.map((chat: any) => {
+  
+  // Sort chats by updated_at with most recent first
+  const sortedChats = acceptedChats.sort((a: any, b: any) => {
+    const dateA = new Date(a.updated_at || 0);
+    const dateB = new Date(b.updated_at || 0);
+    return dateB.getTime() - dateA.getTime(); // Most recent first
+  });
+  
+  const chatInfo = sortedChats.map((chat: any) => {
     if (chat.type === 'group') {
       return {
         ...chat,

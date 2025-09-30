@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  Image,
-  ImageSourcePropType,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
-import { goals } from '@/utils/goals';
 import { useSignup } from '@/contexts/SignupContext';
+import { goals } from '@/utils/goals';
 
 const PrimaryGoalScreen = () => {
   const { signupData, updateSignupData } = useSignup();

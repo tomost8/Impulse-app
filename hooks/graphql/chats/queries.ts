@@ -6,7 +6,7 @@ export const GET_ALL_CHATS = gql`
   query {
     getAllChats {
       success
-      chats { id type title password profile_pic creator { first_name last_name email } creator_id }
+      chats { id type title password profile_pic creator { first_name last_name email } creator_id updated_at }
       errors { field message }
     }
   }
@@ -76,7 +76,7 @@ export const GET_USER_CHATS = gql`
     getUserChats(id: $userId) {
       success
       chat_members {
-        chat { id type title profile_pic }
+        chat { id type title profile_pic updated_at }
         role
         status
       }
@@ -130,7 +130,19 @@ export function useGetChatMembers(chatId: number, shouldFetch: boolean = true) {
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    console.log("useGetChatMembers data", data, error ? 'error:' + error : '');
+    const chatMembers = data?.getChatMembers.chat_members || [];
+    const success = data?.getChatMembers.success;
+    const errors = data?.getChatMembers.errors;
+    const memberDetails = chatMembers.map((member: any) => ({
+      userId: member.user.id,
+      username: member.user.username,
+      firstName: member.user.first_name,
+      lastName: member.user.last_name,
+      role: member.role,
+      status: member.status
+    }));
+    const membersString = memberDetails.map((m: any) => `  {userId: ${m.userId}, username: "${m.username}", name: "${m.firstName} ${m.lastName}", role: "${m.role}", status: "${m.status}"}`).join('\n');
+    console.log("useGetChatMembers: success:", success, "errors:", errors?.length > 0 ? errors : null, "memberCount:", chatMembers.length, "chatId:", chatId, "members:\n" + membersString);
   }
   return {
     chatMembers: data?.getChatMembers.chat_members || [],

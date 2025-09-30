@@ -1,141 +1,119 @@
-import { useState } from 'react';
-import styles from '@/utils/testStyles';
-import { View, TextInput, Button, Text, Platform } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
 import { router } from 'expo-router';
-import firestore from '@react-native-firebase/firestore';
+import { useSignup } from '@/contexts/SignupContext';
+import { useGetAllUsernames } from '@/hooks/graphql/users/queries';
 
-import CreateAccountScreen from '@/components/screens/SignupLogin/Signup/createaccount';
+import CreateAccountScreen from '@/components/screens/auth/CreateAccountScreen';
+
+interface FieldErrors {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+}
 
 export default function CreateAccount() {
-  return <CreateAccountScreen />;
+  const { signupData } = useSignup();
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [isValidating, setIsValidating] = useState(false);
+  
+  const usernamesRef = useRef<string[] | null>(null);
+  const hasFetchedUsernames = useRef(false);
+  const { usernames, fetched: hasNewUsernamesData } = useGetAllUsernames(!hasFetchedUsernames.current);
 
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!hasNewUsernamesData) {
+      return;
+    }
+    if (hasNewUsernamesData) {
+      usernamesRef.current = usernames;
+      hasFetchedUsernames.current = true;
+    }
+  }, [hasNewUsernamesData]);
 
-  const checkValidFields = async () => {
-    setError(null);
-    
+
+  const validateAllFields = async (): Promise<FieldErrors> => {
+    const errors: FieldErrors = {};
+
     try {
-      // Email validation
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        setError('Invalid email format');
-        return false;
+      // 1. First Name validation: 1 to 100 characters
+      if (!signupData.firstName || signupData.firstName.trim() === '') {
+        errors.firstName = 'First name is required';
       }
 
-      // Check email availability
-      const emailQuery = await firestore()
-        .collection('users')
-        .where('email', '==', email.toLowerCase())
-        .get();
-      if (!emailQuery.empty) {
-        setError('Email is already in use');
-        return false;
-      }
-      // Check username availability
-      const usernameQuery = await firestore()
-        .collection('users')
-        .where('userName', '==', username.toLowerCase())
-        .get();
-      if (!usernameQuery.empty) {
-        setError('Username is already taken');
-        return false;
-      }
-      if (password.length < 8) {
-        setError('Password must be at least 8 characters long');
-        return false;
+      // 2. Last Name validation: 1 to 100 characters
+      if (!signupData.lastName || signupData.lastName.trim() === '') {
+        errors.lastName = 'Last name is required';
       }
 
-      setError('All fields valid!');
-      return true;
-
-    } catch (error) {
-      console.error('Error checking field availability:', error);
-      setError(error instanceof Error ? error.message : 'Availability check failed');
-      return false;
-    }
-  };
-
-  const handleNext = async () => {
-    const isAvailable = await checkValidFields();
-    if (isAvailable) {
-      router.push({
-        pathname: '/(auth)/personalProfile',
-        params: {
-          email,
-          username,
-          password,
-          firstName,
-          lastName
+      // 3. Username validation: 2 to 255 characters
+      if (!signupData.username || signupData.username.trim() === '') {
+        errors.username = 'Username is required';
+      } else {
+        if (signupData.username.length < 2) {
+          errors.username = 'Username must be at least 2 characters';
+        } else if (hasFetchedUsernames.current && usernamesRef.current) {
+          // Check username availability (although uniqueness not enforced in backend)
+          const usernameLower = signupData.username.toLowerCase();
+          if (usernamesRef.current.includes(usernameLower)) {
+            errors.username = 'Username is already taken';
+          }
         }
-      });
+      }
+
+      // 4. Email validation: availablity checked later
+      if (!signupData.email || signupData.email.trim() === '') {
+        errors.email = 'Email is required';
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(signupData.email)) {
+          errors.email = 'Invalid email format';
+        }
+      }
+
+      // 5. Password validation
+      if (!signupData.password || signupData.password.trim() === '') {
+        errors.password = 'Password is required';
+      } else if (signupData.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters';
+      }
+
+      return errors;
+    } catch (error) {
+      console.error('Error during validation:', error);
+      return {
+        username: hasFetchedUsernames.current ? 'Failed to check username availability' : 'Loading username data...'
+      };
     }
   };
+
+  const validateAndProceed = async () => {
+    setIsValidating(true);
+    
+    const errors = await validateAllFields();
+    setFieldErrors(errors);
+    
+    setIsValidating(false);
+    
+    // If no errors, navigate to PersonalProfile
+    if (Object.keys(errors).length === 0) {
+      router.push('/(auth)/personalProfile');
+    }
+  };
+
+  const clearFieldError = (field: keyof FieldErrors) => {
+    setFieldErrors(prev => ({ ...prev, [field]: undefined }));
+  };
+
+  const loading = !hasFetchedUsernames.current;
 
   return (
-    <View style={styles.container}>
-      {error && (
-        <Text style={styles.error}>{error}</Text>
-      )}
-      <TextInput 
-        placeholder="First Name" 
-        placeholderTextColor="gray"
-        value={firstName}
-        onChangeText={setFirstName}
-        style={styles.input}
-      />
-
-      <TextInput 
-        placeholder="Last Name" 
-        placeholderTextColor="gray"
-        value={lastName}
-        onChangeText={setLastName}
-        style={styles.input}
-      />
-      
-      <TextInput 
-        placeholder="Username" 
-        placeholderTextColor="gray"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-        style={styles.input}
-      />
-      
-      <TextInput 
-        placeholder="Email" 
-        placeholderTextColor="gray"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        style={styles.input}
-      />
-      
-      <TextInput 
-        placeholder="Password" 
-        placeholderTextColor="gray"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
-
-      <Button 
-        title="Check Availability" 
-        onPress={checkValidFields}
-        //disabled={!email || !username}
-      />
-
-      <Button 
-        title="Next" 
-        onPress={handleNext}
-        disabled={!email || !password || !firstName || !lastName || !username}
-      />
-    </View>
+    <CreateAccountScreen 
+      fieldErrors={fieldErrors}
+      isValidating={isValidating}
+      validateAndProceed={validateAndProceed}
+      clearFieldError={clearFieldError}
+    />
   );
 }

@@ -51,6 +51,7 @@ const DisplayPicturePage = () => {
   const [isCreatingPost, setIsCreatingPost] = useState(false);
 
   const handleCreatePost = async () => {
+    console.log(`🎯 Display: Creating post with activity ${context?.id} (${context?.category})`);
     setIsCreatingPost(true);
     try {
       const postTargets = selectedPostTargets.map(target => {
@@ -70,7 +71,7 @@ const DisplayPicturePage = () => {
         mediaUrls: downloadURLs,
         expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day from now
       };
-      console.log("input", input);
+      console.log("🎯 Display: Post input", input);
       const response = await createPost(input, authToken as string);
       console.log("createPost response:", response);
       if (response.success) {
@@ -87,7 +88,6 @@ const DisplayPicturePage = () => {
           communityFeed: true,   // Show new post in community feed
         });
       } else {
-        console.error("Create post failed - Response:", response);
         throw new Error("createPost response.success false: " + JSON.stringify(response.errors));
       }
     } catch (error) {
@@ -138,16 +138,14 @@ const DisplayPicturePage = () => {
   }, [id, category]);
 
   const handleActivityNext = () => {
-    console.log("Next Activity Button Pressed");
     setActivityModalVisible(false);
     setActivityButtonVisible(false);
     setCaptionFooterVisible(true);
     setUsersButtonVisible(true);
   };
 
-  const handlePostSend = () => {
-    console.log("Selected Post Targets:", selectedPostTargets);
-    handleCreatePost();
+  const handlePostSend = async () => {
+    await handleCreatePost();
     setCaptionFooterVisible(false);
     setUsersModalVisible(false);
     router.replace("/home");
@@ -176,7 +174,7 @@ const DisplayPicturePage = () => {
 
   return (
     <View style={styles.container}>
-      <DisplayPictureScreen
+      <DisplayPictureScreen 
         mainImageSource={mainImageSource}
         previewImageSource={previewImageSource}
         swapImages={swapImages}
@@ -189,6 +187,7 @@ const DisplayPicturePage = () => {
         usersButtonVisible={usersButtonVisible}
         setActivityModalVisible={setActivityModalVisible}
         setUsersModalVisible={setUsersModalVisible}
+        isCreatingPost={isCreatingPost}
       />
       <SelectActivityModal 
         isVisible={activityModalVisible}
@@ -210,6 +209,7 @@ const DisplayPicturePage = () => {
         togglePostTarget={togglePostTarget}
         onClose={() => setUsersModalVisible(false)}
         onSend={handlePostSend}
+        isCreatingPost={isCreatingPost}
       />
     </View>
   );

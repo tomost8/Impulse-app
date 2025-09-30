@@ -14,6 +14,7 @@ interface DisplayPictureScreenProps {
   setActivityModalVisible: (visible: boolean) => void;
   setUsersModalVisible: (visible: boolean) => void;
   swapImages: () => void;
+  isCreatingPost: boolean;
 }
 
 const DisplayPictureScreen = ({
@@ -29,6 +30,7 @@ const DisplayPictureScreen = ({
   setActivityModalVisible,
   setUsersModalVisible,
   swapImages,
+  isCreatingPost,
 }: DisplayPictureScreenProps) => {
   return (
     <KeyboardAvoidingView 

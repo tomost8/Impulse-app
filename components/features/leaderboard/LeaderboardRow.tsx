@@ -18,7 +18,7 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ rank, name, points, ima
       {/* Profile Image */}
       <ProfilePictureWithLoading 
         source={{uri: imageUrl}} 
-        size={48}
+        size={40}
         style={styles.profileImage} 
       />
 

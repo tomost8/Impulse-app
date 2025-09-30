@@ -3,8 +3,7 @@ import { router } from 'expo-router';
 // GraphQL hooks
 import { useFirebaseAuth } from '@/hooks/graphql/auth';
 // Components
-
-import GetStartedScreen from '@/components/screens/SignupLogin/Login/getStarted';
+import GetStartedScreen from '@/components/screens/auth/GetStartedScreen';
 // Services
 import { useAuth } from '@/contexts/AuthContext';
 import { getAuth } from '@/config/firebaseConfig';

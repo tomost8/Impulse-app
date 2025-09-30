@@ -83,8 +83,8 @@ const SetupActivitiesModal: React.FC<SetupActivitiesModalProps> = ({
       animationType="fade"
       transparent={true}
     >
-      <SafeAreaView style={styles.modalContainer}>
-        <View style={styles.popup}>
+      <SafeAreaView style={[styles.modalContainer, { pointerEvents: 'box-none' }]}>
+        <View style={[styles.popup, { pointerEvents: 'auto' }]}>
           <View style={styles.header}>
             <Text style={styles.title}>Select Goals for the Day</Text>
             <TouchableOpacity onPress={onClose}>

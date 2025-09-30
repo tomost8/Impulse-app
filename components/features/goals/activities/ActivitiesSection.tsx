@@ -11,7 +11,7 @@ interface ActivitiesSectionProps {
 
 const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => {
   // Sort activities: in-progress first, then completed
-  const sortedActivities = [...activities].sort((a, b) => {
+  const sortedActivities = [...(activities || [])].sort((a, b) => {
     const aIsPending = a.status.toLowerCase() === 'pending';
     const bIsPending = b.status.toLowerCase() === 'pending';
     
@@ -34,7 +34,7 @@ const ActivitiesSection = ({ activities, timezone }: ActivitiesSectionProps) => 
       </View>
 
       {/* Main Content: Activity Cards */}
-      {activities.length > 0 ? (
+      {(activities || []).length > 0 ? (
         sortedActivities.map((activity) => (
           <ActivityCard
             key={activity.id}

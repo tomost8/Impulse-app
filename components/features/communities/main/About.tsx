@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { DEFAULT_PROFILE_PICTURE } from '@/utils/userOptions';
+import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 
 interface AboutProps {
   description: string;
@@ -21,8 +22,9 @@ const About: React.FC<AboutProps> = ({
       <Text style={styles.description}>{description}</Text>
       
       <View style={styles.founderCard}>
-        <Image
+        <ProfilePictureWithLoading
           source={{ uri: founderImage }}
+          size={50}
           style={styles.founderImage}
         />
         <View style={styles.founderInfo}>

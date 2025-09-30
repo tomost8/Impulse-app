@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { DEFAULT_COMMUNITY_THUMBNAIL } from '@/utils/userOptions';
 
@@ -24,6 +24,8 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
   onJoinCommunity,
   isJoining
 }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const handleEdit = () => {
     router.push(`/community/${communityId}/editCommunity`);
   };
@@ -32,12 +34,29 @@ const CommunityProfile: React.FC<CommunityProfileProps> = ({
     onJoinCommunity();
   };
 
+  const handleImageLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleImageError = () => {
+    setIsLoading(false);
+  };
+
   return (
     <View style={styles.container}>
-      <Image
-        source={thumbnail ? { uri: thumbnail } : { uri: DEFAULT_COMMUNITY_THUMBNAIL }}
-        style={styles.coverImage}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          source={thumbnail ? { uri: thumbnail } : { uri: DEFAULT_COMMUNITY_THUMBNAIL }}
+          style={styles.coverImage}
+          onLoad={handleImageLoad}
+          onError={handleImageError}
+        />
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="small" color="#DE728D" />
+          </View>
+        )}
+      </View>
       
       <View style={styles.contentContainer}>
         <View style={styles.titleSection}>
@@ -76,10 +95,25 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
+  imageContainer: {
+    position: 'relative',
+    width: '100%',
+    height: 109,
+  },
   coverImage: {
     width: '100%',
     height: 109,
     alignSelf: 'stretch',
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(245, 245, 245, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   contentContainer: {
     paddingHorizontal: 16,
