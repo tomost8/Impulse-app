@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { getBadgeImage } from "@/utils/challengeUtils";
 import BadgeEarnedModal from "../Modal/BadgeEarnedModal";
@@ -7,22 +7,21 @@ import BadgeEarnedModal from "../Modal/BadgeEarnedModal";
 type HomeCompletedChallengeProps = {
   id: string;
   title: string;
-  totalDays: number;
+  status: string;
   completedAt: string;
-  endsAt: string;
   badge: string;
 };
 
 const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
   id,
   title,
-  totalDays,
+  status,
   completedAt,
-  endsAt,
   badge,
 }) => {
   const router = useRouter();
   const [showModalPopup, setshowModalPopup] = useState(false);
+  const challengeStatus = status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
 
   const formatDate = (dateString: string) => {
     if (!dateString) return 'Unknown date';
@@ -60,7 +59,7 @@ const HomeCompletedChallenge: React.FC<HomeCompletedChallengeProps> = ({
           
           {/* Completion Info */}
           <View style={styles.completionInfo}>
-            <Text style={styles.completedText}>Completed</Text>
+            <Text style={styles.completedText}>{challengeStatus}</Text>
             <Text style={styles.dot}>•</Text>
             <Text style={styles.completionDate}>{completedAt ? formatDate(completedAt) : 'MM/DD/YY'}</Text>
           </View>

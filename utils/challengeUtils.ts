@@ -59,11 +59,11 @@ export function getBadges(title: string, daysCompleted: number) {
 export function getBadgeImage(title: string, badge: string) {
 
   const { category, level } = extractCategoryAndLevel(title);
-  const name = `${category}_level_${level}_${badge.toLowerCase()}`;
-  
-  //console.log("🛹 Getting badge image for:", name);
-  //console.log("🛹 badgeImages:", badgeImages[name]);
-  return badgeImages[name];
+  const name = badge
+    ? `${category}_level_${level}_${badge.toLowerCase()}`
+    : `${category}_level_${level}_bronze`;
+    
+  return badge? badgeImages[name] : grayBadgeImages[name];  
 }
 
 export function getCategoryIcon(category?: string) {

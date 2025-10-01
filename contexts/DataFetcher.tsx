@@ -184,7 +184,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     currentRefetchOptions.current.challenges);
   const shouldFetchChallenges = shouldFetchChallengesInitially || shouldRefetchChallenges;
   
-  const { activeChallenges, completedChallenges, fetched: hasNewChallengesData } = useGetMyChallenges(
+  const { activeChallenges, completedChallenges, failedChallenges, fetched: hasNewChallengesData } = useGetMyChallenges(
     authToken as string,
     shouldFetchChallenges
   );
@@ -524,7 +524,8 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (hasNewChallengesData) {
       const challengesData = {
         activeChallenges,
-        completedChallenges
+        completedChallenges,
+        failedChallenges,
       };
       challengesRef.current = challengesData;
       hasFetchedChallenges.current = true;

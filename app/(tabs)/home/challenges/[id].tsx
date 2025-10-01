@@ -28,7 +28,7 @@ const ChallengeDetailPage = () => {
   // Query for Loading State - My Challenges Only
   const myChallengesRef = useRef<any | null>(null);
   const hasFetchedMyChallenges = useRef(false);
-  const { activeChallenges, completedChallenges, success, errors: myChallengesErrors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
+  const { activeChallenges, completedChallenges, failedChallenges, success, errors: myChallengesErrors, fetched: hasNewMyChallengesData } = useGetMyChallenges(
     authToken as string,
     !hasFetchedMyChallenges.current && !fetching && !!user?.id
   );
@@ -38,7 +38,7 @@ const ChallengeDetailPage = () => {
       return;
     }
     if (hasNewMyChallengesData) {
-      myChallengesRef.current = { activeChallenges, completedChallenges };
+      myChallengesRef.current = { activeChallenges, completedChallenges, failedChallenges };
       hasFetchedMyChallenges.current = true;
       setRenderCounter(prev => prev + 1);
     }
@@ -48,8 +48,8 @@ const ChallengeDetailPage = () => {
   const challenge = React.useMemo(() => {
     if (!id || !myChallengesRef.current) return null;
     
-    const { activeChallenges, completedChallenges } = myChallengesRef.current;
-    const allChallenges = [...(activeChallenges || []), ...(completedChallenges || [])];
+    const { activeChallenges, completedChallenges, failedChallenges } = myChallengesRef.current;
+    const allChallenges = [...(activeChallenges || []), ...(completedChallenges || []), ...(failedChallenges || [])];
     
     return allChallenges.find((challenge: any) => 
       challenge.userChallenge.id === parseInt(id)
