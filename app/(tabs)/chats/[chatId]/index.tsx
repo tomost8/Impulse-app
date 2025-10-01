@@ -90,12 +90,22 @@ function ChatScreen({
     return (
       <InputToolbar
         {...props}
+        primaryStyle={{
+          alignItems: 'center',
+          //backgroundColor: '#f0f6ff'
+          //borderColor: 'red',
+          //borderWidth: 1,
+        }}
+        /*
         containerStyle={{
           backgroundColor: '#fff',
           borderTopWidth: 1,
           borderTopColor: '#E8E8E8',
           padding: 4,
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
+        */
       />
     );
   };
@@ -110,14 +120,9 @@ function ChatScreen({
     return (
       <Send
         {...props}
-        containerStyle={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginRight: 10,
-          marginBottom: 5,
-        }}
+        containerStyle={styles.sendButton}
       >
-        <Ionicons name="send" size={24} color="#DE728D" />
+        <Ionicons name="send" size={28} color="#DE728D" />
       </Send>
     );
   };
@@ -129,7 +134,7 @@ function ChatScreen({
         style={styles.cameraButton}
         onPress={() => router.push('/camera')}
       >
-        <Ionicons name="camera" size={24} color="#FF6B6B" />
+        <Ionicons name="camera" size={28} color="#DE728D" />
       </TouchableOpacity>
     );
   };
@@ -143,9 +148,12 @@ function ChatScreen({
           backgroundColor: '#F5F5F5',
           borderRadius: 20,
           paddingHorizontal: 12,
-          paddingTop: 8,
-          paddingBottom: 8,
-          marginLeft: 0,
+          marginHorizontal: 10,
+          minHeight: 40,
+          paddingTop: 6,
+          paddingBottom: 0,
+          //borderColor: 'blue',
+          //borderWidth: 1,
         }}
         placeholder="Type a message..."
       />
@@ -473,13 +481,20 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   cameraButton: {
-    marginLeft: 10,
-    marginBottom: 5,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 40,
+    height: 40,
+    //borderColor: 'blue',
+    //borderWidth: 1,
+  },
+  sendButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    //borderColor: 'blue',
+    //borderWidth: 1,
   },
 });
 

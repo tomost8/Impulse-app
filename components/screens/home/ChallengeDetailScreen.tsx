@@ -5,33 +5,28 @@ import { router } from "expo-router";
 import LoadingScreen from "@/components/ui/common/loading";
 import { getIconByCategory, getLabelByCategory } from "@/utils/goals";
 import { getBadgeImage, getPointsByBadge } from "@/utils/challengeUtils";
-import { useGetChallengeDayMedia, useGetFriendsInChallenge } from "@/hooks/graphql/challenges/queries";
 import { CircularProgress } from "@/components/features/goals/challenges/cards/HomeActiveChallenge";
 import ProgressWithMilestones from "./Progressbar";
 
 interface ChallengeDetailScreenProps {
-  challengeId: string;
   challenge: any;
   isLoading: boolean;
-  joined: boolean;
-  onJoinChallenge: (challengeId: number) => Promise<void>;
+  entries: any[];
+  participants: any[];
 }
 
 const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
-  challengeId,
   challenge,
   isLoading,
-  joined,
-  onJoinChallenge,
+  entries,
+  participants,
 }) => {
   if (isLoading) {
     return <LoadingScreen />;
   }
-  //console.log("Rendering ChallengeDetailScreen for challengeId:", challengeId, "with data:", JSON.stringify(challenge));
 
   const {
     userChallenge: {
-      id: userChallenge_id,
       days_completed,
       badge_level = "",
       status,
@@ -43,26 +38,15 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
   const challengeTitle = challengeData.title;
   const totalDays = Number(challengeTitle?.split(" ")[0]) || 0;
 
-  const isActive = status === "ACTIVE";
-  const isCompleted = status === "COMPLETED";
-  const isFailed = status === "FAILED";
+  const STATUS_TESTING = false;
+  const isActive = STATUS_TESTING ? false : status === "ACTIVE";
+  const isCompleted = STATUS_TESTING ? false : status === "COMPLETED";
+  const isFailed = STATUS_TESTING ? true : status === "FAILED";
 
   const { progressLabel, daysRemaining } = progress ?? {};
 
   const categoryIcon = getIconByCategory(challengeData.category);
   const Points = badge_level? getPointsByBadge(badge_level, totalDays): 0;
-
-  const handleJoinChallenge = async () => {
-    console.log("Join Challenge button pressed for:", challengeData.title);
-    onJoinChallenge(challengeData.id);
-  };
-
-
-  // --- Daily Recap query ---
-  const { entries } = useGetChallengeDayMedia(userChallenge_id, true);
-  const { friends: participants, success: participantsLoadingSucess, error: participantsError } =
-  useGetFriendsInChallenge(challenge.userChallenge.challenge_id, status, true);
-  //console.log("🍇 Completed Friends", participants);
 
 
   const recapData = Array.from({ length: totalDays }, (_, i) => {
@@ -73,7 +57,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
       imageUrl: entry?.mediaUrls?.[0] || null,
     };
   });
-
+  
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.headerArea}>
@@ -97,15 +81,13 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
             </View>
           </View>
           <View>
-            {!isActive && !isCompleted && !isFailed ? (
-              <TouchableOpacity style={styles.titleButton} onPress={handleJoinChallenge}>
-                <Text style={styles.titleButtonText}>
-                  {joined ? "Joined" : "Join"}
-                </Text>
-              </TouchableOpacity>
-            ) : isActive ? (
+            {isActive ? (
               <Text style={styles.titleActiveButton}>Active</Text>
-            ) : null}
+            ) : isCompleted || isFailed ? (
+              null
+            ) : (
+              <Text style={styles.titleActiveButton}>Inactive</Text>
+            )}
           </View>
         </View>
 
@@ -211,11 +193,13 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
                 </View>
               </View>
               <View>
+                {/* Badge Icon for friends: crashes because badge_level is returned as null
                 <Image 
                   source={getBadgeImage(challengeData.title, participant.badge_level)}
                   style={styles.friendBadge}
                   resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
                 />
+                */}
               </View>
             </View>
           ))}
@@ -324,6 +308,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "center",
     gap: 2,
+    //borderColor: 'blue',
+    //borderWidth: 1,
   },
   section: {
     marginBottom: 20,
@@ -349,6 +335,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#000",
     fontFamily: "Poppins",
+    //
     paddingLeft: 4,
   },
   ownPct: {

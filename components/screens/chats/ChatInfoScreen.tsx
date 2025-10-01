@@ -86,14 +86,6 @@ const ChatInfoScreen = (props: ChatInfoScreenProps) => {
               </View>
             ))}
           </View>
-          
-          {/* Invite Button */}
-          <TouchableOpacity 
-            style={styles.inviteButton}
-            onPress={() => router.push(`/chats/${props.chatId}/invite`)}
-          >
-            <Text style={styles.inviteButtonText}>Invite a friend to this group</Text>
-          </TouchableOpacity>
         </View>
       );
     } else {
@@ -162,6 +154,14 @@ const ChatInfoScreen = (props: ChatInfoScreenProps) => {
           {renderContent()}
         </ScrollView>
       </View>
+
+      {/* Invite Button */}
+      <TouchableOpacity 
+        style={styles.inviteButton}
+        onPress={() => router.push(`/chats/${props.chatId}/invite`)}
+      >
+        <Text style={styles.inviteButtonText}>Invite a friend to this group</Text>
+      </TouchableOpacity>
 
       <LeavePopup
         isVisible={isLeavePopupVisible}
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   membersList: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingBottom: 490,
+    paddingBottom: 20,
   },
   memberCard: {
     flexDirection: 'row',
@@ -327,6 +327,7 @@ const styles = StyleSheet.create({
   leaderboardContainer: {
     alignItems: 'center',
     paddingVertical: 20,
+    paddingBottom: 80,
   },
   content: {
     flex: 1,

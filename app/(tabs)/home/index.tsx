@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // Services + Utils
 import { router } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { useDataProvider } from '@/contexts/DataProviderContext';
+import { useDataRefetch } from '@/contexts/DataFetcher';
 import { convertLocalToUtc } from '@/utils/timezoneProcessing';
 import { getCategoryById } from '@/utils/goals';
 // GraphQL hooks
@@ -15,6 +17,7 @@ const DEBUG_HOME_PAGE = false;
 
 const HomePage = () => {
   const { fetching, user, activities, timezone, challenges, setActivities, setCameraClickable } = useDataProvider();
+  const { refetchData } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
 
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);

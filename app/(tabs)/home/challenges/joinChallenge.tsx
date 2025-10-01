@@ -5,10 +5,14 @@ import AuthWrapper from "@/contexts/AuthWrapper";
 import { useJoinChallenge } from "@/hooks/graphql/challenges/mutations";
 import LoadingScreen from "@/components/ui/common/loading";
 
+import { useDataRefetch } from '@/contexts/DataFetcher';
+
 const DEBUG_JOIN_CHALLENGE_PAGE = true;
 
 const JoinChallengePage = () => {
   const { challenge } = useLocalSearchParams<{ challenge?: string }>();
+  const { refetchData } = useDataRefetch();
+
 
   const loading = !challenge;
 

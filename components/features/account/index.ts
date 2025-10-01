@@ -59,7 +59,7 @@ export { default as FriendRemoveModal } from './FriendRemoveModal';
  * SETTINGS ENTRY POINTS:
  * - app/(tabs)/account/settings/index.tsx → SettingsScreen
  * - app/(tabs)/account/settings/featureGuide.tsx → GuideScreen
- * - app/(tabs)/account/settings/notifications.tsx → ReminderNotifications
+ * - app/(tabs)/account/settings/notifications.tsx → NotificationsScreen
  * - app/(tabs)/account/settings/viewProfile.tsx → ProfileScreen
  * - app/(tabs)/account/settings/feedback.tsx → FeedbackScreen
  * - app/(tabs)/account/settings/deletion.tsx → SupportScreen
@@ -80,10 +80,11 @@ export { default as FriendRemoveModal } from './FriendRemoveModal';
  * SupportScreen (screens/account/settings/SupportScreen.tsx)
  * └── AccountChangedConfirmation (from settings/)
  * 
- * ReminderNotifications (features/account/settings/ReminderNotifications.tsx)
- * ├── InfoPopup (from settings/)
- * ├── PreferencesUpdatedPopup (from settings/)
- * └── (Info components: info1, info2, info3, info4)
+ * NotificationsScreen (screens/account/settings/NotificationsScreen.tsx)
+ * ├── ReminderItem (from settings/)
+ * ├── Info1, Info2, Info3, Info4 (from settings/)
+ * │   └── InfoPopup (from settings/)
+ * └── PreferencesUpdatedPopup (from settings/)
  * 
  */
 
@@ -93,8 +94,13 @@ export { default as CompleteActivities } from './guide/CompleteActivities';
 export { default as CustomNotifications } from './guide/CustomNotifications';
 export { default as JoinCommunity } from './guide/JoinCommunity';
 
-// Settings Components
-export { default as InfoPopup } from './settings/InfoPopup';
+// Notifications Components
+export { default as ReminderItem } from './settings/ReminderItem';
+export { default as Info1 } from './settings/info1';
+export { default as Info2 } from './settings/info2';
+export { default as Info3 } from './settings/info3';
+export { default as Info4 } from './settings/info4';
 export { default as PreferencesUpdatedPopup } from './settings/PreferencesUpdatedPopup';
-export { default as ReminderNotifications } from './settings/ReminderNotifications';
+
+// Settings Components
 export { default as AccountChangedConfirmation } from './settings/AccountChangedConfirmation';

@@ -1,12 +1,12 @@
 
-import ReminderNotifications from '@/components/features/account/settings/ReminderNotifications';
+import NotificationsScreen from '@/components/screens/account/settings/NotificationsScreen';
 import { useSendBroadcastNotification } from '@/hooks/graphql/notifications/mutations';
 import { useCreateReminder } from '@/hooks/graphql/notifications/mutations';
 
 
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function NotificationsScreen() {
+export default function NotificationsPage() {
     const { authToken } = useAuth();
     // Mutations
     //const { sendBroadcastNotification } = useSendBroadcastNotification();
@@ -17,7 +17,7 @@ export default function NotificationsScreen() {
     }
 
     return (
-        <ReminderNotifications 
+        <NotificationsScreen 
             onSave={handleCreateReminder} 
         />
   );
