@@ -100,7 +100,6 @@ export const GET_MY_CHALLENGES = gql`
           progressLabel
           daysUntilNextBadge
         }
-        badgesEarned
         friendsCompleted {
           id
           username
@@ -132,6 +131,23 @@ export const GET_MY_CHALLENGES = gql`
           last_name
         }
       }
+      failedChallenges {
+        userChallenge {
+          id
+          challenge_id
+          status
+          started_at
+          ends_at
+          completed_at
+          days_completed
+          badge_level
+          challenge {
+            title
+            category
+            length
+          }
+        }
+      }
       errors {
         field
         message
@@ -155,15 +171,18 @@ export function useGetMyChallenges(authToken: string, shouldFetch: boolean=true)
   if (debugQueries && fetched) {
     const activeChallenges = data?.getUserChallenges?.activeChallenges || [];
     const completedChallenges = data?.getUserChallenges?.completedChallenges || [];
+    const failedChallenges = data?.getUserChallenges?.failedChallenges || [];
     const activeCount = activeChallenges.length;
     const completedCount = completedChallenges.length;
+    const failedCount = failedChallenges.length;
     
     // Summary line
     const summary = {
       success: data?.getUserChallenges?.success || false,
       errors: data?.getUserChallenges?.errors || null,
       activeCount,
-      completedCount
+      completedCount,
+      failedCount
     };
     
     let formattedData = `useGetMyChallenges: ${JSON.stringify(summary)}\n`;
@@ -171,7 +190,8 @@ export function useGetMyChallenges(authToken: string, shouldFetch: boolean=true)
     // Log all challenges with their status
     const allChallenges = [
       ...activeChallenges.map((challenge: any) => ({ ...challenge, status: 'active' })),
-      ...completedChallenges.map((challenge: any) => ({ ...challenge, status: 'completed' }))
+      ...completedChallenges.map((challenge: any) => ({ ...challenge, status: 'completed' })),
+      ...failedChallenges.map((challenge: any) => ({ ...challenge, status: 'failed' }))
     ];
     
     allChallenges.forEach((challenge: any) => {
@@ -204,6 +224,7 @@ export function useGetMyChallenges(authToken: string, shouldFetch: boolean=true)
   return {
     activeChallenges: data?.getUserChallenges?.activeChallenges || [],
     completedChallenges: data?.getUserChallenges?.completedChallenges || [],
+    failedChallenges: data?.getUserChallenges?.failedChallenges || [],
     success: data?.getUserChallenges?.success || false,
     errors: data?.getUserChallenges?.errors || [],
     fetched: fetched,

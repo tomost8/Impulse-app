@@ -14,16 +14,14 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
   // Get active challenges data
   const activeChallenges = challenges?.activeChallenges || [];
   const completedChallenges = challenges?.completedChallenges || [];
-  // console.log("🪢 Challenges", challenges);
-  // console.log("🪢 ActiveChallenges", activeChallenges);
-  // console.log("🪢 CompletedChallenges", completedChallenges);
+  const failedChallenges = challenges?.failedChallenges || [];
   
   // TEMPORARY: Force empty state for testing
   const forceEmptyState = false;
   const hasActiveChallenges = forceEmptyState ? false : activeChallenges.length > 0;
   const hasCompletedChallenges = completedChallenges.length > 0;
-  const hasAnyChallenges = hasActiveChallenges || hasCompletedChallenges;
-
+  const hasFailedChallenges = failedChallenges.length > 0;
+  const hasAnyChallenges = hasActiveChallenges || hasCompletedChallenges || hasFailedChallenges;
 
   return (
     <View style={styles.container}>
@@ -63,10 +61,24 @@ const ChallengesSection: React.FC<ChallengesSectionProps> = ({ challenges }) => 
                 key={challenge.userChallenge.id}
                 id={challenge.userChallenge.id}
                 title={challenge.userChallenge.challenge.title}
-                totalDays={challenge.userChallenge.challenge.length}
+                status={challenge.userChallenge.status}
                 completedAt={challenge.userChallenge.completed_at}
-                endsAt={challenge.userChallenge.ends_at}
-                badge={challenge.userChallenge.badge_level || []}
+                badge={challenge.userChallenge.badge_level || ""}
+              />
+            ))}
+              </>
+            )}
+
+            {hasFailedChallenges && (
+              <>
+            {failedChallenges.map((challenge: any, index: number) => (
+              <HomeCompletedChallenge
+                key={challenge.userChallenge.id}
+                id={challenge.userChallenge.id}
+                title={challenge.userChallenge.challenge.title}
+                status={challenge.userChallenge.status}
+                completedAt={challenge.userChallenge.completed_at}
+                badge={challenge.userChallenge.badge_level || ""}
               />
             ))}
               </>

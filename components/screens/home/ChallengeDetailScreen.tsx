@@ -45,14 +45,12 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
 
   const isActive = status === "ACTIVE";
   const isCompleted = status === "COMPLETED";
+  const isFailed = status === "FAILED";
 
   const { progressLabel, daysRemaining } = progress ?? {};
 
-  //console.log("⛳ ChallengeDetailScreen Status", status, isActive, !isActive && !isCompleted);
-
   const categoryIcon = getIconByCategory(challengeData.category);
-  //console.log("🌾 categoryIcon", categoryIcon)
-  const Points = getPointsByBadge(badge_level, totalDays);
+  const Points = badge_level? getPointsByBadge(badge_level, totalDays): 0;
 
   const handleJoinChallenge = async () => {
     console.log("Join Challenge button pressed for:", challengeData.title);
@@ -76,8 +74,6 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
     };
   });
 
-  //console.log("🎓 Recap Data:", recapData);
-  
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.headerArea}>
@@ -101,7 +97,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
             </View>
           </View>
           <View>
-            {!isActive && !isCompleted ? (
+            {!isActive && !isCompleted && !isFailed ? (
               <TouchableOpacity style={styles.titleButton} onPress={handleJoinChallenge}>
                 <Text style={styles.titleButtonText}>
                   {joined ? "Joined" : "Join"}
@@ -116,18 +112,17 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
         {/* Section 1: Card Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            {isActive ? 'Current Goal Progress' : isCompleted ? 'Challenge Summary' : ''}
+            {isActive ? 'Current Goal Progress' : (isCompleted || isFailed)? 'Challenge Summary' : ''}
           </Text>
           <View style={styles.badgeContent}>
             {/* Badge Placeholder */}
             {isActive &&
               <CircularProgress progressLabel={progressLabel} />
             }
-            {isCompleted &&
+            {(isCompleted || isFailed) &&
               <Image
                 source={getBadgeImage(challengeData.title, badge_level)}
                 style={styles.badgeIcon}
-                // resizeMode={FastImage.resizeMode.contain}
                 resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
               />
             }
@@ -135,12 +130,12 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
             <View style={styles.badgeTextContainer}>
               {/* Title */}
               <Text style={styles.summaryHeader}>
-                {isActive ? `DAY ${totalDays}` : isCompleted ? 'Congratulations!' : ''}
+                {isActive ? `DAY ${totalDays}` : isCompleted ? 'Congratulations!' : isFailed? 'Try Again Next Time' : ''}
               </Text>
               <Text style={styles.completedText}>
-                {isActive ? `${daysRemaining} Days Remaining` : isCompleted ? `${days_completed}/${totalDays} Days Complete` : ''}
+                {isActive ? `${daysRemaining} Days Remaining` : (isCompleted || isFailed) ? `${days_completed}/${totalDays} Days Complete` : ''}
               </Text>
-              {isCompleted && <Text style={styles.completedText}>{Points} Points Earned</Text>}
+              {(isCompleted || isFailed) && <Text style={styles.completedText}>{Points} Points Earned</Text>}
             </View>
           </View>
         </View>

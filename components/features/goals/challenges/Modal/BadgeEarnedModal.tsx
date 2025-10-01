@@ -43,24 +43,31 @@ const BadgeEarnedModal: React.FC<BadgeAchievementModalProps> = ({
           </TouchableOpacity>
 
           {/* Badge Image */}
-          <Image 
+          {badgeLevel && <Image 
             source={getBadgeImage(badgeTitle, badgeLevel)} 
             style={styles.badgeImage}
             resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
             onError={(error) => { console.log("Image failed to load:", error.nativeEvent); }} 
-          />
+          />}
 
           {/* Date */}
           <Text style={styles.date}>{badgeDate}</Text>
 
           {/* Title */}
-          <Text style={styles.title}>Badge earned!</Text>
+          <Text style={styles.title}>
+            {badgeLevel ? `Badge earned!` : `Try again next time!`}
+          </Text>
 
           {/* Message */}
-          <Text style={styles.message}>Congratulations - you’ve earned your {badge_level} badge for the {badgeTitle}! Keep it up and go for the next achievement level!</Text>
+          <Text style={styles.message}>
+            {badgeLevel
+              ?`Congratulations - you’ve earned your ${badge_level} badge for the ${badgeTitle}! Keep it up and go for the next achievement level!`
+              :`Unfortunately, you did not earn a completion badge this time. Don’t be discouraged and try again!`
+            }
+          </Text>
 
           {/* Percentage Info */}
-          <Text style={styles.percentage}>20% of Impulse users have this badge</Text>
+          {badgeLevel && <Text style={styles.percentage}>20% of Impulse users have this badge</Text>}
         </View>
       </View>
     </Modal>
@@ -132,7 +139,7 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     fontFamily: 'Lato',
-    fontSize: 12,
+    fontSize: 11,
     fontStyle: 'normal',
     fontWeight: '400',
     marginBottom: 12,
