@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 
@@ -8,10 +9,21 @@ import ChatsListScreen from '@/components/screens/chats/ChatsListScreen';
 import { pageDisplay, debugChatsPage } from '@/debug/utils';
 // Services
 import { useDataProvider } from '@/contexts/DataProviderContext';
-
+import { useDataRefetch } from '@/contexts/DataFetcher';
 
 const ChatPage = () => {
   const { fetching, chats, friends } = useDataProvider();
+  const { refetchData, isRefetching } = useDataRefetch();
+  // Fetch data when navigating to this page
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("🔄 Fetching data - ChatsPage navigated to");
+      // Small delay to prevent GraphQL race conditions
+      setTimeout(() => {
+        refetchData({ chats: true, friends: true });
+      }, 100);
+    }, [])
+  );
 
   // Queries (maybe for messages)
 

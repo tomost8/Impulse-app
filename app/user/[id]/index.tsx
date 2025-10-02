@@ -79,6 +79,7 @@ const UserPage = () => {
   const handleSendFriendRequest = async (friendId: number) => {
     setIsSendingFriendRequest(true);
     try {
+      console.log("Input: user id of", user.id, "is sending friend request to", friendId);
       const input = {
         sender_id: user.id,
         receiver_id: friendId,
@@ -109,7 +110,7 @@ const UserPage = () => {
       const response = await acceptFriendRequest(user.id, friendId, input, authToken as string);
       if (response.success) {
         console.log("Friend request accepted successfully", response);
-        await refetchData({ friends: true });
+        await refetchData({ friends: true, chats: true });
       } else {
         console.error("Error accepting friend request:", response.errors);
       }

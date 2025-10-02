@@ -40,7 +40,6 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   const handleSendRequest = () => {
     if (!isRequestSent) {
       props.onSendRequest?.(props.nonFriend.id);
-      props.onSendRequest?.(props.nonFriend.id);
       setShowRequestSentPopup(true);
     }
   };
@@ -51,9 +50,6 @@ const NonFriendViewScreen = (props: NonFriendViewScreenProps) => {
   };
 
   const handleAcceptRequest = () => {
-    if (props.onAcceptRequest) {
-      props.onAcceptRequest(props.nonFriend.id);
-    }
     if (props.onAcceptRequest) {
       props.onAcceptRequest(props.nonFriend.id);
     }

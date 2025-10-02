@@ -85,10 +85,11 @@ export const GET_USER_CHATS = gql`
   }
 `;
 
-export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
+export function useGetUserChats(userId: number, shouldFetch: boolean=true, shouldUseCache: boolean=false) {
   const { data, loading, error } = useQuery(GET_USER_CHATS, {
     skip: !shouldFetch,
     variables: { userId },
+    fetchPolicy: shouldUseCache ? 'cache-first' : 'network-only'
   });
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
@@ -123,7 +124,7 @@ export const GET_CHAT_MEMBERS = gql`
   }
 `;
 
-export function useGetChatMembers(chatId: number, shouldFetch: boolean = true) {
+export function useGetChatMembers(chatId: number, shouldFetch: boolean=true) {
   const { data, loading, error } = useQuery(GET_CHAT_MEMBERS, {
     variables: { chatId },
     skip: !shouldFetch,

@@ -163,7 +163,8 @@ export function useGetMyChallenges(authToken: string, shouldFetch: boolean=true)
       headers: {
         Authorization: `Bearer ${authToken}`,
       }
-    }
+    },
+    fetchPolicy: 'network-only' // Always fetch from network, never use cache
   });
   
   const fetched = shouldFetch && !loading;

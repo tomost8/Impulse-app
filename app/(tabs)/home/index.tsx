@@ -16,9 +16,24 @@ import HomeScreen from '@/components/screens/home/HomeScreen';
 const DEBUG_HOME_PAGE = false;
 
 const HomePage = () => {
-  const { fetching, user, activities, timezone, challenges, setActivities, setCameraClickable } = useDataProvider();
-  const { refetchData } = useDataRefetch();
   const [renderCounter, setRenderCounter] = useState(0);
+  const { fetching, user, timezone, 
+    activities, 
+    challenges, 
+    setActivities, setCameraClickable 
+  } = useDataProvider();
+  const { refetchData, isRefetching } = useDataRefetch();
+
+  // Fetch data when navigating to this page
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("🔄 Fetching data - HomePage navigated to");
+      // Small delay to prevent GraphQL race conditions
+      setTimeout(() => {
+        refetchData({ activities: true, challenges: true });
+      }, 100);
+    }, [])
+  );
 
   const [isCreatingActivity, setIsCreatingActivity] = useState(false);
   const { createActivity } = useCreateActivity();
@@ -101,7 +116,7 @@ const HomePage = () => {
     }
   };
 
-  const loading = !hasFetchedFriends.current || fetching || isCreatingActivity;
+  const loading = !hasFetchedFriends.current || fetching || isRefetching || isCreatingActivity;
   if (DEBUG_HOME_PAGE && !loading) {
     const leaderboardDetails = leaderboardRef.current?.map((item: any) => ({
       id: item.id,
