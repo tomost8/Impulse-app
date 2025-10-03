@@ -192,13 +192,13 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
                   <Text style={styles.friendUserName}> {participant.username} </Text>
                 </View>
               </View>
-              <View>
+              {isCompleted && <View>
                 <Image 
                   source={getBadgeImage(challengeData.title, participant.badge_level)}
                   style={styles.friendBadge}
                   resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
                 />
-              </View>
+              </View>}
             </View>
           ))}
         </View>}      
