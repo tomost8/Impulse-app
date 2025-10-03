@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { s } from "react-native-size-matters";
+import { s, vs } from "react-native-size-matters";
 
 interface ReminderItemProps {
   title: string;
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: s(20),
     borderTopRightRadius: s(20),
+    height: vs(300),
     maxHeight: '50%',
     padding: s(20),
   },
