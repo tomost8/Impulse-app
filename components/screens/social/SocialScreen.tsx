@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, Platform, FlatList, RefreshControl, ActivityIndicator } from "react-native";
 import { TabSelector, CommunityList, CommunityFilter, Feed } from "@/components/features/social";
-import LoadingScreen from "@/components/ui/common/loading";
 import { router } from "expo-router";
 const searchIcon = require("@/assets/icons/search.png");
 
@@ -29,10 +28,6 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
   onRefresh,
   isRefetching = false,
 }) => {
-  if (loading) {
-    return <LoadingScreen />;
-  }
-  
   // Use persistent ref to maintain tab state across re-mounts
   const [selectedTab, setSelectedTab] = useState<'friends' | 'communities'>(savedTabRef.current);
   
@@ -79,60 +74,81 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         {/* Header + Explore Button */}
         <View style={styles.header}>
           <Text style={styles.headerText}>Feed</Text>
-          <TouchableOpacity onPress={() => router.push('/social/explore')}>
-            <Image source={searchIcon} style={styles.exploreIcon} tintColor="#000000" />
+          <TouchableOpacity 
+            onPress={loading ? undefined : () => router.push('/social/explore')}
+            disabled={loading}
+          >
+            <Image 
+              source={searchIcon} 
+              style={styles.exploreIcon} 
+              tintColor="#000000" 
+            />
           </TouchableOpacity>
         </View>
         {/* Tab Selector */}
         <TabSelector 
-          onTabChange={handleTabChange}
+          onTabChange={loading ? () => {} : handleTabChange}
           selectedTab={selectedTab}
         />
       </View>
-      <FlatList
-        style={styles.scrollContainer}
-        data={[{ key: 'content' }]}
-        renderItem={() => (
-          <View style={styles.scrollContent}>
-            {selectedTab === 'communities' && (
-              <>
-                {/* Community List Section */}
-                <View style={styles.communityListSection}>
-                  <CommunityList 
-                    communities={joinedCommunities} 
-                  />
-                </View>
-                {/* Community Filter Section */}
-                <View style={styles.filterSection}>
-                  <CommunityFilter 
-                    communities={joinedCommunities} 
-                    handleFilterChange={handleFilterChange} 
-                  />
-                </View>
-              </>
-            )}
-            {/* Feed */}
-            <View style={styles.feedSection}>
-              <Feed 
-                currentTab={selectedTab}
-                posts={selectedTab === 'friends' ? sortedFriendsFeed : enrichedCommunityFeed}
-                handleLikePost={handleLikePost}
-                handleUnlikePost={handleUnlikePost}
-              />
+      
+      <View style={styles.contentContainer}>
+        <FlatList
+          style={[styles.scrollContainer, loading && styles.disabledScrollView]}
+          data={[{ key: 'content' }]}
+          renderItem={() => (
+            <View style={styles.scrollContent}>
+              {selectedTab === 'communities' && (
+                <>
+                  {/* Community List Section */}
+                  <View style={[styles.communityListSection, loading && styles.disabledContent]}>
+                    <CommunityList 
+                      communities={joinedCommunities} 
+                    />
+                  </View>
+                  {/* Community Filter Section */}
+                  <View style={[styles.filterSection, loading && styles.disabledContent]}>
+                    <CommunityFilter 
+                      communities={joinedCommunities} 
+                      handleFilterChange={handleFilterChange} 
+                    />
+                  </View>
+                </>
+              )}
+              {/* Feed */}
+              <View style={[styles.feedSection, loading && styles.disabledContent]}>
+                <Feed 
+                  currentTab={selectedTab}
+                  posts={selectedTab === 'friends' ? sortedFriendsFeed : enrichedCommunityFeed}
+                  handleLikePost={handleLikePost}
+                  handleUnlikePost={handleUnlikePost}
+                />
+              </View>
             </View>
+          )}
+          keyExtractor={() => 'content'}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={!loading}
+          refreshControl={
+            !loading ? (
+              <RefreshControl
+                refreshing={isRefetching}
+                onRefresh={onRefresh}
+                colors={['#DE728D']} // Android
+                tintColor="#DE728D" // iOS
+              />
+            ) : undefined
+          }
+        />
+        
+        {/* Loading Overlay */}
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#DE728D" />
+            <Text style={styles.loadingText}>Loading...</Text>
           </View>
         )}
-        keyExtractor={() => 'content'}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={onRefresh}
-            colors={['#DE728D']} // Android
-            tintColor="#DE728D" // iOS
-          />
-        }
-      />
+      </View>
     </View>
   );
 };
@@ -186,6 +202,40 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0EDFD',
     width: '100%',
     paddingTop: Platform.OS === 'android' ? 10 : 0,
+  },
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  disabledIcon: {
+    opacity: 0.5,
+  },
+  disabledScrollView: {
+    opacity: 0.5,
+  },
+  disabledContent: {
+    opacity: 0.5,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    color: '#DE728D',
+    fontWeight: '500',
   },
 });
 

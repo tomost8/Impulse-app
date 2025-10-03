@@ -39,7 +39,11 @@ const ProfilePictureWithLoading: React.FC<ProfilePictureWithLoadingProps> = ({
     <View style={[styles.container, imageStyle, style]}>
       {loading && (
         <View style={[styles.loadingContainer, imageStyle]}>
-          <ActivityIndicator size="small" color="#DE728D" />
+          <ActivityIndicator 
+            size={size <= 32 ? "small" : "small"} 
+            color="#DE728D" 
+            style={size <= 32 ? { transform: [{ scale: 0.7 }] } : {}}
+          />
         </View>
       )}
       

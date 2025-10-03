@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } from "react-native";
 import { useLocalSearchParams } from 'expo-router';
 import LoadingScreen from "@/components/ui/common/loading";
 
@@ -37,9 +37,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   // Daily Acivities modal only shows after Welcome modal closed
   useEffect(() => {
     if (!showWelcomePopup && activities.length === 0) {
-      setShowDailyAddPopup(true);
+      console.log("Setting showDailyAddPopup to true with delay");
+      // Add a small delay to see if timing helps
+      setTimeout(() => {
+        setShowDailyAddPopup(true);
+      }, 500);
     }
   }, [showWelcomePopup, activities.length]);
+
 
   const handleCloseWelcomePopup = () => {
     setShowWelcomePopup(false);
@@ -90,8 +95,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         </ScrollView>
 
         <SetupActivitiesModal  
-          isVisible={showDailyAddPopup}
-          onClose={() => setShowDailyAddPopup(false)}
+          isVisible={showDailyAddPopup && !loading}
+          onClose={() => {
+            console.log("SetupActivitiesModal onClose called");
+            setShowDailyAddPopup(false);
+          }}
           onConfirm={onConfirm}
         />
       </View>

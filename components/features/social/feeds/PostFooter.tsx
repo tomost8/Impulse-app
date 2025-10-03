@@ -1,7 +1,8 @@
 //import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import LikeButton from "./LikeButton";
 import CommentButton from "./CommentButton";
+import ProfilePictureWithLoading from "@/components/ui/common/ProfilePictureWithLoading";
 
 interface PostFooterProps {
   profileImage?: any;
@@ -27,8 +28,9 @@ const PostFooter: React.FC<PostFooterProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
-        <Image
+        <ProfilePictureWithLoading
           source={{ uri: profileImage }}
+          size={32}
           style={styles.profileImage}
         />
         <View style={styles.textContainer}>
@@ -66,8 +68,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   profileImage: {
-    width: 32,
-    height: 32,
     borderRadius: 12,
   },
   textContainer: {

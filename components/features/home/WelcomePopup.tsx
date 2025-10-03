@@ -19,7 +19,7 @@ const WelcomePopup: React.FC<WelcomePopupProps> = ({ visible, onClose }) => {
     <Modal
       visible={visible}
       transparent={true}
-      animationType="fade"
+      //animationType="fade"
     >
       <View style={[styles.overlay, { pointerEvents: 'box-none' }]}>
         <View style={[styles.container, { pointerEvents: 'auto' }]}>

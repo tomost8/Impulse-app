@@ -11,6 +11,7 @@ type DataProviderContextType = {
   friendsFeed: any[]; setFriendsFeed: (friendsFeed: any[]) => void;
   communityFeed: any[]; setCommunityFeed: (communityFeed: any[]) => void;
   challenges: any; setChallenges: (challenges: any) => void;
+  latestMessages: any[]; setLatestMessages: (latestMessages: any[]) => void;
 
   timezone: string; setTimezone: (timezone: string) => void;
   cameraClickable: boolean; setCameraClickable: (status: boolean) => void;
@@ -38,6 +39,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [friendsFeed, setFriendsFeed] = useState<any[]>([]);
   const [communityFeed, setCommunityFeed] = useState<any[]>([]);
   const [challenges, setChallenges] = useState<any>(null);
+  const [latestMessages, setLatestMessages] = useState<any[]>([]);
 
   // Specific Data
   const [timezone, setTimezone] = useState<string>('');
@@ -81,6 +83,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     friendsFeed, setFriendsFeed,
     communityFeed, setCommunityFeed,
     challenges, setChallenges,
+    latestMessages, setLatestMessages,
 
     timezone, setTimezone,
     cameraClickable, setCameraClickable,

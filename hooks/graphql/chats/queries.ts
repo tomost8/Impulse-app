@@ -70,6 +70,7 @@ export function useGetChat(id: number, shouldFetch: boolean = true) {
   };
 }
 
+
 // Query - Get User Chats by User ID
 export const GET_USER_CHATS = gql`
   query ($userId: Int!) {
@@ -101,9 +102,10 @@ export function useGetUserChats(userId: number, shouldFetch: boolean=true, shoul
       chatTitle: member.chat.title || (member.chat.type === 'direct' ? 'null (Direct Chat)' : 'Untitled Group'),
       chatType: member.chat.type,
       role: member.role,
-      status: member.status
+      status: member.status,
+      updatedAt: member.chat.updated_at
     }));
-    const chatsString = chatDetails.map((c: any) => `  {chatId: ${c.chatId}, chatTitle: "${c.chatTitle}", chatType: "${c.chatType}", role: "${c.role}"}`).join('\n');
+    const chatsString = chatDetails.map((c: any) => `  {chatId: ${c.chatId}, chatTitle: "${c.chatTitle}", chatType: "${c.chatType}", role: "${c.role}", updatedAt: "${c.updatedAt}"}`).join('\n');
     console.log("useGetUserChats: success:", success, "errors:", errors?.length > 0 ? errors : null, "chatCount:", chatMembers.length, "chats:\n" + chatsString);
   }
   return {
@@ -258,7 +260,7 @@ const GET_LATEST_MESSAGES_FOR_USER = gql`
           last_name
           profile_picture
         }
-        # add other fields as needed
+        chat { id type title profile_pic updated_at }
       }
       errors {
         field
@@ -272,8 +274,26 @@ export function useGetLatestMessagesForUser(userId: number, shouldFetch: boolean
   const { data, loading, error } = useQuery(GET_LATEST_MESSAGES_FOR_USER, {
     variables: { userId },
     skip: !shouldFetch,
+    fetchPolicy: 'network-only'
   });
   const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    const messages = data?.getLatestMessagesForUser.messages || [];
+    const success = data?.getLatestMessagesForUser.success;
+    const errors = data?.getLatestMessagesForUser.errors;
+    const messageDetails = messages.map((message: any) => ({
+      messageId: message.id,
+      chatId: message.chat_id,
+      content: message.content,
+      senderName: `${message.sender.first_name} ${message.sender.last_name}`,
+      chatTitle: message.chat.title || (message.chat.type === 'direct' ? 'null (Direct Chat)' : 'Untitled Group'),
+      chatType: message.chat.type,
+      createdAt: message.created_at,
+      chatUpdatedAt: message.chat.updated_at
+    }));
+    const messagesString = messageDetails.map((m: any) => `  {messageId: ${m.messageId}, chatId: ${m.chatId}, content: "${m.content}", sender: "${m.senderName}", chatTitle: "${m.chatTitle}", chatType: "${m.chatType}", createdAt: "${m.createdAt}", chatUpdatedAt: "${m.chatUpdatedAt}"}`).join('\n');
+    console.log("useGetLatestMessagesForUser: success:", success, "errors:", errors?.length > 0 ? errors : null, "messageCount:", messages.length, "messages:\n" + messagesString);
+  }
   return {
     messages: data?.getLatestMessagesForUser.messages || [],
     success: data?.getLatestMessagesForUser.success ?? false,

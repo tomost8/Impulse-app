@@ -9,7 +9,7 @@ import { useUpdateUser } from '@/hooks/graphql/users/mutations';
 import { useGetUser } from '@/hooks/graphql/users/queries';
 import { useGetActivitiesByDate } from '@/hooks/graphql/activities/queries';
 import { useGetUserCommunities } from '@/hooks/graphql/communities/queries';
-import { useGetUserChats } from '@/hooks/graphql/chats/queries';
+import { useGetUserChats, useGetLatestMessagesForUser } from '@/hooks/graphql/chats/queries';
 import { useGetFriends } from '@/hooks/graphql/friends/queries';
 import mixpanel from '@/config/mixpanelConfig';
 
@@ -35,6 +35,7 @@ interface RefetchOptions {
   friendsFeed?: boolean;
   communityFeed?: boolean;
   challenges?: boolean;
+  latestMessages?: boolean;
 
   currentCommunity?: boolean;
   currentCommunityMembers?: boolean;
@@ -59,7 +60,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const { setFetching, debugLog,
     setCommunities, setChats, setFriends, setUser, setActivities, 
     setTimezone, setCameraClickable, setLoginStreak,
-    setCommunityFeed, setFriendsFeed, setChallenges,
+    setCommunityFeed, setFriendsFeed, setChallenges, setLatestMessages,
     setCurrentCommunity, setCurrentCommunityMembers, setCurrentCommunityAnnouncements,
     setCurrentPost, setCurrentPostComments
   } = useDataProvider();
@@ -153,6 +154,23 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
   const { chatMembers, fetched: hasNewChatsData } = useGetUserChats(
     userId as number, 
     shouldFetchChats
+  );
+
+  // Latest Messages Query
+  // Refs
+  const latestMessagesRef = useRef<any[] | null>(null);
+  const hasFetchedLatestMessages = useRef(false);
+  
+  // Conditions
+  const shouldFetchLatestMessagesInitially = !hasFetchedLatestMessages.current && hasValidAuth && authInitialized;
+  const shouldRefetchLatestMessages = Boolean(actionRefetchTrigger > 0 && 
+    actionRefetchTrigger !== lastActionRefetchTrigger.current && 
+    currentRefetchOptions.current.latestMessages);
+  const shouldFetchLatestMessages = shouldFetchLatestMessagesInitially || shouldRefetchLatestMessages;
+  
+  const { messages, fetched: hasNewLatestMessagesData } = useGetLatestMessagesForUser(
+    userId as number, 
+    shouldFetchLatestMessages
   );
 
   // Friends Query
@@ -332,6 +350,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (options.activities) hasFetchedActivities.current = false;
     if (options.communities) hasFetchedCommunities.current = false;
     if (options.chats) hasFetchedChats.current = false;
+    if (options.latestMessages) hasFetchedLatestMessages.current = false;
     if (options.friends) hasFetchedFriends.current = false;
     if (options.challenges) hasFetchedChallenges.current = false;
     if (options.friendsFeed) hasFetchedFriendsFeed.current = false;
@@ -419,7 +438,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!hasValidAuth) {
         return;
     }
-    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewFriendsData && !hasNewChallengesData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
+    if (!hasNewUserData && !hasNewActivitiesData && !hasNewCommunitiesData && !hasNewChatsData && !hasNewLatestMessagesData && !hasNewFriendsData && !hasNewChallengesData && !hasNewFriendsFeedData && !hasNewCommunityFeedData) {
       return;
     }
     if (hasNewUserData) {
@@ -516,6 +535,11 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedChats.current = true;
       setChats(chatMembers);
     }
+    if (hasNewLatestMessagesData) {
+      latestMessagesRef.current = messages;
+      hasFetchedLatestMessages.current = true;
+      setLatestMessages(messages);
+    }
     if (hasNewFriendsData) {
       friendsRef.current = friends;
       hasFetchedFriends.current = true;
@@ -552,14 +576,14 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       hasFetchedCurrentPostComments.current = true;
       setCurrentPostComments(currentPostComments);
     }
-    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedFriends.current && hasFetchedChallenges.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
+    if (hasFetchedUser.current && hasFetchedActivities.current && hasFetchedCommunities.current && hasFetchedChats.current && hasFetchedLatestMessages.current && hasFetchedFriends.current && hasFetchedChallenges.current && hasFetchedFriendsFeed.current && hasFetchedCommunityFeed.current) {
       setFetching(false);
       setIsRefetching(false); // Reset refetching state when complete
       
       console.log("✅ User Data Loaded Successfully");
     } else {
     }
-  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewFriendsData, hasNewChallengesData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
+  }, [hasValidAuth, hasNewUserData, hasNewActivitiesData, hasNewCommunitiesData, hasNewChatsData, hasNewLatestMessagesData, hasNewFriendsData, hasNewChallengesData, hasNewFriendsFeedData, hasNewCommunityFeedData, loginEventTrigger, actionRefetchTrigger]);
 
   // Track when queries are executed to prevent multiple executions
   useEffect(() => {
@@ -585,6 +609,12 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       lastActionRefetchTrigger.current = actionRefetchTrigger;
     }
   }, [hasNewChatsData, actionRefetchTrigger]);
+
+  useEffect(() => {
+    if (hasNewLatestMessagesData && actionRefetchTrigger > 0) {
+      lastActionRefetchTrigger.current = actionRefetchTrigger;
+    }
+  }, [hasNewLatestMessagesData, actionRefetchTrigger]);
 
   useEffect(() => {
     if (hasNewFriendsData && actionRefetchTrigger > 0) {

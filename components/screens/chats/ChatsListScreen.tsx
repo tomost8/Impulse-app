@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  StyleSheet, 
-  SafeAreaView,
-  ScrollView,
-  Platform,
-  StatusBar
-} from 'react-native';
-import LoadingScreen from '@/components/ui/common/loading';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Platform, StatusBar, ActivityIndicator } from 'react-native';
 import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
 import { router } from 'expo-router';
 import { ConnectPopup } from '@/components/features/chats';
@@ -19,7 +8,6 @@ interface ChatMessage {
   id: string;
   title: string;
   profile_pic: any;
-  // to fetch
   message: string;
   time: string;
 }
@@ -31,10 +19,6 @@ interface ChatsListScreenProps {
 }
 
 const ChatsListScreen = (props: ChatsListScreenProps) => {
-  if (props.loading) {
-    return <LoadingScreen />;
-  }
-  
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -50,7 +34,8 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
             </View>
             <TouchableOpacity 
               style={styles.addButton}
-              onPress={showModal}
+              onPress={props.loading ? undefined : showModal}
+              disabled={props.loading}
             >
               <Image 
                 source={require("@/assets/icons/addFriend.png")}
@@ -61,37 +46,59 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
         </SafeAreaView>
       </View>
 
-      {/* Requests Count */}
-      <TouchableOpacity onPress={() => router.push('/chats/requests')}>
-        <Text style={styles.requestsText}>Requests ({props.requestCount})</Text>
-      </TouchableOpacity>
+      {/* Content Section */}
+      <View style={styles.contentContainer}>
+        {/* Requests Count */}
+        <TouchableOpacity 
+          onPress={() => router.push('/chats/requests')}
+          style={props.loading ? styles.disabledTouchable : undefined}
+          disabled={props.loading}
+        >
+          <Text style={[styles.requestsText, props.loading && styles.disabledText]}>
+            Requests ({props.requestCount})
+          </Text>
+        </TouchableOpacity>
 
-      {/* Messages List */}
-      <ScrollView style={styles.messagesList}>
-        {props.chats.map((chat) => (
+        {/* Messages List */}
+        <View style={styles.messagesContainer}>
+          <ScrollView 
+            style={[styles.messagesList, props.loading && styles.disabledScrollView]}
+            scrollEnabled={!props.loading}
+          >
+            {props.chats.map((chat) => (
+              <TouchableOpacity 
+                key={chat.id} 
+                style={[styles.messageCard, props.loading && styles.disabledMessageCard]} 
+                onPress={() => !props.loading && router.push(`/chats/${chat.id}`)}
+                disabled={props.loading}
+              >
+                <View style={styles.messageInfo}>
+                  <ProfilePictureWithLoading 
+                    source={{uri: chat.profile_pic}}
+                    size={48}
+                    style={[styles.profileImage, props.loading && styles.disabledImage]}
+                  />
+                  <View style={styles.textContainer}>
+                    <Text style={[styles.name, props.loading && styles.disabledText]}>{chat.title}</Text>
+                    <Text style={[styles.message, props.loading && styles.disabledText]}>{chat.message}</Text>
+                  </View>
+                </View>
+                <View style={styles.timeContainer}>
+                  <Text style={[styles.time, props.loading && styles.disabledText]}>{chat.time}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
           
-            <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
-            <View style={styles.messageInfo}>
-              <ProfilePictureWithLoading 
-                source={{uri: chat.profile_pic}}
-                size={48}
-                style={styles.profileImage}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.name}>{chat.title}</Text>
-                <Text style={styles.message}>{chat.message}</Text>
-              </View>
+          {/* Loading Overlay */}
+          {props.loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#DE728D" />
+              <Text style={styles.loadingText}>Loading chats...</Text>
             </View>
-            <View style={styles.timeContainer}>
-              <Text style={styles.time}>{chat.time}</Text>
-              {/* <View style={styles.unreadBadge}>
-                <Text style={styles.unreadCount}>0</Text>
-              </View> */}
-            </View>
-            </TouchableOpacity>
-          
-        ))}
-      </ScrollView>
+          )}
+        </View>
+      </View>
 
       {/* Connect Popup Modal */}
       <ConnectPopup
@@ -212,6 +219,53 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0EDFD',
     width: '100%',
     paddingTop: Platform.OS === 'android' ? 10 : 0,
+  },
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  messagesContainer: {
+    flex: 1,
+    position: 'relative',
+  },
+  disabledTouchable: {
+    opacity: 0.5,
+  },
+  disabledText: {
+    opacity: 0.5,
+  },
+  disabledScrollView: {
+    opacity: 0.5,
+  },
+  disabledMessageCard: {
+    opacity: 0.5,
+  },
+  disabledImage: {
+    opacity: 0.5,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    fontFamily: 'Poppins',
+    color: '#DE728D',
+    fontWeight: '500',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  disabledIcon: {
+    opacity: 0.5,
   },
 });
 

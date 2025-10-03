@@ -14,6 +14,7 @@ import { useDataRefetch } from '@/contexts/DataFetcher';
 
 const SocialPage = () => {
   const { 
+    fetching,
     communities: communitiesFromContext,
     friendsFeed: friendsFeedFromContext, 
     communityFeed: communityFeedFromContext
@@ -91,9 +92,8 @@ const SocialPage = () => {
 
   // Debug
   const handlingLike = isHandlingLike || isHandlingUnlike;
-  const loading = handlingLike || isRefetching;
+  const loading = fetching || handlingLike || isRefetching;
   if (debugSocialPage && !loading) {
-    console.log(`📱 Rendering SocialPage - Communities: ${communityMembers.length}, Friends Feed: ${friendsFeed.length}, Community Feed: ${communityFeed.length}`);
   }
 
   return (

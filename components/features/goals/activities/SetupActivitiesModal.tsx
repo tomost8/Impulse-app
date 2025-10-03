@@ -80,8 +80,8 @@ const SetupActivitiesModal: React.FC<SetupActivitiesModalProps> = ({
   return (
     <Modal
       visible={isVisible}
-      animationType="fade"
       transparent={true}
+      //animationType="fade"
     >
       <SafeAreaView style={[styles.modalContainer, { pointerEvents: 'box-none' }]}>
         <View style={[styles.popup, { pointerEvents: 'auto' }]}>

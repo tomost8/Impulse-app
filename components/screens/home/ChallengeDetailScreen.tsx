@@ -144,24 +144,27 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
             keyExtractor={(item) => item.day.toString()}
             renderItem={({ item }) => (
               <View style={styles.circleContainer}>
-                <View
-                  style={[ styles.circleImage, styles.imageContainer ]}
-                >
-                  {item.imageUrl &&
+                <View style={styles.imageContainer}>
+                  {item.imageUrl ? (
                     <Image 
                       source={{ uri: item.imageUrl }}
-                      style={styles.circleImage}
+                      style={styles.circleImageWithImage}
                       resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
                     />
-                  }
-                  {item.day >= totalDays - daysRemaining + 1 &&
-                    <Image source={require("@/assets/images/challenge/Inactive State.png")} style={styles.inactiveImage} />
-                  }
-                  <Text
-                    style={styles.dayText}
-                  >
-                    {item.day}
-                  </Text>
+                  ) : (
+                    <View style={styles.circleImage} />
+                  )}
+                  {item.day >= totalDays - daysRemaining + 1 && !item.imageUrl && (
+                    <Image 
+                      source={require("@/assets/images/challenge/Inactive State.png")} 
+                      style={styles.inactiveImage} 
+                    />
+                  )}
+                  <View style={styles.dayTextContainer}>
+                    <Text style={styles.dayText}>
+                      {item.day}
+                    </Text>
+                  </View>
                 </View>
               </View>
             )}
@@ -367,19 +370,38 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     resizeMode: "cover",
   },
+  circleImageWithImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    resizeMode: "cover",
+  },
   inactiveImage: {
-    backgroundColor: "#FFFFFF",
+    position: "absolute",
+    top: -5,
+    left: -5,
     width: 50,
     height: 50,
     resizeMode: "cover",
   },
   imageContainer: {
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
   },
-  dayText: {
+  dayTextContainer: {
     position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  dayText: {
     color: '#242020',
     textAlign: 'center',
     fontFamily: 'Inter',
@@ -387,6 +409,7 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     fontWeight: '400',
     lineHeight: 11,
+    textAlignVertical: 'center',
   },
   friendContainer: {
     flexDirection: "row",

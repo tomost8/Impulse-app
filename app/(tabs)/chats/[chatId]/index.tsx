@@ -112,11 +112,6 @@ function ChatScreen({
 
   // Custom send button
   const renderSend = (props: SendProps<IMessage>) => {
-    mixpanel.trackEvent('Message Sent', {
-      timestamp: new Date().toISOString(),
-      // sender_id, chat_id, message_length, etc.
-    });
-
     return (
       <Send
         {...props}
@@ -275,7 +270,14 @@ const ChatPage = (props: any) => {
   // Process message data
   useEffect(() => {
     if (messagesRef.current && messagesRef.current.length > 0) {
-      const formattedMessages = messagesRef.current.map((msg: any) => ({
+      // Sort messages by creation date (newest first) for proper display in GiftedChat with inverted={true}
+      const sortedMessages = [...messagesRef.current].sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime();
+        const dateB = new Date(b.created_at).getTime();
+        return dateB - dateA; // Descending order (newest first)
+      });
+
+      const formattedMessages = sortedMessages.map((msg: any) => ({
         _id: msg.id,
         text: msg.content,
         createdAt: new Date(msg.created_at),
@@ -371,6 +373,14 @@ const ChatPage = (props: any) => {
       const response = await sendMessage(input);
       if (!response.success) {
         console.error("Failed to send message:", response.errors);
+      } else {
+        // Track successful message send
+        mixpanel.trackEvent('Message Sent', {
+          timestamp: new Date().toISOString(),
+          chat_id: Number(chatId),
+          sender_id: userId,
+          message_length: messageToSend.text.length,
+        });
       }
     } catch (error) {
       console.error("Error sending message:", error);
