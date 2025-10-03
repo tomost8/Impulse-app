@@ -1,3 +1,4 @@
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -40,10 +41,7 @@ function ReminderItem({
             style={styles.infoButton}
             onPress={onInfoPress}
           >
-            <Image 
-              source={require("@/assets/icons/info.png")}
-              style={styles.infoIcon}
-            />
+            <Feather name="info" size={20} color="#C35A74" />
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={onToggle}>
@@ -134,7 +132,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: s(12),
     fontFamily: 'Open Sans',
-    color: '#242020',
+    color: '#A4ACBC',
   },
   arrowIcon: {
     width: s(14),

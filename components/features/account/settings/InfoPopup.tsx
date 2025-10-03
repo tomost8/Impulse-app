@@ -5,9 +5,9 @@ import {
   Modal,
   StyleSheet,
   TouchableOpacity,
-  Image,
 } from 'react-native';
 import { s } from "react-native-size-matters";
+import { Feather } from '@expo/vector-icons';
 
 interface InfoPopupProps {
   visible: boolean;
@@ -25,10 +25,11 @@ const InfoPopup = ({ visible, onClose, title, message }: InfoPopupProps) => {
     >
       <View style={styles.overlay}>
         <View style={styles.popup}>
-          <Image 
-            source={require("@/assets/icons/infoWbackground.png")}
-            style={styles.icon}
-          />
+          <View style={styles.iconCircle1}>
+            <View style={styles.iconCircle2}>
+              <Feather name="info" size={24} color="#C35A74" />
+            </View>
+          </View>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.message}>{message}</Text>
           <TouchableOpacity 
@@ -47,35 +48,49 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
   popup: {
     backgroundColor: 'white',
-    borderRadius: 30,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
     padding: s(20),
     alignItems: 'center',
-    width: '85%',
+    width: '100%',
   },
-  icon: {
-    width: s(60),
-    height: s(60),
-    marginBottom: s(16),
+  iconCircle1: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: '#C35A740D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  iconCircle2: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#C35A741A',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
-    fontSize: 18,
+    fontSize: 22,
     fontFamily: 'Poppins',
-    fontWeight: '600',
+    fontWeight: '700',
     color: '#242020',
-    marginBottom: s(12),
+    marginBottom: s(20),
   },
   message: {
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'Open Sans',
-    color: '#242020',
+    color: '#646C7C',
+    fontWeight: '400',
     textAlign: 'center',
     lineHeight: s(20),
-    marginBottom: s(20),
+    marginBottom: s(32),
   },
   button: {
     backgroundColor: '#DE728D',

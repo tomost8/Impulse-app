@@ -3,8 +3,32 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, TextInput,
 import { s } from "react-native-size-matters";
 import { router } from "expo-router";
 import Header from "@/components/ui/common/headers/Header";
-import { Info1, Info2, Info3, Info4, ReminderItem, PreferencesUpdatedPopup } from '@/components/features/account';
+import { ReminderItem, PreferencesUpdatedPopup } from '@/components/features/account';
+import InfoPopup from "@/components/features/account/settings/InfoPopup";
+import { Feather, Ionicons } from "@expo/vector-icons";
 
+export const infoPopups = {
+  morning: {
+    title: "AM Scheduling Reminder",
+    message:
+      "A daily reminder from Impulse to fill out your activities for the day to stay on track to accomplish your goals. The message changes everyday!",
+  },
+  afternoon: {
+    title: "Afternoon Motivation",
+    message:
+      "This notification is a fun daily message that serves as a reminder to complete your daily scheduled activities. The message  changes everyday!",
+  },
+  goal: {
+    title: "Activities Reminder",
+    message:
+      "This notification reminds you to complete your activity. You can customize when it will be sent out before each activity.",
+  },
+  nudge: {
+    title: "Nudge Notification",
+    message:
+      "This is your custom notification to send to your accountability partners as extra motivation.",
+  },
+};
 
 interface NotificationsScreenProps {
   onSave: (input: any) => void;
@@ -18,10 +42,7 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
   });
   const [nudgeMessage, setNudgeMessage] = useState("");
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [showInfo2, setShowInfo2] = useState(false);
-  const [showInfo3, setShowInfo3] = useState(false);
-  const [showInfo4, setShowInfo4] = useState(false);
-  const [showInfo1, setShowInfo1] = useState(false);
+  const [activeInfo, setActiveInfo] = useState<keyof typeof infoPopups | null>(null);
   const [showUpdatedPopup, setShowUpdatedPopup] = useState(false);
 
   // Generate time options
@@ -78,7 +99,7 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
         >
           <View style={styles.remindersContainer}>
             <ReminderItem
-              title="Scheduling Reminder"
+              title="Morning Scheduling Reminder"
               isEnabled={reminders.morning.enabled}
               onToggle={() => setReminders({
                 ...reminders,
@@ -90,10 +111,10 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
                 ...reminders,
                 morning: { ...reminders.morning, time }
               })}
-              onInfoPress={() => setShowInfo1(true)}
+              onInfoPress={() => setActiveInfo("morning")}
             />
             <ReminderItem
-              title="Midday Motivation"
+              title="Afternoon Motivation"
               isEnabled={reminders.afternoon.enabled}
               onToggle={() => setReminders({
                 ...reminders,
@@ -105,7 +126,7 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
                 ...reminders,
                 afternoon: { ...reminders.afternoon, time }
               })}
-              onInfoPress={() => setShowInfo2(true)}
+              onInfoPress={() => setActiveInfo("afternoon")}
             />
             <ReminderItem
               title="Goal Reminder"
@@ -120,7 +141,7 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
                 ...reminders,
                 daily: { ...reminders.daily, time }
               })}
-              onInfoPress={() => setShowInfo3(true)}
+              onInfoPress={() => setActiveInfo("goal")}
             />
             <View style={styles.nudgeSection}>
               <View style={styles.reminderHeader}>
@@ -128,12 +149,9 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
                   <Text style={styles.reminderTitle}>Nudge Message</Text>
                   <TouchableOpacity 
                     style={styles.infoButton}
-                    onPress={() => setShowInfo4(true)}
+                    onPress={() => setActiveInfo("nudge")}
                   >
-                    <Image 
-                      source={require("@/assets/icons/info.png")}
-                      style={styles.infoIcon}
-                    />
+                  <Feather name="info" size={20} color="#C35A74" />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -142,7 +160,8 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
                   style={styles.input}
                   value={nudgeMessage}
                   onChangeText={(text) => setNudgeMessage(text.slice(0, 30))}
-                  placeholder="Enter custom message"
+                  placeholder="Enter here"
+                  placeholderTextColor="#A4ACBC"
                   maxLength={30}
                   returnKeyType="done"
                   onSubmitEditing={() => Keyboard.dismiss()}
@@ -160,10 +179,14 @@ function NotificationsScreen({ onSave }: NotificationsScreenProps): JSX.Element 
           </TouchableOpacity>
         )}
       </KeyboardAvoidingView>
-      <Info1 visible={showInfo1} onClose={() => setShowInfo1(false)} />
-      <Info2 visible={showInfo2} onClose={() => setShowInfo2(false)} />
-      <Info3 visible={showInfo3} onClose={() => setShowInfo3(false)} />
-      <Info4 visible={showInfo4} onClose={() => setShowInfo4(false)} />
+      {activeInfo && (
+        <InfoPopup
+          visible={!!activeInfo}
+          onClose={() => setActiveInfo(null)}
+          title={infoPopups[activeInfo].title}
+          message={infoPopups[activeInfo].message}
+        />
+      )}
       <PreferencesUpdatedPopup
         isVisible={showUpdatedPopup}
         onClose={() => setShowUpdatedPopup(false)}

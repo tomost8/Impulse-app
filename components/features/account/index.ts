@@ -96,10 +96,6 @@ export { default as JoinCommunity } from './guide/JoinCommunity';
 
 // Notifications Components
 export { default as ReminderItem } from './settings/ReminderItem';
-export { default as Info1 } from './settings/info1';
-export { default as Info2 } from './settings/info2';
-export { default as Info3 } from './settings/info3';
-export { default as Info4 } from './settings/info4';
 export { default as PreferencesUpdatedPopup } from './settings/PreferencesUpdatedPopup';
 
 // Settings Components
