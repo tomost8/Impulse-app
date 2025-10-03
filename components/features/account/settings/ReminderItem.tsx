@@ -115,8 +115,9 @@ const styles = StyleSheet.create({
     color: '#242020',
   },
   infoIcon: {
-    width: s(19),
-    height: s(19),
+    width: s(20),
+    height: s(20),
+    resizeMode: "contain",
   },
   dropdownButton: {
     flexDirection: 'row',
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
   toggleIcon: {
     width: s(51),
     height: s(31),
+    resizeMode: "contain",
   },
   titleContainer: {
     flexDirection: 'row',

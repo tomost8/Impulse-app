@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
   infoIcon: {
     width: s(19),
     height: s(19),
+    resizeMode: "contain",
   },
   titleContainer: {
     flexDirection: 'row',
