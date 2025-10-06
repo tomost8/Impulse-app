@@ -1,5 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
-import { debugMutations } from '@/debug/utils';
+// import { debugMutations } from '@/debug/utils';
 
 // Mutation - Join Challenge
 export const JOIN_CHALLENGE = gql`
@@ -33,14 +33,14 @@ export const JOIN_CHALLENGE = gql`
 export function useJoinChallenge() {
   const [joinChallenge, { loading, error }] = useMutation(JOIN_CHALLENGE, {
     onCompleted: (data) => {
-      if (debugMutations) {
+      // if (debugMutations) {
         console.log("useJoinChallenge completed", data);
-      }
+      // }
     },
     onError: (error) => {
-      if (debugMutations) {
+      // if (debugMutations) {
         console.log("useJoinChallenge error", error);
-      }
+      // }
     }
   });
 

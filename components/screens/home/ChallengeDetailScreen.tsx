@@ -154,9 +154,12 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
                       resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
                     />
                   }
-                  {item.day >= totalDays - daysRemaining + 1 &&
+                  {(
+                    item.day > totalDays - daysRemaining + 1 ||
+                    (item.day === totalDays - daysRemaining + 1 && !item.imageUrl)
+                  ) && (
                     <Image source={require("@/assets/images/challenge/Inactive State.png")} style={styles.inactiveImage} />
-                  }
+                  )}
                   <Text
                     style={styles.dayText}
                   >
