@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -8,7 +8,11 @@ import {
   Modal,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
+import { vs } from "react-native-size-matters";
+
+const { height } = Dimensions.get('window');
 
 interface UserOptionProps {
   name: string;
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 20,
-    height: '80%',
+    maxHeight: vs(height * 0.8),
   },
   friendFeedOption: {
     flexDirection: 'row',

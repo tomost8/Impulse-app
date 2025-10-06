@@ -1,3 +1,4 @@
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   Modal,
 } from "react-native";
-import { s } from "react-native-size-matters";
+import { s, vs } from "react-native-size-matters";
 
 interface ReminderItemProps {
   title: string;
@@ -40,10 +41,7 @@ function ReminderItem({
             style={styles.infoButton}
             onPress={onInfoPress}
           >
-            <Image 
-              source={require("@/assets/icons/info.png")}
-              style={styles.infoIcon}
-            />
+            <Feather name="info" size={20} color="#C35A74" />
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPress={onToggle}>
@@ -115,8 +113,9 @@ const styles = StyleSheet.create({
     color: '#242020',
   },
   infoIcon: {
-    width: s(19),
-    height: s(19),
+    width: s(20),
+    height: s(20),
+    resizeMode: "contain",
   },
   dropdownButton: {
     flexDirection: 'row',
@@ -133,7 +132,7 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontSize: s(12),
     fontFamily: 'Open Sans',
-    color: '#242020',
+    color: '#A4ACBC',
   },
   arrowIcon: {
     width: s(14),
@@ -143,6 +142,7 @@ const styles = StyleSheet.create({
   toggleIcon: {
     width: s(51),
     height: s(31),
+    resizeMode: "contain",
   },
   titleContainer: {
     flexDirection: 'row',
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderTopLeftRadius: s(20),
     borderTopRightRadius: s(20),
+    height: vs(300),
     maxHeight: '50%',
     padding: s(20),
   },

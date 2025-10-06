@@ -173,7 +173,7 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
         </View>
 
         {/* Section 4: Friends Section */}
-        <View style={styles.section}>
+        {!isFailed && <View style={styles.section}>
           <Text style={styles.sectionTitle}>
             {isActive ? 'Friends Also Participating' : isCompleted ? 'Friends' : ''}
           </Text>
@@ -195,18 +195,16 @@ const ChallengeDetailScreen: React.FC<ChallengeDetailScreenProps> = ({
                   <Text style={styles.friendUserName}> {participant.username} </Text>
                 </View>
               </View>
-              <View>
-                {/* Badge Icon for friends: crashes because badge_level is returned as null
+              {isCompleted && <View>
                 <Image 
                   source={getBadgeImage(challengeData.title, participant.badge_level)}
                   style={styles.friendBadge}
                   resizeMethod={Platform.OS === 'android' ? 'resize' : undefined}
                 />
-                */}
-              </View>
+              </View>}
             </View>
           ))}
-        </View>
+        </View>}      
       </ScrollView>
     </View>
   );
