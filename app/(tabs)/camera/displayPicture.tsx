@@ -86,6 +86,7 @@ const DisplayPicturePage = () => {
           activities: true,      // Update activity completion status
           friendsFeed: true,     // Show new post in friends feed
           communityFeed: true,   // Show new post in community feed
+          challenges: true,   // Show challenges updates in challenges status
         });
       } else {
         throw new Error("createPost response.success false: " + JSON.stringify(response.errors));
