@@ -1,7 +1,8 @@
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, } from 'react-native';
+import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import * as Device from "expo-device";
 import { CameraHeaderContext } from './_layout';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -78,132 +79,135 @@ export default function CameraScreen() {
 
   // Toggle between front and back camera
   function toggleCameraFacing() {
-    if (isSwitchingCamera) {
-      return;
-    }
+    if (isSwitchingCamera) return;
     setIsSwitchingCamera(true);
     setIsCameraReady(false);
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // Main camera function: taking pictures
-  async function takePicture() {
-    if (!isCameraReady || isSwitchingCamera) {
-      return;
+  // Helper: wait until camera is ready (no forced delay)
+  function waitForCameraReady() {
+    return new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        if (isCameraReady) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 50);
+    });
+  }
+
+  // Detect emulator/simulator
+  function isRunningOnEmulator() {
+    if (Device.osName === "iOS" && Device.modelName?.includes("Simulator")) {
+      return true;
+    }
+    if (Device.osName === "Android") {
+      return Device.supportedCpuArchitectures?.some((arch) =>
+        arch.includes("x86")
+      );
+    }
+    return false;
+  }
+
+  // Capture photo with fallback for emulator
+  async function capturePhoto(): Promise<{ uri: string } | null> {
+    const runningOnEmulator = isRunningOnEmulator();
+
+    if (runningOnEmulator || !cameraRef.current) {
+      return { uri: "https://picsum.photos/800/1200" }; // placeholder
     }
 
+    return await cameraRef.current.takePictureAsync({
+      quality: 1,
+      exif: true,
+      skipProcessing: true,
+    });
+  }
+
+  // Process photo helper
+  async function processPhoto(uri: string, shouldFlip: boolean) {
+    // Skip manipulation for placeholder URIs
+    if (uri.startsWith("http")) return uri;
+
+    const imageContext = ImageManipulator.manipulate(uri);
+    if (shouldFlip) imageContext.flip(FlipType.Horizontal);
+
+    const rendered = await imageContext.renderAsync();
+    const processed = await rendered.saveAsync({
+      compress: 1,
+      format: SaveFormat.JPEG,
+      base64: false,
+    });
+    return processed?.uri ?? null;
+  }
+
+  // --- Main camera function ---
+  async function takePicture() {
+    if (!isCameraReady || isSwitchingCamera) return;
     const isDoubleCamera = !fetching && user?.is_double_cam;
-    if (cameraRef.current) {
-      try {
-        // Take first picture
-        const firstPhoto = await cameraRef.current.takePictureAsync({
-          quality: 1,
-          exif: true,
-          skipProcessing: true
+
+    try {
+      // First photo
+      const firstPhoto = await capturePhoto();
+      if (!firstPhoto) return;
+      const firstProcessedUri = await processPhoto(
+        firstPhoto.uri,
+        facing === "front"
+      );
+      if (!firstProcessedUri) return;
+
+      if (!isDoubleCamera) {
+        // Single camera flow
+        router.push({
+          pathname: "/camera/displayPicture",
+          params: {
+            frontPhoto: facing === "front" ? firstProcessedUri : null,
+            backPhoto: facing === "back" ? firstProcessedUri : null,
+            id,
+            category,
+          },
         });
-        if (!firstPhoto) return;
-
-        // Process first picture (and flip horizontally if selfie)
-        const imageContext = ImageManipulator.manipulate(firstPhoto.uri);
-        if (facing === 'front') {
-          imageContext.flip(FlipType.Horizontal);
-        }
-        const renderedImage = await imageContext.renderAsync();
-        const processedFirstPhoto = await renderedImage.saveAsync({
-          compress: 1,
-          format: SaveFormat.JPEG,
-          base64: false
-        });
-        if (!processedFirstPhoto) return;
-
-        if (!isDoubleCamera) {
-          // Single camera
-          const frontPhoto = facing === 'front' ? processedFirstPhoto.uri : null;
-          const backPhoto = facing === 'back' ? processedFirstPhoto.uri : null;
-          
-          router.push({
-            pathname: '/camera/displayPicture',
-            params: {
-              frontPhoto,
-              backPhoto,
-              id: id,
-              category: category,
-            }
-          });
-        } else {
-          // Double camera
-          const firstCameraDirection = facing;
-          const secondCameraDirection = firstCameraDirection === 'front' ? 'back' : 'front';
-          // Switch camera and wait for it to be ready
-          setIsSwitchingCamera(true);
-          setFacing(secondCameraDirection);
-          await new Promise(resolve => {
-            const checkReady = () => {
-              if (isCameraReady) {
-                setTimeout(() => {
-                  resolve(true);
-                }, 1000);
-              } else {
-                setTimeout(checkReady, 100);
-              }
-            };
-            checkReady();
-          });
-
-          // Take second picture
-          const secondPhoto = await cameraRef.current.takePictureAsync({
-            quality: 1,
-            exif: true,
-            skipProcessing: true
-          });
-          if (!secondPhoto) return;
-
-          // Process second picture (and flip horizontally if selfie)
-          const imageContext = ImageManipulator.manipulate(secondPhoto.uri);
-          if (secondCameraDirection === 'front') {
-            imageContext.flip(FlipType.Horizontal);
-          }
-          const renderedImage = await imageContext.renderAsync();
-          const processedSecondPhoto = await renderedImage.saveAsync({
-            compress: 1,
-            format: SaveFormat.JPEG,
-            base64: false
-          });
-          if (!processedSecondPhoto) return;
-
-          const firstPhotoIsFront = firstCameraDirection === 'front';
-          const frontPhoto = firstPhotoIsFront ? processedFirstPhoto.uri : processedSecondPhoto.uri;
-          const backPhoto = firstPhotoIsFront ? processedSecondPhoto.uri : processedFirstPhoto.uri;
-
-          // Switch camera back to original direction and wait for it to be ready
-          setIsSwitchingCamera(true);
-          setFacing(firstCameraDirection);
-          await new Promise(resolve => {
-            const checkReady = () => {
-              if (isCameraReady) {
-                setTimeout(() => {
-                  resolve(true);
-                }, 500);
-              } else {
-                setTimeout(checkReady, 100);
-              }
-            };
-            checkReady();
-          });
-
-          router.push({
-            pathname: '/camera/displayPicture',
-            params: {
-              frontPhoto,
-              backPhoto,
-              id: id,
-              category: category,
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error taking picture:', error);
+        return;
       }
+
+      // --- Double camera flow ---
+      const firstCameraDirection = facing;
+      const secondCameraDirection =
+        firstCameraDirection === "front" ? "back" : "front";
+
+      // Switch to second camera
+      setIsSwitchingCamera(true);
+      setFacing(secondCameraDirection);
+      await waitForCameraReady();
+
+      const secondPhoto = await capturePhoto();
+      if (!secondPhoto) return;
+      const secondProcessedUri = await processPhoto(
+        secondPhoto.uri,
+        secondCameraDirection === "front"
+      );
+      if (!secondProcessedUri) return;
+
+      const firstPhotoIsFront = firstCameraDirection === "front";
+      const frontPhoto = firstPhotoIsFront
+        ? firstProcessedUri
+        : secondProcessedUri;
+      const backPhoto = firstPhotoIsFront
+        ? secondProcessedUri
+        : firstProcessedUri;
+
+      // Switch back (fire-and-forget, no blocking)
+      setIsSwitchingCamera(true);
+      setFacing(firstCameraDirection);
+      waitForCameraReady();
+
+      router.push({
+        pathname: "/camera/displayPicture",
+        params: { frontPhoto, backPhoto, id, category },
+      });
+    } catch (error) {
+      console.error("Error taking picture:", error);
     }
   }
 
