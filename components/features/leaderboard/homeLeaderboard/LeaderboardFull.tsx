@@ -12,7 +12,7 @@ interface LeaderboardFullProps {
 
 const LeaderboardFull: React.FC<LeaderboardFullProps> = ({ users, isUsersLoading }) => {
   const podiumUsers = users.slice(0, 3);
-  const listUsers = users.slice(3, 10);
+  const listUsers = users.slice(3, 6);
   return (
     <View style={styles.container}>
       {/* Header Section */}

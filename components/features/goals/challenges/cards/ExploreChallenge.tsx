@@ -95,10 +95,11 @@ const ExploreChallenge: React.FC<ExploreChallengeProps> = ({
           <Feather name="lock" size={24} color="#FE6D73" />
         )}
 
-
+        {/*
         {!challengeItem.isJoined && !challengeItem.isLocked && (
           <Feather name="unlock" size={24} color="#FE6D73" />
         )}
+        */}
 
         <ChallengeLockedModal
           isVisible={showModalPopup}

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, Platform, FlatList, RefreshControl, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, StatusBar, Platform, FlatList, RefreshControl } from "react-native";
 import { TabSelector, CommunityList, CommunityFilter, Feed } from "@/components/features/social";
+import LoadingOverlay from "@/components/ui/common/LoadingOverlay";
 import { router } from "expo-router";
 const searchIcon = require("@/assets/icons/search.png");
 
@@ -142,12 +143,9 @@ const SocialScreen: React.FC<SocialScreenProps> = ({
         />
         
         {/* Loading Overlay */}
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="#DE728D" />
-            <Text style={styles.loadingText}>Loading...</Text>
-          </View>
-        )}
+        <LoadingOverlay 
+          visible={loading} 
+        />
       </View>
     </View>
   );
@@ -218,24 +216,6 @@ const styles = StyleSheet.create({
   },
   disabledContent: {
     opacity: 0.5,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    color: '#DE728D',
-    fontWeight: '500',
   },
 });
 

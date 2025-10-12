@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Platform, StatusBar, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Platform, StatusBar } from 'react-native';
 import ProfilePictureWithLoading from '@/components/ui/common/ProfilePictureWithLoading';
+import LoadingOverlay from '@/components/ui/common/LoadingOverlay';
 import { router } from 'expo-router';
 import { ConnectPopup } from '@/components/features/chats';
 
@@ -59,7 +60,7 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
           </Text>
         </TouchableOpacity>
 
-        {/* Messages List */}
+        {/* Chats List */}
         <View style={styles.messagesContainer}>
           <ScrollView 
             style={[styles.messagesList, props.loading && styles.disabledScrollView]}
@@ -91,12 +92,9 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
           </ScrollView>
           
           {/* Loading Overlay */}
-          {props.loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color="#DE728D" />
-              <Text style={styles.loadingText}>Loading chats...</Text>
-            </View>
-          )}
+          <LoadingOverlay 
+            visible={props.loading} 
+          />
         </View>
       </View>
 
@@ -145,6 +143,11 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     tintColor: '#242020',
   },
+  /* Request Section */
+  contentContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   requestsText: {
     fontSize: 14,
     fontFamily: 'Poppins',
@@ -155,6 +158,11 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     width: '100%',
     paddingRight: 16,
+  },
+  messagesContainer: {
+    flex: 1,
+    position: 'relative',
+    paddingBottom: 100,
   },
   messagesList: {
     flex: 1,
@@ -215,19 +223,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
-  headerExtension: {
-    backgroundColor: '#E0EDFD',
-    width: '100%',
-    paddingTop: Platform.OS === 'android' ? 10 : 0,
-  },
-  contentContainer: {
-    flex: 1,
-    position: 'relative',
-  },
-  messagesContainer: {
-    flex: 1,
-    position: 'relative',
-  },
+  /* Loading States */
   disabledTouchable: {
     opacity: 0.5,
   },
@@ -242,24 +238,6 @@ const styles = StyleSheet.create({
   },
   disabledImage: {
     opacity: 0.5,
-  },
-  loadingOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    fontFamily: 'Poppins',
-    color: '#DE728D',
-    fontWeight: '500',
   },
   disabledButton: {
     opacity: 0.5,

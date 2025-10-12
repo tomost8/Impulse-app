@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Impulse-app",
     slug: "Impulse-app",
-    version: "2.0.1",
+    version: "2.0.2",
     orientation: "portrait",
     icon: "./assets/icons/appLogoIcon.png",
     scheme: "myapp",

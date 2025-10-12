@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, ScrollView, SafeAreaView, Text, TouchableOpacity } from "react-native";
 import { useLocalSearchParams } from 'expo-router';
 import LoadingScreen from "@/components/ui/common/loading";
+import LoadingOverlay from "@/components/ui/common/LoadingOverlay";
 
 import { HomeHeader, QuoteofDay, WelcomePopup } from "@/components/features/home";
 import { ActivitiesSection, ChallengesSection, SetupActivitiesModal } from "@/components/features/goals";
@@ -26,10 +27,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   friendsLeaderboard,
   handleAddGoals,
 }) => {
-  if (loading) {
-    return <LoadingScreen />;
-  }
-  
   const { welcome } = useLocalSearchParams();
   const [showWelcomePopup, setShowWelcomePopup] = useState(welcome === 'true');
   const [showDailyAddPopup, setShowDailyAddPopup] = useState(activities.length === 0 && !showWelcomePopup);
@@ -58,41 +55,38 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <View style={styles.headerExtension}>
-          <HomeHeader name={name} />
-        </View>
-        <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={true}
-          alwaysBounceVertical={false}
-          scrollEventThrottle={16}
-          decelerationRate="normal"
-        >
-          <View style={styles.quoteSection}>
-            <QuoteofDay />
+        <HomeHeader name={name} />
+        {!loading && (
+          <View style={styles.contentContainer}>
+            <ScrollView 
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={true}
+              alwaysBounceVertical={false}
+              scrollEventThrottle={16}
+              decelerationRate="normal"
+            >
+              <QuoteofDay />
+              <ActivitiesSection 
+                activities={activities} 
+                timezone={timezone}
+              />
+              <ChallengesSection 
+                challenges={challenges} 
+              />
+              <LeaderboardFull 
+                users={friendsLeaderboard}
+                isUsersLoading={loading}
+              />
+            </ScrollView>
           </View>
-
-          {/* Activities Section */}
-          <View>
-            <ActivitiesSection 
-              activities={activities} 
-              timezone={timezone}
-            />
-          </View>
-
-          {/* Challenges Section */}
-          <ChallengesSection challenges={challenges} />
-
-          {/* Leaderboard Section with Navigation to Full Leaderboard */}
-          <View style={styles.leaderboardWrapper}>
-            <LeaderboardFull 
-              users={friendsLeaderboard}
-              isUsersLoading={loading}
-            />
-          </View>
-        </ScrollView>
+        )}
+        
+        {/* Loading Overlay */}
+        <LoadingOverlay 
+          visible={loading} 
+          top={130} 
+        />
 
         <SetupActivitiesModal  
           isVisible={showDailyAddPopup && !loading}
@@ -113,6 +107,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 };
 
 const styles = StyleSheet.create({
+  /* Containers */
   safeArea: {
     flex: 1,
     backgroundColor: '#E0EDFD',
@@ -121,47 +116,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  headerExtension: {
-    backgroundColor: '#E0EDFD',
-    width: '100%',
-  },
-  scrollView: {
+  contentContainer: {
     flex: 1,
+    position: 'relative',
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 65, // Add padding at bottom to ensure visibility
-  },
-  quoteSection: {
-    marginTop: 24,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  section: {
-    marginBottom: 24, // Ensures spacing between sections
-  },
-  leaderboardWrapper: {
-    marginBottom: 45, // Add margin to ensure space at bottom
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  topSectionWrapper: {
-    flex: 1,
-  },
-  checkButton: {
-    padding: 8,
-    marginLeft: 16,
-  },
-  checkIcon: {
-    width: 25,
-    height: 25,
-    resizeMode: 'contain',
-    tintColor: '#4CAF50',
+    paddingBottom: 80, 
   },
 });
 

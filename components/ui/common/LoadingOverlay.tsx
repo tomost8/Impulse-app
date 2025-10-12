@@ -5,17 +5,19 @@ interface LoadingOverlayProps {
   visible: boolean;
   color?: string;
   size?: 'small' | 'large';
+  top?: number;
 }
 
 const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ 
   visible, 
   color = '#DE728D', 
-  size = 'large' 
+  size = 'large',
+  top = 0
 }) => {
   if (!visible) return null;
 
   return (
-    <View style={styles.overlay}>
+    <View style={[styles.overlay, { top }]}>
       <ActivityIndicator size={size} color={color} />
     </View>
   );

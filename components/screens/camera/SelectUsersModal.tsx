@@ -111,6 +111,15 @@ const SelectUsers = ({
 
           {/* Scrollable Options */}
           <ScrollView style={styles.scrollContainer}>
+            {acceptedCommunities?.map((community: any) => (
+              <UserOption
+                key={community.community.id}
+                name={community.community.name}
+                profilePic={community.community.thumbnail}
+                isSelected={selectedPostTargets.includes(`community${community.community.id}`)}
+                onSelect={() => togglePostTarget(`community${community.community.id}`)}
+              />
+            ))}
             {acceptedFriends?.map((friend: any) => (
               <UserOption
                 key={friend.friend.id}
@@ -127,15 +136,6 @@ const SelectUsers = ({
                 profilePic={group.chat.profile_pic}
                 isSelected={selectedPostTargets.includes(`group${group.chat.id}`)}
                 onSelect={() => togglePostTarget(`group${group.chat.id}`)}
-              />
-            ))}
-            {acceptedCommunities?.map((community: any) => (
-              <UserOption
-                key={community.community.id}
-                name={community.community.name}
-                profilePic={community.community.thumbnail}
-                isSelected={selectedPostTargets.includes(`community${community.community.id}`)}
-                onSelect={() => togglePostTarget(`community${community.community.id}`)}
               />
             ))}
           </ScrollView>
