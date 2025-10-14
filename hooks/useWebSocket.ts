@@ -5,6 +5,7 @@ export function useWebSocket(userId: number) {
   const [error, setError] = useState<string | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const subscriptionIdRef = useRef<string | null>(null);
+  const handlersRef = useRef<Record<string, (payload: any) => void>>({});
 
   // Generate unique subscription ID
   const generateSubscriptionId = useCallback(() => {
@@ -14,11 +15,13 @@ export function useWebSocket(userId: number) {
   // Connect WebSocket
   const connect = useCallback(() => {
     try {
+      let retries = 0;
       console.log('Connecting to WebSocket...');
-      wsRef.current = new WebSocket('ws://18.191.234.29:3000/graphql', 'graphql-transport-ws');
+      wsRef.current = new WebSocket('http://10.0.2.2:3000/graphql', 'graphql-transport-ws');
       
       wsRef.current.onopen = () => {
         console.log('WebSocket connection opened');
+        retries = 0;
         setIsConnected(true);
         
         // Send initialization message
@@ -45,6 +48,18 @@ export function useWebSocket(userId: number) {
         setError('WebSocket connection error');
         setIsConnected(false);
       };
+
+      wsRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'next' && data.id) {
+          handlersRef.current[data.id]?.(data.payload);
+        }
+
+        if (data.type === 'complete' && data.id) {
+          delete handlersRef.current[data.id];
+        }
+      };
     } catch (error) {
       console.error('Error creating WebSocket:', error);
       setError(`Error creating WebSocket: ${error}`);
@@ -70,13 +85,20 @@ export function useWebSocket(userId: number) {
     }
 
     // If already subscribed, unsubscribe first
-    if (subscriptionIdRef.current) {
-      unsubscribeFromMessages();
-    }
+    if (subscriptionIdRef.current) unsubscribeFromMessages();
 
-    subscriptionIdRef.current = generateSubscriptionId();
+    const id = generateSubscriptionId();
+    subscriptionIdRef.current = id;
+    console.log("useWebSocket subscribeMessage", subscriptionIdRef.current)
+
+    handlersRef.current[id] = (payload) => {
+      if (payload?.data?.messageSent) {
+        onMessageReceived(payload.data.messageSent);
+      }
+    };
+
     const subscribeMessage = {
-      id: subscriptionIdRef.current,
+      id,
       type: 'subscribe',
       payload: {
         query: `subscription { messageSent { id chat_id sender_id content created_at } }`
@@ -86,17 +108,6 @@ export function useWebSocket(userId: number) {
     console.log('Subscribing to message updates...');
     console.log('Sending subscription message:', JSON.stringify(subscribeMessage));
     wsRef.current.send(JSON.stringify(subscribeMessage));
-
-    // Set up message handler
-    wsRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log('Received WebSocket message:', data);
-      
-      if (data.type === 'next' && data.payload?.data?.messageSent) {
-        const message = data.payload.data.messageSent;
-        onMessageReceived(message);
-      }
-    };
 
     return true;
   }, [generateSubscriptionId]);

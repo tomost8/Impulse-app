@@ -150,7 +150,7 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
     currentRefetchOptions.current.chats);
   const shouldFetchChats = shouldFetchChatsInitially || shouldRefetchChats;
   
-  const { chatMembers, fetched: hasNewChatsData } = useGetUserChats(
+  const { chats, fetched: hasNewChatsData } = useGetUserChats(
     userId as number, 
     shouldFetchChats
   );
@@ -512,9 +512,9 @@ export const DataFetcher: React.FC<{ children: React.ReactNode }> = ({ children 
       setCommunities(communityMembers);
     }
     if (hasNewChatsData) {
-      chatsRef.current = chatMembers;
+      chatsRef.current = chats;
       hasFetchedChats.current = true;
-      setChats(chatMembers);
+      setChats(chats);
     }
     if (hasNewFriendsData) {
       friendsRef.current = friends;

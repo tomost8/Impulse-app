@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, SafeAreaView, Platform
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { GiftedChat, Bubble, Day, InputToolbar, Composer, Send, IMessage, BubbleProps, DayProps, InputToolbarProps, SendProps, ComposerProps } from 'react-native-gifted-chat';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import AuthWrapper from '@/contexts/AuthWrapper';
 // GraphQL hooks
 import { useGetChat, useGetChatMembers, useGetMessages } from '@/hooks/graphql/chats/queries';
@@ -90,41 +90,14 @@ function ChatScreen({
     return (
       <InputToolbar
         {...props}
-        primaryStyle={{
-          alignItems: 'center',
-          //backgroundColor: '#f0f6ff'
-          //borderColor: 'red',
-          //borderWidth: 1,
-        }}
-        /*
-        containerStyle={{
-          backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: '#E8E8E8',
-          padding: 4,
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-        */
+        containerStyle={styles.inputToolbarContainer}
+        primaryStyle={styles.inputToolbarPrimary}
       />
     );
   };
 
-  // Custom send button
-  const renderSend = (props: SendProps<IMessage>) => {
-    mixpanel.trackEvent('Message Sent', {
-      timestamp: new Date().toISOString(),
-      // sender_id, chat_id, message_length, etc.
-    });
-
-    return (
-      <Send
-        {...props}
-        containerStyle={styles.sendButton}
-      >
-        <Ionicons name="send" size={28} color="#DE728D" />
-      </Send>
-    );
+  const renderEmptySend = () => {
+    return <View />; // An empty View component
   };
 
   // Custom input box left button
@@ -142,21 +115,22 @@ function ChatScreen({
   // Custom input box
   const renderComposer = (props: ComposerProps) => {
     return (
-      <Composer
-        {...props}
-        textInputStyle={{
-          backgroundColor: '#F5F5F5',
-          borderRadius: 20,
-          paddingHorizontal: 12,
-          marginHorizontal: 10,
-          minHeight: 40,
-          paddingTop: 6,
-          paddingBottom: 0,
-          //borderColor: 'blue',
-          //borderWidth: 1,
-        }}
-        placeholder="Type a message..."
-      />
+      <View style={styles.composerContainer}>
+        <Composer
+          {...props}
+          textInputStyle={styles.textInput}
+          placeholder="Type a message..."
+        />
+        <View style={styles.sendButtonWrapper}>
+          <Send
+            {...props}
+            containerStyle={styles.sendButton}
+            disabled={!props.text || props.text.trim().length === 0}
+          >
+            <Feather name="send" size={24} color={"#DE728D"} />
+          </Send>
+        </View>
+      </View>
     );
   };
 
@@ -214,10 +188,9 @@ function ChatScreen({
         renderBubble={renderBubble}
         renderDay={renderDay}
         renderInputToolbar={renderInputToolbar}
-        renderSend={renderSend}
         renderActions={renderActions}
         renderComposer={renderComposer}
-        alwaysShowSend
+        renderSend={renderEmptySend}
         //scrollToBottom
         inverted={true}
         renderAvatar={null}
@@ -357,6 +330,8 @@ const ChatPage = (props: any) => {
     setChatMessages(previousMessages => 
       GiftedChat.append(previousMessages, newMessages)
     );
+
+    console.log("ChatPage handleSend", newMessages);
     
     try {
       setIsSendingMessage(true);
@@ -367,7 +342,12 @@ const ChatPage = (props: any) => {
         sender_id: userId,
         content: messageToSend.text,
       };
-      
+
+      mixpanel.trackEvent('Message Sent', {
+        timestamp: new Date().toISOString(),
+        // sender_id, chat_id, message_length, etc.
+      });
+
       const response = await sendMessage(input);
       if (!response.success) {
         console.error("Failed to send message:", response.errors);
@@ -487,6 +467,38 @@ const styles = StyleSheet.create({
     height: 40,
     //borderColor: 'blue',
     //borderWidth: 1,
+  },
+  composerContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 20,
+    marginHorizontal: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    minHeight: 40,
+    flex: 1,
+  },
+  textInput: {
+    flex: 1,
+    marginLeft: 0,
+    paddingTop: 6,
+    paddingBottom: 0,
+    marginRight: 8, // Add space between input and send button
+    color: '#242020',
+  },
+  sendButtonWrapper: {
+    justifyContent: 'flex-end',
+    marginBottom: 4, // Adjust for proper vertical alignment
+  },
+  inputToolbarContainer: {
+    backgroundColor: '#f0f6ff',
+    borderTopWidth: 0,
+    paddingHorizontal: 0,
+    paddingBottom: 5,
+  },
+  inputToolbarPrimary: {
+    alignItems: 'center',
   },
   sendButton: {
     justifyContent: 'center',

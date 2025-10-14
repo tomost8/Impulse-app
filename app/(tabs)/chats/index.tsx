@@ -16,31 +16,41 @@ const ChatPage = () => {
   // Queries (maybe for messages)
 
   // Display Chat Info
-  const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat.chat);
+  const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat);
   
   // Sort chats by updated_at with most recent first
   const sortedChats = acceptedChats.sort((a: any, b: any) => {
-    const dateA = new Date(a.updated_at || 0);
-    const dateB = new Date(b.updated_at || 0);
-    return dateB.getTime() - dateA.getTime(); // Most recent first
+    const aHasUnread = a.unreadCount > 0;
+    const bHasUnread = b.unreadCount > 0;
+
+    // If one has unread and the other doesn't, unread one comes first
+    if (aHasUnread && !bHasUnread) return -1;
+    if (!aHasUnread && bHasUnread) return 1;
+
+    // If both have same unread status, sort by most recent date
+    const dateA = new Date(a.chat.updated_at || 0).getTime();
+    const dateB = new Date(b.chat.updated_at || 0).getTime();
+    return dateB - dateA;
   });
-  
+
   const chatInfo = sortedChats.map((chat: any) => {
-    if (chat.type === 'group') {
+    if (chat.chat.type === 'group') {
       return {
-        ...chat,
+        ...chat.chat,
         message: "Tap to view messages",
-        time: ""
+        time: "",
+        unreadCount: chat.unreadCount || 0
       };
-    } else if (chat.type === 'direct') {
-      const matchingFriend = friends.find(friend => friend.chat_id === chat.id);
+    } else if (chat.chat.type === 'direct') {
+      const matchingFriend = friends.find(friend => friend.chat_id === chat.chat.id);
       const directChatInfo = {
-        id: chat.id,
+        id: chat.chat.id,
         type: 'direct',
         title: matchingFriend ? matchingFriend.friend.username : chat.title,
         profile_pic: matchingFriend ? matchingFriend.friend.profile_picture : null,
         message: "Tap to view messages",
-        time: ""
+        time: "",
+        unreadCount: chat.unreadCount || 0
       };
       return directChatInfo;
     }

@@ -22,6 +22,7 @@ interface ChatMessage {
   // to fetch
   message: string;
   time: string;
+  unreadCount: number;
 }
 
 interface ChatsListScreenProps {
@@ -69,8 +70,7 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
       {/* Messages List */}
       <ScrollView style={styles.messagesList}>
         {props.chats.map((chat) => (
-          
-            <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
+          <TouchableOpacity key={chat.id} style={styles.messageCard} onPress={() => router.push(`/chats/${chat.id}`)}>
             <View style={styles.messageInfo}>
               <ProfilePictureWithLoading 
                 source={{uri: chat.profile_pic}}
@@ -84,12 +84,11 @@ const ChatsListScreen = (props: ChatsListScreenProps) => {
             </View>
             <View style={styles.timeContainer}>
               <Text style={styles.time}>{chat.time}</Text>
-              {/* <View style={styles.unreadBadge}>
-                <Text style={styles.unreadCount}>0</Text>
-              </View> */}
+              {chat.unreadCount != 0 && <View style={styles.unreadBadge}>
+                <Text style={styles.unreadCount}>{chat.unreadCount}</Text>
+              </View>}
             </View>
-            </TouchableOpacity>
-          
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -152,6 +151,7 @@ const styles = StyleSheet.create({
   messagesList: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingBottom: 100,
   },
   messageCard: {
     flexDirection: 'row',

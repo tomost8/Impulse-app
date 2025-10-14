@@ -75,12 +75,40 @@ export const GET_USER_CHATS = gql`
   query ($userId: Int!) {
     getUserChats(id: $userId) {
       success
-      chat_members {
-        chat { id type title profile_pic updated_at }
+      chats {
+        chat {
+          id
+          type
+          title
+          profile_pic
+          updated_at
+        }
         role
         status
+        unreadCount
+        lastMessage {
+          id
+          content
+          created_at
+          sender {
+            id
+            first_name
+            last_name
+            profile_picture
+          }
+          post {
+            id
+            caption
+            mediaUrls
+          }
+        }
+        lastReadMessageId
+        lastReadAt
       }
-      errors { field message }
+      errors {
+        field
+        message
+      }
     }
   }
 `;
@@ -90,27 +118,23 @@ export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
     skip: !shouldFetch,
     variables: { userId },
   });
+
   const fetched = shouldFetch && !loading;
   if (debugQueries && fetched) {
-    const chatMembers = data?.getUserChats.chat_members || [];
-    const success = data?.getUserChats.success;
-    const errors = data?.getUserChats.errors;
-    const chatDetails = chatMembers.map((member: any) => ({
-      chatId: member.chat.id,
-      chatTitle: member.chat.title || (member.chat.type === 'direct' ? 'null (Direct Chat)' : 'Untitled Group'),
-      chatType: member.chat.type,
-      role: member.role,
-      status: member.status
-    }));
-    const chatsString = chatDetails.map((c: any) => `  {chatId: ${c.chatId}, chatTitle: "${c.chatTitle}", chatType: "${c.chatType}", role: "${c.role}"}`).join('\n');
-    console.log("useGetUserChats: success:", success, "errors:", errors?.length > 0 ? errors : null, "chatCount:", chatMembers.length, "chats:\n" + chatsString);
+    console.log('useGetUserChats data', data, error ? 'error:' + error : '');
   }
+
+  console.log("🗣️ useGetUserChats data?.getUserChats.chats", data?.getUserChats.chats);
+
   return {
-    chatMembers: data?.getUserChats.chat_members || [],
-    fetched: fetched,
-    error: error?.message || null
+    chats: data?.getUserChats.chats ?? [],
+    success: data?.getUserChats.success ?? false,
+    errors: data?.getUserChats.errors ?? [],
+    fetched,
+    loading,
+    error: error?.message || null,
   };
-} 
+}
 
 // Query - Get Chat Members (for Chat with ID of chatId)
 export const GET_CHAT_MEMBERS = gql`
@@ -280,5 +304,75 @@ export function useGetLatestMessagesForUser(userId: number, shouldFetch: boolean
     fetched,
     loading,
     error: error?.message || null
+  };
+}
+
+export const GET_MESSAGES_AFTER = gql`
+  query MessagesAfter($chatId: Int!, $after: DateTime, $afterMessageId: Int, $limit: Int) {
+    messagesAfter(chatId: $chatId, after: $after, afterMessageId: $afterMessageId, limit: $limit) {
+      success
+      messages {
+        id
+        content
+        created_at
+        sender {
+          id
+          first_name
+          last_name
+          profile_picture
+        }
+        post {
+          id
+          caption
+          mediaUrls
+        }
+      }
+      pageInfo {
+        hasMore
+        lastMessageId
+        lastCreatedAt
+      }
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export interface UseGetMessagesAfterOptions {
+  chatId: number;
+  after?: string;
+  afterMessageId?: number;
+  limit?: number;
+  shouldFetch?: boolean;
+}
+
+export function useGetMessagesAfter({
+  chatId,
+  after,
+  afterMessageId,
+  limit = 50,
+  shouldFetch = true,
+}: UseGetMessagesAfterOptions) {
+  const { data, loading, error } = useQuery(GET_MESSAGES_AFTER, {
+    variables: { chatId, after, afterMessageId, limit },
+    skip: !shouldFetch,
+  });
+
+  const fetched = shouldFetch && !loading;
+  if (debugQueries && fetched) {
+    console.log('useGetMessagesAfter data', data, error ? 'error:' + error : '');
+  }
+
+  const response = data?.messagesAfter;
+  return {
+    messages: response?.messages ?? [],
+    pageInfo: response?.pageInfo ?? null,
+    success: response?.success ?? false,
+    errors: response?.errors ?? [],
+    fetched,
+    loading,
+    error: error?.message || null,
   };
 }
