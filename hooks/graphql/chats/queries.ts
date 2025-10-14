@@ -124,8 +124,6 @@ export function useGetUserChats(userId: number, shouldFetch: boolean = true) {
     console.log('useGetUserChats data', data, error ? 'error:' + error : '');
   }
 
-  console.log("🗣️ useGetUserChats data?.getUserChats.chats", data?.getUserChats.chats);
-
   return {
     chats: data?.getUserChats.chats ?? [],
     success: data?.getUserChats.success ?? false,

@@ -13,8 +13,6 @@ import { useDataProvider } from '@/contexts/DataProviderContext';
 const ChatPage = () => {
   const { fetching, chats, friends } = useDataProvider();
 
-  // Queries (maybe for messages)
-
   // Display Chat Info
   const acceptedChats = chats.filter((chat: any) => chat.status === 'ACCEPTED').map((chat: any) => chat);
   

@@ -6,7 +6,7 @@ type DataProviderContextType = {
   user: any; setUser: (user: any) => void;
   activities: any[]; setActivities: (activities: any[]) => void;
   communities: any[]; setCommunities: (communities: any[]) => void;
-  chats: any[]; setChats: (chats: any[]) => void;
+  chats: any[]; setChats: (chats: any[] | ((prevChats: any[]) => any[])) => void;
   friends: any[]; setFriends: (friends: any[]) => void;
   friendsFeed: any[]; setFriendsFeed: (friendsFeed: any[]) => void;
   communityFeed: any[]; setCommunityFeed: (communityFeed: any[]) => void;

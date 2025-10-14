@@ -176,3 +176,38 @@ export function useSendMessage() {
   };
   return { sendMessage };
 }
+
+export const MARK_CHAT_READ = gql`
+  mutation MarkChatRead($chatId: Int!, $lastMessageId: Int!) {
+    markChatRead(chatId: $chatId, lastMessageId: $lastMessageId) {
+      success
+      errors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export function useMarkChatRead() {
+  const [markChatReadMutation] = useMutation(MARK_CHAT_READ);
+  
+  const markChatRead = async (chatId: number, lastMessageId: number) => {
+    console.log("Marking chat as read", { chatId, lastMessageId });
+    try {
+      const { data } = await markChatReadMutation({
+        variables: { chatId, lastMessageId },
+      });
+
+      if (data?.markChatRead?.success) {
+        console.log('✅ Chat marked as read successfully');
+      } else {
+        console.warn('⚠️ Failed to mark chat as read:', data?.markChatRead?.errors);
+      }
+    } catch (error) {
+      console.error('❌ Mark chat as read failed:', error);
+    }
+  };
+
+  return { markChatRead };
+}
