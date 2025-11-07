@@ -1,24 +1,26 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router, useLocalSearchParams } from 'expo-router';
 import { goals } from '@/utils/goals';
 import { useSignup } from '@/contexts/SignupContext';
 import LoadingOverlay from '@/components/ui/common/LoadingOverlay';
 
+import GoalCard from '@/components/screens/auth/GoalCard';
+
 interface SecondaryGoalScreenProps {
   isLoading: boolean;
   handleCreateAccount: (formData: any) => void;
 }
 
-const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalScreenProps) => {
+const SecondaryGoalScreen: React.FC<SecondaryGoalScreenProps> = ({ isLoading, handleCreateAccount }) => {
   const { signupData, updateSignupData } = useSignup();
   const { primaryGoalId } = useLocalSearchParams<{ primaryGoalId: string }>();
 
   // Filter out the primary goal
   const availableGoals = goals.filter(goal => goal.id !== Number(primaryGoalId));
 
-  const handleGoalSelect = (goalId: number) => {
+  const handleGoalSelect = useCallback((goalId: number) => {
     // If clicking the same goal, unselect it
     if (signupData.secondaryGoalId === goalId) {
       updateSignupData({ secondaryGoalId: null });
@@ -26,25 +28,15 @@ const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalSc
       // Select the new goal
       updateSignupData({ secondaryGoalId: goalId });
     }
-  };
+  }, [signupData.secondaryGoalId, updateSignupData]);
 
   const handleFinish = () => {
     const formData = {
-      firstName: signupData.firstName,
-      lastName: signupData.lastName,
-      email: signupData.email,
-      username: signupData.username,
-      password: signupData.password,
-      age: signupData.age,
-      gender: signupData.gender,
-      timezone: signupData.timezone,
-      bio: signupData.bio,
-      profilePicture: signupData.profilePicture,
-      code: signupData.code,
-      communityId: signupData.communityId,
-      primaryGoalId: signupData.primaryGoalId,
-      secondaryGoalId: signupData.secondaryGoalId,
-    }
+        ...signupData, // Spread all existing data
+        primaryGoalId: signupData.primaryGoalId, // Explicitly keep key goals for clarity
+        secondaryGoalId: signupData.secondaryGoalId,
+    };
+   
     handleCreateAccount(formData);
   };
 
@@ -62,51 +54,30 @@ const SecondaryGoalScreen = ({ isLoading, handleCreateAccount }: SecondaryGoalSc
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.title}>Select your secondary goal</Text>
-        
-        <Text style={styles.subtitle}>
-          Pick a second goal or stick to just one. Keeping it simple helps you stay focused and make real progress.
-        </Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Content */}
+          <Text style={styles.title}>Select your secondary goal</Text>
+          
+          <Text style={styles.subtitle}>
+            Pick a second goal or stick to just one. Keeping it simple helps you stay focused and make real progress.
+          </Text>
 
-        <Text style={styles.description}>
-          Your goal selections aren't permanent, you can update this anytime in Settings.
-        </Text>
+          <Text style={styles.description}>
+            Your goal selections aren't permanent, you can update this anytime in Settings.
+          </Text>
 
-        {/* Goals Grid */}
-        <View style={styles.goalsGrid}>
-          {availableGoals.map((goal) => (
-            <TouchableOpacity
-              key={goal.id}
-              style={[
-                styles.goalCard,
-                signupData.secondaryGoalId === goal.id && styles.goalCardSelected
-              ]}
-              onPress={() => handleGoalSelect(goal.id)}
-            >
-              <View style={styles.iconContainer}>
-                <Image
-                  source={goal.icon as ImageSourcePropType}
-                  style={[
-                    styles.goalIcon,
-                    signupData.secondaryGoalId === goal.id && styles.goalIconSelected
-                  ]}
-                />
-              </View>
-              <Text style={[
-                styles.goalText,
-                signupData.secondaryGoalId === goal.id && styles.goalTextSelected
-              ]}>
-                {goal.label}
-              </Text>
-              {signupData.secondaryGoalId === goal.id && (
-                <Image
-                  source={require('@/assets/icons/checkGreen.png')}
-                  style={styles.checkIcon}
-                />
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
+          {/* Goals Grid - Now using the reusable GoalCard */}
+          <View style={styles.goalsGrid}>
+            {availableGoals.map((goal) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal as any} // Cast goal to 'any' or define the GoalItem type in goals.ts and import it
+                isSelected={signupData.secondaryGoalId === goal.id}
+                onSelect={handleGoalSelect}
+              />
+            ))}
+          </View>
+        </ScrollView>
 
         {/* Navigation Buttons */}
         <View style={styles.buttonContainer}>
@@ -187,58 +158,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: s(8),
     marginBottom: s(16),
-  },
-  goalCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: s(16),
-    padding: s(16),
-    borderWidth: 1,
-    borderColor: '#E1E1E1',
-    alignItems: 'center',
-    marginBottom: s(10),
-  },
-  goalCardSelected: {
-    borderColor: '#DE728D',
-    borderWidth: 2,
-  },
-  iconContainer: {
-    width: s(55),
-    height: s(55),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: s(8),
-  },
-  goalIcon: {
-    width: s(55),
-    height: s(55),
-    tintColor: '#DE728D',
-  },
-  goalIconSelected: {
-    tintColor: '#DE728D',
-  },
-  goalText: {
-    fontSize: s(12),
-    fontFamily: 'Open Sans',
-    fontWeight: '600',
-    color: '#242020',
-    textAlign: 'center',
-  },
-  goalTextSelected: {
-  },
-  checkIcon: {
-    width: s(30),
-    height: s(30),
-    position: 'absolute',
-    top: s(8),
-    right: s(8),
-  },
-  errorMessage: {
-    color: '#DE728D',
-    fontSize: s(12),
-    fontFamily: 'Open Sans',
-    marginBottom: s(16),
-    marginTop: -15, 
   },
   buttonContainer: {
     flexDirection: 'row',

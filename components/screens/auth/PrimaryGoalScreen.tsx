@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ImageSourcePropType } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { s } from 'react-native-size-matters';
 import { router } from 'expo-router';
 import { useSignup } from '@/contexts/SignupContext';
 import { goals } from '@/utils/goals';
 
-const PrimaryGoalScreen = () => {
+import GoalCard from '@/components/screens/auth/GoalCard';
+
+const PrimaryGoalScreen: React.FC = () => {
   const { signupData, updateSignupData } = useSignup();
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const handleGoalSelect = (goalId: number) => {
+  const handleGoalSelect = useCallback((goalId: number) => {
     // If clicking the same goal, unselect it
     if (signupData.primaryGoalId === goalId) {
       updateSignupData({ primaryGoalId: null });
@@ -19,7 +21,7 @@ const PrimaryGoalScreen = () => {
     }
     // Clear any error message when making a selection
     if (errorMessage) setErrorMessage('');
-  };
+  }, [signupData.primaryGoalId, errorMessage, updateSignupData]);
 
   const handleNext = () => {
     if (signupData.primaryGoalId === null || signupData.primaryGoalId === undefined) {
@@ -44,55 +46,32 @@ const PrimaryGoalScreen = () => {
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.title}>Select your primary goal</Text>
-        
-        <Text style={styles.subtitle}>
-          This app works best when you prioritize a single goal, helping you build a strong connection to your progress.
-        </Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Content */}
+          <Text style={styles.title}>Select your primary goal</Text>
+          <Text style={styles.subtitle}>
+            This app works best when you prioritize a single goal, helping you build a strong connection to your progress.
+          </Text>
+          <Text style={styles.description}>
+            Each category is flexible—you can choose what specifically you want to work on within it
+          </Text>
 
-        <Text style={styles.description}>
-          Each category is flexible—you can choose what specifically you want to work on within it
-        </Text>
-
-        {errorMessage && (
-          <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
-        )}
+          {errorMessage && (
+            <Text style={styles.errorMessage}>Error: {errorMessage}</Text>
+          )}
 
         {/* Goals Grid */}
-        <View style={styles.goalsGrid}>
-          {goals.map((goal) => (
-            <TouchableOpacity
-              key={goal.id}
-              style={[
-                styles.goalCard,
-                signupData.primaryGoalId === goal.id && styles.goalCardSelected
-              ]}
-              onPress={() => handleGoalSelect(goal.id)}
-            >
-              <View style={styles.iconContainer}>
-                <Image
-                  source={goal.icon as ImageSourcePropType}
-                  style={[
-                    styles.goalIcon,
-                    signupData.primaryGoalId === goal.id && styles.goalIconSelected
-                  ]}
-                />
-              </View>
-              <Text style={[
-                styles.goalText,
-                signupData.primaryGoalId === goal.id && styles.goalTextSelected
-              ]}>
-                {goal.label}
-              </Text>
-              {signupData.primaryGoalId === goal.id && (
-                <Image
-                  source={require('@/assets/icons/checkGreen.png')}
-                  style={styles.checkIcon}
-                />
-              )}
-            </TouchableOpacity>
-          ))}
-        </View>
+          <View style={styles.goalsGrid}>
+            {goals.map((goal) => (
+              <GoalCard
+                key={goal.id}
+                goal={goal}
+                isSelected={signupData.primaryGoalId === goal.id}
+                onSelect={handleGoalSelect}
+              />
+            ))}
+          </View>
+        </ScrollView>
 
         {/* Navigation Buttons */}
         <View style={styles.buttonContainer}>
@@ -172,51 +151,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: s(8),
     marginBottom: s(16),
-  },
-  goalCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: s(16),
-    padding: s(16),
-    borderWidth: 1,
-    borderColor: '#E1E1E1',
-    alignItems: 'center',
-    marginBottom: s(10),
-  },
-  goalCardSelected: {
-    borderColor: '#DE728D',
-    borderWidth: 2,
-  },
-  iconContainer: {
-    width: s(55),
-    height: s(55),
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: s(8),
-  },
-  goalIcon: {
-    width: s(55),
-    height: s(55),
-    tintColor: '#DE728D',
-  },
-  goalIconSelected: {
-    tintColor: '#DE728D',
-  },
-  goalText: {
-    fontSize: s(12),
-    fontFamily: 'Open Sans',
-    fontWeight: '600',
-    color: '#242020',
-    textAlign: 'center',
-  },
-  goalTextSelected: {
-  },
-  checkIcon: {
-    width: s(30),
-    height: s(30),
-    position: 'absolute',
-    top: s(8),
-    right: s(8),
   },
   errorMessage: {
     color: '#DE728D',
